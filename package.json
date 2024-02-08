@@ -9,14 +9,13 @@
   "browser": "dist/angular-ts.umd.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/angular/angular.js.git"
+    "url": "https://github.com/tolyo/angular.ts.git"
   },
   "engines": {
     "node": ">=18.18.2",
     "grunt-cli": "^1.2.0"
   },
   "scripts": {
-    "commit": "git-cz",
     "test-i18n": "jasmine-node i18n/spec",
     "test-i18n-ucd": "jasmine-node i18n/ucd/spec"
   },
