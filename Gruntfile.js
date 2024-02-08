@@ -23,14 +23,6 @@ if (!semver.satisfies(process.version, pkg.engines.node)) {
                'Please use a version that satisfies ' + pkg.engines.node);
 }
 
-// // Yarn version checks
-// var expectedYarnVersion = pkg.engines.yarn;
-// var currentYarnVersion = exec('yarn --version', {silent: true}).stdout.trim();
-// if (!semver.satisfies(currentYarnVersion, expectedYarnVersion)) {
-//   reportOrFail('Invalid yarn version (' + currentYarnVersion + '). ' +
-//                'Please use a version that satisfies ' + expectedYarnVersion);
-// }
-
 // Grunt CLI version checks
 var expectedGruntVersion = pkg.engines['grunt-cli'];
 var currentGruntVersions = exec('grunt --version', {silent: true}).stdout;
@@ -460,8 +452,6 @@ module.exports = function(grunt) {
   ]);
   grunt.registerTask('test:jqlite', 'Run the unit tests with Karma' , ['tests:jqlite']);
   grunt.registerTask('test:jquery', 'Run the jQuery (latest) unit tests with Karma', ['tests:jquery']);
-  grunt.registerTask('test:jquery-2.2', 'Run the jQuery 2.2 unit tests with Karma', ['tests:jquery-2.2']);
-  grunt.registerTask('test:jquery-2.1', 'Run the jQuery 2.1 unit tests with Karma', ['tests:jquery-2.1']);
   grunt.registerTask('test:modules', 'Run the Karma module tests with Karma', [
     'build',
     'tests:modules',
@@ -504,11 +494,7 @@ module.exports = function(grunt) {
     'copy:i18n',
     'compress:build'
   ]);
-  grunt.registerTask('ci-checks', [
-    'ddescribe-iit',
-    'merge-conflict',
-    'eslint'
-  ]);
+
   grunt.registerTask('prepareDeploy', [
     'copy:deployFirebaseCode',
     'copy:deployFirebaseDocs'
