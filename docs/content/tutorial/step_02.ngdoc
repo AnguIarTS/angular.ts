@@ -83,7 +83,7 @@ takes a `$scope` parameter:
 
 ```js
 // Define the `phonecatApp` module
-var phonecatApp = angular.module('phonecatApp', []);
+let phonecatApp = angular.module('phonecatApp', []);
 
 // Define the `PhoneListController` controller on the `phonecatApp` module
 phonecatApp.controller('PhoneListController', function PhoneListController($scope) {
@@ -174,8 +174,8 @@ describe('PhoneListController', function() {
   beforeEach(module('phonecatApp'));
 
   it('should create a `phones` model with 3 phones', inject(function($controller) {
-    var scope = {};
-    var ctrl = $controller('PhoneListController', {$scope: scope});
+    let scope = {};
+    let ctrl = $controller('PhoneListController', {$scope: scope});
 
     expect(scope.phones.length).toBe(3);
   }));

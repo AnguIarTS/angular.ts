@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('a', function() {
-  var element, $compile, $rootScope;
+  let element, $compile, $rootScope;
 
   beforeEach(module(function($compileProvider) {
     $compileProvider.
@@ -35,7 +35,7 @@ describe('a', function() {
 
 
   it('should prevent default action to be executed when href is empty', function() {
-    var orgLocation = window.document.location.href,
+    let orgLocation = window.document.location.href,
         preventDefaultCalled = false,
         event;
 
@@ -70,9 +70,9 @@ describe('a', function() {
 
 
   it('should not link and hookup an event if href is present at compile', function() {
-    var jq = jQuery || jqLite;
+    let jq = jQuery || jqLite;
     element = jq('<a href="//a.com">hello@you</a>');
-    var linker = $compile(element);
+    let linker = $compile(element);
 
     spyOn(jq.prototype, 'on');
 
@@ -87,8 +87,8 @@ describe('a', function() {
     element = $compile('<a link-to="https://www.google.com">')($rootScope);
     $rootScope.$digest();
 
-    var child = element.children('a');
-    var preventDefault = jasmine.createSpy('preventDefault');
+    let child = element.children('a');
+    let preventDefault = jasmine.createSpy('preventDefault');
 
     child.triggerHandler({
       type: 'click',
@@ -104,8 +104,8 @@ describe('a', function() {
     element = $compile('<a link-not="https://www.google.com">')($rootScope);
     $rootScope.$digest();
 
-    var child = element.children('a');
-    var preventDefault = jasmine.createSpy('preventDefault');
+    let child = element.children('a');
+    let preventDefault = jasmine.createSpy('preventDefault');
 
     child.triggerHandler({
       type: 'click',
@@ -119,7 +119,7 @@ describe('a', function() {
   if (isDefined(window.SVGElement)) {
     describe('SVGAElement', function() {
       it('should prevent default action to be executed when href is empty', function() {
-        var orgLocation = window.document.location.href,
+        let orgLocation = window.document.location.href,
             preventDefaultCalled = false,
             event,
             child;
@@ -145,9 +145,9 @@ describe('a', function() {
 
 
       it('should not link and hookup an event if xlink:href is present at compile', function() {
-        var jq = jQuery || jqLite;
+        let jq = jQuery || jqLite;
         element = jq('<svg><a xlink:href="bobby">hello@you</a></svg>');
-        var linker = $compile(element);
+        let linker = $compile(element);
 
         spyOn(jq.prototype, 'on');
 

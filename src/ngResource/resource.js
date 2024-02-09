@@ -1,11 +1,9 @@
-"use strict";
-
-var $resourceMinErr = angular.$$minErr("$resource");
+let $resourceMinErr = angular.$$minErr("$resource");
 
 // Helper functions and regex to lookup a dotted path on an object
 // stopping at undefined/null.  The path must be composed of ASCII
 // identifiers (just like $parse)
-var MEMBER_NAME_REGEX = /^(\.[a-zA-Z_$@][0-9a-zA-Z_$@]*)+$/;
+let MEMBER_NAME_REGEX = /^(\.[a-zA-Z_$@][0-9a-zA-Z_$@]*)+$/;
 
 function isValidDottedPath(path) {
   return (
@@ -24,9 +22,9 @@ function lookupDottedPath(obj, path) {
       path,
     );
   }
-  var keys = path.split(".");
-  for (var i = 0, ii = keys.length; i < ii && angular.isDefined(obj); i++) {
-    var key = keys[i];
+  let keys = path.split(".");
+  for (let i = 0, ii = keys.length; i < ii && angular.isDefined(obj); i++) {
+    let key = keys[i];
     obj = obj !== null ? obj[key] : undefined;
   }
   return obj;
@@ -42,7 +40,7 @@ function shallowClearAndCopy(src, dst) {
     delete dst[key];
   });
 
-  for (var key in src) {
+  for (let key in src) {
     if (
       src.hasOwnProperty(key) &&
       !(key.charAt(0) === "$" && key.charAt(1) === "$")
@@ -240,7 +238,7 @@ function shallowClearAndCopy(src, dst) {
  *   the `$` prefix. This allows you to easily perform CRUD operations (create, read, update,
  *   delete) on server-side data like this:
  *   ```js
- *   var User = $resource('/user/:userId', {userId: '@id'});
+ *   let User = $resource('/user/:userId', {userId: '@id'});
  *   User.get({userId: 123}).$promise.then(function(user) {
  *     user.abc = true;
  *     user.$save();
@@ -315,19 +313,19 @@ function shallowClearAndCopy(src, dst) {
  *
    ```js
      // Define a CreditCard class
-     var CreditCard = $resource('/users/:userId/cards/:cardId',
+     let CreditCard = $resource('/users/:userId/cards/:cardId',
        {userId: 123, cardId: '@id'}, {
          charge: {method: 'POST', params: {charge: true}}
        });
 
      // We can retrieve a collection from the server
-     var cards = CreditCard.query();
+     let cards = CreditCard.query();
          // GET: /users/123/cards
          // server returns: [{id: 456, number: '1234', name: 'Smith'}]
 
      // Wait for the request to complete
      cards.$promise.then(function() {
-       var card = cards[0];
+       let card = cards[0];
 
        // Each item is an instance of CreditCard
        expect(card instanceof CreditCard).toEqual(true);
@@ -344,10 +342,10 @@ function shallowClearAndCopy(src, dst) {
      });
 
      // We can create an instance as well
-     var newCard = new CreditCard({number: '0123'});
+     let newCard = new CreditCard({number: '0123'});
      newCard.name = 'Mike Smith';
 
-     var savePromise = newCard.$save();
+     let savePromise = newCard.$save();
          // POST: /users/123/cards {number: '0123', name: 'Mike Smith'}
          // server returns: {id: 789, number: '0123', name: 'Mike Smith'}
 
@@ -373,7 +371,7 @@ function shallowClearAndCopy(src, dst) {
  * operations (create, read, update, delete) on server-side data.
  *
    ```js
-     var User = $resource('/users/:userId', {userId: '@id'});
+     let User = $resource('/users/:userId', {userId: '@id'});
      User.get({userId: 123}).$promise.then(function(user) {
        user.abc = true;
        user.$save();
@@ -386,7 +384,7 @@ function shallowClearAndCopy(src, dst) {
  * the above example and get access to HTTP headers as follows:
  *
    ```js
-     var User = $resource('/users/:userId', {userId: '@id'});
+     let User = $resource('/users/:userId', {userId: '@id'});
      User.get({userId: 123}, function(user, getResponseHeaders) {
        user.abc = true;
        user.$save(function(user, putResponseHeaders) {
@@ -403,7 +401,7 @@ function shallowClearAndCopy(src, dst) {
  * In this example we create a custom method on our resource to make a PUT request:
  *
    ```js
-      var app = angular.module('app', ['ngResource']);
+      let app = angular.module('app', ['ngResource']);
 
       // Some APIs expect a PUT request in the format URL/object/ID
       // Here we are creating an 'update' method
@@ -417,8 +415,8 @@ function shallowClearAndCopy(src, dst) {
       app.controller('NotesCtrl', ['$location', 'Notes', function($location, Notes) {
         // First, retrieve the corresponding `Note` object from the server
         // (Assuming a URL of the form `.../notes?id=XYZ`)
-        var noteId = $location.search().id;
-        var note = Notes.get({id: noteId});
+        let noteId = $location.search().id;
+        let note = Notes.get({id: noteId});
 
         note.$promise.then(function() {
           note.content = 'Hello, world!';
@@ -443,7 +441,7 @@ function shallowClearAndCopy(src, dst) {
  *
    ```js
      // ...defining the `Hotel` resource...
-     var Hotel = $resource('/api/hotels/:id', {id: '@id'}, {
+     let Hotel = $resource('/api/hotels/:id', {id: '@id'}, {
        // Let's make the `query()` method cancellable
        query: {method: 'get', isArray: true, cancellable: true}
      });
@@ -472,7 +470,7 @@ function shallowClearAndCopy(src, dst) {
  * interceptors to augment the returned instance with additional info:
  *
    ```js
-     var Thing = $resource('/api/things/:id', {id: '@id'}, {
+     let Thing = $resource('/api/things/:id', {id: '@id'}, {
        save: {
          method: 'POST',
          interceptor: {
@@ -483,7 +481,7 @@ function shallowClearAndCopy(src, dst) {
            },
            response: function(response) {
              // Get the instance from the response object
-             var instance = response.resource;
+             let instance = response.resource;
 
              // Augment the instance with a custom `saveLatency` property, computed as the time
              // between sending the request and receiving the response.
@@ -506,9 +504,9 @@ angular
   .module("ngResource", ["ng"])
   .info({ angularVersion: '"NG_VERSION_FULL"' })
   .provider("$resource", function ResourceProvider() {
-    var PROTOCOL_AND_IPV6_REGEX = /^https?:\/\/\[[^\]]*][^/]*/;
+    let PROTOCOL_AND_IPV6_REGEX = /^https?:\/\/\[[^\]]*][^/]*/;
 
-    var provider = this;
+    let provider = this;
 
     /**
      * @ngdoc property
@@ -598,7 +596,7 @@ angular
       "$q",
       "$timeout",
       function ($http, $log, $q, $timeout) {
-        var noop = angular.noop,
+        let noop = angular.noop,
           forEach = angular.forEach,
           extend = angular.extend,
           copy = angular.copy,
@@ -617,13 +615,13 @@ angular
 
         Route.prototype = {
           setUrlParams: function (config, params, actionUrl) {
-            var self = this,
+            let self = this,
               url = actionUrl || self.template,
               val,
               encodedVal,
               protocolAndIpv6 = "";
 
-            var urlParams = (self.urlParams = Object.create(null));
+            let urlParams = (self.urlParams = Object.create(null));
             forEach(url.split(/\W/), function (param) {
               if (param === "hasOwnProperty") {
                 throw $resourceMinErr(
@@ -703,12 +701,12 @@ angular
         };
 
         function resourceFactory(url, paramDefaults, actions, options) {
-          var route = new Route(url, options);
+          let route = new Route(url, options);
 
           actions = extend({}, provider.defaults.actions, actions);
 
           function extractParams(data, actionParams) {
-            var ids = {};
+            let ids = {};
             actionParams = extend({}, paramDefaults, actionParams);
             forEach(actionParams, function (value, key) {
               if (isFunction(value)) {
@@ -731,7 +729,7 @@ angular
           }
 
           Resource.prototype.toJSON = function () {
-            var data = extend({}, this);
+            let data = extend({}, this);
             delete data.$promise;
             delete data.$resolved;
             delete data.$cancelRequest;
@@ -739,12 +737,12 @@ angular
           };
 
           forEach(actions, function (action, name) {
-            var hasBody =
+            let hasBody =
               action.hasBody === true ||
               (action.hasBody !== false &&
                 /^(POST|PUT|PATCH)$/i.test(action.method));
-            var numericTimeout = action.timeout;
-            var cancellable = isDefined(action.cancellable)
+            let numericTimeout = action.timeout;
+            let cancellable = isDefined(action.cancellable)
               ? action.cancellable
               : route.defaults.cancellable;
 
@@ -761,7 +759,7 @@ angular
             }
 
             Resource[name] = function (a1, a2, a3, a4) {
-              var params = {},
+              let params = {},
                 data,
                 onSuccess,
                 onError;
@@ -805,25 +803,25 @@ angular
                   );
               }
 
-              var isInstanceCall = this instanceof Resource;
-              var value = isInstanceCall
+              let isInstanceCall = this instanceof Resource;
+              let value = isInstanceCall
                 ? data
                 : action.isArray
                   ? []
                   : new Resource(data);
-              var httpConfig = {};
-              var requestInterceptor =
+              let httpConfig = {};
+              let requestInterceptor =
                 (action.interceptor && action.interceptor.request) || undefined;
-              var requestErrorInterceptor =
+              let requestErrorInterceptor =
                 (action.interceptor && action.interceptor.requestError) ||
                 undefined;
-              var responseInterceptor =
+              let responseInterceptor =
                 (action.interceptor && action.interceptor.response) ||
                 defaultResponseInterceptor;
-              var responseErrorInterceptor =
+              let responseErrorInterceptor =
                 (action.interceptor && action.interceptor.responseError) ||
                 $q.reject;
-              var successCallback = onSuccess
+              let successCallback = onSuccess
                 ? function (val) {
                     onSuccess(
                       val,
@@ -833,10 +831,10 @@ angular
                     );
                   }
                 : undefined;
-              var errorCallback = onError || undefined;
-              var timeoutDeferred;
-              var numericTimeoutPromise;
-              var response;
+              let errorCallback = onError || undefined;
+              let timeoutDeferred;
+              let numericTimeoutPromise;
+              let response;
 
               forEach(action, function (value, key) {
                 switch (key) {
@@ -871,7 +869,7 @@ angular
               );
 
               // Start the promise chain
-              var promise = $q
+              let promise = $q
                 .resolve(httpConfig)
                 .then(requestInterceptor)
                 .catch(requestErrorInterceptor)
@@ -879,7 +877,7 @@ angular
 
               promise = promise.then(
                 function (resp) {
-                  var data = resp.data;
+                  let data = resp.data;
 
                   if (data) {
                     // Need to convert action.isArray to boolean in case it is undefined
@@ -908,7 +906,7 @@ angular
                         }
                       });
                     } else {
-                      var promise = value.$promise; // Save the promise
+                      let promise = value.$promise; // Save the promise
                       shallowClearAndCopy(data, value);
                       value.$promise = promise; // Restore the promise
                     }
@@ -968,7 +966,7 @@ angular
                 success = params;
                 params = {};
               }
-              var result = Resource[name].call(
+              let result = Resource[name].call(
                 this,
                 params,
                 this,

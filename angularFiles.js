@@ -1,6 +1,6 @@
-'use strict';
 
-var angularFiles = {
+
+let angularFiles = {
   'angularSrc': [
     'src/minErr.js',
     'src/Angular.js',
@@ -86,8 +86,7 @@ var angularFiles = {
     'src/ng/directive/select.js',
     'src/ng/directive/validators.js',
     'src/angular.bind.js',
-    'src/publishExternalApis.js',
-    'src/ngLocale/angular-locale_en-us.js'
+    'src/publishExternalApis.js'
   ],
 
   'angularLoader': [
@@ -309,12 +308,12 @@ angularFiles['angularSrcModules'] = [].concat(
 if (exports) {
   exports.files = angularFiles;
   exports.mergeFilesFor = function() {
-    var files = [];
+    let files = [];
 
     Array.prototype.slice.call(arguments, 0).forEach(function(filegroup) {
       angularFiles[filegroup].forEach(function(file) {
         // replace @ref
-        var match = file.match(/^@(.*)/);
+        let match = file.match(/^@(.*)/);
         if (match) {
           files = files.concat(angularFiles[match[1]]);
         } else {

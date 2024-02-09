@@ -1,14 +1,14 @@
-'use strict';
+
 
 // Wrapper to abstract over using touch events or mouse events.
-var swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, endEvent) {
+let swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, endEvent) {
   describe('ngSwipe with ' + description + ' events', function() {
-    var element;
+    let element;
 
     if (restrictBrowsers) {
       // TODO(braden): Once we have other touch-friendly browsers on CI, allow them here.
       // Currently Firefox and IE refuse to fire touch events.
-      var chrome = /chrome/.test(window.navigator.userAgent.toLowerCase());
+      let chrome = /chrome/.test(window.navigator.userAgent.toLowerCase());
       if (!chrome) {
         return;
       }
@@ -188,7 +188,7 @@ var swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, 
       $rootScope.$digest();
 
       expect($rootScope.swiped).toBeUndefined();
-      var eventFired = false;
+      let eventFired = false;
       element.on('swipeleft', function() {
         eventFired = true;
       });
@@ -212,7 +212,7 @@ var swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, 
       $rootScope.$digest();
 
       expect($rootScope.swiped).toBeUndefined();
-      var eventFired = false;
+      let eventFired = false;
       element.on('swiperight', function() {
         eventFired = true;
       });

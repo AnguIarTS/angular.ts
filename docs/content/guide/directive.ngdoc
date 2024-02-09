@@ -100,8 +100,8 @@ For example, the following forms are all equivalent and match the {@link ngBind}
   </file>
   <file name="protractor.js" type="protractor">
     it('should show off bindings', function() {
-      var containerElm = element(by.css('div[ng-controller="Controller"]'));
-      var nameBindings = containerElm.all(by.binding('name'));
+      let containerElm = element(by.css('div[ng-controller="Controller"]'));
+      let nameBindings = containerElm.all(by.binding('name'));
 
       expect(nameBindings.count()).toBe(5);
       nameBindings.each(function(elem) {
@@ -571,7 +571,7 @@ We also want to remove the `$interval` if the directive is deleted so we don't i
       .directive('myCurrentTime', ['$interval', 'dateFilter', function($interval, dateFilter) {
 
         function link(scope, element, attrs) {
-          var format,
+          let format,
               timeoutId;
 
           function updateTime() {
@@ -802,7 +802,7 @@ element?
       .directive('myDraggable', ['$document', function($document) {
         return {
           link: function(scope, element, attr) {
-            var startX = 0, startY = 0, x = 0, y = 0;
+            let startX = 0, startY = 0, x = 0, y = 0;
 
             element.css({
              position: 'relative',
@@ -862,7 +862,7 @@ to which tab is active.
           transclude: true,
           scope: {},
           controller: ['$scope', function MyTabsController($scope) {
-            var panes = $scope.panes = [];
+            let panes = $scope.panes = [];
 
             $scope.select = function(pane) {
               angular.forEach(panes, function(pane) {
@@ -958,7 +958,7 @@ angular.module('docsTabsExample', [])
         title: '@'
       },
       link: function(scope, element, attrs, controllers) {
-        var tabsCtrl = controllers[0],
+        let tabsCtrl = controllers[0],
             modelCtrl = controllers[1];
 
         tabsCtrl.addPane(scope);

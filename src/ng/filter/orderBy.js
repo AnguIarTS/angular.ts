@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc filter
  * @name orderBy
@@ -183,7 +181,7 @@
      </file>
      <file name="protractor.js" type="protractor">
        // Element locators
-       var names = element.all(by.repeater('friends').column('friend.name'));
+       let names = element.all(by.repeater('friends').column('friend.name'));
 
        it('should sort friends by age in reverse order', function() {
          expect(names.get(0).getText()).toBe('Adam');
@@ -235,7 +233,7 @@
      <file name="script.js">
        angular.module('orderByExample2', [])
          .controller('ExampleController', ['$scope', function($scope) {
-           var friends = [
+           let friends = [
              {name: 'John',   phone: '555-1212',  age: 10},
              {name: 'Mary',   phone: '555-9876',  age: 19},
              {name: 'Mike',   phone: '555-4321',  age: 21},
@@ -278,12 +276,12 @@
      </file>
      <file name="protractor.js" type="protractor">
        // Element locators
-       var unsortButton = element(by.partialButtonText('unsorted'));
-       var nameHeader = element(by.partialButtonText('Name'));
-       var phoneHeader = element(by.partialButtonText('Phone'));
-       var ageHeader = element(by.partialButtonText('Age'));
-       var firstName = element(by.repeater('friends').column('friend.name').row(0));
-       var lastName = element(by.repeater('friends').column('friend.name').row(4));
+       let unsortButton = element(by.partialButtonText('unsorted'));
+       let nameHeader = element(by.partialButtonText('Name'));
+       let phoneHeader = element(by.partialButtonText('Phone'));
+       let ageHeader = element(by.partialButtonText('Age'));
+       let firstName = element(by.repeater('friends').column('friend.name').row(0));
+       let lastName = element(by.repeater('friends').column('friend.name').row(4));
 
        it('should sort friends by some property, when clicking on the column header', function() {
          expect(firstName.getText()).toBe('Adam');
@@ -367,7 +365,7 @@
      <file name="script.js">
        angular.module('orderByExample3', [])
          .controller('ExampleController', ['$scope', 'orderByFilter', function($scope, orderBy) {
-           var friends = [
+           let friends = [
              {name: 'John',   phone: '555-1212',  age: 10},
              {name: 'Mary',   phone: '555-9876',  age: 19},
              {name: 'Mike',   phone: '555-4321',  age: 21},
@@ -412,12 +410,12 @@
      </file>
      <file name="protractor.js" type="protractor">
        // Element locators
-       var unsortButton = element(by.partialButtonText('unsorted'));
-       var nameHeader = element(by.partialButtonText('Name'));
-       var phoneHeader = element(by.partialButtonText('Phone'));
-       var ageHeader = element(by.partialButtonText('Age'));
-       var firstName = element(by.repeater('friends').column('friend.name').row(0));
-       var lastName = element(by.repeater('friends').column('friend.name').row(4));
+       let unsortButton = element(by.partialButtonText('unsorted'));
+       let nameHeader = element(by.partialButtonText('Name'));
+       let phoneHeader = element(by.partialButtonText('Phone'));
+       let ageHeader = element(by.partialButtonText('Age'));
+       let firstName = element(by.repeater('friends').column('friend.name').row(0));
+       let lastName = element(by.repeater('friends').column('friend.name').row(4));
 
        it('should sort friends by some property, when clicking on the column header', function() {
          expect(firstName.getText()).toBe('Adam');
@@ -545,8 +543,8 @@
      </file>
      <file name="protractor.js" type="protractor">
        // Element locators
-       var container = element(by.css('.custom-comparator'));
-       var names = container.all(by.repeater('friends').column('friend.name'));
+       let container = element(by.css('.custom-comparator'));
+       let names = container.all(by.repeater('friends').column('friend.name'));
 
        it('should sort friends by favorite letter (in correct alphabetical order)', function() {
          expect(names.get(0).getText()).toBe('John');
@@ -578,17 +576,17 @@ function orderByFilter($parse) {
       sortPredicate = ["+"];
     }
 
-    var predicates = processPredicates(sortPredicate);
+    let predicates = processPredicates(sortPredicate);
 
-    var descending = reverseOrder ? -1 : 1;
+    let descending = reverseOrder ? -1 : 1;
 
     // Define the `compare()` function. Use a default comparator if none is specified.
-    var compare = isFunction(compareFn) ? compareFn : defaultCompare;
+    let compare = isFunction(compareFn) ? compareFn : defaultCompare;
 
     // The next three lines are a version of a Swartzian Transform idiom from Perl
     // (sometimes called the Decorate-Sort-Undecorate idiom)
     // See https://en.wikipedia.org/wiki/Schwartzian_transform
-    var compareValues = Array.prototype.map.call(array, getComparisonObject);
+    let compareValues = Array.prototype.map.call(array, getComparisonObject);
     compareValues.sort(doComparison);
     array = compareValues.map(function (item) {
       return item.value;
@@ -610,8 +608,8 @@ function orderByFilter($parse) {
     }
 
     function doComparison(v1, v2) {
-      for (var i = 0, ii = predicates.length; i < ii; i++) {
-        var result = compare(v1.predicateValues[i], v2.predicateValues[i]);
+      for (let i = 0, ii = predicates.length; i < ii; i++) {
+        let result = compare(v1.predicateValues[i], v2.predicateValues[i]);
         if (result) {
           return result * predicates[i].descending * descending;
         }
@@ -626,7 +624,7 @@ function orderByFilter($parse) {
 
   function processPredicates(sortPredicates) {
     return sortPredicates.map(function (predicate) {
-      var descending = 1,
+      let descending = 1,
         get = identity;
 
       if (isFunction(predicate)) {
@@ -639,7 +637,7 @@ function orderByFilter($parse) {
         if (predicate !== "") {
           get = $parse(predicate);
           if (get.constant) {
-            var key = get();
+            let key = get();
             get = function (value) {
               return value[key];
             };
@@ -677,7 +675,7 @@ function orderByFilter($parse) {
   }
 
   function getPredicateValue(value, index) {
-    var type = typeof value;
+    let type = typeof value;
     if (value === null) {
       type = "null";
     } else if (type === "object") {
@@ -687,13 +685,13 @@ function orderByFilter($parse) {
   }
 
   function defaultCompare(v1, v2) {
-    var result = 0;
-    var type1 = v1.type;
-    var type2 = v2.type;
+    let result = 0;
+    let type1 = v1.type;
+    let type2 = v2.type;
 
     if (type1 === type2) {
-      var value1 = v1.value;
-      var value2 = v2.value;
+      let value1 = v1.value;
+      let value2 = v2.value;
 
       if (type1 === "string") {
         // Compare strings case-insensitively

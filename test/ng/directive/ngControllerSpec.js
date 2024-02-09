@@ -1,19 +1,19 @@
-'use strict';
+
 
 describe('ngController', function() {
-  var element;
+  let element;
 
   beforeEach(module(function($controllerProvider) {
     $controllerProvider.register('PublicModule', function() {
       this.mark = 'works';
     });
 
-    var Greeter = function($scope) {
+    let Greeter = function($scope) {
       // private stuff (not exported to scope)
       this.prefix = 'Hello ';
 
       // public stuff (exported to scope)
-      var ctrl = this;
+      let ctrl = this;
       $scope.name = 'Misko';
       $scope.greet = function(name) {
         return ctrl.prefix + name + ctrl.suffix;
@@ -37,7 +37,7 @@ describe('ngController', function() {
       this.mark = 'works';
     });
 
-    var Foo = function($scope) {
+    let Foo = function($scope) {
       $scope.mark = 'foo';
     };
     $controllerProvider.register('BoundFoo', ['$scope', Foo.bind(null)]);
@@ -113,7 +113,7 @@ describe('ngController', function() {
   it('should only instantiate the controller once with ngInclude on the same element',
       inject(function($compile, $rootScope, $httpBackend) {
 
-    var count = 0;
+    let count = 0;
 
     $rootScope.CountController = function($scope) {
       count += 1;
@@ -138,7 +138,7 @@ describe('ngController', function() {
   it('when ngInclude is on the same element, the content included content should get a child scope of the controller',
       inject(function($compile, $rootScope, $httpBackend) {
 
-    var controllerScope;
+    let controllerScope;
 
     $rootScope.ExposeScopeController = function($scope) {
       controllerScope = $scope;

@@ -1,5 +1,3 @@
-"use strict";
-
 /* exported $CoreAnimateCssProvider */
 
 /**
@@ -14,7 +12,7 @@
  *
  * Click here {@link ngAnimate.$animateCss to read the documentation for $animateCss}.
  */
-var $CoreAnimateCssProvider = function () {
+let $CoreAnimateCssProvider = function () {
   this.$get = [
     "$$rAF",
     "$q",
@@ -25,7 +23,7 @@ var $CoreAnimateCssProvider = function () {
         // a copy of the options data, however, if a
         // parent service has already created a copy then
         // we should stick to using that
-        var options = initialOptions || {};
+        let options = initialOptions || {};
         if (!options.$$prepared) {
           options = copy(options);
         }
@@ -42,7 +40,7 @@ var $CoreAnimateCssProvider = function () {
           options.from = null;
         }
 
-        var closed,
+        let closed,
           runner = new $$AnimateRunner();
         return {
           start: run,

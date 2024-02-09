@@ -59,7 +59,7 @@ The following example demonstrates creating a `GreetingController`, which attach
 property containing the string `'Hola!'` to the `$scope`:
 
 ```js
-var myApp = angular.module('myApp',[]);
+let myApp = angular.module('myApp',[]);
 
 myApp.controller('GreetingController', ['$scope', function($scope) {
   $scope.greeting = 'Hola!';
@@ -95,7 +95,7 @@ then available to be called from the template/view.
 The following example uses a Controller to add a method, which doubles a number, to the scope:
 
 ```js
-var myApp = angular.module('myApp',[]);
+let myApp = angular.module('myApp',[]);
 
 myApp.controller('DoubleController', ['$scope', function($scope) {
   $scope.double = function(value) { return value * 2; };
@@ -138,7 +138,7 @@ string "very". Depending on which button is clicked, the `spice` model is set to
     </div>
   </file>
   <file name="app.js">
-    var myApp = angular.module('spicyApp1', []);
+    let myApp = angular.module('spicyApp1', []);
 
     myApp.controller('SpicyController', ['$scope', function($scope) {
         $scope.spice = 'very';
@@ -180,7 +180,7 @@ previous example.
   </div>
   </file>
   <file name="app.js">
-    var myApp = angular.module('spicyApp2', []);
+    let myApp = angular.module('spicyApp2', []);
 
     myApp.controller('SpicyController', ['$scope', function($scope) {
         $scope.customSpice = 'wasabi';
@@ -230,7 +230,7 @@ more information about scope inheritance.
     }
   </file>
   <file name="app.js">
-      var myApp = angular.module('scopeInheritance', []);
+      let myApp = angular.module('scopeInheritance', []);
       myApp.controller('MainController', ['$scope', function($scope) {
         $scope.timeOfDay = 'morning';
         $scope.name = 'Nikki';
@@ -266,7 +266,7 @@ involves injecting the {@link ng.$rootScope $rootScope} and {@link ng.$controlle
 
 **Controller Definition:**
 ```js
-    var myApp = angular.module('myApp',[]);
+    let myApp = angular.module('myApp',[]);
 
     myApp.controller('MyController', function($scope) {
       $scope.spices = [{"name":"pasilla", "spiciness":"mild"},
@@ -281,7 +281,7 @@ involves injecting the {@link ng.$rootScope $rootScope} and {@link ng.$controlle
 describe('myController function', function() {
 
   describe('myController', function() {
-    var $scope;
+    let $scope;
 
     beforeEach(module('myApp'));
 
@@ -307,7 +307,7 @@ in your test that exists in the DOM:
 
 ```js
 describe('state', function() {
-    var mainScope, childScope, grandChildScope;
+    let mainScope, childScope, grandChildScope;
 
     beforeEach(module('myApp'));
 

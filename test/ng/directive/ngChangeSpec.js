@@ -1,10 +1,10 @@
-'use strict';
+
 
 /* globals generateInputCompilerHelper: false */
 
 describe('ngChange', function() {
 
-  var helper = {}, $rootScope;
+  let helper = {}, $rootScope;
 
   generateInputCompilerHelper(helper);
 
@@ -35,7 +35,7 @@ describe('ngChange', function() {
 
 
   it('should $eval ngChange expression on checkbox', function() {
-    var inputElm = helper.compileInput('<input type="checkbox" ng-model="foo" ng-change="changeFn()">');
+    let inputElm = helper.compileInput('<input type="checkbox" ng-model="foo" ng-change="changeFn()">');
 
     $rootScope.changeFn = jasmine.createSpy('changeFn');
     expect($rootScope.changeFn).not.toHaveBeenCalled();
@@ -46,7 +46,7 @@ describe('ngChange', function() {
 
 
   it('should be able to change the model and via that also update the view', function() {
-    var inputElm = helper.compileInput('<input type="text" ng-model="value" ng-change="value=\'b\'" />');
+    let inputElm = helper.compileInput('<input type="text" ng-model="value" ng-change="value=\'b\'" />');
 
     helper.changeInputValueTo('a');
     expect(inputElm.val()).toBe('b');

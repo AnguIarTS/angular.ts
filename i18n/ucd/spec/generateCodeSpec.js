@@ -1,8 +1,8 @@
-'use strict';
 
-var generateCodeModule = require('../src/generateCode.js');
-var generateCode = generateCodeModule.generateCode;
-var generateFunction = generateCodeModule.generateFunction;
+
+let generateCodeModule = require('../src/generateCode.js');
+let generateCode = generateCodeModule.generateCode;
+let generateFunction = generateCodeModule.generateFunction;
 
 describe('generateFunction', function() {
   it('should generate function with ranges', function() {

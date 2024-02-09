@@ -1,7 +1,7 @@
-'use strict';
+
 
 // eslint-disable-next-line new-cap
-var encoder = new require('node-html-encoder').Encoder();
+let encoder = new require('node-html-encoder').Encoder();
 
 /**
  * @dgService typeInlineTagDef

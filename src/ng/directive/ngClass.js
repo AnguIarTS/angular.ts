@@ -1,5 +1,3 @@
-"use strict";
-
 /* exported
   ngClassDirective,
   ngClassEvenDirective,
@@ -8,7 +6,7 @@
 
 function classDirective(name, selector) {
   name = "ngClass" + name;
-  var indexWatchExpression;
+  let indexWatchExpression;
 
   return [
     "$parse",
@@ -16,9 +14,9 @@ function classDirective(name, selector) {
       return {
         restrict: "AC",
         link: function (scope, element, attr) {
-          var classCounts = element.data("$classCounts");
-          var oldModulo = true;
-          var oldClassString;
+          let classCounts = element.data("$classCounts");
+          let oldModulo = true;
+          let oldClassString;
 
           if (!classCounts) {
             // Use createMap() to prevent class assumptions involving property
@@ -54,21 +52,21 @@ function classDirective(name, selector) {
           }
 
           function updateClasses(oldClassString, newClassString) {
-            var oldClassArray = split(oldClassString);
-            var newClassArray = split(newClassString);
+            let oldClassArray = split(oldClassString);
+            let newClassArray = split(newClassString);
 
-            var toRemoveArray = arrayDifference(oldClassArray, newClassArray);
-            var toAddArray = arrayDifference(newClassArray, oldClassArray);
+            let toRemoveArray = arrayDifference(oldClassArray, newClassArray);
+            let toAddArray = arrayDifference(newClassArray, oldClassArray);
 
-            var toRemoveString = digestClassCounts(toRemoveArray, -1);
-            var toAddString = digestClassCounts(toAddArray, 1);
+            let toRemoveString = digestClassCounts(toRemoveArray, -1);
+            let toAddString = digestClassCounts(toAddArray, 1);
 
             attr.$addClass(toAddString);
             attr.$removeClass(toRemoveString);
           }
 
           function digestClassCounts(classArray, count) {
-            var classesToUpdate = [];
+            let classesToUpdate = [];
 
             forEach(classArray, function (className) {
               if (count > 0 || classCounts[className]) {
@@ -112,11 +110,11 @@ function classDirective(name, selector) {
     if (!tokens1 || !tokens1.length) return [];
     if (!tokens2 || !tokens2.length) return tokens1;
 
-    var values = [];
+    let values = [];
 
-    outer: for (var i = 0; i < tokens1.length; i++) {
-      var token = tokens1[i];
-      for (var j = 0; j < tokens2.length; j++) {
+    outer: for (let i = 0; i < tokens1.length; i++) {
+      let token = tokens1[i];
+      for (let j = 0; j < tokens2.length; j++) {
         if (token === tokens2[j]) continue outer;
       }
       values.push(token);
@@ -132,7 +130,7 @@ function classDirective(name, selector) {
   function toClassString(classValue) {
     if (!classValue) return classValue;
 
-    var classString = classValue;
+    let classString = classValue;
 
     if (isArray(classValue)) {
       classString = classValue.map(toClassString).join(" ");
@@ -257,7 +255,7 @@ function classDirective(name, selector) {
        }
      </file>
      <file name="protractor.js" type="protractor">
-       var ps = element.all(by.css('p'));
+       let ps = element.all(by.css('p'));
 
        it('should let you toggle the class', function() {
 
@@ -335,7 +333,7 @@ function classDirective(name, selector) {
      </file>
    </example>
  */
-var ngClassDirective = classDirective("", true);
+let ngClassDirective = classDirective("", true);
 
 /**
  * @ngdoc directive
@@ -416,8 +414,8 @@ var ngClassDirective = classDirective("", true);
      </file>
      <file name="protractor.js" type="protractor">
        it('should add new entries to the beginning of the list', function() {
-         var button = element(by.buttonText('Add item'));
-         var rows = element.all(by.repeater('item in items'));
+         let button = element(by.buttonText('Add item'));
+         let rows = element.all(by.repeater('item in items'));
 
          expect(rows.count()).toBe(4);
          expect(rows.get(0).getText()).toBe('Item 3');
@@ -431,8 +429,8 @@ var ngClassDirective = classDirective("", true);
        });
 
        it('should add odd class to odd entries', function() {
-         var button = element(by.buttonText('Add item'));
-         var rows = element.all(by.repeater('item in items'));
+         let button = element(by.buttonText('Add item'));
+         let rows = element.all(by.repeater('item in items'));
 
          expect(rows.get(0).getAttribute('class')).toMatch(/odd/);
          expect(rows.get(1).getAttribute('class')).not.toMatch(/odd/);
@@ -445,7 +443,7 @@ var ngClassDirective = classDirective("", true);
      </file>
    </example>
  */
-var ngClassOddDirective = classDirective("Odd", 0);
+let ngClassOddDirective = classDirective("Odd", 0);
 
 /**
  * @ngdoc directive
@@ -526,8 +524,8 @@ var ngClassOddDirective = classDirective("Odd", 0);
      </file>
      <file name="protractor.js" type="protractor">
        it('should add new entries to the beginning of the list', function() {
-         var button = element(by.buttonText('Add item'));
-         var rows = element.all(by.repeater('item in items'));
+         let button = element(by.buttonText('Add item'));
+         let rows = element.all(by.repeater('item in items'));
 
          expect(rows.count()).toBe(4);
          expect(rows.get(0).getText()).toBe('Item 3');
@@ -541,8 +539,8 @@ var ngClassOddDirective = classDirective("Odd", 0);
        });
 
        it('should add even class to even entries', function() {
-         var button = element(by.buttonText('Add item'));
-         var rows = element.all(by.repeater('item in items'));
+         let button = element(by.buttonText('Add item'));
+         let rows = element.all(by.repeater('item in items'));
 
          expect(rows.get(0).getAttribute('class')).not.toMatch(/even/);
          expect(rows.get(1).getAttribute('class')).toMatch(/even/);
@@ -555,4 +553,4 @@ var ngClassOddDirective = classDirective("Odd", 0);
      </file>
    </example>
  */
-var ngClassEvenDirective = classDirective("Even", 1);
+let ngClassEvenDirective = classDirective("Even", 1);

@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * @dgProcessor errorDocsProcessor
@@ -12,22 +12,22 @@ module.exports = function errorDocsProcessor(log, errorNamespaceMap, getMinerrIn
     $process: function(docs) {
 
       // Get the extracted min errors to compare with the error docs, and report any mismatch
-      var collectedErrors = require('../../../build/errors.json').errors;
-      var flatErrors = [];
+      let collectedErrors = require('../../../build/errors.json').errors;
+      let flatErrors = [];
 
-      for (var namespace in collectedErrors) {
-        for (var error in collectedErrors[namespace]) {
+      for (let namespace in collectedErrors) {
+        for (let error in collectedErrors[namespace]) {
           flatErrors.push(namespace + ':' + error);
         }
       }
 
       // Create error namespace docs and attach error docs to each
       docs.forEach(function(doc) {
-        var parts, namespaceDoc;
+        let parts, namespaceDoc;
 
         if (doc.docType === 'error') {
 
-          var matchingMinErr = flatErrors.indexOf(doc.name);
+          let matchingMinErr = flatErrors.indexOf(doc.name);
 
           if (matchingMinErr === -1) {
             log.warn('Error doc: ' + doc.name + ' has no matching min error');

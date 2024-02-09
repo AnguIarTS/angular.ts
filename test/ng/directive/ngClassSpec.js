@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('ngClass', function() {
-  var element;
+  let element;
 
   beforeEach(module(function($compileProvider) {
     $compileProvider.debugInfoEnabled(false);
@@ -223,8 +223,8 @@ describe('ngClass', function() {
   it('should ngClass odd/even', inject(function($rootScope, $compile) {
     element = $compile('<ul><li ng-repeat="i in [0,1]" class="existing" ng-class-odd="\'odd\'" ng-class-even="\'even\'"></li><ul>')($rootScope);
     $rootScope.$digest();
-    var e1 = jqLite(element[0].childNodes[1]);
-    var e2 = jqLite(element[0].childNodes[3]);
+    let e1 = jqLite(element[0].childNodes[1]);
+    let e2 = jqLite(element[0].childNodes[3]);
     expect(e1.hasClass('existing')).toBeTruthy();
     expect(e1.hasClass('odd')).toBeTruthy();
     expect(e2.hasClass('existing')).toBeTruthy();
@@ -238,8 +238,8 @@ describe('ngClass', function() {
       'ng-class-odd="\'odd\'" ng-class-even="\'even\'"></li>' +
       '<ul>')($rootScope);
     $rootScope.$apply();
-    var e1 = jqLite(element[0].childNodes[1]);
-    var e2 = jqLite(element[0].childNodes[3]);
+    let e1 = jqLite(element[0].childNodes[1]);
+    let e2 = jqLite(element[0].childNodes[3]);
 
     expect(e1.hasClass('plainClass')).toBeTruthy();
     expect(e1.hasClass('odd')).toBeTruthy();
@@ -261,9 +261,9 @@ describe('ngClass', function() {
           '<ul>')($rootScope);
       $rootScope.$digest();
 
-      var e1 = element.children().eq(0);
-      var e2 = element.children().eq(1);
-      var e3 = element.children().eq(2);
+      let e1 = element.children().eq(0);
+      let e2 = element.children().eq(1);
+      let e3 = element.children().eq(2);
 
       expect(e1).toHaveClass('same');
       expect(e1).toHaveClass('odd');
@@ -298,8 +298,8 @@ describe('ngClass', function() {
       'ng-class-odd="[\'C\', \'D\']" ng-class-even="[\'E\', \'F\']"></li>' +
       '<ul>')($rootScope);
     $rootScope.$apply();
-    var e1 = jqLite(element[0].childNodes[1]);
-    var e2 = jqLite(element[0].childNodes[3]);
+    let e1 = jqLite(element[0].childNodes[1]);
+    let e2 = jqLite(element[0].childNodes[3]);
 
     expect(e1.hasClass('A')).toBeTruthy();
     expect(e1.hasClass('B')).toBeTruthy();
@@ -323,8 +323,8 @@ describe('ngClass', function() {
           '<div class="one {{two}} three" ng-class="{five: five}"></div>' +
           '<div class="one {{two}} three {{four}}" ng-class="{five: five}"></div>' +
         '</div>')($rootScope);
-      var e1 = element.children().eq(0);
-      var e2 = element.children().eq(1);
+      let e1 = element.children().eq(0);
+      let e2 = element.children().eq(1);
 
       $rootScope.$apply('two = "two"; five = true');
 
@@ -413,8 +413,8 @@ describe('ngClass', function() {
     $rootScope.items.unshift('a');
     $rootScope.$digest();
 
-    var e1 = jqLite(element[0].childNodes[1]);
-    var e4 = jqLite(element[0].childNodes[7]);
+    let e1 = jqLite(element[0].childNodes[1]);
+    let e4 = jqLite(element[0].childNodes[7]);
 
     expect(e1.hasClass('odd')).toBeTruthy();
     expect(e1.hasClass('even')).toBeFalsy();
@@ -435,8 +435,8 @@ describe('ngClass', function() {
     $rootScope.items = ['a','a'];
     $rootScope.$digest();
 
-    var e1 = jqLite(element[0].childNodes[1]);
-    var e2 = jqLite(element[0].childNodes[3]);
+    let e1 = jqLite(element[0].childNodes[1]);
+    let e2 = jqLite(element[0].childNodes[3]);
 
     expect(e1.hasClass('odd')).toBeTruthy();
     expect(e1.hasClass('even')).toBeFalsy();
@@ -457,8 +457,8 @@ describe('ngClass', function() {
     $rootScope.items = ['b','a'];
     $rootScope.$digest();
 
-    var e1 = jqLite(element[0].childNodes[1]);
-    var e2 = jqLite(element[0].childNodes[3]);
+    let e1 = jqLite(element[0].childNodes[1]);
+    let e2 = jqLite(element[0].childNodes[3]);
 
     expect(e1.hasClass('odd')).toBeTruthy();
     expect(e1.hasClass('even')).toBeFalsy();
@@ -475,8 +475,8 @@ describe('ngClass', function() {
             '<div ng-class-odd="foo"></div>' +
             '<div ng-class-even="foo"></div>' +
           '</div>')($rootScope);
-      var odd = element.children().eq(0);
-      var even = element.children().eq(1);
+      let odd = element.children().eq(0);
+      let even = element.children().eq(1);
 
       $rootScope.$apply('$index = 0; foo = "class1"');
 
@@ -624,8 +624,8 @@ describe('ngClass', function() {
   });
 
   describe('large objects', function() {
-    var getProp;
-    var veryLargeObj;
+    let getProp;
+    let veryLargeObj;
 
     beforeEach(function() {
       getProp = jasmine.createSpy('getProp');
@@ -695,7 +695,7 @@ describe('ngClass', function() {
 });
 
 describe('ngClass animations', function() {
-  var body, element, $rootElement;
+  let body, element, $rootElement;
 
   afterEach(function() {
     dealoc(element);
@@ -705,7 +705,7 @@ describe('ngClass animations', function() {
     module('ngAnimateMock');
     inject(function($compile, $rootScope, $animate, $timeout) {
       element = angular.element('<div ng-class="val"></div>');
-      var body = jqLite(window.document.body);
+      let body = jqLite(window.document.body);
       body.append(element);
       $compile(element)($rootScope);
 
@@ -760,7 +760,7 @@ describe('ngClass animations', function() {
 
       $compile(element)($rootScope);
 
-      var enterComplete = false;
+      let enterComplete = false;
       $animate.enter(element, $rootElement, null).then(function() {
         enterComplete = true;
       });
@@ -784,7 +784,7 @@ describe('ngClass animations', function() {
     module('ngAnimateMock');
 
     inject(function($rootScope, $compile, $animate) {
-      var className;
+      let className;
 
       $rootScope.one = true;
       $rootScope.two = true;
@@ -795,7 +795,7 @@ describe('ngClass animations', function() {
       $rootScope.$digest();
 
       //this fires twice due to the class observer firing
-      var item = $animate.queue.shift();
+      let item = $animate.queue.shift();
       expect(item.event).toBe('addClass');
       expect(item.args[1]).toBe('one two three');
 

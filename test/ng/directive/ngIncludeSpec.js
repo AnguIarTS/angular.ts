@@ -1,9 +1,9 @@
-'use strict';
+
 
 describe('ngInclude', function() {
 
   describe('basic', function() {
-    var element;
+    let element;
 
     afterEach(function() {
       dealoc(element);
@@ -42,7 +42,7 @@ describe('ngInclude', function() {
     it('should include an external file', inject(putIntoCache('myUrl', '{{name}}'),
         function($rootScope, $compile) {
       element = jqLite('<div><ng:include src="url"></ng:include></div>');
-      var body = jqLite(window.document.body);
+      let body = jqLite(window.document.body);
       body.append(element);
       element = $compile(element)($rootScope);
       $rootScope.name = 'misko';
@@ -113,7 +113,7 @@ describe('ngInclude', function() {
 
     it('should fire $includeContentRequested event on scope after making the xhr call', inject(
         function($rootScope, $compile, $httpBackend) {
-      var contentRequestedSpy = jasmine.createSpy('content requested').and.callFake(function(event) {
+      let contentRequestedSpy = jasmine.createSpy('content requested').and.callFake(function(event) {
         expect(event.targetScope).toBe($rootScope);
       });
 
@@ -130,7 +130,7 @@ describe('ngInclude', function() {
 
     it('should fire $includeContentLoaded event on child scope after linking the content', inject(
         function($rootScope, $compile, $templateCache) {
-      var contentLoadedSpy = jasmine.createSpy('content loaded').and.callFake(function(event) {
+      let contentLoadedSpy = jasmine.createSpy('content loaded').and.callFake(function(event) {
         expect(event.targetScope.$parent).toBe($rootScope);
         expect(element.text()).toBe('partial content');
       });
@@ -147,7 +147,7 @@ describe('ngInclude', function() {
 
     it('should fire $includeContentError event when content request fails', inject(
         function($rootScope, $compile, $httpBackend, $templateCache) {
-      var contentLoadedSpy = jasmine.createSpy('content loaded'),
+      let contentLoadedSpy = jasmine.createSpy('content loaded'),
           contentErrorSpy = jasmine.createSpy('content error');
 
       $rootScope.$on('$includeContentLoaded', contentLoadedSpy);
@@ -256,7 +256,7 @@ describe('ngInclude', function() {
 
       $rootScope.url = 'myUrl';
 
-      var called = 0;
+      let called = 0;
       // we want to assert only during first watch
       $rootScope.$watch(function() {
         if (!called) expect(element.text()).toBe('');
@@ -271,7 +271,7 @@ describe('ngInclude', function() {
     it('should discard pending xhr callbacks if a new template is requested before the current ' +
         'finished loading', inject(function($rootScope, $compile, $httpBackend) {
       element = jqLite('<div><ng:include src=\'templateUrl\'></ng:include></div>');
-      var log = {};
+      let log = {};
 
       $rootScope.templateUrl = 'myUrl1';
       $rootScope.logger = function(msg) {
@@ -294,7 +294,7 @@ describe('ngInclude', function() {
     it('should compile only the content', inject(function($compile, $rootScope, $templateCache) {
       // regression
 
-      var onload = jasmine.createSpy('$includeContentLoaded');
+      let onload = jasmine.createSpy('$includeContentLoaded');
       $rootScope.$on('$includeContentLoaded', onload);
       $templateCache.put('tpl.html', [200, 'partial {{tpl}}', {}]);
 
@@ -374,7 +374,7 @@ describe('ngInclude', function() {
         $httpBackend.expectGET('include.svg').respond('<rect></rect><rect></rect>');
         element = $compile('<svg><test></test></svg>')($rootScope);
         $httpBackend.flush();
-        var child = element.find('rect');
+        let child = element.find('rect');
         expect(child.length).toBe(2);
         // eslint-disable-next-line no-undef
         expect(child[0] instanceof SVGRectElement).toBe(true);
@@ -404,7 +404,7 @@ describe('ngInclude', function() {
     it('should not compile template if original scope is destroyed', function() {
       module(function($provide) {
         $provide.decorator('$compile', function($delegate) {
-          var result = jasmine.createSpy('$compile').and.callFake($delegate);
+          let result = jasmine.createSpy('$compile').and.callFake($delegate);
           result.$$createComment = $delegate.$$createComment;
           return result;
         });
@@ -426,7 +426,7 @@ describe('ngInclude', function() {
     it('should not trigger a digest when the include is changed', function() {
 
       inject(function($$rAF, $templateCache, $rootScope, $compile, $timeout) {
-        var spy = spyOn($rootScope, '$digest').and.callThrough();
+        let spy = spyOn($rootScope, '$digest').and.callThrough();
 
         $templateCache.put('myUrl', 'my template content');
         $templateCache.put('myOtherUrl', 'my other template content');
@@ -452,7 +452,7 @@ describe('ngInclude', function() {
 
 
     describe('autoscroll', function() {
-      var autoScrollSpy;
+      let autoScrollSpy;
 
       function spyOnAnchorScroll() {
         return function($provide) {
@@ -582,7 +582,7 @@ describe('ngInclude', function() {
   });
 
   describe('and transcludes', function() {
-    var element, directive;
+    let element, directive;
 
     beforeEach(module(function($compileProvider) {
       element = null;
@@ -596,7 +596,7 @@ describe('ngInclude', function() {
     });
 
     it('should allow access to directive controller from children when used in a replace template', function() {
-      var controller;
+      let controller;
       module(function() {
         directive('template', valueFn({
           template: '<div ng-include="\'include.html\'"></div>',
@@ -622,7 +622,7 @@ describe('ngInclude', function() {
     });
 
     it('should compile its content correctly (although we remove it later)', function() {
-      var testElement;
+      let testElement;
       module(function() {
         directive('test', function() {
           return {
@@ -643,7 +643,7 @@ describe('ngInclude', function() {
     });
 
     it('should link directives on the same element after the content has been loaded', function() {
-      var contentOnLink;
+      let contentOnLink;
       module(function() {
         directive('test', function() {
           return {
@@ -663,7 +663,7 @@ describe('ngInclude', function() {
     });
 
     it('should add the content to the element before compiling it', function() {
-      var root;
+      let root;
       module(function() {
         directive('test', function() {
           return {
@@ -684,7 +684,7 @@ describe('ngInclude', function() {
   });
 
   describe('and animations', function() {
-    var body, element, $rootElement;
+    let body, element, $rootElement;
 
     function html(content) {
       $rootElement.html(content);
@@ -714,7 +714,7 @@ describe('ngInclude', function() {
 
     it('should fire off the enter animation',
       inject(function($compile, $rootScope, $templateCache, $animate) {
-        var item;
+        let item;
 
         $templateCache.put('enter', [200, '<div>data</div>', {}]);
         $rootScope.tpl = 'enter';
@@ -725,7 +725,7 @@ describe('ngInclude', function() {
         ))($rootScope);
         $rootScope.$digest();
 
-        var animation = $animate.queue.pop();
+        let animation = $animate.queue.pop();
         expect(animation.event).toBe('enter');
         expect(animation.element.text()).toBe('data');
       })
@@ -733,7 +733,7 @@ describe('ngInclude', function() {
 
     it('should fire off the leave animation',
       inject(function($compile, $rootScope, $templateCache, $animate) {
-        var item;
+        let item;
         $templateCache.put('enter', [200, '<div>data</div>', {}]);
         $rootScope.tpl = 'enter';
         element = $compile(html(
@@ -743,7 +743,7 @@ describe('ngInclude', function() {
         ))($rootScope);
         $rootScope.$digest();
 
-        var animation = $animate.queue.shift();
+        let animation = $animate.queue.shift();
         expect(animation.event).toBe('enter');
         expect(animation.element.text()).toBe('data');
 
@@ -758,7 +758,7 @@ describe('ngInclude', function() {
 
     it('should animate two separate ngInclude elements',
       inject(function($compile, $rootScope, $templateCache, $animate) {
-        var item;
+        let item;
         $templateCache.put('one', [200, 'one', {}]);
         $templateCache.put('two', [200, 'two', {}]);
         $rootScope.tpl = 'one';
@@ -769,14 +769,14 @@ describe('ngInclude', function() {
         ))($rootScope);
         $rootScope.$digest();
 
-        var item1 = $animate.queue.shift().element;
+        let item1 = $animate.queue.shift().element;
         expect(item1.text()).toBe('one');
 
         $rootScope.tpl = 'two';
         $rootScope.$digest();
 
-        var itemA = $animate.queue.shift().element;
-        var itemB = $animate.queue.shift().element;
+        let itemA = $animate.queue.shift().element;
+        let itemB = $animate.queue.shift().element;
         expect(itemA.attr('ng-include')).toBe('tpl');
         expect(itemB.attr('ng-include')).toBe('tpl');
         expect(itemA).not.toEqual(itemB);
@@ -786,7 +786,7 @@ describe('ngInclude', function() {
     it('should destroy the previous leave animation if a new one takes place', function() {
       module(function($provide) {
         $provide.decorator('$animate', function($delegate, $$q) {
-          var emptyPromise = $$q.defer().promise;
+          let emptyPromise = $$q.defer().promise;
           emptyPromise.done = noop;
 
           $delegate.leave = function() {
@@ -796,8 +796,8 @@ describe('ngInclude', function() {
         });
       });
       inject(function($compile, $rootScope, $animate, $templateCache) {
-        var item;
-        var $scope = $rootScope.$new();
+        let item;
+        let $scope = $rootScope.$new();
         element = $compile(html(
           '<div>' +
             '<div ng-include="inc">Yo</div>' +
@@ -809,7 +809,7 @@ describe('ngInclude', function() {
 
         $scope.$apply('inc = "one"');
 
-        var destroyed, inner = element.children(0);
+        let destroyed, inner = element.children(0);
         inner.on('$destroy', function() {
           destroyed = true;
         });

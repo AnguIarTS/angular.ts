@@ -142,7 +142,7 @@ the function needs to be annotated with the `$inject` property. The `$inject` pr
 of service names to inject.
 
 ```js
-var MyController = function($scope, greeter) {
+let MyController = function($scope, greeter) {
   // ...
 }
 MyController.$inject = ['$scope', 'greeter'];
@@ -284,7 +284,7 @@ the second parameter means that this module does not depend on any other modules
 
 ```js
 // Create a module to hold the service definition
-var myModule = angular.module('myModule', []);
+let myModule = angular.module('myModule', []);
 ```
 
 Teach the injector how to build a `greeter` service, which is just an object that contains a `greet`
@@ -306,8 +306,8 @@ Create a new injector that can provide components defined in our `myModule` modu
 `greeter` service from the injector. (This is usually done automatically by AngularJS bootstrap).
 
 ```js
-var injector = angular.injector(['ng', 'myModule']);
-var greeter = injector.get('greeter');
+let injector = angular.injector(['ng', 'myModule']);
+let greeter = injector.get('greeter');
 ```
 
 Asking for dependencies solves the issue of hard coding, but it also means that the injector needs

@@ -24,7 +24,7 @@
     (function() {
       // Dynamically, pre-emptively, add `noindex`, which will be removed when the doc is ready and valid
       ['googlebot', 'robots'].forEach(function(bot) {
-        var tag = document.createElement('meta');
+        let tag = document.createElement('meta');
         tag.name = bot;
         tag.content = 'noindex';
         tag.setAttribute('ng-if', 'hasError()');
@@ -35,7 +35,7 @@
   <script type="text/javascript">
     // Dynamically add `<base>` tag.
     (function() {
-      var indexFile = (location.pathname.match(/\/(index[^.]*\.html)/) || ['', ''])[1],
+      let indexFile = (location.pathname.match(/\/(index[^.]*\.html)/) || ['', ''])[1],
           rUrl = /(#!\/|api|guide|misc|tutorial|error|index[^.]*\.html).*$/,
           baseUrl = location.href.replace(rUrl, indexFile),
           headEl = document.getElementsByTagName('head')[0],
@@ -55,14 +55,14 @@
 
   <script type="text/javascript">
     // GA asynchronous tracker
-    var _gaq = _gaq || [];
+    let _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-8594346-3']);
     _gaq.push(['_setDomainName', '.angularjs.org']);
 
     (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      let ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      let s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
     })();
   </script>
 </head>

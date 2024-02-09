@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('ngHref', function() {
-  var element;
+  let element;
 
   afterEach(function() {
     dealoc(element);
@@ -119,7 +119,7 @@ describe('ngHref', function() {
     describe('SVGAElement', function() {
       it('should interpolate the expression and bind to xlink:href', inject(function($compile, $rootScope) {
         element = $compile('<svg><a ng-href="some/{{id}}"></a></svg>')($rootScope);
-        var child = element.children('a');
+        let child = element.children('a');
         $rootScope.$digest();
         expect(child.attr('xlink:href')).toEqual('some/');
 
@@ -132,7 +132,7 @@ describe('ngHref', function() {
 
       it('should bind xlink:href even if no interpolation', inject(function($rootScope, $compile) {
         element = $compile('<svg><a ng-href="http://server"></a></svg>')($rootScope);
-        var child = element.children('a');
+        let child = element.children('a');
         $rootScope.$digest();
         expect(child.attr('xlink:href')).toEqual('http://server');
       }));

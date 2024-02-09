@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('ngClick', function() {
-  var element;
+  let element;
 
   afterEach(function() {
     dealoc(element);

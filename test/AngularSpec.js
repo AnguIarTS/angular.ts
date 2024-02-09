@@ -1,4 +1,4 @@
-'use strict';
+
 
 // Lots of typed array globals are used in this file and ESLint is
 // not smart enough to understand the `typeof !== 'undefined'` guards.
@@ -6,7 +6,7 @@
 Float32Array, Float64Array,  */
 
 describe('angular', function() {
-  var element, document;
+  let element, document;
 
   beforeEach(function() {
     document = window.document;
@@ -30,59 +30,59 @@ describe('angular', function() {
 
   describe('copy', function() {
     it('should return same object', function() {
-      var obj = {};
-      var arr = [];
+      let obj = {};
+      let arr = [];
       expect(copy({}, obj)).toBe(obj);
       expect(copy([], arr)).toBe(arr);
     });
 
     it('should preserve prototype chaining', function() {
-      var GrandParentProto = {};
-      var ParentProto = Object.create(GrandParentProto);
-      var obj = Object.create(ParentProto);
+      let GrandParentProto = {};
+      let ParentProto = Object.create(GrandParentProto);
+      let obj = Object.create(ParentProto);
       expect(ParentProto.isPrototypeOf(copy(obj))).toBe(true);
       expect(GrandParentProto.isPrototypeOf(copy(obj))).toBe(true);
-      var Foo = function() {};
+      let Foo = function() {};
       expect(copy(new Foo()) instanceof Foo).toBe(true);
     });
 
     it('should copy Date', function() {
-      var date = new Date(123);
+      let date = new Date(123);
       expect(copy(date) instanceof Date).toBeTruthy();
       expect(copy(date).getTime()).toEqual(123);
       expect(copy(date) === date).toBeFalsy();
     });
 
     it('should copy RegExp', function() {
-      var re = new RegExp('.*');
+      let re = new RegExp('.*');
       expect(copy(re) instanceof RegExp).toBeTruthy();
       expect(copy(re).source).toBe('.*');
       expect(copy(re) === re).toBe(false);
     });
 
     it('should copy literal RegExp', function() {
-      var re = /.*/;
+      let re = /.*/;
       expect(copy(re) instanceof RegExp).toBeTruthy();
       expect(copy(re).source).toEqual('.*');
       expect(copy(re) === re).toBeFalsy();
     });
 
     it('should copy RegExp with flags', function() {
-      var re = new RegExp('.*', 'gim');
+      let re = new RegExp('.*', 'gim');
       expect(copy(re).global).toBe(true);
       expect(copy(re).ignoreCase).toBe(true);
       expect(copy(re).multiline).toBe(true);
     });
 
     it('should copy RegExp with lastIndex', function() {
-      var re = /a+b+/g;
-      var str = 'ab aabb';
+      let re = /a+b+/g;
+      let str = 'ab aabb';
       expect(re.exec(str)[0]).toEqual('ab');
       expect(copy(re).exec(str)[0]).toEqual('aabb');
     });
 
     it('should deeply copy literal RegExp', function() {
-      var objWithRegExp = {
+      let objWithRegExp = {
         re: /.*/
       };
       expect(copy(objWithRegExp).re instanceof RegExp).toBeTruthy();
@@ -92,9 +92,9 @@ describe('angular', function() {
 
     it('should copy a Uint8Array with no destination', function() {
       if (typeof Uint8Array !== 'undefined') {
-        var src = new Uint8Array(2);
+        let src = new Uint8Array(2);
         src[1] = 1;
-        var dst = copy(src);
+        let dst = copy(src);
         expect(copy(src) instanceof Uint8Array).toBeTruthy();
         expect(dst).toEqual(src);
         expect(dst).not.toBe(src);
@@ -104,9 +104,9 @@ describe('angular', function() {
 
     it('should copy a Uint8ClampedArray with no destination', function() {
       if (typeof Uint8ClampedArray !== 'undefined') {
-        var src = new Uint8ClampedArray(2);
+        let src = new Uint8ClampedArray(2);
         src[1] = 1;
-        var dst = copy(src);
+        let dst = copy(src);
         expect(copy(src) instanceof Uint8ClampedArray).toBeTruthy();
         expect(dst).toEqual(src);
         expect(dst).not.toBe(src);
@@ -116,9 +116,9 @@ describe('angular', function() {
 
     it('should copy a Uint16Array with no destination', function() {
       if (typeof Uint16Array !== 'undefined') {
-        var src = new Uint16Array(2);
+        let src = new Uint16Array(2);
         src[1] = 1;
-        var dst = copy(src);
+        let dst = copy(src);
         expect(copy(src) instanceof Uint16Array).toBeTruthy();
         expect(dst).toEqual(src);
         expect(dst).not.toBe(src);
@@ -128,9 +128,9 @@ describe('angular', function() {
 
     it('should copy a Uint32Array with no destination', function() {
       if (typeof Uint32Array !== 'undefined') {
-        var src = new Uint32Array(2);
+        let src = new Uint32Array(2);
         src[1] = 1;
-        var dst = copy(src);
+        let dst = copy(src);
         expect(copy(src) instanceof Uint32Array).toBeTruthy();
         expect(dst).toEqual(src);
         expect(dst).not.toBe(src);
@@ -140,9 +140,9 @@ describe('angular', function() {
 
     it('should copy a Int8Array with no destination', function() {
       if (typeof Int8Array !== 'undefined') {
-        var src = new Int8Array(2);
+        let src = new Int8Array(2);
         src[1] = 1;
-        var dst = copy(src);
+        let dst = copy(src);
         expect(copy(src) instanceof Int8Array).toBeTruthy();
         expect(dst).toEqual(src);
         expect(dst).not.toBe(src);
@@ -152,9 +152,9 @@ describe('angular', function() {
 
     it('should copy a Int16Array with no destination', function() {
       if (typeof Int16Array !== 'undefined') {
-        var src = new Int16Array(2);
+        let src = new Int16Array(2);
         src[1] = 1;
-        var dst = copy(src);
+        let dst = copy(src);
         expect(copy(src) instanceof Int16Array).toBeTruthy();
         expect(dst).toEqual(src);
         expect(dst).not.toBe(src);
@@ -164,9 +164,9 @@ describe('angular', function() {
 
     it('should copy a Int32Array with no destination', function() {
       if (typeof Int32Array !== 'undefined') {
-        var src = new Int32Array(2);
+        let src = new Int32Array(2);
         src[1] = 1;
-        var dst = copy(src);
+        let dst = copy(src);
         expect(copy(src) instanceof Int32Array).toBeTruthy();
         expect(dst).toEqual(src);
         expect(dst).not.toBe(src);
@@ -176,9 +176,9 @@ describe('angular', function() {
 
     it('should copy a Float32Array with no destination', function() {
       if (typeof Float32Array !== 'undefined') {
-        var src = new Float32Array(2);
+        let src = new Float32Array(2);
         src[1] = 1;
-        var dst = copy(src);
+        let dst = copy(src);
         expect(copy(src) instanceof Float32Array).toBeTruthy();
         expect(dst).toEqual(src);
         expect(dst).not.toBe(src);
@@ -188,9 +188,9 @@ describe('angular', function() {
 
     it('should copy a Float64Array with no destination', function() {
       if (typeof Float64Array !== 'undefined') {
-        var src = new Float64Array(2);
+        let src = new Float64Array(2);
         src[1] = 1;
-        var dst = copy(src);
+        let dst = copy(src);
         expect(copy(src) instanceof Float64Array).toBeTruthy();
         expect(dst).toEqual(src);
         expect(dst).not.toBe(src);
@@ -200,10 +200,10 @@ describe('angular', function() {
 
     it('should copy an ArrayBuffer with no destination', function() {
       if (typeof ArrayBuffer !== 'undefined') {
-        var src = new ArrayBuffer(8);
+        let src = new ArrayBuffer(8);
         new Int32Array(src).set([1, 2]);
 
-        var dst = copy(src);
+        let dst = copy(src);
         expect(dst instanceof ArrayBuffer).toBeTruthy();
         expect(dst).toEqual(src);
         expect(dst).not.toBe(src);
@@ -212,11 +212,11 @@ describe('angular', function() {
 
     it('should handle ArrayBuffer objects with multiple references', function() {
       if (typeof ArrayBuffer !== 'undefined') {
-        var buffer = new ArrayBuffer(8);
-        var src = [new Int32Array(buffer), new Float32Array(buffer)];
+        let buffer = new ArrayBuffer(8);
+        let src = [new Int32Array(buffer), new Float32Array(buffer)];
         src[0].set([1, 2]);
 
-        var dst = copy(src);
+        let dst = copy(src);
         expect(dst).toEqual(src);
         expect(dst[0]).not.toBe(src[0]);
         expect(dst[1]).not.toBe(src[1]);
@@ -227,11 +227,11 @@ describe('angular', function() {
 
     it('should handle Int32Array objects with multiple references', function() {
       if (typeof Int32Array !== 'undefined') {
-        var arr = new Int32Array(2);
-        var src = [arr, arr];
+        let arr = new Int32Array(2);
+        let src = [arr, arr];
         arr.set([1, 2]);
 
-        var dst = copy(src);
+        let dst = copy(src);
         expect(dst).toEqual(src);
         expect(dst).not.toBe(src);
         expect(dst[0]).not.toBe(src[0]);
@@ -242,8 +242,8 @@ describe('angular', function() {
 
     it('should handle Blob objects', function() {
       if (typeof Blob !== 'undefined') {
-        var src = new Blob(['foo'], {type: 'bar'});
-        var dst = copy(src);
+        let src = new Blob(['foo'], {type: 'bar'});
+        let dst = copy(src);
 
         expect(dst).not.toBe(src);
         expect(dst.size).toBe(3);
@@ -254,10 +254,10 @@ describe('angular', function() {
 
     it('should handle Uint16Array subarray', function() {
       if (typeof Uint16Array !== 'undefined') {
-        var arr = new Uint16Array(4);
+        let arr = new Uint16Array(4);
         arr[1] = 1;
-        var src = arr.subarray(1, 2);
-        var dst = copy(src);
+        let src = arr.subarray(1, 2);
+        let dst = copy(src);
         expect(dst instanceof Uint16Array).toBeTruthy();
         expect(dst.length).toEqual(1);
         expect(dst[0]).toEqual(1);
@@ -268,8 +268,8 @@ describe('angular', function() {
 
     it('should throw an exception if a Uint8Array is the destination', function() {
       if (typeof Uint8Array !== 'undefined') {
-        var src = new Uint8Array();
-        var dst = new Uint8Array(5);
+        let src = new Uint8Array();
+        let dst = new Uint8Array(5);
         expect(function() { copy(src, dst); })
           .toThrowMinErr('ng', 'cpta', 'Can\'t copy! TypedArray destination cannot be mutated.');
       }
@@ -277,8 +277,8 @@ describe('angular', function() {
 
     it('should throw an exception if a Uint8ClampedArray is the destination', function() {
       if (typeof Uint8ClampedArray !== 'undefined') {
-        var src = new Uint8ClampedArray();
-        var dst = new Uint8ClampedArray(5);
+        let src = new Uint8ClampedArray();
+        let dst = new Uint8ClampedArray(5);
         expect(function() { copy(src, dst); })
           .toThrowMinErr('ng', 'cpta', 'Can\'t copy! TypedArray destination cannot be mutated.');
       }
@@ -286,8 +286,8 @@ describe('angular', function() {
 
     it('should throw an exception if a Uint16Array is the destination', function() {
       if (typeof Uint16Array !== 'undefined') {
-        var src = new Uint16Array();
-        var dst = new Uint16Array(5);
+        let src = new Uint16Array();
+        let dst = new Uint16Array(5);
         expect(function() { copy(src, dst); })
           .toThrowMinErr('ng', 'cpta', 'Can\'t copy! TypedArray destination cannot be mutated.');
       }
@@ -295,8 +295,8 @@ describe('angular', function() {
 
     it('should throw an exception if a Uint32Array is the destination', function() {
       if (typeof Uint32Array !== 'undefined') {
-        var src = new Uint32Array();
-        var dst = new Uint32Array(5);
+        let src = new Uint32Array();
+        let dst = new Uint32Array(5);
         expect(function() { copy(src, dst); })
           .toThrowMinErr('ng', 'cpta', 'Can\'t copy! TypedArray destination cannot be mutated.');
       }
@@ -304,8 +304,8 @@ describe('angular', function() {
 
     it('should throw an exception if a Int8Array is the destination', function() {
       if (typeof Int8Array !== 'undefined') {
-        var src = new Int8Array();
-        var dst = new Int8Array(5);
+        let src = new Int8Array();
+        let dst = new Int8Array(5);
         expect(function() { copy(src, dst); })
           .toThrowMinErr('ng', 'cpta', 'Can\'t copy! TypedArray destination cannot be mutated.');
       }
@@ -313,8 +313,8 @@ describe('angular', function() {
 
     it('should throw an exception if a Int16Array is the destination', function() {
       if (typeof Int16Array !== 'undefined') {
-        var src = new Int16Array();
-        var dst = new Int16Array(5);
+        let src = new Int16Array();
+        let dst = new Int16Array(5);
         expect(function() { copy(src, dst); })
           .toThrowMinErr('ng', 'cpta', 'Can\'t copy! TypedArray destination cannot be mutated.');
       }
@@ -322,8 +322,8 @@ describe('angular', function() {
 
     it('should throw an exception if a Int32Array is the destination', function() {
       if (typeof Int32Array !== 'undefined') {
-        var src = new Int32Array();
-        var dst = new Int32Array(5);
+        let src = new Int32Array();
+        let dst = new Int32Array(5);
         expect(function() { copy(src, dst); })
           .toThrowMinErr('ng', 'cpta', 'Can\'t copy! TypedArray destination cannot be mutated.');
       }
@@ -331,8 +331,8 @@ describe('angular', function() {
 
     it('should throw an exception if a Float32Array is the destination', function() {
       if (typeof Float32Array !== 'undefined') {
-        var src = new Float32Array();
-        var dst = new Float32Array(5);
+        let src = new Float32Array();
+        let dst = new Float32Array(5);
         expect(function() { copy(src, dst); })
           .toThrowMinErr('ng', 'cpta', 'Can\'t copy! TypedArray destination cannot be mutated.');
       }
@@ -340,8 +340,8 @@ describe('angular', function() {
 
     it('should throw an exception if a Float64Array is the destination', function() {
       if (typeof Float64Array !== 'undefined') {
-        var src = new Float64Array();
-        var dst = new Float64Array(5);
+        let src = new Float64Array();
+        let dst = new Float64Array(5);
         expect(function() { copy(src, dst); })
           .toThrowMinErr('ng', 'cpta', 'Can\'t copy! TypedArray destination cannot be mutated.');
       }
@@ -349,16 +349,16 @@ describe('angular', function() {
 
     it('should throw an exception if an ArrayBuffer is the destination', function() {
       if (typeof ArrayBuffer !== 'undefined') {
-        var src = new ArrayBuffer(5);
-        var dst = new ArrayBuffer(5);
+        let src = new ArrayBuffer(5);
+        let dst = new ArrayBuffer(5);
         expect(function() { copy(src, dst); })
           .toThrowMinErr('ng', 'cpta', 'Can\'t copy! TypedArray destination cannot be mutated.');
       }
     });
 
     it('should deeply copy an array into an existing array', function() {
-      var src = [1, {name:'value'}];
-      var dst = [{key:'v'}];
+      let src = [1, {name:'value'}];
+      let dst = [{key:'v'}];
       expect(copy(src, dst)).toBe(dst);
       expect(dst).toEqual([1, {name:'value'}]);
       expect(dst[1]).toEqual({name:'value'});
@@ -366,8 +366,8 @@ describe('angular', function() {
     });
 
     it('should deeply copy an array into a new array', function() {
-      var src = [1, {name:'value'}];
-      var dst = copy(src);
+      let src = [1, {name:'value'}];
+      let dst = copy(src);
       expect(src).toEqual([1, {name:'value'}]);
       expect(dst).toEqual(src);
       expect(dst).not.toBe(src);
@@ -375,15 +375,15 @@ describe('angular', function() {
     });
 
     it('should copy empty array', function() {
-      var src = [];
-      var dst = [{key: 'v'}];
+      let src = [];
+      let dst = [{key: 'v'}];
       expect(copy(src, dst)).toEqual([]);
       expect(dst).toEqual([]);
     });
 
     it('should deeply copy an object into an existing object', function() {
-      var src = {a:{name:'value'}};
-      var dst = {b:{key:'v'}};
+      let src = {a:{name:'value'}};
+      let dst = {b:{key:'v'}};
       expect(copy(src, dst)).toBe(dst);
       expect(dst).toEqual({a:{name:'value'}});
       expect(dst.a).toEqual(src.a);
@@ -391,8 +391,8 @@ describe('angular', function() {
     });
 
     it('should deeply copy an object into a non-existing object', function() {
-      var src = {a:{name:'value'}};
-      var dst = copy(src, undefined);
+      let src = {a:{name:'value'}};
+      let dst = copy(src, undefined);
       expect(src).toEqual({a:{name:'value'}});
       expect(dst).toEqual(src);
       expect(dst).not.toBe(src);
@@ -427,7 +427,7 @@ describe('angular', function() {
     });
 
     it('should throw an exception when source and destination are equivalent', function() {
-      var src, dst;
+      let src, dst;
       src = dst = {key: 'value'};
       expect(function() { copy(src, dst); }).toThrowMinErr('ng', 'cpi', 'Can\'t copy! Source and destination are identical.');
       src = dst = [2, 4];
@@ -435,7 +435,7 @@ describe('angular', function() {
     });
 
     it('should not copy the private $$hashKey', function() {
-      var src,dst;
+      let src,dst;
       src = {};
       hashKey(src);
       dst = copy(src);
@@ -448,7 +448,7 @@ describe('angular', function() {
     });
 
     it('should retain the previous $$hashKey when copying object with hashKey', function() {
-      var src,dst,h;
+      let src,dst,h;
       src = {};
       dst = {};
       // force creation of a hashkey
@@ -463,8 +463,8 @@ describe('angular', function() {
     });
 
     it('should retain the previous $$hashKey when copying non-object', function() {
-      var dst = {};
-      var h = hashKey(dst);
+      let dst = {};
+      let h = hashKey(dst);
 
       copy(null, dst);
       expect(hashKey(dst)).toEqual(h);
@@ -477,12 +477,12 @@ describe('angular', function() {
     });
 
     it('should handle circular references', function() {
-      var a = {b: {a: null}, self: null, selfs: [null, null, [null]]};
+      let a = {b: {a: null}, self: null, selfs: [null, null, [null]]};
       a.b.a = a;
       a.self = a;
       a.selfs = [a, a.b, [a]];
 
-      var aCopy = copy(a, null);
+      let aCopy = copy(a, null);
       expect(aCopy).toEqual(a);
 
       expect(aCopy).not.toBe(a);
@@ -490,7 +490,7 @@ describe('angular', function() {
       expect(aCopy).toBe(aCopy.selfs[2][0]);
       expect(aCopy.selfs[2]).not.toBe(a.selfs[2]);
 
-      var copyTo = [];
+      let copyTo = [];
       aCopy = copy(a, copyTo);
       expect(aCopy).toBe(copyTo);
       expect(aCopy).not.toBe(a);
@@ -498,9 +498,9 @@ describe('angular', function() {
     });
 
     it('should deeply copy XML nodes', function() {
-      var anElement = document.createElement('foo');
+      let anElement = document.createElement('foo');
       anElement.appendChild(document.createElement('bar'));
-      var theCopy = anElement.cloneNode(true);
+      let theCopy = anElement.cloneNode(true);
       expect(copy(anElement).outerHTML).toEqual(theCopy.outerHTML);
       expect(copy(anElement)).not.toBe(anElement);
     });
@@ -510,14 +510,14 @@ describe('angular', function() {
     });
 
     it('should handle objects with multiple references', function() {
-      var b = {};
-      var a = [b, -1, b];
+      let b = {};
+      let a = [b, -1, b];
 
-      var aCopy = copy(a);
+      let aCopy = copy(a);
       expect(aCopy[0]).not.toBe(a[0]);
       expect(aCopy[0]).toBe(aCopy[2]);
 
-      var copyTo = [];
+      let copyTo = [];
       aCopy = copy(a, copyTo);
       expect(aCopy).toBe(copyTo);
       expect(aCopy[0]).not.toBe(a[0]);
@@ -525,11 +525,11 @@ describe('angular', function() {
     });
 
     it('should handle date/regex objects with multiple references', function() {
-      var re = /foo/;
-      var d = new Date();
-      var o = {re: re, re2: re, d: d, d2: d};
+      let re = /foo/;
+      let d = new Date();
+      let o = {re: re, re2: re, d: d, d2: d};
 
-      var oCopy = copy(o);
+      let oCopy = copy(o);
       expect(oCopy.re).toBe(oCopy.re2);
       expect(oCopy.d).toBe(oCopy.d2);
 
@@ -556,12 +556,12 @@ describe('angular', function() {
     });
 
     it('should copy objects with no prototype parent', function() {
-      var obj = extend(Object.create(null), {
+      let obj = extend(Object.create(null), {
         a: 1,
         b: 2,
         c: 3
       });
-      var dest = copy(obj);
+      let dest = copy(obj);
 
       expect(Object.getPrototypeOf(dest)).toBe(null);
       expect(dest.a).toBe(1);
@@ -572,8 +572,8 @@ describe('angular', function() {
 
     it('should copy String() objects', function() {
       // eslint-disable-next-line no-new-wrappers
-      var obj = new String('foo');
-      var dest = copy(obj);
+      let obj = new String('foo');
+      let dest = copy(obj);
       expect(dest).not.toBe(obj);
       expect(isObject(dest)).toBe(true);
       expect(dest.valueOf()).toBe(obj.valueOf());
@@ -581,8 +581,8 @@ describe('angular', function() {
 
     it('should copy Boolean() objects', function() {
       // eslint-disable-next-line no-new-wrappers
-      var obj = new Boolean(true);
-      var dest = copy(obj);
+      let obj = new Boolean(true);
+      let dest = copy(obj);
       expect(dest).not.toBe(obj);
       expect(isObject(dest)).toBe(true);
       expect(dest.valueOf()).toBe(obj.valueOf());
@@ -590,8 +590,8 @@ describe('angular', function() {
 
     it('should copy Number() objects', function() {
       // eslint-disable-next-line no-new-wrappers
-      var obj = new Number(42);
-      var dest = copy(obj);
+      let obj = new Number(42);
+      let dest = copy(obj);
       expect(dest).not.toBe(obj);
       expect(isObject(dest)).toBe(true);
       expect(dest.valueOf()).toBe(obj.valueOf());
@@ -607,8 +607,8 @@ describe('angular', function() {
     });
 
     it('should copy source until reaching a given max depth', function() {
-      var source = {a1: 1, b1: {b2: {b3: 1}}, c1: [1, {c2: 1}], d1: {d2: 1}};
-      var dest;
+      let source = {a1: 1, b1: {b2: {b3: 1}}, c1: [1, {c2: 1}], d1: {d2: 1}};
+      let dest;
 
       dest =  copy(source, {}, 1);
       expect(dest).toEqual({a1:1, b1:'...', c1:'...', d1:'...'});
@@ -625,8 +625,8 @@ describe('angular', function() {
 
     they('should copy source and ignore max depth when maxDepth = $prop',
       [NaN, null, undefined, true, false, -1, 0], function(maxDepth) {
-        var source = {a1: 1, b1: {b2: {b3: 1}}, c1: [1, {c2: 1}], d1: {d2: 1}};
-        var dest =  copy(source, {}, maxDepth);
+        let source = {a1: 1, b1: {b2: {b3: 1}}, c1: [1, {c2: 1}], d1: {d2: 1}};
+        let dest =  copy(source, {}, maxDepth);
         expect(dest).toEqual({a1: 1, b1: {b2: {b3: 1}}, c1: [1, {c2: 1}], d1: {d2: 1}});
       }
     );
@@ -635,7 +635,7 @@ describe('angular', function() {
   describe('extend', function() {
 
     it('should not copy the private $$hashKey', function() {
-      var src,dst;
+      let src,dst;
       src = {};
       dst = {};
       hashKey(src);
@@ -645,7 +645,7 @@ describe('angular', function() {
 
 
     it('should copy the properties of the source object onto the destination object', function() {
-      var destination, source;
+      let destination, source;
       destination = {};
 			source = {foo: true};
       destination = extend(destination, source);
@@ -654,7 +654,7 @@ describe('angular', function() {
 
 
     it('ISSUE #4751 - should copy the length property of an object source to the destination object', function() {
-      var destination, source;
+      let destination, source;
       destination = {};
       source = {radius: 30, length: 0};
       destination = extend(destination, source);
@@ -663,7 +663,7 @@ describe('angular', function() {
     });
 
     it('should retain the previous $$hashKey', function() {
-      var src,dst,h;
+      let src,dst,h;
       src = {};
       dst = {};
       h = hashKey(dst);
@@ -677,7 +677,7 @@ describe('angular', function() {
 
 
     it('should work when extending with itself', function() {
-      var src,dst,h;
+      let src,dst,h;
       dst = src = {};
       h = hashKey(dst);
       dst = extend(dst,src);
@@ -687,8 +687,8 @@ describe('angular', function() {
 
 
     it('should copy dates by reference', function() {
-      var src = { date: new Date() };
-      var dst = {};
+      let src = { date: new Date() };
+      let dst = {};
 
       extend(dst, src);
 
@@ -696,9 +696,9 @@ describe('angular', function() {
     });
 
     it('should copy elements by reference', function() {
-      var src = { element: document.createElement('div'),
+      let src = { element: document.createElement('div'),
         jqObject: jqLite('<p><span>s1</span><span>s2</span></p>').find('span') };
-      var dst = {};
+      let dst = {};
 
       extend(dst, src);
 
@@ -710,9 +710,9 @@ describe('angular', function() {
 
   describe('merge', function() {
     it('should recursively copy objects into dst from left to right', function() {
-      var dst = { foo: { bar: 'foobar' }};
-      var src1 = { foo: { bazz: 'foobazz' }};
-      var src2 = { foo: { bozz: 'foobozz' }};
+      let dst = { foo: { bar: 'foobar' }};
+      let src1 = { foo: { bazz: 'foobazz' }};
+      let src2 = { foo: { bozz: 'foobozz' }};
       merge(dst, src1, src2);
       expect(dst).toEqual({
         foo: {
@@ -725,8 +725,8 @@ describe('angular', function() {
 
 
     it('should replace primitives with objects', function() {
-      var dst = { foo: 'bloop' };
-      var src = { foo: { bar: { baz: 'bloop' }}};
+      let dst = { foo: 'bloop' };
+      let src = { foo: { bar: { baz: 'bloop' }}};
       merge(dst, src);
       expect(dst).toEqual({
         foo: {
@@ -739,8 +739,8 @@ describe('angular', function() {
 
 
     it('should replace null values in destination with objects', function() {
-      var dst = { foo: null };
-      var src = { foo: { bar: { baz: 'bloop' }}};
+      let dst = { foo: null };
+      let src = { foo: { bar: { baz: 'bloop' }}};
       merge(dst, src);
       expect(dst).toEqual({
         foo: {
@@ -754,8 +754,8 @@ describe('angular', function() {
 
     it('should copy references to functions by value rather than merging', function() {
       function fn() {}
-      var dst = { foo: 1 };
-      var src = { foo: fn };
+      let dst = { foo: 1 };
+      let src = { foo: fn };
       merge(dst, src);
       expect(dst).toEqual({
         foo: fn
@@ -764,8 +764,8 @@ describe('angular', function() {
 
 
     it('should create a new array if destination property is a non-object and source property is an array', function() {
-      var dst = { foo: NaN };
-      var src = { foo: [1,2,3] };
+      let dst = { foo: NaN };
+      let src = { foo: [1,2,3] };
       merge(dst, src);
       expect(dst).toEqual({
         foo: [1,2,3]
@@ -775,8 +775,8 @@ describe('angular', function() {
 
 
     it('should copy dates by value', function() {
-      var src = { date: new Date() };
-      var dst = {};
+      let src = { date: new Date() };
+      let dst = {};
 
       merge(dst, src);
 
@@ -786,8 +786,8 @@ describe('angular', function() {
     });
 
     it('should copy regexp by value', function() {
-      var src = { regexp: /blah/ };
-      var dst = {};
+      let src = { regexp: /blah/ };
+      let dst = {};
 
       merge(dst, src);
 
@@ -798,11 +798,11 @@ describe('angular', function() {
 
 
     it('should copy(clone) elements', function() {
-      var src = {
+      let src = {
         element: document.createElement('div'),
         jqObject: jqLite('<p><span>s1</span><span>s2</span></p>').find('span')
       };
-      var dst = {};
+      let dst = {};
 
       merge(dst, src);
 
@@ -816,8 +816,8 @@ describe('angular', function() {
     });
 
     it('should not merge the __proto__ property', function() {
-      var src = JSON.parse('{ "__proto__": { "xxx": "polluted" } }');
-      var dst = {};
+      let src = JSON.parse('{ "__proto__": { "xxx": "polluted" } }');
+      let dst = {};
 
       merge(dst, src);
 
@@ -832,15 +832,15 @@ describe('angular', function() {
 
   describe('shallow copy', function() {
     it('should make a copy', function() {
-      var original = {key:{}};
-      var copy = shallowCopy(original);
+      let original = {key:{}};
+      let copy = shallowCopy(original);
       expect(copy).toEqual(original);
       expect(copy.key).toBe(original.key);
     });
 
     it('should omit "$$"-prefixed properties', function() {
-      var original = {$$some: true, $$: true};
-      var clone = {};
+      let original = {$$some: true, $$: true};
+      let clone = {};
 
       expect(shallowCopy(original, clone)).toBe(clone);
       expect(clone.$$some).toBeUndefined();
@@ -848,18 +848,18 @@ describe('angular', function() {
     });
 
     it('should copy "$"-prefixed properties from copy', function() {
-      var original = {$some: true};
-      var clone = {};
+      let original = {$some: true};
+      let clone = {};
 
       expect(shallowCopy(original, clone)).toBe(clone);
       expect(clone.$some).toBe(original.$some);
     });
 
     it('should handle arrays', function() {
-      var original = [{}, 1],
+      let original = [{}, 1],
           clone = [];
 
-      var aCopy = shallowCopy(original);
+      let aCopy = shallowCopy(original);
       expect(aCopy).not.toBe(original);
       expect(aCopy).toEqual(original);
       expect(aCopy[0]).toBe(original[0]);
@@ -884,7 +884,7 @@ describe('angular', function() {
 
   describe('equals', function() {
     it('should return true if same object', function() {
-      var o = {};
+      let o = {};
       expect(equals(o, o)).toEqual(true);
       expect(equals(o, {})).toEqual(true);
       expect(equals(1, '1')).toEqual(false);
@@ -903,7 +903,7 @@ describe('angular', function() {
     });
 
     it('should ignore undefined member variables during comparison', function() {
-      var obj1 = {name: 'misko'},
+      let obj1 = {name: 'misko'},
           obj2 = {name: 'misko', undefinedvar: undefined};
 
       expect(equals(obj1, obj2)).toBe(true);
@@ -924,7 +924,7 @@ describe('angular', function() {
       expect(equals(null, '123')).toBe(false);
       expect(equals('123', null)).toBe(false);
 
-      var obj = {foo:'bar'};
+      let obj = {foo:'bar'};
       expect(equals(null, obj)).toBe(false);
       expect(equals(obj, null)).toBe(false);
 
@@ -935,7 +935,7 @@ describe('angular', function() {
       expect(equals(undefined, '123')).toBe(false);
       expect(equals('123', undefined)).toBe(false);
 
-      var obj = {foo:'bar'};
+      let obj = {foo:'bar'};
       expect(equals(undefined, obj)).toBe(false);
       expect(equals(obj, undefined)).toBe(false);
 
@@ -947,7 +947,7 @@ describe('angular', function() {
     });
 
     it('should compare Scope instances only by identity', inject(function($rootScope) {
-      var scope1 = $rootScope.$new(),
+      let scope1 = $rootScope.$new(),
           scope2 = $rootScope.$new();
 
       expect(equals(scope1, scope1)).toBe(true);
@@ -1007,10 +1007,10 @@ describe('angular', function() {
     });
 
     it('should safely compare objects with no prototype parent', function() {
-      var o1 = extend(Object.create(null), {
+      let o1 = extend(Object.create(null), {
         a: 1, b: 2, c: 3
       });
-      var o2 = extend(Object.create(null), {
+      let o2 = extend(Object.create(null), {
         a: 1, b: 2, c: 3
       });
       expect(equals(o1, o2)).toBe(true);
@@ -1020,13 +1020,13 @@ describe('angular', function() {
 
 
     it('should safely compare objects which shadow Object.prototype.hasOwnProperty', function() {
-      var o1 = {
+      let o1 = {
         hasOwnProperty: true,
         a: 1,
         b: 2,
         c: 3
       };
-      var o2 = {
+      let o2 = {
         hasOwnProperty: true,
         a: 1,
         b: 2,
@@ -1044,14 +1044,14 @@ describe('angular', function() {
     function mockCspElement(cspAttrName, cspAttrValue) {
       return spyOn(document, 'querySelector').and.callFake(function(selector) {
         if (selector === '[' + cspAttrName + ']') {
-          var html = '<div ' + cspAttrName + (cspAttrValue ? ('="' + cspAttrValue + '" ') : '') + '></div>';
+          let html = '<div ' + cspAttrName + (cspAttrValue ? ('="' + cspAttrValue + '" ') : '') + '></div>';
           return jqLite(html)[0];
         }
       });
 
     }
 
-    var originalPrototype = window.Function.prototype;
+    let originalPrototype = window.Function.prototype;
 
     beforeEach(function() {
       spyOn(window, 'Function');
@@ -1078,7 +1078,7 @@ describe('angular', function() {
 
 
     it('should return true for all rules when CSP is enabled manually via empty `ng-csp` attribute', function() {
-      var spy = mockCspElement('ng-csp');
+      let spy = mockCspElement('ng-csp');
       expect(csp()).toEqual({ noUnsafeEval: true, noInlineStyle: true });
       expect(spy).toHaveBeenCalledWith('[ng-csp]');
       expect(window.Function).not.toHaveBeenCalled();
@@ -1086,7 +1086,7 @@ describe('angular', function() {
 
 
     it('should return true when CSP is enabled manually via [data-ng-csp]', function() {
-      var spy = mockCspElement('data-ng-csp');
+      let spy = mockCspElement('data-ng-csp');
       expect(csp()).toEqual({ noUnsafeEval: true, noInlineStyle: true });
       expect(spy).toHaveBeenCalledWith('[data-ng-csp]');
       expect(window.Function).not.toHaveBeenCalled();
@@ -1094,7 +1094,7 @@ describe('angular', function() {
 
 
     it('should return true for noUnsafeEval if it is specified in the `ng-csp` attribute value', function() {
-      var spy = mockCspElement('ng-csp', 'no-unsafe-eval');
+      let spy = mockCspElement('ng-csp', 'no-unsafe-eval');
       expect(csp()).toEqual({ noUnsafeEval: true, noInlineStyle: false });
       expect(spy).toHaveBeenCalledWith('[ng-csp]');
       expect(window.Function).not.toHaveBeenCalled();
@@ -1102,7 +1102,7 @@ describe('angular', function() {
 
 
     it('should return true for noInlineStyle if it is specified in the `ng-csp` attribute value', function() {
-      var spy = mockCspElement('ng-csp', 'no-inline-style');
+      let spy = mockCspElement('ng-csp', 'no-inline-style');
       expect(csp()).toEqual({ noUnsafeEval: false, noInlineStyle: true });
       expect(spy).toHaveBeenCalledWith('[ng-csp]');
       expect(window.Function).not.toHaveBeenCalled();
@@ -1110,7 +1110,7 @@ describe('angular', function() {
 
 
     it('should return true for all styles if they are all specified in the `ng-csp` attribute value', function() {
-      var spy = mockCspElement('ng-csp', 'no-inline-style;no-unsafe-eval');
+      let spy = mockCspElement('ng-csp', 'no-inline-style;no-unsafe-eval');
       expect(csp()).toEqual({ noUnsafeEval: true, noInlineStyle: true });
       expect(spy).toHaveBeenCalledWith('[ng-csp]');
       expect(window.Function).not.toHaveBeenCalled();
@@ -1119,7 +1119,7 @@ describe('angular', function() {
 
 
   describe('jq', function() {
-    var element;
+    let element;
 
     beforeEach(function() {
       element = document.createElement('html');
@@ -1277,9 +1277,9 @@ describe('angular', function() {
     });
 
     it('should return true if passed an `Array` from a different window context', function() {
-      var iframe = document.createElement('iframe');
+      let iframe = document.createElement('iframe');
       document.body.appendChild(iframe);  // No `contentWindow` if not attached to the DOM.
-      var arr = new iframe.contentWindow.Array();
+      let arr = new iframe.contentWindow.Array();
       document.body.removeChild(iframe);  // Clean up.
 
       expect(arr instanceof Array).toBe(false);
@@ -1323,22 +1323,22 @@ describe('angular', function() {
     });
 
     it('should return true if passed a nodelist', function() {
-      var nodes1 = document.body.childNodes;
+      let nodes1 = document.body.childNodes;
       expect(isArrayLike(nodes1)).toBe(true);
 
-      var nodes2 = document.getElementsByTagName('nonExistingTagName');
+      let nodes2 = document.getElementsByTagName('nonExistingTagName');
       expect(isArrayLike(nodes2)).toBe(true);
     });
 
     it('should return false for objects with `length` but no matching indexable items', function() {
-      var obj1 = {
+      let obj1 = {
         a: 'a',
         b:'b',
         length: 10
       };
       expect(isArrayLike(obj1)).toBe(false);
 
-      var obj2 = {
+      let obj2 = {
         length: 0
       };
       expect(isArrayLike(obj2)).toBe(false);
@@ -1348,7 +1348,7 @@ describe('angular', function() {
       function ArrayLike() {}
       ArrayLike.prototype = Array.prototype;
 
-      var arrLike = new ArrayLike();
+      let arrLike = new ArrayLike();
       expect(arrLike.length).toBe(0);
       expect(isArrayLike(arrLike)).toBe(true);
 
@@ -1367,7 +1367,7 @@ describe('angular', function() {
       }
       MyObj.prototype.foo = 'fooVal';
 
-      var obj = new MyObj(),
+      let obj = new MyObj(),
           log = [];
 
       forEach(obj, function(value, key) { log.push(key + ':' + value); });
@@ -1377,11 +1377,11 @@ describe('angular', function() {
 
 
     it('should not break if obj is an array we override hasOwnProperty', function() {
-      var obj = [];
+      let obj = [];
       obj[0] = 1;
       obj[1] = 2;
       obj.hasOwnProperty = null;
-      var log = [];
+      let log = [];
       forEach(obj, function(value, key) {
         log.push(key + ':' + value);
       });
@@ -1391,7 +1391,7 @@ describe('angular', function() {
 
 
     it('should handle JQLite and jQuery objects like arrays', function() {
-      var jqObject = jqLite('<p><span>s1</span><span>s2</span></p>').find('span'),
+      let jqObject = jqLite('<p><span>s1</span><span>s2</span></p>').find('span'),
           log = [];
 
       forEach(jqObject, function(value, key) { log.push(key + ':' + value.innerHTML); });
@@ -1405,7 +1405,7 @@ describe('angular', function() {
 
 
     it('should handle NodeList objects like arrays', function() {
-      var nodeList = jqLite('<p><span>a</span><span>b</span><span>c</span></p>')[0].childNodes,
+      let nodeList = jqLite('<p><span>a</span><span>b</span><span>c</span></p>')[0].childNodes,
           log = [];
 
 
@@ -1421,7 +1421,7 @@ describe('angular', function() {
                                   '<a name=\'x\'>c</a>' +
                                 '</p>';
 
-      var htmlCollection = document.getElementsByName('x'),
+      let htmlCollection = document.getElementsByName('x'),
           log = [];
 
       forEach(htmlCollection, function(value, key) { log.push(key + ':' + value.innerHTML); });
@@ -1429,7 +1429,7 @@ describe('angular', function() {
     });
 
     it('should handle arguments objects like arrays', function() {
-      var args,
+      let args,
           log = [];
 
       (function() { args = arguments; })('a', 'b', 'c');
@@ -1439,7 +1439,7 @@ describe('angular', function() {
     });
 
     it('should handle string values like arrays', function() {
-      var log = [];
+      let log = [];
 
       forEach('bar', function(value, key) { log.push(key + ':' + value); });
       expect(log).toEqual(['0:b', '1:a', '2:r']);
@@ -1447,7 +1447,7 @@ describe('angular', function() {
 
 
     it('should handle objects with length property as objects', function() {
-      var obj = {
+      let obj = {
           'foo': 'bar',
           'length': 2
         },
@@ -1464,7 +1464,7 @@ describe('angular', function() {
         this.foo = 'bar';
       }
 
-      var obj = new CustomType(),
+      let obj = new CustomType(),
           log = [];
 
       forEach(obj, function(value, key) { log.push(key + ':' + value); });
@@ -1473,8 +1473,8 @@ describe('angular', function() {
 
 
     it('should not invoke the iterator for indexed properties which are not present in the collection', function() {
-      var log = [];
-      var collection = [];
+      let log = [];
+      let collection = [];
       collection[5] = 'SPARSE';
       forEach(collection, function(item, index) {
         log.push(item + index);
@@ -1485,11 +1485,11 @@ describe('angular', function() {
 
 
     it('should safely iterate through objects with no prototype parent', function() {
-      var obj = extend(Object.create(null), {
+      let obj = extend(Object.create(null), {
         a: 1, b: 2, c: 3
       });
-      var log = [];
-      var self = {};
+      let log = [];
+      let self = {};
       forEach(obj, function(val, key, collection) {
         expect(this).toBe(self);
         expect(collection).toBe(obj);
@@ -1501,14 +1501,14 @@ describe('angular', function() {
 
 
     it('should safely iterate through objects which shadow Object.prototype.hasOwnProperty', function() {
-      var obj = {
+      let obj = {
         hasOwnProperty: true,
         a: 1,
         b: 2,
         c: 3
       };
-      var log = [];
-      var self = {};
+      let log = [];
+      let self = {};
       forEach(obj, function(val, key, collection) {
         expect(this).toBe(self);
         expect(collection).toBe(obj);
@@ -1522,7 +1522,7 @@ describe('angular', function() {
     describe('ES spec api compliance', function() {
 
       function testForEachSpec(expectedSize, collection) {
-        var that = {};
+        let that = {};
 
         forEach(collection, function(value, key, collectionArg) {
           expect(collectionArg).toBe(collection);
@@ -1648,8 +1648,8 @@ describe('angular', function() {
 
 
   describe('angularInit', function() {
-    var bootstrapSpy;
-    var element;
+    let bootstrapSpy;
+    let element;
 
     beforeEach(function() {
       element = {
@@ -1676,7 +1676,7 @@ describe('angular', function() {
 
 
     it('should look for ngApp directive as attr', function() {
-      var appElement = jqLite('<div ng-app="ABC"></div>')[0];
+      let appElement = jqLite('<div ng-app="ABC"></div>')[0];
       element.querySelector['[ng-app]'] = appElement;
       angularInit(element, bootstrapSpy);
       expect(bootstrapSpy).toHaveBeenCalledOnceWith(appElement, ['ABC'], jasmine.any(Object));
@@ -1684,7 +1684,7 @@ describe('angular', function() {
 
 
     it('should look for ngApp directive using querySelectorAll', function() {
-      var appElement = jqLite('<div x-ng-app="ABC"></div>')[0];
+      let appElement = jqLite('<div x-ng-app="ABC"></div>')[0];
       element.querySelector['[x-ng-app]'] = appElement;
       angularInit(element, bootstrapSpy);
       expect(bootstrapSpy).toHaveBeenCalledOnceWith(appElement, ['ABC'], jasmine.any(Object));
@@ -1692,7 +1692,7 @@ describe('angular', function() {
 
 
     it('should bootstrap anonymously', function() {
-      var appElement = jqLite('<div x-ng-app></div>')[0];
+      let appElement = jqLite('<div x-ng-app></div>')[0];
       element.querySelector['[x-ng-app]'] = appElement;
       angularInit(element, bootstrapSpy);
       expect(bootstrapSpy).toHaveBeenCalledOnceWith(appElement, [], jasmine.any(Object));
@@ -1700,14 +1700,14 @@ describe('angular', function() {
 
 
     it('should bootstrap if the annotation is on the root element', function() {
-      var appElement = jqLite('<div ng-app=""></div>')[0];
+      let appElement = jqLite('<div ng-app=""></div>')[0];
       angularInit(appElement, bootstrapSpy);
       expect(bootstrapSpy).toHaveBeenCalledOnceWith(appElement, [], jasmine.any(Object));
     });
 
 
     it('should complain if app module cannot be found', function() {
-      var appElement = jqLite('<div ng-app="doesntexist"></div>')[0];
+      let appElement = jqLite('<div ng-app="doesntexist"></div>')[0];
 
       expect(function() {
         angularInit(appElement, angular.bootstrap);
@@ -1720,7 +1720,7 @@ describe('angular', function() {
 
 
     it('should complain if an element has already been bootstrapped', function() {
-      var element = jqLite('<div>bootstrap me!</div>');
+      let element = jqLite('<div>bootstrap me!</div>');
       angular.bootstrap(element);
 
       expect(function() {
@@ -1744,12 +1744,12 @@ describe('angular', function() {
 
     it('should bootstrap in strict mode when ng-strict-di attribute is specified', function() {
       bootstrapSpy = spyOn(angular, 'bootstrap').and.callThrough();
-      var appElement = jqLite('<div ng-app="" ng-strict-di></div>');
+      let appElement = jqLite('<div ng-app="" ng-strict-di></div>');
       angularInit(jqLite('<div></div>').append(appElement[0])[0], bootstrapSpy);
       expect(bootstrapSpy).toHaveBeenCalledOnce();
       expect(bootstrapSpy.calls.mostRecent().args[2].strictDi).toBe(true);
 
-      var injector = appElement.injector();
+      let injector = appElement.injector();
       function testFactory($rootScope) {}
       expect(function() {
         injector.instantiate(testFactory);
@@ -1766,7 +1766,7 @@ describe('angular', function() {
         function createFakeDoc(attrs, protocol, currentScript) {
 
           protocol = protocol || 'http:';
-          var origin = protocol + '//something';
+          let origin = protocol + '//something';
 
           if (currentScript === undefined) {
             currentScript = document.createElement('script');
@@ -1784,8 +1784,8 @@ describe('angular', function() {
         describe('from extensions into extension documents', function() {
           // Extension URLs are browser-specific, so we must choose a scheme that is supported by the browser to make
           // sure that the URL is properly parsed.
-          var protocol;
-          var userAgent = window.navigator.userAgent;
+          let protocol;
+          let userAgent = window.navigator.userAgent;
           if (/Firefox\//.test(userAgent)) {
             protocol = 'moz-extension:';
           } else if (/Edge\//.test(userAgent)) {
@@ -1796,8 +1796,8 @@ describe('angular', function() {
             // On iOS, Safari versions <15 recognize `safari-extension:`, while versions >=15 only
             // recognize `chrome-extension:`.
             // (On macOS, Safari v15 recognizes both protocols, so it is fine to use either.)
-            var majorVersionMatch = /Version\/(\d+)/.exec(userAgent);
-            var majorVersion = majorVersionMatch ? parseInt(majorVersionMatch[1], 10) : 0;
+            let majorVersionMatch = /Version\/(\d+)/.exec(userAgent);
+            let majorVersion = majorVersionMatch ? parseInt(majorVersionMatch[1], 10) : 0;
             protocol = (majorVersion < 15) ? 'safari-extension:' : 'chrome-extension:';
           } else {
             protocol = 'browserext:';  // Upcoming standard scheme.
@@ -1849,7 +1849,7 @@ describe('angular', function() {
 
         it('should not bootstrap if the currentScript property has been clobbered', function() {
 
-          var img = document.createElement('img');
+          let img = document.createElement('img');
           img.setAttribute('src', '');
           expect(allowAutoBootstrap(createFakeDoc({}, 'http:', img))).toBe(false);
         });
@@ -1900,10 +1900,10 @@ describe('angular', function() {
 
   describe('isError', function() {
     function testErrorFromDifferentContext(createError) {
-      var iframe = document.createElement('iframe');
+      let iframe = document.createElement('iframe');
       document.body.appendChild(iframe);
       try {
-        var error = createError(iframe.contentWindow);
+        let error = createError(iframe.contentWindow);
         expect(isError(error)).toBe(true);
       } finally {
         iframe.parentElement.removeChild(iframe);
@@ -1911,7 +1911,7 @@ describe('angular', function() {
     }
 
     it('should not assume objects are errors', function() {
-      var fakeError = { message: 'A fake error', stack: 'no stack here'};
+      let fakeError = { message: 'A fake error', stack: 'no stack here'};
       expect(isError(fakeError)).toBe(false);
     });
 
@@ -1970,7 +1970,7 @@ describe('angular', function() {
 
   describe('compile', function() {
     it('should link to existing node and create scope', inject(function($rootScope, $compile) {
-      var template = angular.element('<div>{{greeting = "hello world"}}</div>');
+      let template = angular.element('<div>{{greeting = "hello world"}}</div>');
       element = $compile(template)($rootScope);
       $rootScope.$digest();
       expect(template.text()).toEqual('hello world');
@@ -1978,17 +1978,17 @@ describe('angular', function() {
     }));
 
     it('should link to existing node and given scope', inject(function($rootScope, $compile) {
-      var template = angular.element('<div>{{greeting = "hello world"}}</div>');
+      let template = angular.element('<div>{{greeting = "hello world"}}</div>');
       element = $compile(template)($rootScope);
       $rootScope.$digest();
       expect(template.text()).toEqual('hello world');
     }));
 
     it('should link to new node and given scope', inject(function($rootScope, $compile) {
-      var template = jqLite('<div>{{greeting = "hello world"}}</div>');
+      let template = jqLite('<div>{{greeting = "hello world"}}</div>');
 
-      var compile = $compile(template);
-      var templateClone = template.clone();
+      let compile = $compile(template);
+      let templateClone = template.clone();
 
       element = compile($rootScope, function(clone) {
         templateClone = clone;
@@ -2002,7 +2002,7 @@ describe('angular', function() {
     }));
 
     it('should link to cloned node and create scope', inject(function($rootScope, $compile) {
-      var template = jqLite('<div>{{greeting = "hello world"}}</div>');
+      let template = jqLite('<div>{{greeting = "hello world"}}</div>');
       element = $compile(template)($rootScope, noop);
       $rootScope.$digest();
       expect(template.text()).toEqual('{{greeting = "hello world"}}');
@@ -2014,7 +2014,7 @@ describe('angular', function() {
 
   describe('nodeName_', function() {
     it('should correctly detect node name with "namespace" when xmlns is defined', function() {
-      var div = jqLite('<div xmlns:ngtest="http://angularjs.org/">' +
+      let div = jqLite('<div xmlns:ngtest="http://angularjs.org/">' +
                          '<ngtest:foo ngtest:attr="bar"></ngtest:foo>' +
                        '</div>')[0];
       expect(nodeName_(div.childNodes[0])).toBe('ngtest:foo');
@@ -2022,7 +2022,7 @@ describe('angular', function() {
     });
 
     it('should correctly detect node name with "namespace" when xmlns is NOT defined', function() {
-      var div = jqLite('<div xmlns:ngtest="http://angularjs.org/">' +
+      let div = jqLite('<div xmlns:ngtest="http://angularjs.org/">' +
                          '<ngtest:foo ngtest:attr="bar"></ng-test>' +
                        '</div>')[0];
       expect(nodeName_(div.childNodes[0])).toBe('ngtest:foo');
@@ -2038,11 +2038,11 @@ describe('angular', function() {
 
   describe('nextUid()', function() {
     it('should return new id per call', function() {
-      var seen = {};
-      var count = 100;
+      let seen = {};
+      let count = 100;
 
       while (count--) {
-        var current = nextUid();
+        let current = nextUid();
         expect(typeof current).toBe('number');
         expect(seen[current]).toBeFalsy();
         seen[current] = true;
@@ -2064,15 +2064,15 @@ describe('angular', function() {
 
   describe('bootstrap', function() {
     it('should bootstrap app', function() {
-      var element = jqLite('<div>{{1+2}}</div>');
-      var injector = angular.bootstrap(element);
+      let element = jqLite('<div>{{1+2}}</div>');
+      let injector = angular.bootstrap(element);
       expect(injector).toBeDefined();
       expect(element.injector()).toBe(injector);
       dealoc(element);
     });
 
     it('should complain if app module can\'t be found', function() {
-      var element = jqLite('<div>{{1+2}}</div>');
+      let element = jqLite('<div>{{1+2}}</div>');
 
       expect(function() {
         angular.bootstrap(element, ['doesntexist']);
@@ -2087,7 +2087,7 @@ describe('angular', function() {
 
 
     describe('deferred bootstrap', function() {
-      var originalName = window.name,
+      let originalName = window.name,
           element;
 
       beforeEach(function() {
@@ -2101,7 +2101,7 @@ describe('angular', function() {
       });
 
       it('should provide injector for deferred bootstrap', function() {
-        var injector;
+        let injector;
         window.name = 'NG_DEFER_BOOTSTRAP!';
 
         injector = angular.bootstrap(element);
@@ -2112,11 +2112,11 @@ describe('angular', function() {
       });
 
       it('should resume deferred bootstrap, if defined', function() {
-        var injector;
+        let injector;
         window.name = 'NG_DEFER_BOOTSTRAP!';
 
         angular.resumeDeferredBootstrap = noop;
-        var spy = spyOn(angular, 'resumeDeferredBootstrap');
+        let spy = spyOn(angular, 'resumeDeferredBootstrap');
         injector = angular.bootstrap(element);
         expect(spy).toHaveBeenCalled();
       });
@@ -2138,7 +2138,7 @@ describe('angular', function() {
         element = jqLite('<div>{{1+2}}</div>');
         window.name = 'NG_DEFER_BOOTSTRAP!';
 
-        var bootstrapping = jasmine.createSpy('bootstrapping');
+        let bootstrapping = jasmine.createSpy('bootstrapping');
         angular.bootstrap(element, [bootstrapping]);
 
         expect(bootstrapping).not.toHaveBeenCalled();
@@ -2188,7 +2188,7 @@ describe('angular', function() {
 
   describe('startingTag', function() {
     it('should allow passing in Nodes instead of Elements', function() {
-      var txtNode = document.createTextNode('some text');
+      let txtNode = document.createTextNode('some text');
       expect(startingTag(txtNode)).toBe('some text');
     });
   });
@@ -2210,7 +2210,7 @@ describe('angular', function() {
   describe('fromJson', function() {
 
     it('should delegate to JSON.parse', function() {
-      var spy = spyOn(JSON, 'parse').and.callThrough();
+      let spy = spyOn(JSON, 'parse').and.callThrough();
 
       expect(fromJson('{}')).toEqual({});
       expect(spy).toHaveBeenCalled();
@@ -2221,7 +2221,7 @@ describe('angular', function() {
   describe('toJson', function() {
 
     it('should delegate to JSON.stringify', function() {
-      var spy = spyOn(JSON, 'stringify').and.callThrough();
+      let spy = spyOn(JSON, 'stringify').and.callThrough();
 
       expect(toJson({})).toEqual('{}');
       expect(spy).toHaveBeenCalled();
@@ -2275,12 +2275,12 @@ describe('angular', function() {
 
   describe('isElement', function() {
     it('should return a boolean value', inject(function($compile, $document, $rootScope) {
-      var element = $compile('<p>Hello, world!</p>')($rootScope),
+      let element = $compile('<p>Hello, world!</p>')($rootScope),
           body = $document.find('body')[0],
           expected = [false, false, false, false, false, false, false, true, true],
           tests = [null, undefined, 'string', 1001, {}, 0, false, body, element];
       angular.forEach(tests, function(value, idx) {
-        var result = angular.isElement(value);
+        let result = angular.isElement(value);
         expect(typeof result).toEqual('boolean');
         expect(result).toEqual(expected[idx]);
       });
@@ -2290,7 +2290,7 @@ describe('angular', function() {
     it('should return false for objects resembling a Backbone Collection', function() {
       // Backbone stuff is sort of hard to mock, if you have a better way of doing this,
       // please fix this.
-      var fakeBackboneCollection = {
+      let fakeBackboneCollection = {
         children: [{}, {}, {}],
         find: function() {},
         on: function() {},
@@ -2301,7 +2301,7 @@ describe('angular', function() {
     });
 
     it('should return false for arrays with node-like properties', function() {
-      var array = [1,2,3];
+      let array = [1,2,3];
       array.on = true;
       expect(isElement(array)).toBe(false);
     });

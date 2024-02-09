@@ -1,9 +1,9 @@
-'use strict';
+
 
 /* eslint-disable no-script-url */
 
 describe('sanitizeUri', function() {
-  var sanitizeHref, sanitizeImg, sanitizeUriProvider, testUrl;
+  let sanitizeHref, sanitizeImg, sanitizeUriProvider, testUrl;
   beforeEach(function() {
     module(function(_$$sanitizeUriProvider_) {
       sanitizeUriProvider = _$$sanitizeUriProvider_;
@@ -19,7 +19,7 @@ describe('sanitizeUri', function() {
   });
 
   function isEvilInCurrentBrowser(uri) {
-    var a = window.document.createElement('a');
+    let a = window.document.createElement('a');
     a.setAttribute('href', uri);
     return a.href.substring(0, 4) !== 'http';
   }
@@ -126,7 +126,7 @@ describe('sanitizeUri', function() {
     });
 
     it('should allow reconfiguration of the src trusted URIs', function() {
-      var returnVal;
+      let returnVal;
       expect(sanitizeUriProvider.imgSrcSanitizationTrustedUrlList() instanceof RegExp).toBe(true);
       returnVal = sanitizeUriProvider.imgSrcSanitizationTrustedUrlList(/javascript:/);
       expect(returnVal).toBe(sanitizeUriProvider);
@@ -227,7 +227,7 @@ describe('sanitizeUri', function() {
     }));
 
     it('should allow reconfiguration of the href trusted URIs', function() {
-      var returnVal;
+      let returnVal;
       expect(sanitizeUriProvider.aHrefSanitizationTrustedUrlList() instanceof RegExp).toBe(true);
       returnVal = sanitizeUriProvider.aHrefSanitizationTrustedUrlList(/javascript:/);
       expect(returnVal).toBe(sanitizeUriProvider);

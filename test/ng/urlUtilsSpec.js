@@ -1,9 +1,9 @@
-'use strict';
+
 
 describe('urlUtils', function() {
   describe('urlResolve', function() {
     it('should returned already parsed URLs unchanged', function() {
-      var urlObj = urlResolve('/foo?bar=baz#qux');
+      let urlObj = urlResolve('/foo?bar=baz#qux');
       expect(urlResolve(urlObj)).toBe(urlObj);
       expect(urlResolve(true)).toBe(true);
       expect(urlResolve(null)).toBeNull();
@@ -17,7 +17,7 @@ describe('urlUtils', function() {
 
 
     it('should parse relative URL into component pieces', function() {
-      var parsed = urlResolve('foo');
+      let parsed = urlResolve('foo');
       expect(parsed.href).toMatch(/https?:\/\//);
       expect(parsed.protocol).toMatch(/^https?/);
       expect(parsed.host).not.toBe('');
@@ -28,7 +28,7 @@ describe('urlUtils', function() {
 
     it('should return pathname as / if empty path provided', function() {
       // IE (all versions) counts / as empty, necessary to use / so that pathname is not context.html
-      var parsed = urlResolve('/');
+      let parsed = urlResolve('/');
       expect(parsed.pathname).toBe('/');
     });
 
@@ -36,12 +36,12 @@ describe('urlUtils', function() {
       // Support: IE 9-11 only, Edge 16-17 only (fixed in 18 Preview)
       // IE/Edge don't wrap IPv6 addresses' hostnames in square brackets
       // when parsed out of an anchor element.
-      var parsed = urlResolve('http://[::1]/');
+      let parsed = urlResolve('http://[::1]/');
       expect(parsed.hostname).toBe('[::1]');
     });
 
     it('should not put the domain in brackets for the hostname field', function() {
-      var parsed = urlResolve('https://google.com/');
+      let parsed = urlResolve('https://google.com/');
       expect(parsed.hostname).toBe('google.com');
     });
   });
@@ -63,7 +63,7 @@ describe('urlUtils', function() {
 
         expectIsSameOrigin('path', true);
 
-        var origin = urlResolve($document[0].location.href);
+        let origin = urlResolve($document[0].location.href);
         expectIsSameOrigin('//' + origin.host + '/path', true);
 
         // Different domain.
@@ -81,8 +81,8 @@ describe('urlUtils', function() {
 
 
   describe('urlIsAllowedOriginFactory', function() {
-    var origin = urlResolve(window.location.href);
-    var urlIsAllowedOrigin;
+    let origin = urlResolve(window.location.href);
+    let urlIsAllowedOrigin;
 
     beforeEach(function() {
       urlIsAllowedOrigin = urlIsAllowedOriginFactory([
@@ -114,9 +114,9 @@ describe('urlUtils', function() {
 
 
     it('should return true only if the origins (protocol, hostname, post) match', function() {
-      var differentProtocol = (origin.protocol !== 'http') ? 'http' : 'https';
-      var differentPort = (parseInt(origin.port, 10) || 0) + 1;
-      var url;
+      let differentProtocol = (origin.protocol !== 'http') ? 'http' : 'https';
+      let differentPort = (parseInt(origin.port, 10) || 0) + 1;
+      let url;
 
 
       // Relative path

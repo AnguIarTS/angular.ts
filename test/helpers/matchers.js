@@ -1,4 +1,4 @@
-'use strict';
+
 
 beforeEach(function() {
 
@@ -6,9 +6,9 @@ beforeEach(function() {
     return function() {
       return {
         compare: function(actual) {
-          var element = angular.element(actual);
-          var present = true;
-          var absent = false;
+          let element = angular.element(actual);
+          let present = true;
+          let absent = false;
 
           angular.forEach(presentClasses.split(' '), function(className) {
             present = present && element.hasClass(className);
@@ -18,7 +18,7 @@ beforeEach(function() {
             absent = absent || element.hasClass(className);
           });
 
-          var message = function() {
+          let message = function() {
             return 'Expected to have ' + presentClasses +
               (absentClasses ? (' and not have ' + absentClasses + '') : '') +
               ' but had ' + element[0].className + '.';
@@ -40,7 +40,7 @@ beforeEach(function() {
 
   function isNgElementHidden(element) {
     // we need to check element.getAttribute for SVG nodes
-    var hidden = true;
+    let hidden = true;
     forEach(angular.element(element), function(element) {
       if ((' '  + (element.getAttribute('class') || '') + ' ').indexOf(' ng-hide ') === -1) {
         hidden = false;
@@ -50,8 +50,8 @@ beforeEach(function() {
   }
 
   function MinErrMatcher(isNot, namespace, code, content, wording) {
-    var codeRegex = new RegExp('^' + escapeRegexp('[' + namespace + ':' + code + ']'));
-    var contentRegex = angular.isUndefined(content) || jasmine.isA_('RegExp', content) ?
+    let codeRegex = new RegExp('^' + escapeRegexp('[' + namespace + ':' + code + ']'));
+    let contentRegex = angular.isUndefined(content) || jasmine.isA_('RegExp', content) ?
         content : new RegExp(escapeRegexp(content));
 
     this.test = test;
@@ -64,11 +64,11 @@ beforeEach(function() {
     }
 
     function test(exception) {
-      var exceptionMessage = (exception && exception.message) || exception || '';
+      let exceptionMessage = (exception && exception.message) || exception || '';
 
-      var codeMatches = codeRegex.test(exceptionMessage);
-      var contentMatches = angular.isUndefined(contentRegex) || contentRegex.test(exceptionMessage);
-      var matches = codeMatches && contentMatches;
+      let codeMatches = codeRegex.test(exceptionMessage);
+      let contentMatches = angular.isUndefined(contentRegex) || contentRegex.test(exceptionMessage);
+      let matches = codeMatches && contentMatches;
 
       return {
         pass: isNot ? !matches : matches,
@@ -101,7 +101,7 @@ beforeEach(function() {
       };
       function generateCompare(isNot) {
         return function(actual) {
-          var message = valueFn(
+          let message = valueFn(
             'Expected object ' + (isNot ? 'not ' : '') + 'to be a promise');
           return { pass: isPromiseLike(actual), message: message };
         };
@@ -115,8 +115,8 @@ beforeEach(function() {
       };
       function generateCompare(isNot) {
         return function(actual) {
-          var message = valueFn('Expected element ' + (isNot ? '' : 'not ') + 'to have \'ng-hide\' class');
-          var pass = !isNgElementHidden(actual);
+          let message = valueFn('Expected element ' + (isNot ? '' : 'not ') + 'to have \'ng-hide\' class');
+          let pass = !isNgElementHidden(actual);
           if (isNot) {
             pass = !pass;
           }
@@ -132,8 +132,8 @@ beforeEach(function() {
       };
       function generateCompare(isNot) {
         return function(actual) {
-          var message = valueFn('Expected element ' + (isNot ? 'not ' : '') + 'to have \'ng-hide\' class');
-          var pass = isNgElementHidden(actual);
+          let message = valueFn('Expected element ' + (isNot ? 'not ' : '') + 'to have \'ng-hide\' class');
+          let pass = isNgElementHidden(actual);
           if (isNot) {
             pass = !pass;
           }
@@ -160,7 +160,7 @@ beforeEach(function() {
     toEqualOneOf: function(util) {
       return {
         compare: function(actual) {
-          var expectedArgs = Array.prototype.slice.call(arguments, 1);
+          let expectedArgs = Array.prototype.slice.call(arguments, 1);
           return {
             pass: expectedArgs.some(function(expected) {
               return util.equals(actual, expected, [DOMTester]);
@@ -190,11 +190,11 @@ beforeEach(function() {
             throw new Error('Expected a spy, but got ' + jasmine.pp(actual) + '.');
           }
 
-          var count = actual.calls.count();
-          var pass = count === 1;
+          let count = actual.calls.count();
+          let pass = count === 1;
 
-          var message = function() {
-            var msg = 'Expected spy ' + actual.and.identity() + (pass ? ' not ' : ' ') +
+          let message = function() {
+            let msg = 'Expected spy ' + actual.and.identity() + (pass ? ' not ' : ' ') +
                       'to have been called once, but ';
 
             switch (count) {
@@ -232,15 +232,15 @@ beforeEach(function() {
             throw new Error('Expected a spy, but got ' + jasmine.pp(actual) + '.');
           }
 
-          var expectedArgs = Array.prototype.slice.call(arguments, 1);
-          var actualCount = actual.calls.count();
-          var actualArgs = actualCount && actual.calls.argsFor(0);
+          let expectedArgs = Array.prototype.slice.call(arguments, 1);
+          let actualCount = actual.calls.count();
+          let actualArgs = actualCount && actual.calls.argsFor(0);
 
-          var pass = (actualCount === 1) && util.equals(actualArgs, expectedArgs);
+          let pass = (actualCount === 1) && util.equals(actualArgs, expectedArgs);
           if (isNot) pass = !pass;
 
-          var message = function() {
-            var msg = 'Expected spy ' + actual.and.identity() + (isNot ? ' not ' : ' ') +
+          let message = function() {
+            let msg = 'Expected spy ' + actual.and.identity() + (isNot ? ' not ' : ' ') +
                       'to have been called once with ' + jasmine.pp(expectedArgs) + ', but ';
 
             if (isNot) {
@@ -273,7 +273,7 @@ beforeEach(function() {
     toBeOneOf: function() {
       return {
         compare: function(actual) {
-          var expectedArgs = Array.prototype.slice.call(arguments, 1);
+          let expectedArgs = Array.prototype.slice.call(arguments, 1);
           return { pass: expectedArgs.indexOf(actual) !== -1 };
         }
       };
@@ -291,11 +291,11 @@ beforeEach(function() {
       }
       function generateCompare(isNot) {
         return function(actual, clazz) {
-          var message = function() {
+          let message = function() {
             return 'Expected \'' + angular.mock.dump(actual) + '\'' + (isNot ? ' not ' : '') + ' to have class \'' + clazz + '\'.';
           };
-          var classes = clazz.trim().split(/\s+/);
-          for (var i = 0; i < classes.length; ++i) {
+          let classes = clazz.trim().split(/\s+/);
+          for (let i = 0; i < classes.length; ++i) {
             if (!hasClass(actual[0], classes[i])) {
               return { pass: isNot };
             }
@@ -314,7 +314,7 @@ beforeEach(function() {
       function generateCompare(isNot) {
         return function(actual, namespace, code, content) {
 
-          var matcher = new MinErrMatcher(isNot, namespace, code, content, {
+          let matcher = new MinErrMatcher(isNot, namespace, code, content, {
             inputType: 'error',
             expectedAction: 'equal',
             actualAction: 'was'
@@ -333,7 +333,7 @@ beforeEach(function() {
 
       function generateCompare(isNot) {
         return function(actual, namespace, code, content) {
-          var exception;
+          let exception;
 
           if (!angular.isFunction(actual)) {
             throw new Error('Actual is not a function');
@@ -345,7 +345,7 @@ beforeEach(function() {
             exception = e;
           }
 
-          var matcher = new MinErrMatcher(isNot, namespace, code, content, {
+          let matcher = new MinErrMatcher(isNot, namespace, code, content, {
             inputType: 'function',
             expectedAction: 'throw',
             actualAction: 'threw'
@@ -365,19 +365,15 @@ beforeEach(function() {
 
       return {
         compare: function(actual) {
-          var errors = [];
-          var optionVal = toJson(actual.value);
+          let errors = [];
+          let optionVal = toJson(actual.value);
 
           if (actual.selected === null || typeof actual.selected === 'undefined' || actual.selected === false) {
             errors.push('Expected option with value ' + optionVal + ' to have property "selected" set to truthy');
           }
 
-          // Support: IE 9 only
-          if (msie !== 9 && actual.hasAttribute('selected') === false) {
-            errors.push('Expected option with value ' + optionVal + ' to have attribute "selected"');
-          }
-
-          var result = {
+          
+          let result = {
             pass: errors.length === 0,
             message: errors.join('\n')
           };
@@ -385,19 +381,14 @@ beforeEach(function() {
           return result;
         },
         negativeCompare: function(actual) {
-          var errors = [];
-          var optionVal = toJson(actual.value);
+          let errors = [];
+          let optionVal = toJson(actual.value);
 
           if (actual.selected) {
             errors.push('Expected option with value ' + optionVal + ' property "selected" to be falsy');
           }
 
-          // Support: IE 9 only
-          if (msie !== 9 && actual.hasAttribute('selected')) {
-            errors.push('Expected option with value ' + optionVal + ' not to have attribute "selected"');
-          }
-
-          var result = {
+          let result = {
             pass: errors.length === 0,
             message: errors.join('\n')
           };
@@ -409,14 +400,14 @@ beforeEach(function() {
     toEqualSelect: function() {
       return {
         compare: function(actual, expected) {
-          var actualValues = [],
+          let actualValues = [],
               expectedValues = [].slice.call(arguments, 1);
 
           forEach(actual.find('option'), function(option) {
             actualValues.push(option.selected ? [option.value] : option.value);
           });
 
-          var message = function() {
+          let message = function() {
             return 'Expected ' + toJson(actualValues) + ' to equal ' + toJson(expectedValues) + '.';
           };
 
@@ -435,8 +426,8 @@ beforeEach(function() {
  * This is helpful when need to spy only setter methods and ignore getters
  */
 function spyOnlyCallsWithArgs(obj, method) {
-  var originalFn = obj[method];
-  var spy = spyOn(obj, method);
+  let originalFn = obj[method];
+  let spy = spyOn(obj, method);
   obj[method] = function() {
     if (arguments.length) return spy.apply(this, arguments);
     return originalFn.apply(this);
@@ -453,7 +444,7 @@ function createAsync(doneFn) {
     return this.runs(doneFn);
   };
   Job.prototype.runs = function(fn) {
-    var newJob = new Job();
+    let newJob = new Job();
     this.next.push(function() {
       fn();
       newJob.start();
@@ -461,10 +452,10 @@ function createAsync(doneFn) {
     return newJob;
   };
   Job.prototype.waitsFor = function(fn, error, timeout) {
-    var newJob = new Job();
+    let newJob = new Job();
     timeout = timeout || 5000;
     this.next.push(function() {
-      var counter = 0,
+      let counter = 0,
         intervalId = window.setInterval(function() {
           if (fn()) {
             window.clearInterval(intervalId);
@@ -483,7 +474,7 @@ function createAsync(doneFn) {
     return this.waitsFor(function() { return true; }, undefined, timeout);
   };
   Job.prototype.start = function() {
-    var i;
+    let i;
     for (i = 0; i < this.next.length; i += 1) {
       this.next[i]();
     }

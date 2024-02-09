@@ -1,9 +1,9 @@
-'use strict';
+
 
 /* globals nativeAriaNodeNames false */
 
 describe('$aria', function() {
-  var scope, $compile, element;
+  let scope, $compile, element;
 
   beforeEach(module('ngAria'));
 
@@ -18,9 +18,9 @@ describe('$aria', function() {
         toHaveAttribute: function toHaveAttributeMatcher() {
           return {
             compare: function toHaveAttributeCompare(element, attr) {
-              var node = element[0];
-              var pass = node.hasAttribute(attr);
-              var message = 'Expected `' + node.outerHTML + '` ' + (pass ? 'not ' : '') +
+              let node = element[0];
+              let pass = node.hasAttribute(attr);
+              let message = 'Expected `' + node.outerHTML + '` ' + (pass ? 'not ' : '') +
                             'to have attribute `' + attr + '`.';
 
               return {
@@ -49,8 +49,8 @@ describe('$aria', function() {
           '<div role="radio" ng-model="val" value="one" ng-aria-disable></div>' +
           '<div role="radio" ng-model="val" value="two" ng-aria-disable></div>');
 
-      var radio1 = element.eq(0);
-      var radio2 = element.eq(1);
+      let radio1 = element.eq(0);
+      let radio2 = element.eq(1);
 
       scope.$apply('val = "one"');
       expect(radio1).not.toHaveAttribute('aria-checked');
@@ -171,8 +171,8 @@ describe('$aria', function() {
           '<div role="progressbar" ng-model="val" min="0" max="100" ng-aria-disable></div>' +
           '<div role="slider" ng-model="val" min="0" max="100" ng-aria-disable></div>');
 
-      var progressbar = element.eq(0);
-      var slider = element.eq(1);
+      let progressbar = element.eq(0);
+      let slider = element.eq(1);
 
       ['aria-valuemax', 'aria-valuemin', 'aria-valuenow'].forEach(function(attr) {
         expect(progressbar).not.toHaveAttribute(attr);
@@ -199,8 +199,8 @@ describe('$aria', function() {
           '<div ng-click="onClick()" tabindex="0" ng-aria-disable></div>' +
           '<ul><li ng-click="onClick()" tabindex="0" ng-aria-disable></li></ul>');
 
-      var div = element.find('div');
-      var li = element.find('li');
+      let div = element.find('div');
+      let li = element.find('li');
 
       div.triggerHandler({type: 'keypress', keyCode: 32});
       li.triggerHandler({type: 'keypress', keyCode: 32});
@@ -347,7 +347,7 @@ describe('$aria', function() {
     it('should use `$isEmpty()` to determine if the checkbox is checked',
       function() {
         compileElement('<div role="checkbox" ng-model="val"></div>');
-        var ctrl = element.controller('ngModel');
+        let ctrl = element.controller('ngModel');
         ctrl.$isEmpty = function(value) {
           return value === 'not-checked';
         };
@@ -371,7 +371,7 @@ describe('$aria', function() {
     );
 
     it('should not handle native checkbox with ngChecked', function() {
-      var element = $compile('<input type="checkbox" ng-checked="val">')(scope);
+      let element = $compile('<input type="checkbox" ng-checked="val">')(scope);
 
       scope.$apply('val = true');
       expect(element.attr('aria-checked')).toBeUndefined();
@@ -381,7 +381,7 @@ describe('$aria', function() {
     });
 
     it('should handle custom checkbox with ngChecked', function() {
-      var element = $compile('<div role="checkbox" ng-checked="val">')(scope);
+      let element = $compile('<div role="checkbox" ng-checked="val">')(scope);
 
       scope.$apply('val = true');
       expect(element.eq(0).attr('aria-checked')).toBe('true');
@@ -391,7 +391,7 @@ describe('$aria', function() {
     });
 
     it('should not attach to native input type="radio"', function() {
-      var element = $compile('<input type="radio" ng-model="val" value="one">' +
+      let element = $compile('<input type="radio" ng-model="val" value="one">' +
                              '<input type="radio" ng-model="val" value="two">')(scope);
 
       scope.$apply('val=\'one\'');
@@ -404,7 +404,7 @@ describe('$aria', function() {
     });
 
     it('should attach to custom radio controls', function() {
-      var element = $compile('<div role="radio" ng-model="val" value="one"></div>' +
+      let element = $compile('<div role="radio" ng-model="val" value="one"></div>' +
           '<div role="radio" ng-model="val" value="two"></div>')(scope);
 
       scope.$apply('val=\'one\'');
@@ -417,7 +417,7 @@ describe('$aria', function() {
     });
 
     it('should handle custom radios with integer model values', function() {
-      var element = $compile('<div role="radio" ng-model="val" value="0"></div>' +
+      let element = $compile('<div role="radio" ng-model="val" value="0"></div>' +
           '<div role="radio" ng-model="val" value="1"></div>')(scope);
 
       scope.$apply('val=0');
@@ -430,7 +430,7 @@ describe('$aria', function() {
     });
 
     it('should handle radios with boolean model values using ngValue', function() {
-      var element = $compile('<div role="radio" ng-model="val" ng-value="valExp"></div>' +
+      let element = $compile('<div role="radio" ng-model="val" ng-value="valExp"></div>' +
           '<div role="radio" ng-model="val" ng-value="valExp2"></div>')(scope);
 
       scope.$apply(function() {
@@ -466,7 +466,7 @@ describe('$aria', function() {
     });
 
     it('should not attach itself if an aria-checked value is already present', function() {
-      var element = [
+      let element = [
         $compile('<div role=\'radio\' ng-model=\'val\' value=\'{{val3}}\' aria-checked=\'userSetValue\'></div>')(scope),
         $compile('<div role=\'menuitemradio\' ng-model=\'val\' value=\'{{val3}}\' aria-checked=\'userSetValue\'></div>')(scope),
         $compile('<div role=\'checkbox\' checked=\'checked\' aria-checked=\'userSetValue\'></div>')(scope),
@@ -529,7 +529,7 @@ describe('$aria', function() {
       details: '<details ng-click="doClick()"></details>',
       a: '<a ng-click="doClick()"></a>'
     }, function(tmpl) {
-      var element = $compile(tmpl)(scope);
+      let element = $compile(tmpl)(scope);
       expect(element.attr('role')).toBeUndefined();
     });
   });
@@ -564,7 +564,7 @@ describe('$aria', function() {
       select: '<select ng-disabled="val"></select>',
       button: '<button ng-disabled="val"></button>'
     }, function(tmpl) {
-      var element = $compile(tmpl)(scope);
+      let element = $compile(tmpl)(scope);
       scope.$apply('val = true');
 
       expect(element.attr('disabled')).toBeDefined();
@@ -680,7 +680,7 @@ describe('$aria', function() {
       select: '<select ng-readonly="val"></select>',
       button: '<button ng-readonly="val"></button>'
     }, function(tmpl) {
-      var element = $compile(tmpl)(scope);
+      let element = $compile(tmpl)(scope);
       scope.$apply('val = true');
 
       expect(element.attr('readonly')).toBeDefined();
@@ -779,7 +779,7 @@ describe('$aria', function() {
     beforeEach(injectScopeAndCompiler);
 
     it('should attach to input type="range"', function() {
-      var element = [
+      let element = [
         $compile('<input type="range" ng-model="val" min="0" max="100">')(scope),
         $compile('<div role="progressbar" min="0" max="100" ng-model="val">')(scope),
         $compile('<div role="slider" min="0" max="100" ng-model="val">')(scope)
@@ -795,7 +795,7 @@ describe('$aria', function() {
     });
 
     it('should not attach if aria-value* is already present', function() {
-      var element = [
+      let element = [
         $compile('<input type="range" ng-model="val" min="0" max="100" aria-valuenow="userSetValue1" aria-valuemin="userSetValue2" aria-valuemax="userSetValue3">')(scope),
         $compile('<div role="progressbar" min="0" max="100" ng-model="val" aria-valuenow="userSetValue1" aria-valuemin="userSetValue2" aria-valuemax="userSetValue3">')(scope),
         $compile('<div role="slider" min="0" max="100" ng-model="val" aria-valuenow="userSetValue1" aria-valuemin="userSetValue2" aria-valuemax="userSetValue3">')(scope)
@@ -842,7 +842,7 @@ describe('$aria', function() {
     beforeEach(injectScopeAndCompiler);
 
     it('should attach aria-live', function() {
-      var element = [
+      let element = [
         $compile('<div ng-messages="myForm.myName.$error">')(scope)
       ];
       expectAriaAttrOnEachElement(element, 'aria-live', 'assertive');
@@ -924,14 +924,14 @@ describe('$aria', function() {
   });
 
   describe('accessible actions', function() {
-    var clickEvents;
+    let clickEvents;
 
     beforeEach(injectScopeAndCompiler);
     beforeEach(function() {
       clickEvents = [];
       scope.onClick = jasmine.createSpy('onClick').and.callFake(function(evt) {
-        var nodeName = evt ? evt.target.nodeName.toLowerCase() : '';
-        var prevented = !!(evt && evt.isDefaultPrevented());
+        let nodeName = evt ? evt.target.nodeName.toLowerCase() : '';
+        let prevented = !!(evt && evt.isDefaultPrevented());
         clickEvents.push(nodeName + '(' + prevented + ')');
       });
     });
@@ -943,8 +943,8 @@ describe('$aria', function() {
           '<ul><li ng-click="onClick($event)"></li></ul>' +
         '</section>');
 
-      var divElement = element.find('div');
-      var liElement = element.find('li');
+      let divElement = element.find('div');
+      let liElement = element.find('li');
 
       divElement.triggerHandler({type: 'keydown', keyCode: 13});
       liElement.triggerHandler({type: 'keydown', keyCode: 13});
@@ -962,8 +962,8 @@ describe('$aria', function() {
             '<ul><li ng-click="onClick($event)"></li></ul>' +
           '</section>');
 
-        var divElement = element.find('div');
-        var liElement = element.find('li');
+        let divElement = element.find('div');
+        let liElement = element.find('li');
 
         divElement.triggerHandler({type: 'keydown', which: 13});
         liElement.triggerHandler({type: 'keydown', which: 13});
@@ -1021,8 +1021,8 @@ describe('$aria', function() {
         // based on the `contenteditable` attribute.
         $document.find('body').append(element);
 
-        var containers = element.children();
-        var container;
+        let containers = element.children();
+        let container;
 
         // Using `browserTrigger()`, because it supports event bubbling.
 
@@ -1074,8 +1074,8 @@ describe('$aria', function() {
             '<div ng-click="onClick($event)">' + createHTML(elementType) + '</div>' +
           '</section>');
 
-        var divElement = element.find('div');
-        var interactiveElement = element.find(elementType);
+        let divElement = element.find('div');
+        let interactiveElement = element.find(elementType);
 
         // Use browserTrigger because it supports event bubbling
         // 13 Enter

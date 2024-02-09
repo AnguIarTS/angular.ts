@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('ngStyle', function() {
-  var element;
+  let element;
 
 
   afterEach(function() {
@@ -60,7 +60,7 @@ describe('ngStyle', function() {
 
 
   describe('preserving styles set before and after compilation', function() {
-    var scope, preCompStyle, preCompVal, postCompStyle, postCompVal, element;
+    let scope, preCompStyle, preCompVal, postCompStyle, postCompVal, element;
 
     beforeEach(inject(function($rootScope, $compile) {
       preCompStyle = 'width';

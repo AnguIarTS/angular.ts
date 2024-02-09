@@ -1,6 +1,6 @@
-"use strict";
+import { minErr } from "../minErr";
 
-var $timeoutMinErr = minErr("$timeout");
+let $timeoutMinErr = minErr("$timeout");
 
 /** @this */
 function $TimeoutProvider() {
@@ -11,7 +11,7 @@ function $TimeoutProvider() {
     "$$q",
     "$exceptionHandler",
     function ($rootScope, $browser, $q, $$q, $exceptionHandler) {
-      var deferreds = {};
+      let deferreds = {};
 
       /**
        * @ngdoc service
@@ -49,7 +49,7 @@ function $TimeoutProvider() {
           fn = noop;
         }
 
-        var args = sliceArgs(arguments, 3),
+        let args = sliceArgs(arguments, 3),
           skipApply = isDefined(invokeApply) && !invokeApply,
           deferred = (skipApply ? $$q : $q).defer(),
           promise = deferred.promise,
@@ -102,8 +102,8 @@ function $TimeoutProvider() {
 
         if (!deferreds.hasOwnProperty(promise.$$timeoutId)) return false;
 
-        var id = promise.$$timeoutId;
-        var deferred = deferreds[id];
+        let id = promise.$$timeoutId;
+        let deferred = deferreds[id];
 
         // Timeout cancels should not report an unhandled promise.
         markQExceptionHandled(deferred.promise);

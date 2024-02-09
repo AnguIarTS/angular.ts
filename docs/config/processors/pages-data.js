@@ -1,9 +1,9 @@
-'use strict';
 
-var _ = require('lodash');
-var path = require('canonical-path');
 
-var AREA_NAMES = {
+let _ = require('lodash');
+let path = require('canonical-path');
+
+let AREA_NAMES = {
   api: 'API',
   guide: 'Developer Guide',
   misc: 'Miscellaneous',
@@ -13,7 +13,7 @@ var AREA_NAMES = {
 
 function getNavGroup(pages, area, pageSorter, pageMapper) {
 
-  var navItems = _(pages)
+  let navItems = _(pages)
     // We don't want the child to include the index page as this is already catered for
     .omit(function(page) { return page.id === 'index'; })
 
@@ -43,17 +43,17 @@ function getNavGroup(pages, area, pageSorter, pageMapper) {
 module.exports = function generatePagesDataProcessor(log) {
 
 
-  var navGroupMappers = {
+  let navGroupMappers = {
     api: function(areaPages, area) {
-      var navGroups = _(areaPages)
+      let navGroups = _(areaPages)
         .filter('module') // We are not interested in docs that are not in a module
 
         .groupBy('module')
 
         .map(function(modulePages, moduleName) {
           log.debug('moduleName: ' + moduleName);
-          var navItems = [];
-          var modulePage;
+          let navItems = [];
+          let modulePage;
 
           _(modulePages)
 
@@ -152,12 +152,12 @@ module.exports = function generatePagesDataProcessor(log) {
     $process: function(docs) {
 
       // We are only interested in docs that are in an area
-      var pages = _.filter(docs, function(doc) {
+      let pages = _.filter(docs, function(doc) {
         return doc.area;
       });
 
       // We are only interested in pages that are not landing pages
-      var navPages = _.filter(pages, function(page) {
+      let navPages = _.filter(pages, function(page) {
         return page.docType !== 'componentGroup';
       });
 
@@ -178,17 +178,17 @@ module.exports = function generatePagesDataProcessor(log) {
       //    - section "service"
       //    - $route
       //
-      var areas = {};
+      let areas = {};
       _(navPages)
         .groupBy('area')
         .forEach(function(pages, areaId) {
-          var area = {
+          let area = {
             id: areaId,
             name: AREA_NAMES[areaId]
           };
           areas[areaId] = area;
 
-          var navGroupMapper = navGroupMappers[area.id] || navGroupMappers['pages'];
+          let navGroupMapper = navGroupMappers[area.id] || navGroupMappers['pages'];
           area.navGroups = navGroupMapper(pages, area);
         });
 
@@ -202,7 +202,7 @@ module.exports = function generatePagesDataProcessor(log) {
 
 
 
-      var searchData = _(pages)
+      let searchData = _(pages)
         .filter(function(page) {
             return page.searchTerms;
         })
@@ -220,7 +220,7 @@ module.exports = function generatePagesDataProcessor(log) {
       });
 
       // Extract a list of basic page information for mapping paths to partials and for client side searching
-      var pageData = _(docs)
+      let pageData = _(docs)
         .map(function(doc) {
           return _.pick(doc, ['name', 'area', 'path']);
         })

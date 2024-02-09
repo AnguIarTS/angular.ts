@@ -1,25 +1,25 @@
-'use strict';
 
-var beforeReady;
+
+let beforeReady;
 (function() {
-  var divAfterScripts = window.document.getElementById('div-after-scripts');
+  let divAfterScripts = window.document.getElementById('div-after-scripts');
   beforeReady = divAfterScripts && divAfterScripts.textContent;
 })();
 
-var afterReady;
+let afterReady;
 angular.element(function() {
-  var divAfterScripts = window.document.getElementById('div-after-scripts');
+  let divAfterScripts = window.document.getElementById('div-after-scripts');
   afterReady = divAfterScripts && divAfterScripts.textContent;
 });
 
-var afterReadyMethod;
+let afterReadyMethod;
 angular.element(window.document).ready(function() {
-  var divAfterScripts = window.document.getElementById('div-after-scripts');
+  let divAfterScripts = window.document.getElementById('div-after-scripts');
   afterReadyMethod = divAfterScripts && divAfterScripts.textContent;
 });
 
-var afterReadySync = afterReady;
-var afterReadyMethodSync = afterReadyMethod;
+let afterReadySync = afterReady;
+let afterReadyMethodSync = afterReadyMethod;
 
 angular
   .module('test', [])

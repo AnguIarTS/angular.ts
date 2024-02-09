@@ -361,9 +361,9 @@ In the following example we create two directives:
   </file>
 
   <file name="script.js">
-    var app = angular.module('form-example1', []);
+    let app = angular.module('form-example1', []);
 
-    var INTEGER_REGEXP = /^-?\d+$/;
+    let INTEGER_REGEXP = /^-?\d+$/;
     app.directive('integer', function() {
       return {
         require: 'ngModel',
@@ -390,7 +390,7 @@ In the following example we create two directives:
       return {
         require: 'ngModel',
         link: function(scope, elm, attrs, ctrl) {
-          var usernames = ['Jim', 'John', 'Jill', 'Jackie'];
+          let usernames = ['Jim', 'John', 'Jill', 'Jackie'];
 
           ctrl.$asyncValidators.username = function(modelValue, viewValue) {
 
@@ -399,7 +399,7 @@ In the following example we create two directives:
               return $q.resolve();
             }
 
-            var def = $q.defer();
+            let def = $q.defer();
 
             $timeout(function() {
               // Mock a delayed response
@@ -443,10 +443,10 @@ Note that you can alternatively use `ng-pattern` to further restrict the validat
   </file>
 
   <file name="script.js">
-    var app = angular.module('form-example-modify-validators', []);
+    let app = angular.module('form-example-modify-validators', []);
 
     app.directive('overwriteEmail', function() {
-      var EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@example\.com$/i;
+      let EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@example\.com$/i;
 
       return {
         require: '?ngModel',

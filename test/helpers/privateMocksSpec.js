@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('private mocks', function() {
 
@@ -30,7 +30,7 @@ describe('private mocks', function() {
       });
 
       it('should pass each item in an array to the handler', function() {
-        var handlerSpy = jasmine.createSpy('handler');
+        let handlerSpy = jasmine.createSpy('handler');
         spyOn(window, 'it').and.callFake(function(msg, handler) {
           handler();
         });
@@ -53,7 +53,7 @@ describe('private mocks', function() {
 
 
       it('should pass each key-value pair in an object to the handler', function() {
-        var handlerSpy = jasmine.createSpy('handler');
+        let handlerSpy = jasmine.createSpy('handler');
         spyOn(window, 'it').and.callFake(function(msg, handler) {
           handler();
         });
@@ -65,8 +65,8 @@ describe('private mocks', function() {
 
 
       it('should call handler with correct `this`', function() {
-        var handlerSpy = jasmine.createSpy('handler');
-        var dummyThis = { name: 'dummyThis' };
+        let handlerSpy = jasmine.createSpy('handler');
+        let dummyThis = { name: 'dummyThis' };
 
         spyOn(window, 'it').and.callFake(function(msg, handler) {
           handler.call(dummyThis);
@@ -92,7 +92,7 @@ describe('private mocks', function() {
 
 
       it('should pass each item in an array to the handler', function() {
-        var handlerSpy = jasmine.createSpy('handler');
+        let handlerSpy = jasmine.createSpy('handler');
         spyOn(window, 'fit').and.callFake(function(msg, handler) {
           handler();
         });
@@ -115,7 +115,7 @@ describe('private mocks', function() {
 
 
       it('should pass each key-value pair in an object to the handler', function() {
-        var handlerSpy = jasmine.createSpy('handler');
+        let handlerSpy = jasmine.createSpy('handler');
         spyOn(window, 'fit').and.callFake(function(msg, handler) {
           handler();
         });
@@ -127,8 +127,8 @@ describe('private mocks', function() {
 
 
       it('should call handler with correct `this`', function() {
-        var handlerSpy = jasmine.createSpy('handler');
-        var dummyThis = { name: 'dummyThis' };
+        let handlerSpy = jasmine.createSpy('handler');
+        let dummyThis = { name: 'dummyThis' };
 
         spyOn(window, 'fit').and.callFake(function(msg, handler) {
           handler.call(dummyThis);
@@ -154,7 +154,7 @@ describe('private mocks', function() {
 
 
       it('should pass each item in an array to the handler', function() {
-        var handlerSpy = jasmine.createSpy('handler');
+        let handlerSpy = jasmine.createSpy('handler');
         spyOn(window, 'xit').and.callFake(function(msg, handler) {
           handler();
         });
@@ -177,7 +177,7 @@ describe('private mocks', function() {
 
 
       it('should pass each key-value pair in an object to the handler', function() {
-        var handlerSpy = jasmine.createSpy('handler');
+        let handlerSpy = jasmine.createSpy('handler');
         spyOn(window, 'xit').and.callFake(function(msg, handler) {
           handler();
         });
@@ -189,8 +189,8 @@ describe('private mocks', function() {
 
 
       it('should call handler with correct `this`', function() {
-        var handlerSpy = jasmine.createSpy('handler');
-        var dummyThis = { name: 'dummyThis' };
+        let handlerSpy = jasmine.createSpy('handler');
+        let dummyThis = { name: 'dummyThis' };
 
         spyOn(window, 'xit').and.callFake(function(msg, handler) {
           handler.call(dummyThis);
@@ -209,11 +209,11 @@ describe('private mocks', function() {
     it('should allow custom styles to be created and removed when the stylesheet is destroyed', function(done) {
       inject(function($compile, $document, $window, $rootElement, $rootScope) {
 
-        var doc = $document[0];
-        var count = doc.styleSheets.length;
-        var stylesheet = createMockStyleSheet($document);
-        var elm;
-        var job = createAsync(done);
+        let doc = $document[0];
+        let count = doc.styleSheets.length;
+        let stylesheet = createMockStyleSheet($document);
+        let elm;
+        let job = createAsync(done);
         job
         .runs(function() {
           expect(doc.styleSheets.length).toBe(count + 1);
@@ -239,7 +239,7 @@ describe('private mocks', function() {
         job.start();
 
         function getStyle(element, key) {
-          var node = element[0];
+          let node = element[0];
           return node.currentStyle ?
             node.currentStyle[key] :
             $window.getComputedStyle(node)[key];

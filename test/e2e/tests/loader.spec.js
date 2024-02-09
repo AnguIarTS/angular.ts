@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('angular-loader', function() {
   beforeEach(function() {

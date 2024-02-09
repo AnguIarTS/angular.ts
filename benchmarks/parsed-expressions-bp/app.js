@@ -1,6 +1,6 @@
-'use strict';
 
-var app = angular.module('parsedExpressionBenchmark', []);
+
+let app = angular.module('parsedExpressionBenchmark', []);
 
 app.config(function($compileProvider) {
   if ($compileProvider.debugInfoEnabled) {
@@ -45,15 +45,15 @@ app.directive('bmPeWatchCollection', function() {
 });
 
 app.controller('DataController', function($scope, $rootScope) {
-  var totalRows = 10000;
+  let totalRows = 10000;
 
-  var data = $scope.data = [];
+  let data = $scope.data = [];
 
-  var star = '*';
+  let star = '*';
 
   $scope.func = function() { return star; };
 
-  for (var i = 0; i < totalRows; i++) {
+  for (let i = 0; i < totalRows; i++) {
     data.push({
       index: i,
       odd: i % 2 === 0,
@@ -76,7 +76,7 @@ app.controller('DataController', function($scope, $rootScope) {
   benchmarkSteps.push({
     name: '$apply',
     fn: function() {
-      for (var i = 0; i < 50; i++) {
+      for (let i = 0; i < 50; i++) {
         $rootScope.$digest();
       }
     }

@@ -1,5 +1,3 @@
-"use strict";
-
 ngRouteModule.directive("ngView", ngViewFactory);
 ngRouteModule.directive("ngView", ngViewFillContentFactory);
 
@@ -153,7 +151,7 @@ ngRouteModule.directive("ngView", ngViewFillContentFactory);
       <file name="protractor.js" type="protractor">
         it('should load and compile correct template', function() {
           element(by.linkText('Moby: Ch1')).click();
-          var content = element(by.css('[ng-view]')).getText();
+          let content = element(by.css('[ng-view]')).getText();
           expect(content).toMatch(/controller: ChapterCtrl/);
           expect(content).toMatch(/Book Id: Moby/);
           expect(content).toMatch(/Chapter Id: 1/);
@@ -183,7 +181,7 @@ function ngViewFactory($route, $anchorScroll, $animate) {
     priority: 400,
     transclude: "element",
     link: function (scope, $element, attr, ctrl, $transclude) {
-      var currentScope,
+      let currentScope,
         currentElement,
         previousLeaveAnimation,
         autoScrollExp = attr.autoscroll,
@@ -212,12 +210,12 @@ function ngViewFactory($route, $anchorScroll, $animate) {
       }
 
       function update() {
-        var locals = $route.current && $route.current.locals,
+        let locals = $route.current && $route.current.locals,
           template = locals && locals.$template;
 
         if (angular.isDefined(template)) {
-          var newScope = scope.$new();
-          var current = $route.current;
+          let newScope = scope.$new();
+          let current = $route.current;
 
           // Note: This will also link all children of ng-view that were contained in the original
           // html. If that content contains controllers, ... they could pollute/change the scope.
@@ -225,7 +223,7 @@ function ngViewFactory($route, $anchorScroll, $animate) {
           // Note: We can't remove them in the cloneAttchFn of $transclude as that
           // function is called before linking the content, which would apply child
           // directives to non existing elements.
-          var clone = $transclude(newScope, function (clone) {
+          let clone = $transclude(newScope, function (clone) {
             $animate
               .enter(clone, null, currentElement || $element)
               .done(function onNgViewEnter(response) {
@@ -263,16 +261,16 @@ function ngViewFillContentFactory($compile, $controller, $route) {
     restrict: "ECA",
     priority: -400,
     link: function (scope, $element) {
-      var current = $route.current,
+      let current = $route.current,
         locals = current.locals;
 
       $element.html(locals.$template);
 
-      var link = $compile($element.contents());
+      let link = $compile($element.contents());
 
       if (current.controller) {
         locals.$scope = scope;
-        var controller = $controller(current.controller, locals);
+        let controller = $controller(current.controller, locals);
         if (current.controllerAs) {
           scope[current.controllerAs] = controller;
         }

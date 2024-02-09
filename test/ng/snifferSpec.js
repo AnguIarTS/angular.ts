@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('$sniffer', function() {
   function sniffer($window, $document) {
@@ -14,7 +14,7 @@ describe('$sniffer', function() {
 
   describe('history', function() {
     it('should be true if history.pushState defined', function() {
-      var mockWindow = {
+      let mockWindow = {
         history: {
           pushState: noop,
           replaceState: noop
@@ -32,7 +32,7 @@ describe('$sniffer', function() {
 
 
     it('should be false on Boxee box with an older version of Webkit', function() {
-      var mockWindow = {
+      let mockWindow = {
         history: {
           pushState: noop
         },
@@ -46,7 +46,7 @@ describe('$sniffer', function() {
 
 
     it('should be true on NW.js apps (which look similar to Chrome Packaged Apps)', function() {
-      var mockWindow = {
+      let mockWindow = {
         history: {
           pushState: noop
         },
@@ -74,14 +74,14 @@ describe('$sniffer', function() {
       expect(sniffer(createMockWindow(true, true)).history).toBe(false);
 
       function createMockWindow(isChrome, isPackagedApp) {
-        var mockWindow = {
+        let mockWindow = {
           history: {
             pushState: noop
           }
         };
 
         if (isChrome) {
-          var chromeAppObj = isPackagedApp ? {runtime: {}} : {};
+          let chromeAppObj = isPackagedApp ? {runtime: {}} : {};
           mockWindow.chrome = {app: chromeAppObj};
         }
 
@@ -91,12 +91,12 @@ describe('$sniffer', function() {
 
 
     it('should not try to access `history.pushState` in Chrome Packaged Apps', function() {
-      var pushStateAccessCount = 0;
+      let pushStateAccessCount = 0;
 
-      var mockHistory = Object.create(Object.prototype, {
+      let mockHistory = Object.create(Object.prototype, {
         pushState: {get: function() { pushStateAccessCount++; return noop; }}
       });
-      var mockWindow = {
+      let mockWindow = {
         chrome: {
           app: {
             runtime: {}
@@ -112,12 +112,12 @@ describe('$sniffer', function() {
 
     it('should not try to access `history.pushState` in sandboxed Chrome Packaged Apps',
       function() {
-        var pushStateAccessCount = 0;
+        let pushStateAccessCount = 0;
 
-        var mockHistory = Object.create(Object.prototype, {
+        let mockHistory = Object.create(Object.prototype, {
           pushState: {get: function() { pushStateAccessCount++; return noop; }}
         });
-        var mockWindow = {
+        let mockWindow = {
           chrome: {
             runtime: {
               id: 'x'
@@ -135,11 +135,11 @@ describe('$sniffer', function() {
 
 
   describe('hasEvent', function() {
-    var mockDocument, mockDivElement, $sniffer;
+    let mockDocument, mockDivElement, $sniffer;
 
     beforeEach(function() {
-      var mockCreateElementFn = function(elm) { if (elm === 'div') return mockDivElement; };
-      var createElementSpy = jasmine.createSpy('createElement').and.callFake(mockCreateElementFn);
+      let mockCreateElementFn = function(elm) { if (elm === 'div') return mockDivElement; };
+      let createElementSpy = jasmine.createSpy('createElement').and.callFake(mockCreateElementFn);
 
       mockDocument = {createElement: createElementSpy};
       $sniffer = sniffer({}, mockDocument);
@@ -170,21 +170,12 @@ describe('$sniffer', function() {
       expect(mockDocument.createElement).toHaveBeenCalledOnce();
     });
 
-
-    it('should claim that IE9 doesn\'t have support for "oninput"', function() {
-      // Support: IE 9-11 only
-      // IE9 implementation is fubared, so it's better to pretend that it doesn't have the support
-      // IE10+ implementation is fubared when mixed with placeholders
-      mockDivElement = {oninput: noop};
-
-      expect($sniffer.hasEvent('input')).toBe(!msie);
-    });
   });
 
 
   describe('csp', function() {
     it('should have all rules set to false by default', function() {
-      var csp = sniffer({}).csp;
+      const csp = sniffer({}).csp;
       forEach(Object.keys(csp), function(key) {
         expect(csp[key]).toEqual(false);
       });
@@ -199,7 +190,7 @@ describe('$sniffer', function() {
 
 
     it('should be false when there is no animation style', function() {
-      var mockDocument = {
+      let mockDocument = {
         body: {
           style: {}
         }
@@ -210,8 +201,8 @@ describe('$sniffer', function() {
 
 
     it('should be true with -webkit-prefixed animations', function() {
-      var animationStyle = 'some_animation 2s linear';
-      var mockDocument = {
+      let animationStyle = 'some_animation 2s linear';
+      let mockDocument = {
         body: {
           style: {
             webkitAnimation: animationStyle
@@ -224,7 +215,7 @@ describe('$sniffer', function() {
 
 
     it('should be true with w3c-style animations', function() {
-      var mockDocument = {
+      let mockDocument = {
         body: {
           style: {
             animation: 'some_animation 2s linear'
@@ -237,12 +228,12 @@ describe('$sniffer', function() {
 
 
     it('should be true on android with older body style properties', function() {
-      var mockWindow = {
+      let mockWindow = {
         navigator: {
           userAgent: 'android 2'
         }
       };
-      var mockDocument = {
+      let mockDocument = {
         body: {
           style: {
             webkitAnimation: ''
@@ -255,7 +246,7 @@ describe('$sniffer', function() {
 
 
     it('should be true when an older version of Webkit is used', function() {
-      var mockDocument = {
+      let mockDocument = {
         body: {
           style: {
             WebkitOpacity: '0'
@@ -275,7 +266,7 @@ describe('$sniffer', function() {
 
 
     it('should be false when there is no transition style', function() {
-      var mockDocument = {
+      let mockDocument = {
         body: {
           style: {}
         }
@@ -286,8 +277,8 @@ describe('$sniffer', function() {
 
 
     it('should be true with -webkit-prefixed transitions', function() {
-      var transitionStyle = '1s linear all';
-      var mockDocument = {
+      let transitionStyle = '1s linear all';
+      let mockDocument = {
         body: {
           style: {
             webkitTransition: transitionStyle
@@ -300,7 +291,7 @@ describe('$sniffer', function() {
 
 
     it('should be true with w3c-style transitions', function() {
-      var mockDocument = {
+      let mockDocument = {
         body: {
           style: {
             transition: '1s linear all'
@@ -313,12 +304,12 @@ describe('$sniffer', function() {
 
 
     it('should be true on android with older body style properties', function() {
-      var mockWindow = {
+      let mockWindow = {
         navigator: {
           userAgent: 'android 2'
         }
       };
-      var mockDocument = {
+      let mockDocument = {
         body: {
           style: {
             webkitTransition: ''
@@ -333,7 +324,7 @@ describe('$sniffer', function() {
 
   describe('android', function() {
     it('should provide the android version', function() {
-      var mockWindow = {
+      let mockWindow = {
         navigator: {
           userAgent: 'android 2'
         }

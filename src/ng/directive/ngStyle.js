@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngStyle
@@ -39,7 +37,7 @@
        }
      </file>
      <file name="protractor.js" type="protractor">
-       var colorSpan = element(by.css('span'));
+       let colorSpan = element(by.css('span'));
 
        it('should check ng-style', function() {
          expect(colorSpan.getCssValue('color')).toMatch(/rgba\(0, 0, 0, 1\)|rgb\(0, 0, 0\)/);
@@ -51,7 +49,7 @@
      </file>
    </example>
  */
-var ngStyleDirective = ngDirective(function (scope, element, attr) {
+let ngStyleDirective = ngDirective(function (scope, element, attr) {
   scope.$watchCollection(
     attr.ngStyle,
     function ngStyleWatchAction(newStyles, oldStyles) {

@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngNonBindable
@@ -31,4 +29,4 @@
     </file>
   </example>
  */
-var ngNonBindableDirective = ngDirective({ terminal: true, priority: 1000 });
+let ngNonBindableDirective = ngDirective({ terminal: true, priority: 1000 });

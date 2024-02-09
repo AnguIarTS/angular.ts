@@ -1,7 +1,3 @@
-"use strict";
-
-/* eslint-disable new-cap */
-
 /**
  * @ngdoc module
  * @name ngParseExt

@@ -1,22 +1,22 @@
 #!/usr/bin/env node
-'use strict';
 
-var Q  = require('q'),
+
+let Q  = require('q'),
     qfs  = require('q-io/fs'),
     closureI18nExtractor = require('./closureI18nExtractor.js'),
     localeInfo = {};
 
 
-var NG_LOCALE_DIR = __dirname + '/../../src/ngLocale/';
+let NG_LOCALE_DIR = __dirname + '/../../src/ngLocale/';
 
 
 function readSymbols() {
   console.log('Processing currency and number symbols ...');
-  var numericStagePromise = qfs.read(__dirname + '/../closure/currencySymbols.js', 'b')
+  let numericStagePromise = qfs.read(__dirname + '/../closure/currencySymbols.js', 'b')
     .then(function(content) {
-      var currencySymbols = closureI18nExtractor.extractCurrencySymbols(content);
+      let currencySymbols = closureI18nExtractor.extractCurrencySymbols(content);
       return qfs.read(__dirname + '/../closure/numberSymbols.js', 'b').then(function(content) {
-          var numberSymbols = content;
+          let numberSymbols = content;
           return qfs.read(__dirname + '/../closure/numberSymbolsExt.js', 'b')
             .then(function(content) {
               numberSymbols += content;
@@ -26,7 +26,7 @@ function readSymbols() {
       });
 
   console.log('Processing datetime symbols ...');
-  var datetimeStagePromise = qfs.read(__dirname + '/../closure/datetimeSymbols.js', 'b')
+  let datetimeStagePromise = qfs.read(__dirname + '/../closure/datetimeSymbols.js', 'b')
       .then(function(content) {
         closureI18nExtractor.extractDateTimeSymbols(content, localeInfo);
         return qfs.read(__dirname + '/../closure/datetimeSymbolsExt.js', 'b').then(function(content) {
@@ -46,9 +46,9 @@ function extractPlurals() {
 
 function writeLocaleFiles() {
   console.log('Final stage: Writing AngularJS locale files to directory: %j', NG_LOCALE_DIR);
-  var result = Q.defer();
-  var localeIds = Object.keys(localeInfo);
-  var num_files = 0;
+  let result = Q.defer();
+  let localeIds = Object.keys(localeInfo);
+  let num_files = 0;
 
   console.log('Generated %j locale files.', localeIds.length);
   loop();
@@ -58,7 +58,7 @@ function writeLocaleFiles() {
   // as otherwise we will get the error EMFILE, which means
   // we have too many open files.
   function loop() {
-    var nextPromise;
+    let nextPromise;
     if (localeIds.length) {
       nextPromise = process(localeIds.pop()) || Q.when();
       nextPromise.then(loop, result.reject);
@@ -68,10 +68,10 @@ function writeLocaleFiles() {
   }
 
   function process(localeID) {
-    var content = closureI18nExtractor.outputLocale(localeInfo, localeID);
+    let content = closureI18nExtractor.outputLocale(localeInfo, localeID);
     if (!content) return;
-    var correctedLocaleId = closureI18nExtractor.correctedLocaleId(localeID);
-    var filename = NG_LOCALE_DIR + 'angular-locale_' + correctedLocaleId + '.js';
+    let correctedLocaleId = closureI18nExtractor.correctedLocaleId(localeID);
+    let filename = NG_LOCALE_DIR + 'angular-locale_' + correctedLocaleId + '.js';
     console.log('Writing ' + filename);
     return qfs.write(filename, content)
         .then(function() {

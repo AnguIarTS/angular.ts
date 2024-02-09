@@ -1,9 +1,9 @@
-'use strict';
+
 
 describe('$animate', function() {
 
   describe('without animation', function() {
-    var element, $rootElement;
+    let element, $rootElement;
 
     beforeEach(module(function() {
       return function($compile, _$rootElement_, $rootScope) {
@@ -13,7 +13,7 @@ describe('$animate', function() {
     }));
 
     it('should add element at the start of enter animation', inject(function($animate, $compile, $rootScope) {
-      var child = $compile('<div></div>')($rootScope);
+      let child = $compile('<div></div>')($rootScope);
       expect(element.contents().length).toBe(0);
       $animate.enter(child, element);
       expect(element.contents().length).toBe(1);
@@ -22,18 +22,18 @@ describe('$animate', function() {
     it('should enter the element to the start of the parent container',
       inject(function($animate, $compile, $rootScope) {
 
-      for (var i = 0; i < 5; i++) {
+      for (let i = 0; i < 5; i++) {
         element.append(jqLite('<div> ' + i + '</div>'));
       }
 
-      var child = jqLite('<div>first</div>');
+      let child = jqLite('<div>first</div>');
       $animate.enter(child, element);
 
       expect(element.text()).toEqual('first 0 1 2 3 4');
     }));
 
     it('should remove the element at the end of leave animation', inject(function($animate, $compile, $rootScope) {
-      var child = $compile('<div></div>')($rootScope);
+      let child = $compile('<div></div>')($rootScope);
       element.append(child);
       expect(element.contents().length).toBe(1);
       $animate.leave(child);
@@ -41,8 +41,8 @@ describe('$animate', function() {
     }));
 
     it('should reorder the move animation', inject(function($animate, $compile, $rootScope) {
-      var child1 = $compile('<div>1</div>')($rootScope);
-      var child2 = $compile('<div>2</div>')($rootScope);
+      let child1 = $compile('<div>1</div>')($rootScope);
+      let child2 = $compile('<div>2</div>')($rootScope);
       element.append(child1);
       element.append(child2);
       expect(element.text()).toBe('12');
@@ -69,9 +69,9 @@ describe('$animate', function() {
     }));
 
     it('should run each method and return a promise', inject(function($animate, $document) {
-      var element = jqLite('<div></div>');
-      var move   = jqLite('<div></div>');
-      var parent = jqLite($document[0].body);
+      let element = jqLite('<div></div>');
+      let move   = jqLite('<div></div>');
+      let parent = jqLite($document[0].body);
       parent.append(move);
 
       expect($animate.enter(element, parent)).toBeAPromise();
@@ -94,8 +94,8 @@ describe('$animate', function() {
 
     it('should add and remove classes on SVG elements', inject(function($animate, $rootScope) {
       if (!window.SVGElement) return;
-      var svg = jqLite('<svg><rect></rect></svg>');
-      var rect = svg.children();
+      let svg = jqLite('<svg><rect></rect></svg>');
+      let rect = svg.children();
       $animate.enabled(false);
       expect(rect).toBeShown();
       $animate.addClass(rect, 'ng-hide');
@@ -116,7 +116,7 @@ describe('$animate', function() {
     });
 
     it('should register the animation and be available for lookup', function() {
-      var provider;
+      let provider;
       module(function($animateProvider) {
         provider = $animateProvider;
       });
@@ -131,9 +131,9 @@ describe('$animate', function() {
     });
 
     it('should apply and retain inline styles on the element that is animated', inject(function($animate, $rootScope) {
-      var element = jqLite('<div></div>');
-      var parent = jqLite('<div></div>');
-      var other = jqLite('<div></div>');
+      let element = jqLite('<div></div>');
+      let parent = jqLite('<div></div>');
+      let other = jqLite('<div></div>');
       parent.append(other);
       $animate.enabled(true);
 
@@ -179,7 +179,7 @@ describe('$animate', function() {
     it('should merge the from and to styles that are provided',
       inject(function($animate, $rootScope) {
 
-      var element = jqLite('<div></div>');
+      let element = jqLite('<div></div>');
 
       element.css('color', 'red');
       $animate.addClass(element, 'on', {
@@ -188,7 +188,7 @@ describe('$animate', function() {
       });
       $rootScope.$digest();
 
-      var style = element[0].style;
+      let style = element[0].style;
       expect(style.color).toBe('green');
       expect(style.borderColor).toBe('purple');
     }));
@@ -196,7 +196,7 @@ describe('$animate', function() {
     it('should avoid cancelling out add/remove when the element already contains the class',
       inject(function($animate, $rootScope) {
 
-      var element = jqLite('<div class="ng-hide"></div>');
+      let element = jqLite('<div class="ng-hide"></div>');
 
       $animate.addClass(element, 'ng-hide');
       $animate.removeClass(element, 'ng-hide');
@@ -208,7 +208,7 @@ describe('$animate', function() {
     it('should avoid cancelling out remove/add if the element does not contain the class',
       inject(function($animate, $rootScope) {
 
-      var element = jqLite('<div></div>');
+      let element = jqLite('<div></div>');
 
       $animate.removeClass(element, 'ng-hide');
       $animate.addClass(element, 'ng-hide');
@@ -221,8 +221,8 @@ describe('$animate', function() {
       ['enter', 'move'], function(method) {
 
       inject(function($document, $animate, $rootElement) {
-        var element = jqLite('<div></div>');
-        var parent = $document[0].createElement('div');
+        let element = jqLite('<div></div>');
+        let parent = $document[0].createElement('div');
         $rootElement.append(parent);
 
         $animate[method](element, parent);
@@ -234,8 +234,8 @@ describe('$animate', function() {
       ['enter', 'move'], function(method) {
 
       inject(function($document, $animate, $rootElement) {
-        var element = jqLite('<div></div>');
-        var after = $document[0].createElement('div');
+        let element = jqLite('<div></div>');
+        let after = $document[0].createElement('div');
         $rootElement.append(after);
 
         $animate[method](element, null, after);
@@ -246,7 +246,7 @@ describe('$animate', function() {
     they('$prop() should operate using a native DOM element',
       ['enter', 'move', 'leave', 'addClass', 'removeClass', 'setClass', 'animate'], function(event) {
 
-      var captureSpy = jasmine.createSpy();
+      let captureSpy = jasmine.createSpy();
 
       module(function($provide) {
         $provide.value('$$animateQueue', {
@@ -255,16 +255,16 @@ describe('$animate', function() {
       });
 
       inject(function($animate, $rootScope, $document, $rootElement) {
-        var element = jqLite('<div></div>');
-        var parent2 = jqLite('<div></div>');
-        var parent = $rootElement;
+        let element = jqLite('<div></div>');
+        let parent2 = jqLite('<div></div>');
+        let parent = $rootElement;
         parent.append(parent2);
 
         if (event !== 'enter' && event !== 'move') {
           parent.append(element);
         }
 
-        var fn, invalidOptions = function() { };
+        let fn, invalidOptions = function() { };
 
         switch (event) {
           case 'enter':
@@ -301,7 +301,7 @@ describe('$animate', function() {
             break;
 
           case 'animate':
-            var toStyles = { color: 'red' };
+            let toStyles = { color: 'red' };
             fn = function() {
               $animate.animate(element, {}, toStyles, 'klass', invalidOptions);
             };
@@ -313,7 +313,7 @@ describe('$animate', function() {
           $rootScope.$digest();
         }).not.toThrow();
 
-        var optionsArg = captureSpy.calls.mostRecent().args[2];
+        let optionsArg = captureSpy.calls.mostRecent().args[2];
         expect(optionsArg).not.toBe(invalidOptions);
         expect(isObject(optionsArg)).toBeTruthy();
       });
@@ -322,10 +322,10 @@ describe('$animate', function() {
 
   it('should not issue a call to addClass if the provided class value is not a string or array', function() {
     inject(function($animate, $rootScope, $rootElement) {
-      var spy = spyOn(window, 'jqLiteAddClass').and.callThrough();
+      let spy = spyOn(window, 'jqLiteAddClass').and.callThrough();
 
-      var element = jqLite('<div></div>');
-      var parent = $rootElement;
+      let element = jqLite('<div></div>');
+      let parent = $rootElement;
 
       $animate.enter(element, parent, null, { addClass: noop });
       $rootScope.$digest();
@@ -344,8 +344,8 @@ describe('$animate', function() {
 
   it('should not break postDigest for subsequent elements if addClass contains non-valid CSS class names', function() {
     inject(function($animate, $rootScope, $rootElement) {
-      var element1 = jqLite('<div></div>');
-      var element2 = jqLite('<div></div>');
+      let element1 = jqLite('<div></div>');
+      let element2 = jqLite('<div></div>');
 
       $animate.enter(element1, $rootElement, null, { addClass: ' ' });
       $animate.enter(element2, $rootElement, null, { addClass: 'valid-name' });
@@ -358,10 +358,10 @@ describe('$animate', function() {
 
   it('should not issue a call to removeClass if the provided class value is not a string or array', function() {
     inject(function($animate, $rootScope, $rootElement) {
-      var spy = spyOn(window, 'jqLiteRemoveClass').and.callThrough();
+      let spy = spyOn(window, 'jqLiteRemoveClass').and.callThrough();
 
-      var element = jqLite('<div></div>');
-      var parent = $rootElement;
+      let element = jqLite('<div></div>');
+      let parent = $rootElement;
 
       $animate.enter(element, parent, null, {removeClass: noop});
       $rootScope.$digest();
@@ -379,20 +379,20 @@ describe('$animate', function() {
   });
 
   it('should not alter the provided options input in any way throughout the animation', inject(function($animate, $rootElement, $rootScope) {
-    var element = jqLite('<div></div>');
-    var parent = $rootElement;
+    let element = jqLite('<div></div>');
+    let parent = $rootElement;
 
-    var initialOptions = {
+    let initialOptions = {
       from: { height: '50px' },
       to: { width: '50px' },
       addClass: 'one',
       removeClass: 'two'
     };
 
-    var copiedOptions = copy(initialOptions);
+    let copiedOptions = copy(initialOptions);
     expect(copiedOptions).toEqual(initialOptions);
 
-    var runner = $animate.enter(element, parent, null, copiedOptions);
+    let runner = $animate.enter(element, parent, null, copiedOptions);
     expect(copiedOptions).toEqual(initialOptions);
 
     $rootScope.$digest();
@@ -400,9 +400,9 @@ describe('$animate', function() {
   }));
 
   describe('CSS class DOM manipulation', function() {
-    var element;
-    var addClass;
-    var removeClass;
+    let element;
+    let addClass;
+    let removeClass;
 
     beforeEach(module(provideLog));
 
@@ -419,17 +419,17 @@ describe('$animate', function() {
 
     function setupClassManipulationLogger(log) {
       inject(function() {
-        var _addClass = jqLiteAddClass;
+        let _addClass = jqLiteAddClass;
         addClass = spyOn(window, 'jqLiteAddClass').and.callFake(function(element, classes) {
-          var names = classes;
+          let names = classes;
           if (Object.prototype.toString.call(classes) === '[object Array]') names = classes.join(' ');
           log('addClass(' + names + ')');
           return _addClass(element, classes);
         });
 
-        var _removeClass = jqLiteRemoveClass;
+        let _removeClass = jqLiteRemoveClass;
         removeClass = spyOn(window, 'jqLiteRemoveClass').and.callFake(function(element, classes) {
-          var names = classes;
+          let names = classes;
           if (Object.prototype.toString.call(classes) === '[object Array]') names = classes.join(' ');
           log('removeClass(' + names + ')');
           return _removeClass(element, classes);
@@ -534,7 +534,7 @@ describe('$animate', function() {
       if (!window.SVGElement) return;
       setupClassManipulationSpies();
       element = jqLite('<svg><g></g></svg>');
-      var target = element.children().eq(0);
+      let target = element.children().eq(0);
 
       $rootScope.$apply(function() {
         $animate.addClass(target, 'test-class1');
@@ -561,7 +561,7 @@ describe('$animate', function() {
       if (!window.SVGElement) return;
       setupClassManipulationLogger(log);
       element = jqLite('<svg><g class="test-class4"></g></svg>');
-      var target = element.children().eq(0);
+      let target = element.children().eq(0);
 
       $animate.addClass(target, 'test-class1');
       $animate.removeClass(target, 'test-class1');
@@ -583,7 +583,7 @@ describe('$animate', function() {
     it('should perform class manipulation in expected order at end of digest for SVG', inject(function($rootScope, $animate, log) {
       if (!window.SVGElement) return;
       element = jqLite('<svg><g class="test-class3"></g></svg>');
-      var target = element.children().eq(0);
+      let target = element.children().eq(0);
 
       setupClassManipulationLogger(log);
 

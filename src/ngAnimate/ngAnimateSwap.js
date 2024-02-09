@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngAnimateSwap
@@ -40,7 +38,7 @@
  *           $scope.number++;
  *         }, 1000);
  *
- *         var colors = ['red','blue','green','yellow','orange'];
+ *         let colors = ['red','blue','green','yellow','orange'];
  *         $scope.colorClass = function(number) {
  *           return colors[number % colors.length];
  *         };
@@ -87,7 +85,7 @@
  *  </file>
  * </example>
  */
-var ngAnimateSwapDirective = [
+let ngAnimateSwapDirective = [
   "$animate",
   function ($animate) {
     return {
@@ -97,7 +95,7 @@ var ngAnimateSwapDirective = [
       priority: 550, // We use 550 here to ensure that the directive is caught before others,
       // but after `ngIf` (at priority 600).
       link: function (scope, $element, attrs, ctrl, $transclude) {
-        var previousElement, previousScope;
+        let previousElement, previousScope;
         scope.$watchCollection(
           attrs.ngAnimateSwap || attrs["for"],
           function (value) {

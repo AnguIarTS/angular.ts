@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('$cookies', function() {
-  var mockedCookies;
+  let mockedCookies;
 
   beforeEach(function() {
     mockedCookies = {};

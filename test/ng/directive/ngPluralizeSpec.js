@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('ngPluralize', function() {
-  var element,
+  let element,
     elementAlt;
 
 
@@ -186,7 +186,7 @@ describe('ngPluralize', function() {
   });
 
   describe('undefined rule cases', function() {
-    var $locale, $log;
+    let $locale, $log;
     beforeEach(inject(function(_$locale_, _$log_) {
       $locale = _$locale_;
       $log = _$log_;

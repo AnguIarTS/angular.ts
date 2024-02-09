@@ -7,7 +7,7 @@ Occurs when an invalid identifier is specified in an {@link ng.directive:ngRepea
 
 The {@link ng.directive:ngRepeat ngRepeat} directive's `alias as` syntax is used to assign an alias for the processed collection in scope.
 
-If the expression is not a simple identifier (such that you could declare it with `var {name}`, or if the expression is a reserved name,
+If the expression is not a simple identifier (such that you could declare it with `let {name}`, or if the expression is a reserved name,
 this error is thrown.
 
 Reserved names include:

@@ -1,5 +1,3 @@
-"use strict";
-
 /** @this */
 function $$IntervalFactoryProvider() {
   this.$get = [
@@ -10,7 +8,7 @@ function $$IntervalFactoryProvider() {
     function ($browser, $q, $$q, $rootScope) {
       return function intervalFactory(setIntervalFn, clearIntervalFn) {
         return function intervalFn(fn, delay, count, invokeApply) {
-          var hasParams = arguments.length > 4,
+          let hasParams = arguments.length > 4,
             args = hasParams ? sliceArgs(arguments, 4) : [],
             iteration = 0,
             skipApply = isDefined(invokeApply) && !invokeApply,

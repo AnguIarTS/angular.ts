@@ -1,6 +1,4 @@
-"use strict";
-
-var $interpolateMinErr = (angular.$interpolateMinErr = minErr("$interpolate"));
+let $interpolateMinErr = (angular.$interpolateMinErr = minErr("$interpolate"));
 $interpolateMinErr.throwNoconcat = function (text) {
   throw $interpolateMinErr(
     "noconcat",
@@ -41,7 +39,7 @@ $interpolateMinErr.interr = function (text, err) {
 <example name="custom-interpolation-markup" module="customInterpolationApp">
 <file name="index.html">
 <script>
-  var customInterpolationApp = angular.module('customInterpolationApp', []);
+  let customInterpolationApp = angular.module('customInterpolationApp', []);
 
   customInterpolationApp.config(function($interpolateProvider) {
     $interpolateProvider.startSymbol('//');
@@ -65,8 +63,8 @@ $interpolateMinErr.interr = function (text, err) {
 </example>
  */
 function $InterpolateProvider() {
-  var startSymbol = "{{";
-  var endSymbol = "}}";
+  let startSymbol = "{{";
+  let endSymbol = "}}";
 
   /**
    * @ngdoc method
@@ -107,7 +105,7 @@ function $InterpolateProvider() {
     "$exceptionHandler",
     "$sce",
     function ($parse, $exceptionHandler, $sce) {
-      var startSymbolLength = startSymbol.length,
+      let startSymbolLength = startSymbol.length,
         endSymbolLength = endSymbol.length,
         escapedStartRegexp = new RegExp(startSymbol.replace(/./g, escape), "g"),
         escapedEndRegexp = new RegExp(endSymbol.replace(/./g, escape), "g");
@@ -129,7 +127,7 @@ function $InterpolateProvider() {
         objectEquality,
         constantInterp,
       ) {
-        var unwatch = scope.$watch(
+        let unwatch = scope.$watch(
           function constantInterpolateWatch(scope) {
             unwatch();
             return constantInterp(scope);
@@ -157,8 +155,8 @@ function $InterpolateProvider() {
        *
        *
        * ```js
-       *   var $interpolate = ...; // injected
-       *   var exp = $interpolate('Hello {{name | uppercase}}!');
+       *   let $interpolate = ...; // injected
+       *   let exp = $interpolate('Hello {{name | uppercase}}!');
        *   expect(exp({name:'AngularJS'})).toEqual('Hello ANGULARJS!');
        * ```
        *
@@ -167,11 +165,11 @@ function $InterpolateProvider() {
        * evaluate to a value other than `undefined`.
        *
        * ```js
-       *   var $interpolate = ...; // injected
-       *   var context = {greeting: 'Hello', name: undefined };
+       *   let $interpolate = ...; // injected
+       *   let context = {greeting: 'Hello', name: undefined };
        *
        *   // default "forgiving" mode
-       *   var exp = $interpolate('{{greeting}} {{name}}!');
+       *   let exp = $interpolate('{{greeting}} {{name}}!');
        *   expect(exp(context)).toEqual('Hello !');
        *
        *   // "allOrNothing" mode
@@ -264,18 +262,18 @@ function $InterpolateProvider() {
         trustedContext,
         allOrNothing,
       ) {
-        var contextAllowsConcatenation =
+        let contextAllowsConcatenation =
           trustedContext === $sce.URL || trustedContext === $sce.MEDIA_URL;
 
         // Provide a quick exit and simplified result function for text with no interpolation
         if (!text.length || text.indexOf(startSymbol) === -1) {
           if (mustHaveExpression) return;
 
-          var unescapedText = unescapeText(text);
+          let unescapedText = unescapeText(text);
           if (contextAllowsConcatenation) {
             unescapedText = $sce.getTrusted(trustedContext, unescapedText);
           }
-          var constantInterp = valueFn(unescapedText);
+          let constantInterp = valueFn(unescapedText);
           constantInterp.exp = text;
           constantInterp.expressions = [];
           constantInterp.$$watchDelegate = constantWatchDelegate;
@@ -284,7 +282,7 @@ function $InterpolateProvider() {
         }
 
         allOrNothing = !!allOrNothing;
-        var startIndex,
+        let startIndex,
           endIndex,
           index = 0,
           expressions = [],
@@ -325,7 +323,7 @@ function $InterpolateProvider() {
         // Intercept expression if we need to stringify concatenated inputs, which may be SCE trusted
         // objects rather than simple strings
         // (we don't modify the expression if the input consists of only a single trusted input)
-        var interceptor =
+        let interceptor =
           contextAllowsConcatenation && singleExpression
             ? undefined
             : parseStringifyInterceptor;
@@ -347,8 +345,8 @@ function $InterpolateProvider() {
         // only used in srcdoc attributes, this would not be very useful.
 
         if (!mustHaveExpression || expressions.length) {
-          var compute = function (values) {
-            for (var i = 0, ii = expressions.length; i < ii; i++) {
+          let compute = function (values) {
+            for (let i = 0, ii = expressions.length; i < ii; i++) {
               if (allOrNothing && isUndefined(values[i])) return;
               concat[expressionPositions[i]] = values[i];
             }
@@ -369,9 +367,9 @@ function $InterpolateProvider() {
 
           return extend(
             function interpolationFn(context) {
-              var i = 0;
-              var ii = expressions.length;
-              var values = new Array(ii);
+              let i = 0;
+              let ii = expressions.length;
+              let values = new Array(ii);
 
               try {
                 for (; i < ii; i++) {
@@ -388,14 +386,14 @@ function $InterpolateProvider() {
               exp: text, //just for compatibility with regular watchers created via $watch
               expressions: expressions,
               $$watchDelegate: function (scope, listener) {
-                var lastValue;
+                let lastValue;
                 return scope.$watchGroup(
                   parseFns,
                   /** @this */ function interpolateFnWatcher(
                     values,
                     oldValues,
                   ) {
-                    var currValue = compute(values);
+                    let currValue = compute(values);
                     listener.call(
                       this,
                       currValue,

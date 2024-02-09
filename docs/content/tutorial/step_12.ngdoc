@@ -25,7 +25,7 @@ In this step, you will add a clickable phone image swapper to the phone details 
     ...
     controller: ['$http', '$routeParams',
       function PhoneDetailController($http, $routeParams) {
-        var self = this;
+        let self = this;
 
         self.setImage = function setImage(imageUrl) {
           self.mainImageUrl = imageUrl;
@@ -90,14 +90,14 @@ that the main image URL changes accordingly.
     ...
 
     it('should display the first phone image as the main phone image', function() {
-      var mainImage = element(by.css('img.phone'));
+      let mainImage = element(by.css('img.phone'));
 
       expect(mainImage.getAttribute('src')).toMatch(/img\/phones\/nexus-s.0.jpg/);
     });
 
     it('should swap the main image when clicking on a thumbnail image', function() {
-      var mainImage = element(by.css('img.phone'));
-      var thumbnails = element.all(by.css('.phone-thumbs img'));
+      let mainImage = element(by.css('img.phone'));
+      let thumbnails = element.all(by.css('.phone-thumbs img'));
 
       thumbnails.get(2).click();
       expect(mainImage.getAttribute('src')).toMatch(/img\/phones\/nexus-s.2.jpg/);
@@ -123,8 +123,8 @@ property to the controller. As previously, we will use a mocked response.
   ...
 
   describe('controller', function() {
-    var $httpBackend, ctrl
-    var xyzPhoneData = {
+    let $httpBackend, ctrl
+    let xyzPhoneData = {
       name: 'phone xyz',
       images: ['image/url1.png', 'image/url2.png']
     };

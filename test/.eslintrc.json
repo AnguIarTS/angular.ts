@@ -27,7 +27,6 @@
     "angular": false,
     "minErrConfig": false,
     "errorHandlingConfig": false,
-    "msie": false,
     "jqLite": false,
     "jQuery": false,
     "slice": false,

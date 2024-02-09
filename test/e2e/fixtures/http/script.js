@@ -1,4 +1,4 @@
-'use strict';
+
 
 angular.
   module('test', []).
@@ -19,9 +19,9 @@ angular.
     });
   }).
   controller('TestController', function($cacheFactory, $http, $scope) {
-    var url = '/some/url';
+    let url = '/some/url';
 
-    var cache = $cacheFactory('test');
+    let cache = $cacheFactory('test');
     cache.put(url, 'Hello, world!');
 
     $http.

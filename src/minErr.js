@@ -1,12 +1,13 @@
-"use strict";
-
 /* exported
   minErrConfig,
   errorHandlingConfig,
   isValidObjectMaxDepth
 */
 
-var minErrConfig = {
+import { sliceArgs } from "./ng/utils";
+import { toDebugString } from "./stringify";
+
+export const minErrConfig = {
   objectMaxDepth: 5,
   urlErrorParamsEnabled: true,
 };
@@ -38,7 +39,7 @@ var minErrConfig = {
  *
  *   Default: true. When used without argument, it returns the current value.
  */
-function errorHandlingConfig(config) {
+export function errorHandlingConfig(config) {
   if (isObject(config)) {
     if (isDefined(config.objectMaxDepth)) {
       minErrConfig.objectMaxDepth = isValidObjectMaxDepth(config.objectMaxDepth)
@@ -57,21 +58,12 @@ function errorHandlingConfig(config) {
 }
 
 /**
- * @private
- * @param {Number} maxDepth
- * @return {boolean}
- */
-function isValidObjectMaxDepth(maxDepth) {
-  return isNumber(maxDepth) && maxDepth > 0;
-}
-
-/**
  * @description
  *
  * This object provides a utility for producing rich Error messages within
  * AngularJS. It can be called as follows:
  *
- * var exampleMinErr = minErr('example');
+ * let exampleMinErr = minErr('example');
  * throw exampleMinErr('one', 'This {0} is {1}', foo, bar);
  *
  * The above creates an instance of minErr in the example namespace. The
@@ -95,15 +87,15 @@ function isValidObjectMaxDepth(maxDepth) {
  * @returns {function(code:string, template:string, ...templateArgs): Error} minErr instance
  */
 
-function minErr(module, ErrorConstructor) {
+export function minErr(module, ErrorConstructor) {
   ErrorConstructor = ErrorConstructor || Error;
 
-  var url = 'https://errors.angularjs.org/"NG_VERSION_FULL"/';
-  var regex = url.replace(".", "\\.") + "[\\s\\S]*";
-  var errRegExp = new RegExp(regex, "g");
+  let url = 'https://errors.angularjs.org/"NG_VERSION_FULL"/';
+  let regex = url.replace(".", "\\.") + "[\\s\\S]*";
+  let errRegExp = new RegExp(regex, "g");
 
   return function () {
-    var code = arguments[0],
+    let code = arguments[0],
       template = arguments[1],
       message = "[" + (module ? module + ":" : "") + code + "] ",
       templateArgs = sliceArgs(arguments, 2).map(function (arg) {
@@ -118,7 +110,7 @@ function minErr(module, ErrorConstructor) {
     // To prevent the messages from getting too long, we strip the error urls from the parameters.
 
     message += template.replace(/\{\d+\}/g, function (match) {
-      var index = +match.slice(1, -1);
+      let index = +match.slice(1, -1);
 
       if (index < templateArgs.length) {
         return templateArgs[index].replace(errRegExp, "");

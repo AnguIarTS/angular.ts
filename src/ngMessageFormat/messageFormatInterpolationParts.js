@@ -1,5 +1,3 @@
-"use strict";
-
 // NOTE: ADVANCED_OPTIMIZATIONS mode.
 //
 // This file is compiled with Closure compiler's ADVANCED_OPTIMIZATIONS flag! Be wary of using
@@ -59,16 +57,16 @@ InterpolationParts.prototype.addExpressionFn = function addExpressionFn(
 InterpolationParts.prototype.getExpressionValues = function getExpressionValues(
   context,
 ) {
-  var expressionValues = new Array(this.expressionFns.length);
-  for (var i = 0; i < this.expressionFns.length; i++) {
+  let expressionValues = new Array(this.expressionFns.length);
+  for (let i = 0; i < this.expressionFns.length; i++) {
     expressionValues[i] = this.expressionFns[i](context);
   }
   return expressionValues;
 };
 
 InterpolationParts.prototype.getResult = function getResult(expressionValues) {
-  for (var i = 0; i < this.expressionIndices.length; i++) {
-    var expressionValue = expressionValues[i];
+  for (let i = 0; i < this.expressionIndices.length; i++) {
+    let expressionValue = expressionValues[i];
     if (this.allOrNothing && expressionValue === undefined) return;
     this.textParts[this.expressionIndices[i]] = expressionValue;
   }
@@ -79,7 +77,7 @@ InterpolationParts.prototype.toParsedFn = function toParsedFn(
   mustHaveExpression,
   originalText,
 ) {
-  var self = this;
+  let self = this;
   this.flushPartialText();
   if (mustHaveExpression && this.expressionFns.length === 0) {
     return undefined;
@@ -96,7 +94,7 @@ InterpolationParts.prototype.toParsedFn = function toParsedFn(
     }
     return parseTextLiteral(this.textParts[0]);
   }
-  var parsedFn = function (context) {
+  let parsedFn = function (context) {
     return self.getResult(self.getExpressionValues(context));
   };
   parsedFn["$$watchDelegate"] = function $$watchDelegate(
@@ -109,7 +107,7 @@ InterpolationParts.prototype.toParsedFn = function toParsedFn(
 
   parsedFn["exp"] = originalText; // Needed to pretend to be $interpolate for tests copied from interpolateSpec.js
   parsedFn["expressions"] = new Array(this.expressionFns.length); // Require this to call $compile.$$addBindingInfo() which allows Protractor to find elements by binding.
-  for (var i = 0; i < this.expressionFns.length; i++) {
+  for (let i = 0; i < this.expressionFns.length; i++) {
     parsedFn["expressions"][i] = this.expressionFns[i]["exp"];
   }
 
@@ -121,7 +119,7 @@ InterpolationParts.prototype.watchDelegate = function watchDelegate(
   listener,
   objectEquality,
 ) {
-  var watcher = new InterpolationPartsWatcher(
+  let watcher = new InterpolationPartsWatcher(
     this,
     scope,
     listener,
@@ -142,7 +140,7 @@ function InterpolationPartsWatcher(
   this.scope = scope;
   this.previousResult = undefined;
   this.listener = listener;
-  var self = this;
+  let self = this;
   this.expressionFnsWatcher = scope["$watchGroup"](
     interpolationParts.expressionFns,
     function (newExpressionValues, oldExpressionValues) {
@@ -155,7 +153,7 @@ InterpolationPartsWatcher.prototype.watchListener = function watchListener(
   newExpressionValues,
   oldExpressionValues,
 ) {
-  var result = this.interpolationParts.getResult(newExpressionValues);
+  let result = this.interpolationParts.getResult(newExpressionValues);
   this.listener.call(
     null,
     result,

@@ -1,9 +1,8 @@
-"use strict";
 /* global stripHash: true */
 
-var PATH_MATCH = /^([^?#]*)(\?([^#]*))?(#(.*))?$/,
+let PATH_MATCH = /^([^?#]*)(\?([^#]*))?(#(.*))?$/,
   DEFAULT_PORTS = { http: 80, https: 443, ftp: 21 };
-var $locationMinErr = minErr("$location");
+let $locationMinErr = minErr("$location");
 
 /**
  * Encode path using encodeUriSegment, ignoring forward slashes
@@ -12,7 +11,7 @@ var $locationMinErr = minErr("$location");
  * @returns {string}
  */
 function encodePath(path) {
-  var segments = path.split("/"),
+  let segments = path.split("/"),
     i = segments.length;
 
   while (i--) {
@@ -24,7 +23,7 @@ function encodePath(path) {
 }
 
 function decodePath(path, html5Mode) {
-  var segments = path.split("/"),
+  let segments = path.split("/"),
     i = segments.length;
 
   while (i--) {
@@ -39,7 +38,7 @@ function decodePath(path, html5Mode) {
 }
 
 function normalizePath(pathValue, searchValue, hashValue) {
-  var search = toKeyValue(searchValue),
+  let search = toKeyValue(searchValue),
     hash = hashValue ? "#" + encodeUriSegment(hashValue) : "",
     path = encodePath(pathValue);
 
@@ -47,7 +46,7 @@ function normalizePath(pathValue, searchValue, hashValue) {
 }
 
 function parseAbsoluteUrl(absoluteUrl, locationObj) {
-  var parsedUrl = urlResolve(absoluteUrl);
+  let parsedUrl = urlResolve(absoluteUrl);
 
   locationObj.$$protocol = parsedUrl.protocol;
   locationObj.$$host = parsedUrl.hostname;
@@ -55,18 +54,18 @@ function parseAbsoluteUrl(absoluteUrl, locationObj) {
     toInt(parsedUrl.port) || DEFAULT_PORTS[parsedUrl.protocol] || null;
 }
 
-var DOUBLE_SLASH_REGEX = /^\s*[\\/]{2,}/;
+let DOUBLE_SLASH_REGEX = /^\s*[\\/]{2,}/;
 function parseAppUrl(url, locationObj, html5Mode) {
   if (DOUBLE_SLASH_REGEX.test(url)) {
     throw $locationMinErr("badpath", 'Invalid url "{0}".', url);
   }
 
-  var prefixed = url.charAt(0) !== "/";
+  let prefixed = url.charAt(0) !== "/";
   if (prefixed) {
     url = "/" + url;
   }
-  var match = urlResolve(url);
-  var path =
+  let match = urlResolve(url);
+  let path =
     prefixed && match.pathname.charAt(0) === "/"
       ? match.pathname.substring(1)
       : match.pathname;
@@ -98,7 +97,7 @@ function stripBaseUrl(base, url) {
 }
 
 function stripHash(url) {
-  var index = url.indexOf("#");
+  let index = url.indexOf("#");
   return index === -1 ? url : url.substr(0, index);
 }
 
@@ -131,7 +130,7 @@ function LocationHtml5Url(appBase, appBaseNoFile, basePrefix) {
    * @private
    */
   this.$$parse = function (url) {
-    var pathUrl = stripBaseUrl(appBaseNoFile, url);
+    let pathUrl = stripBaseUrl(appBaseNoFile, url);
     if (!isString(pathUrl)) {
       throw $locationMinErr(
         "ipthprfx",
@@ -161,8 +160,8 @@ function LocationHtml5Url(appBase, appBaseNoFile, basePrefix) {
       this.hash(relHref.slice(1));
       return true;
     }
-    var appUrl, prevAppUrl;
-    var rewrittenUrl;
+    let appUrl, prevAppUrl;
+    let rewrittenUrl;
 
     if (isDefined((appUrl = stripBaseUrl(appBase, url)))) {
       prevAppUrl = appUrl;
@@ -205,9 +204,9 @@ function LocationHashbangUrl(appBase, appBaseNoFile, hashPrefix) {
    * @private
    */
   this.$$parse = function (url) {
-    var withoutBaseUrl =
+    let withoutBaseUrl =
       stripBaseUrl(appBase, url) || stripBaseUrl(appBaseNoFile, url);
-    var withoutHashUrl;
+    let withoutHashUrl;
 
     if (!isUndefined(withoutBaseUrl) && withoutBaseUrl.charAt(0) === "#") {
       // The rest of the URL starts with a hash so we have
@@ -254,9 +253,9 @@ function LocationHashbangUrl(appBase, appBaseNoFile, hashPrefix) {
       Matches paths for file protocol on windows,
       such as /C:/foo/bar, and captures only /foo/bar.
       */
-      var windowsFilePathExp = /^\/[A-Z]:(\/.*)/;
+      let windowsFilePathExp = /^\/[A-Z]:(\/.*)/;
 
-      var firstPathSegmentMatch;
+      let firstPathSegmentMatch;
 
       //Get the relative path from the input URL.
       if (startsWith(url, base)) {
@@ -308,8 +307,8 @@ function LocationHashbangInHtml5Url(appBase, appBaseNoFile, hashPrefix) {
       return true;
     }
 
-    var rewrittenUrl;
-    var appUrl;
+    let rewrittenUrl;
+    let appUrl;
 
     if (appBase === stripHash(url)) {
       rewrittenUrl = url;
@@ -330,7 +329,7 @@ function LocationHashbangInHtml5Url(appBase, appBaseNoFile, hashPrefix) {
   };
 }
 
-var locationPrototype = {
+let locationPrototype = {
   /**
    * Ensure absolute URL is initialized.
    * @private
@@ -372,7 +371,7 @@ var locationPrototype = {
    *
    * ```js
    * // given URL http://example.com/#/some/path?foo=bar&baz=xoxo
-   * var absUrl = $location.absUrl();
+   * let absUrl = $location.absUrl();
    * // => "http://example.com/#/some/path?foo=bar&baz=xoxo"
    * ```
    *
@@ -394,7 +393,7 @@ var locationPrototype = {
    *
    * ```js
    * // given URL http://example.com/#/some/path?foo=bar&baz=xoxo
-   * var url = $location.url();
+   * let url = $location.url();
    * // => "/some/path?foo=bar&baz=xoxo"
    * ```
    *
@@ -406,7 +405,7 @@ var locationPrototype = {
       return this.$$url;
     }
 
-    var match = PATH_MATCH.exec(url);
+    let match = PATH_MATCH.exec(url);
     if (match[1] || url === "") this.path(decodeURIComponent(match[1]));
     if (match[2] || match[1] || url === "") this.search(match[3] || "");
     this.hash(match[5] || "");
@@ -426,7 +425,7 @@ var locationPrototype = {
    *
    * ```js
    * // given URL http://example.com/#/some/path?foo=bar&baz=xoxo
-   * var protocol = $location.protocol();
+   * let protocol = $location.protocol();
    * // => "http"
    * ```
    *
@@ -448,7 +447,7 @@ var locationPrototype = {
    *
    * ```js
    * // given URL http://example.com/#/some/path?foo=bar&baz=xoxo
-   * var host = $location.host();
+   * let host = $location.host();
    * // => "example.com"
    *
    * // given URL http://user:password@example.com:8080/#/some/path?foo=bar&baz=xoxo
@@ -474,7 +473,7 @@ var locationPrototype = {
    *
    * ```js
    * // given URL http://example.com/#/some/path?foo=bar&baz=xoxo
-   * var port = $location.port();
+   * let port = $location.port();
    * // => 80
    * ```
    *
@@ -499,7 +498,7 @@ var locationPrototype = {
    *
    * ```js
    * // given URL http://example.com/#/some/path?foo=bar&baz=xoxo
-   * var path = $location.path();
+   * let path = $location.path();
    * // => "/some/path"
    * ```
    *
@@ -525,7 +524,7 @@ var locationPrototype = {
    *
    * ```js
    * // given URL http://example.com/#/some/path?foo=bar&baz=xoxo
-   * var searchObject = $location.search();
+   * let searchObject = $location.search();
    * // => {foo: 'bar', baz: 'xoxo'}
    *
    * // set foo to 'yipee'
@@ -605,7 +604,7 @@ var locationPrototype = {
    *
    * ```js
    * // given URL http://example.com/#/some/path?foo=bar&baz=xoxo#hashValue
-   * var hash = $location.hash();
+   * let hash = $location.hash();
    * // => "hashValue"
    * ```
    *
@@ -731,7 +730,7 @@ function locationGetterSetter(property, preprocess) {
  * Use the `$locationProvider` to configure how the application deep linking paths are stored.
  */
 function $LocationProvider() {
-  var hashPrefix = "!",
+  let hashPrefix = "!",
     html5Mode = {
       enabled: false,
       requireBase: true,
@@ -847,7 +846,7 @@ function $LocationProvider() {
     "$rootElement",
     "$window",
     function ($rootScope, $browser, $sniffer, $rootElement, $window) {
-      var $location,
+      let $location,
         LocationMode,
         baseHref = $browser.baseHref(), // if base[href] is undefined, it defaults to ''
         initialUrl = $browser.url(),
@@ -868,14 +867,14 @@ function $LocationProvider() {
         appBase = stripHash(initialUrl);
         LocationMode = LocationHashbangUrl;
       }
-      var appBaseNoFile = stripFile(appBase);
+      let appBaseNoFile = stripFile(appBase);
 
       $location = new LocationMode(appBase, appBaseNoFile, "#" + hashPrefix);
       $location.$$parseLinkUrl(initialUrl, initialUrl);
 
       $location.$$state = $browser.state();
 
-      var IGNORE_URI_REGEXP = /^\s*(javascript|mailto):/i;
+      let IGNORE_URI_REGEXP = /^\s*(javascript|mailto):/i;
 
       // Determine if two URLs are equal despite potentially having different encoding/normalizing
       //  such as $location.absUrl() vs $browser.url()
@@ -885,8 +884,8 @@ function $LocationProvider() {
       }
 
       function setBrowserUrlWithFallback(url, replace, state) {
-        var oldUrl = $location.url();
-        var oldState = $location.$$state;
+        let oldUrl = $location.url();
+        let oldState = $location.$$state;
         try {
           $browser.url(url, replace, state);
 
@@ -904,7 +903,7 @@ function $LocationProvider() {
       }
 
       $rootElement.on("click", function (event) {
-        var rewriteLinks = html5Mode.rewriteLinks;
+        let rewriteLinks = html5Mode.rewriteLinks;
         // TODO(vojta): rewrite link when opening in new tab/window (in legacy browser)
         // currently we open nice url link and redirect then
 
@@ -918,7 +917,7 @@ function $LocationProvider() {
         )
           return;
 
-        var elm = jqLite(event.target);
+        let elm = jqLite(event.target);
 
         // traverse the DOM up to find first A tag
         while (nodeName_(elm[0]) !== "a") {
@@ -929,10 +928,10 @@ function $LocationProvider() {
         if (isString(rewriteLinks) && isUndefined(elm.attr(rewriteLinks)))
           return;
 
-        var absHref = elm.prop("href");
+        let absHref = elm.prop("href");
         // get the actual href attribute - see
         // http://msdn.microsoft.com/en-us/library/ie/dd347148(v=vs.85).aspx
-        var relHref = elm.attr("href") || elm.attr("xlink:href");
+        let relHref = elm.attr("href") || elm.attr("xlink:href");
 
         if (
           isObject(absHref) &&
@@ -965,7 +964,7 @@ function $LocationProvider() {
         $browser.url($location.absUrl(), true);
       }
 
-      var initializing = true;
+      let initializing = true;
 
       // update $location when $browser url changes
       $browser.onUrlChange(function (newUrl, newState) {
@@ -976,9 +975,9 @@ function $LocationProvider() {
         }
 
         $rootScope.$evalAsync(function () {
-          var oldUrl = $location.absUrl();
-          var oldState = $location.$$state;
-          var defaultPrevented;
+          let oldUrl = $location.absUrl();
+          let oldState = $location.$$state;
+          let defaultPrevented;
           $location.$$parse(newUrl);
           $location.$$state = newState;
 
@@ -1011,11 +1010,11 @@ function $LocationProvider() {
         if (initializing || $location.$$urlUpdatedByLocation) {
           $location.$$urlUpdatedByLocation = false;
 
-          var oldUrl = $browser.url();
-          var newUrl = $location.absUrl();
-          var oldState = $browser.state();
-          var currentReplace = $location.$$replace;
-          var urlOrStateChanged =
+          let oldUrl = $browser.url();
+          let newUrl = $location.absUrl();
+          let oldState = $browser.state();
+          let currentReplace = $location.$$replace;
+          let urlOrStateChanged =
             !urlsEqual(oldUrl, newUrl) ||
             ($location.$$html5 &&
               $sniffer.history &&
@@ -1025,8 +1024,8 @@ function $LocationProvider() {
             initializing = false;
 
             $rootScope.$evalAsync(function () {
-              var newUrl = $location.absUrl();
-              var defaultPrevented = $rootScope.$broadcast(
+              let newUrl = $location.absUrl();
+              let defaultPrevented = $rootScope.$broadcast(
                 "$locationChangeStart",
                 newUrl,
                 oldUrl,

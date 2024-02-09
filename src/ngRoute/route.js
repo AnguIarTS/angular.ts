@@ -1,14 +1,12 @@
-"use strict";
-
 /* global routeToRegExp: false */
 /* global shallowCopy: false */
 
 // `isArray` and `isObject` are necessary for `shallowCopy()` (included via `src/shallowCopy.js`).
 // They are initialized inside the `$RouteProvider`, to ensure `window.angular` is available.
-var isArray;
-var isObject;
-var isDefined;
-var noop;
+let isArray;
+let isObject;
+let isDefined;
+let noop;
 
 /**
  * @ngdoc module
@@ -22,7 +20,7 @@ var noop;
  *
  */
 /* global -ngRouteModule */
-var ngRouteModule = angular
+let ngRouteModule = angular
   .module("ngRoute", [])
   .info({ angularVersion: '"NG_VERSION_FULL"' })
   .provider("$route", $RouteProvider)
@@ -30,8 +28,8 @@ var ngRouteModule = angular
   // event (unless explicitly disabled). This is necessary in case `ngView` is included in an
   // asynchronously loaded template.
   .run(instantiateRoute);
-var $routeMinErr = angular.$$minErr("ngRoute");
-var isEagerInstantiationEnabled;
+let $routeMinErr = angular.$$minErr("ngRoute");
+let isEagerInstantiationEnabled;
 
 /**
  * @ngdoc provider
@@ -58,7 +56,7 @@ function $RouteProvider() {
     return angular.extend(Object.create(parent), extra);
   }
 
-  var routes = {};
+  let routes = {};
 
   /**
    * @ngdoc method
@@ -212,7 +210,7 @@ function $RouteProvider() {
    */
   this.when = function (path, route) {
     //copy original route object to preserve params inherited from proto chain
-    var routeCopy = shallowCopy(route);
+    let routeCopy = shallowCopy(route);
     if (angular.isUndefined(routeCopy.reloadOnUrl)) {
       routeCopy.reloadOnUrl = true;
     }
@@ -230,7 +228,7 @@ function $RouteProvider() {
 
     // create redirection for trailing slashes
     if (path) {
-      var redirectPath =
+      let redirectPath =
         path[path.length - 1] === "/"
           ? path.substr(0, path.length - 1)
           : path + "/";
@@ -435,7 +433,7 @@ function $RouteProvider() {
        *         resolve: {
        *           // I will cause a 1 second delay
        *           delay: function($q, $timeout) {
-       *             var delay = $q.defer();
+       *             let delay = $q.defer();
        *             $timeout(delay.resolve, 1000);
        *             return delay.promise;
        *           }
@@ -455,7 +453,7 @@ function $RouteProvider() {
        *   <file name="protractor.js" type="protractor">
        *     it('should load and compile correct template', function() {
        *       element(by.linkText('Moby: Ch1')).click();
-       *       var content = element(by.css('[ng-view]')).getText();
+       *       let content = element(by.css('[ng-view]')).getText();
        *       expect(content).toMatch(/controller: ChapterController/);
        *       expect(content).toMatch(/Book Id: Moby/);
        *       expect(content).toMatch(/Chapter Id: 1/);
@@ -535,7 +533,7 @@ function $RouteProvider() {
        * @param {Route} current Current/previous route information.
        */
 
-      var forceReload = false,
+      let forceReload = false,
         preparedRoute,
         preparedRouteIsUpdateOnly,
         $route = {
@@ -555,7 +553,7 @@ function $RouteProvider() {
           reload: function () {
             forceReload = true;
 
-            var fakeLocationEvent = {
+            let fakeLocationEvent = {
               defaultPrevented: false,
               preventDefault: function fakePreventDefault() {
                 this.defaultPrevented = true;
@@ -618,18 +616,18 @@ function $RouteProvider() {
        * visionmedia/express/lib/router/router.js.
        */
       function switchRouteMatcher(on, route) {
-        var keys = route.keys,
+        let keys = route.keys,
           params = {};
 
         if (!route.regexp) return null;
 
-        var m = route.regexp.exec(on);
+        let m = route.regexp.exec(on);
         if (!m) return null;
 
-        for (var i = 1, len = m.length; i < len; ++i) {
-          var key = keys[i - 1];
+        for (let i = 1, len = m.length; i < len; ++i) {
+          let key = keys[i - 1];
 
-          var val = m[i];
+          let val = m[i];
 
           if (key && val) {
             params[key.name] = val;
@@ -639,7 +637,7 @@ function $RouteProvider() {
       }
 
       function prepareRoute($locationEvent) {
-        var lastRoute = $route.current;
+        let lastRoute = $route.current;
 
         preparedRoute = parseRoute();
         preparedRouteIsUpdateOnly = isNavigationUpdateOnly(
@@ -660,8 +658,8 @@ function $RouteProvider() {
       }
 
       function commitRoute() {
-        var lastRoute = $route.current;
-        var nextRoute = preparedRoute;
+        let lastRoute = $route.current;
+        let nextRoute = preparedRoute;
 
         if (preparedRouteIsUpdateOnly) {
           lastRoute.params = nextRoute.params;
@@ -671,7 +669,7 @@ function $RouteProvider() {
           forceReload = false;
           $route.current = nextRoute;
 
-          var nextRoutePromise = $q.resolve(nextRoute);
+          let nextRoutePromise = $q.resolve(nextRoute);
 
           $browser.$$incOutstandingRequestCount("$route");
 
@@ -719,7 +717,7 @@ function $RouteProvider() {
       }
 
       function getRedirectionData(route) {
-        var data = {
+        let data = {
           route: route,
           hasRedirection: false,
         };
@@ -731,9 +729,9 @@ function $RouteProvider() {
               data.search = route.params;
               data.hasRedirection = true;
             } else {
-              var oldPath = $location.path();
-              var oldSearch = $location.search();
-              var newUrl = route.redirectTo(
+              let oldPath = $location.path();
+              let oldSearch = $location.search();
+              let newUrl = route.redirectTo(
                 route.pathParams,
                 oldPath,
                 oldSearch,
@@ -762,13 +760,13 @@ function $RouteProvider() {
       }
 
       function handlePossibleRedirection(data) {
-        var keepProcessingRoute = true;
+        let keepProcessingRoute = true;
 
         if (data.route !== $route.current) {
           keepProcessingRoute = false;
         } else if (data.hasRedirection) {
-          var oldUrl = $location.url();
-          var newUrl = data.url;
+          let oldUrl = $location.url();
+          let newUrl = data.url;
 
           if (newUrl) {
             $location.url(newUrl).replace();
@@ -792,13 +790,13 @@ function $RouteProvider() {
 
       function resolveLocals(route) {
         if (route) {
-          var locals = angular.extend({}, route.resolve);
+          let locals = angular.extend({}, route.resolve);
           angular.forEach(locals, function (value, key) {
             locals[key] = angular.isString(value)
               ? $injector.get(value)
               : $injector.invoke(value, null, null, key);
           });
-          var template = getTemplateFor(route);
+          let template = getTemplateFor(route);
           if (angular.isDefined(template)) {
             locals["$template"] = template;
           }
@@ -807,7 +805,7 @@ function $RouteProvider() {
       }
 
       function getTemplateFor(route) {
-        var template, templateUrl;
+        let template, templateUrl;
         if (angular.isDefined((template = route.template))) {
           if (angular.isFunction(template)) {
             template = template(route.params);
@@ -829,7 +827,7 @@ function $RouteProvider() {
        */
       function parseRoute() {
         // Match a route
-        var params, match;
+        let params, match;
         angular.forEach(routes, function (route, path) {
           if (
             !match &&
@@ -878,13 +876,13 @@ function $RouteProvider() {
        * @returns {string} interpolation of the redirect path with the parameters
        */
       function interpolate(string, params) {
-        var result = [];
+        let result = [];
         angular.forEach((string || "").split(":"), function (segment, i) {
           if (i === 0) {
             result.push(segment);
           } else {
-            var segmentMatch = segment.match(/(\w+)(?:[?*])?(.*)/);
-            var key = segmentMatch[1];
+            let segmentMatch = segment.match(/(\w+)(?:[?*])?(.*)/);
+            let key = segmentMatch[1];
             result.push(params[key]);
             result.push(segmentMatch[2] || "");
             delete params[key];

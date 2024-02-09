@@ -1,11 +1,11 @@
-'use strict';
+
 
 describe('Filter: limitTo', function() {
-  var items;
-  var str;
-  var number;
-  var arrayLike;
-  var limitTo;
+  let items;
+  let str;
+  let number;
+  let arrayLike;
+  let limitTo;
 
   beforeEach(inject(function($filter) {
     items = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -228,9 +228,9 @@ describe('Filter: limitTo', function() {
     function getArguments() {
       return arguments;
     }
-    var argsObj = getArguments({name: 'Misko'}, {name: 'Igor'}, {name: 'Brad'});
+    let argsObj = getArguments({name: 'Misko'}, {name: 'Igor'}, {name: 'Brad'});
 
-    var nodeList = jqLite('<p><span>Misko</span><span>Igor</span><span>Brad</span></p>')[0].childNodes;
+    let nodeList = jqLite('<p><span>Misko</span><span>Igor</span><span>Brad</span></p>')[0].childNodes;
 
     expect(limitTo(argsObj, 2).length).toBe(2);
     expect(limitTo('abc', 1).length).toBe(1);

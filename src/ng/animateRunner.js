@@ -1,16 +1,14 @@
-"use strict";
-
-var $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
+let $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
   this.$get = [
     "$$rAF",
     function ($$rAF) {
-      var waitQueue = [];
+      let waitQueue = [];
 
       function waitForTick(fn) {
         waitQueue.push(fn);
         if (waitQueue.length > 1) return;
         $$rAF(function () {
-          for (var i = 0; i < waitQueue.length; i++) {
+          for (let i = 0; i < waitQueue.length; i++) {
             waitQueue[i]();
           }
           waitQueue = [];
@@ -18,7 +16,7 @@ var $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
       }
 
       return function () {
-        var passed = false;
+        let passed = false;
         waitForTick(function () {
           passed = true;
         });
@@ -34,7 +32,7 @@ var $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
   ];
 };
 
-var $$AnimateRunnerFactoryProvider = /** @this */ function () {
+let $$AnimateRunnerFactoryProvider = /** @this */ function () {
   this.$get = [
     "$q",
     "$sniffer",
@@ -42,12 +40,12 @@ var $$AnimateRunnerFactoryProvider = /** @this */ function () {
     "$$isDocumentHidden",
     "$timeout",
     function ($q, $sniffer, $$animateAsyncRun, $$isDocumentHidden, $timeout) {
-      var INITIAL_STATE = 0;
-      var DONE_PENDING_STATE = 1;
-      var DONE_COMPLETE_STATE = 2;
+      let INITIAL_STATE = 0;
+      let DONE_PENDING_STATE = 1;
+      let DONE_COMPLETE_STATE = 2;
 
       AnimateRunner.chain = function (chain, callback) {
-        var index = 0;
+        let index = 0;
 
         next();
         function next() {
@@ -68,8 +66,8 @@ var $$AnimateRunnerFactoryProvider = /** @this */ function () {
       };
 
       AnimateRunner.all = function (runners, callback) {
-        var count = 0;
-        var status = true;
+        let count = 0;
+        let status = true;
         forEach(runners, function (runner) {
           runner.done(onProgress);
         });
@@ -85,8 +83,8 @@ var $$AnimateRunnerFactoryProvider = /** @this */ function () {
       function AnimateRunner(host) {
         this.setHost(host);
 
-        var rafTick = $$animateAsyncRun();
-        var timeoutTick = function (fn) {
+        let rafTick = $$animateAsyncRun();
+        let timeoutTick = function (fn) {
           $timeout(fn, 0, false);
         };
 
@@ -118,7 +116,7 @@ var $$AnimateRunnerFactoryProvider = /** @this */ function () {
 
         getPromise: function () {
           if (!this.promise) {
-            var self = this;
+            let self = this;
             this.promise = $q(function (resolve, reject) {
               self.done(function (status) {
                 if (status === false) {
@@ -171,7 +169,7 @@ var $$AnimateRunnerFactoryProvider = /** @this */ function () {
         },
 
         complete: function (response) {
-          var self = this;
+          let self = this;
           if (self._state === INITIAL_STATE) {
             self._state = DONE_PENDING_STATE;
             self._tick(function () {

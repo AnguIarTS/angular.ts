@@ -1,28 +1,28 @@
-'use strict';
+
 
 describe('ngAnimate $$animateCache', function() {
   beforeEach(module('ngAnimate'));
 
   it('should store the details in a lookup', inject(function($$animateCache) {
-    var data = { 'hello': 'there' };
+    let data = { 'hello': 'there' };
     $$animateCache.put('key', data, true);
     expect($$animateCache.get('key')).toBe(data);
   }));
 
   it('should update existing stored details in a lookup', inject(function($$animateCache) {
-    var data = { 'hello': 'there' };
+    let data = { 'hello': 'there' };
     $$animateCache.put('key', data, true);
 
-    var otherData = { 'hi': 'you' };
+    let otherData = { 'hi': 'you' };
     $$animateCache.put('key', otherData, true);
     expect($$animateCache.get('key')).toBe(otherData);
   }));
 
   it('should create a special cacheKey based on the element/parent and className relationship', inject(function($$animateCache) {
-    var cacheKey, elm = jqLite('<div></div>');
+    let cacheKey, elm = jqLite('<div></div>');
     elm.addClass('one two');
 
-    var parent1 = jqLite('<div></div>');
+    let parent1 = jqLite('<div></div>');
     parent1.append(elm);
 
     cacheKey = $$animateCache.cacheKey(getDomNode(elm), 'event');
@@ -34,7 +34,7 @@ describe('ngAnimate $$animateCache', function() {
     cacheKey = $$animateCache.cacheKey(getDomNode(elm), 'event', 'add', 'remove');
     expect(cacheKey).toBe('1 event one two add remove');
 
-    var parent2 = jqLite('<div></div>');
+    let parent2 = jqLite('<div></div>');
     parent2.append(elm);
 
     cacheKey = $$animateCache.cacheKey(getDomNode(elm), 'event');
@@ -45,14 +45,14 @@ describe('ngAnimate $$animateCache', function() {
   }));
 
   it('should keep a count of how many times a cache key has been updated', inject(function($$animateCache) {
-    var data = { 'hello': 'there' };
-    var key = 'key';
+    let data = { 'hello': 'there' };
+    let key = 'key';
     expect($$animateCache.count(key)).toBe(0);
 
     $$animateCache.put(key, data, true);
     expect($$animateCache.count(key)).toBe(1);
 
-    var otherData = { 'other': 'data' };
+    let otherData = { 'other': 'data' };
     $$animateCache.put(key, otherData, true);
     expect($$animateCache.count(key)).toBe(2);
   }));
@@ -75,8 +75,8 @@ describe('ngAnimate $$animateCache', function() {
 
   describe('containsCachedAnimationWithoutDuration', function() {
     it('should return false if the validity of a key is false', inject(function($$animateCache) {
-      var validEntry = { someEssentialProperty: true };
-      var invalidEntry = { someEssentialProperty: false };
+      let validEntry = { someEssentialProperty: true };
+      let invalidEntry = { someEssentialProperty: false };
 
       $$animateCache.put('key1', validEntry, true);
       $$animateCache.put('key2', invalidEntry, false);

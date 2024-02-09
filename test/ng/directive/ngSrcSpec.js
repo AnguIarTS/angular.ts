@@ -1,9 +1,9 @@
-'use strict';
+
 
 /* eslint-disable no-script-url */
 
 describe('ngSrc', function() {
-  var element;
+  let element;
 
   afterEach(function() {
     dealoc(element);

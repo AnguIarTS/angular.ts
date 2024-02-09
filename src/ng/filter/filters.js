@@ -1,8 +1,6 @@
-"use strict";
-
-var MAX_DIGITS = 22;
-var DECIMAL_SEP = ".";
-var ZERO_CHAR = "0";
+let MAX_DIGITS = 22;
+let DECIMAL_SEP = ".";
+let ZERO_CHAR = "0";
 
 /**
  * @ngdoc filter
@@ -58,7 +56,7 @@ var ZERO_CHAR = "0";
  */
 currencyFilter.$inject = ["$locale"];
 function currencyFilter($locale) {
-  var formats = $locale.NUMBER_FORMATS;
+  let formats = $locale.NUMBER_FORMATS;
   return function (amount, currencySymbol, fractionSize) {
     if (isUndefined(currencySymbol)) {
       currencySymbol = formats.CURRENCY_SYM;
@@ -69,7 +67,7 @@ function currencyFilter($locale) {
     }
 
     // If the currency symbol is empty, trim whitespace around the symbol
-    var currencySymbolRe = !currencySymbol ? /\s*\u00A4\s*/g : /\u00A4/g;
+    let currencySymbolRe = !currencySymbol ? /\s*\u00A4\s*/g : /\u00A4/g;
 
     // if null or undefined pass it through
     return amount == null
@@ -140,7 +138,7 @@ function currencyFilter($locale) {
  */
 numberFilter.$inject = ["$locale"];
 function numberFilter($locale) {
-  var formats = $locale.NUMBER_FORMATS;
+  let formats = $locale.NUMBER_FORMATS;
   return function (number, fractionSize) {
     // if null or undefined pass it through
     return number == null
@@ -169,10 +167,10 @@ function numberFilter($locale) {
  *
  */
 function parse(numStr) {
-  var exponent = 0,
+  let exponent = 0,
     digits,
     numberOfIntegerDigits;
-  var i, j, zeros;
+  let i, j, zeros;
 
   // Decimal point?
   if ((numberOfIntegerDigits = numStr.indexOf(DECIMAL_SEP)) > -1) {
@@ -228,8 +226,8 @@ function parse(numStr) {
  * This function changed the parsedNumber in-place
  */
 function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
-  var digits = parsedNumber.d;
-  var fractionLen = digits.length - parsedNumber.i;
+  let digits = parsedNumber.d;
+  let fractionLen = digits.length - parsedNumber.i;
 
   // determine fractionSize if it is not specified; `+fractionSize` converts it to a number
   fractionSize = isUndefined(fractionSize)
@@ -237,15 +235,15 @@ function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
     : +fractionSize;
 
   // The index of the digit to where rounding is to occur
-  var roundAt = fractionSize + parsedNumber.i;
-  var digit = digits[roundAt];
+  let roundAt = fractionSize + parsedNumber.i;
+  let digit = digits[roundAt];
 
   if (roundAt > 0) {
     // Drop fractional digits beyond `roundAt`
     digits.splice(Math.max(parsedNumber.i, roundAt));
 
     // Set non-fractional digits beyond `roundAt` to 0
-    for (var j = roundAt; j < digits.length; j++) {
+    for (let j = roundAt; j < digits.length; j++) {
       digits[j] = 0;
     }
   } else {
@@ -254,12 +252,12 @@ function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
     parsedNumber.i = 1;
     digits.length = Math.max(1, (roundAt = fractionSize + 1));
     digits[0] = 0;
-    for (var i = 1; i < roundAt; i++) digits[i] = 0;
+    for (let i = 1; i < roundAt; i++) digits[i] = 0;
   }
 
   if (digit >= 5) {
     if (roundAt - 1 < 0) {
-      for (var k = 0; k > roundAt; k--) {
+      for (let k = 0; k > roundAt; k--) {
         digits.unshift(0);
         parsedNumber.i++;
       }
@@ -274,7 +272,7 @@ function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
   for (; fractionLen < Math.max(0, fractionSize); fractionLen++) digits.push(0);
 
   // Do any carrying, e.g. a digit was rounded up to 10
-  var carry = digits.reduceRight(function (carry, d, i, digits) {
+  let carry = digits.reduceRight(function (carry, d, i, digits) {
     d = d + carry;
     digits[i] = d % 10;
     return Math.floor(d / 10);
@@ -306,9 +304,9 @@ function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
 function formatNumber(number, pattern, groupSep, decimalSep, fractionSize) {
   if (!(isString(number) || isNumber(number)) || isNaN(number)) return "";
 
-  var isInfinity = !isFinite(number);
-  var isZero = false;
-  var numStr = Math.abs(number) + "",
+  let isInfinity = !isFinite(number);
+  let isZero = false;
+  let numStr = Math.abs(number) + "",
     formattedText = "",
     parsedNumber;
 
@@ -319,10 +317,10 @@ function formatNumber(number, pattern, groupSep, decimalSep, fractionSize) {
 
     roundNumber(parsedNumber, fractionSize, pattern.minFrac, pattern.maxFrac);
 
-    var digits = parsedNumber.d;
-    var integerLen = parsedNumber.i;
-    var exponent = parsedNumber.e;
-    var decimals = [];
+    let digits = parsedNumber.d;
+    let integerLen = parsedNumber.i;
+    let exponent = parsedNumber.e;
+    let decimals = [];
     isZero = digits.reduce(function (isZero, d) {
       return isZero && !d;
     }, true);
@@ -342,7 +340,7 @@ function formatNumber(number, pattern, groupSep, decimalSep, fractionSize) {
     }
 
     // format the integer digits with grouping separators
-    var groups = [];
+    let groups = [];
     if (digits.length >= pattern.lgSize) {
       groups.unshift(digits.splice(-pattern.lgSize, digits.length).join(""));
     }
@@ -371,7 +369,7 @@ function formatNumber(number, pattern, groupSep, decimalSep, fractionSize) {
 }
 
 function padNumber(num, digits, trim, negWrap) {
-  var neg = "";
+  let neg = "";
   if (num < 0 || (negWrap && num <= 0)) {
     if (negWrap) {
       num = -num + 1;
@@ -391,7 +389,7 @@ function padNumber(num, digits, trim, negWrap) {
 function dateGetter(name, size, offset, trim, negWrap) {
   offset = offset || 0;
   return function (date) {
-    var value = date["get" + name]();
+    let value = date["get" + name]();
     if (offset > 0 || value > -offset) {
       value += offset;
     }
@@ -402,18 +400,18 @@ function dateGetter(name, size, offset, trim, negWrap) {
 
 function dateStrGetter(name, shortForm, standAlone) {
   return function (date, formats) {
-    var value = date["get" + name]();
-    var propPrefix =
+    let value = date["get" + name]();
+    let propPrefix =
       (standAlone ? "STANDALONE" : "") + (shortForm ? "SHORT" : "");
-    var get = uppercase(propPrefix + name);
+    let get = uppercase(propPrefix + name);
 
     return formats[get][value];
   };
 }
 
 function timeZoneGetter(date, formats, offset) {
-  var zone = -1 * offset;
-  var paddedZone = zone >= 0 ? "+" : "";
+  let zone = -1 * offset;
+  let paddedZone = zone >= 0 ? "+" : "";
 
   paddedZone +=
     padNumber(Math[zone > 0 ? "floor" : "ceil"](zone / 60), 2) +
@@ -424,7 +422,7 @@ function timeZoneGetter(date, formats, offset) {
 
 function getFirstThursdayOfYear(year) {
   // 0 = index of January
-  var dayOfWeekOnFirst = new Date(year, 0, 1).getDay();
+  let dayOfWeekOnFirst = new Date(year, 0, 1).getDay();
   // 4 = index of Thursday (+1 to account for 1st = 5)
   // 11 = index of *next* Thursday (+1 account for 1st = 12)
   return new Date(year, 0, (dayOfWeekOnFirst <= 4 ? 5 : 12) - dayOfWeekOnFirst);
@@ -441,10 +439,10 @@ function getThursdayThisWeek(datetime) {
 
 function weekGetter(size) {
   return function (date) {
-    var firstThurs = getFirstThursdayOfYear(date.getFullYear()),
+    let firstThurs = getFirstThursdayOfYear(date.getFullYear()),
       thisThurs = getThursdayThisWeek(date);
 
-    var diff = +thisThurs - +firstThurs,
+    let diff = +thisThurs - +firstThurs,
       result = 1 + Math.round(diff / 6.048e8); // 6.048e8 ms per week
 
     return padNumber(result, size);
@@ -463,7 +461,7 @@ function longEraGetter(date, formats) {
   return date.getFullYear() <= 0 ? formats.ERANAMES[0] : formats.ERANAMES[1];
 }
 
-var DATE_FORMATS = {
+let DATE_FORMATS = {
   yyyy: dateGetter("FullYear", 4, 0, false, true),
   yy: dateGetter("FullYear", 2, 0, true, true),
   y: dateGetter("FullYear", 1, 0, false, true),
@@ -497,7 +495,7 @@ var DATE_FORMATS = {
   GGGG: longEraGetter,
 };
 
-var DATE_FORMATS_SPLIT =
+let DATE_FORMATS_SPLIT =
     /((?:[^yMLdHhmsaZEwG']+)|(?:'(?:[^']|'')*')|(?:E+|y+|M+|L+|d+|H+|h+|m+|s+|a|Z|G+|w+))([\s\S]*)/,
   NUMBER_STRING = /^-?\d+$/;
 
@@ -599,13 +597,13 @@ var DATE_FORMATS_SPLIT =
  */
 dateFilter.$inject = ["$locale"];
 function dateFilter($locale) {
-  var R_ISO8601_STR =
+  let R_ISO8601_STR =
     /^(\d{4})-?(\d\d)-?(\d\d)(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:\.(\d+))?)?)?(Z|([+-])(\d\d):?(\d\d))?)?$/;
   // 1        2       3         4          5          6          7          8  9     10      11
   function jsonStringToDate(string) {
-    var match;
+    let match;
     if ((match = string.match(R_ISO8601_STR))) {
-      var date = new Date(0),
+      let date = new Date(0),
         tzHour = 0,
         tzMin = 0,
         dateSetter = match[8] ? date.setUTCFullYear : date.setFullYear,
@@ -621,10 +619,10 @@ function dateFilter($locale) {
         toInt(match[2]) - 1,
         toInt(match[3]),
       );
-      var h = toInt(match[4] || 0) - tzHour;
-      var m = toInt(match[5] || 0) - tzMin;
-      var s = toInt(match[6] || 0);
-      var ms = Math.round(parseFloat("0." + (match[7] || 0)) * 1000);
+      let h = toInt(match[4] || 0) - tzHour;
+      let m = toInt(match[5] || 0) - tzMin;
+      let s = toInt(match[6] || 0);
+      let ms = Math.round(parseFloat("0." + (match[7] || 0)) * 1000);
       timeSetter.call(date, h, m, s, ms);
       return date;
     }
@@ -632,7 +630,7 @@ function dateFilter($locale) {
   }
 
   return function (date, format, timezone) {
-    var text = "",
+    let text = "",
       parts = [],
       fn,
       match;
@@ -662,7 +660,7 @@ function dateFilter($locale) {
       }
     }
 
-    var dateTimezoneOffset = date.getTimezoneOffset();
+    let dateTimezoneOffset = date.getTimezoneOffset();
     if (timezone) {
       dateTimezoneOffset = timezoneToOffset(timezone, dateTimezoneOffset);
       date = convertTimezoneToLocal(date, timezone, true);
@@ -731,7 +729,7 @@ function jsonFilter() {
  *
  * @see angular.lowercase
  */
-var lowercaseFilter = valueFn(lowercase);
+let lowercaseFilter = valueFn(lowercase);
 
 /**
  * @ngdoc filter
@@ -757,4 +755,4 @@ var lowercaseFilter = valueFn(lowercase);
      </file>
    </example>
  */
-var uppercaseFilter = valueFn(uppercase);
+let uppercaseFilter = valueFn(uppercase);

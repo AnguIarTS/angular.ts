@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc provider
  * @name $anchorScrollProvider
@@ -10,7 +8,7 @@
  * {@link ng.$location#hash $location.hash()} changes.
  */
 function $AnchorScrollProvider() {
-  var autoScrollingEnabled = true;
+  let autoScrollingEnabled = true;
 
   /**
    * @ngdoc method
@@ -132,7 +130,7 @@ function $AnchorScrollProvider() {
            .controller('headerCtrl', ['$anchorScroll', '$location', '$scope',
              function($anchorScroll, $location, $scope) {
                $scope.gotoAnchor = function(x) {
-                 var newHash = 'anchor' + x;
+                 let newHash = 'anchor' + x;
                  if ($location.hash() !== newHash) {
                    // set the $location.hash to `newHash` and
                    // $anchorScroll will automatically scroll to it
@@ -175,13 +173,13 @@ function $AnchorScrollProvider() {
     "$location",
     "$rootScope",
     function ($window, $location, $rootScope) {
-      var document = $window.document;
+      let document = $window.document;
 
       // Helper function to get first anchor from a NodeList
       // (using `Array#some()` instead of `angular#forEach()` since it's more performant
       //  and working in all supported browsers.)
       function getFirstAnchor(list) {
-        var result = null;
+        let result = null;
         Array.prototype.some.call(list, function (element) {
           if (nodeName_(element) === "a") {
             result = element;
@@ -192,13 +190,13 @@ function $AnchorScrollProvider() {
       }
 
       function getYOffset() {
-        var offset = scroll.yOffset;
+        let offset = scroll.yOffset;
 
         if (isFunction(offset)) {
           offset = offset();
         } else if (isElement(offset)) {
-          var elem = offset[0];
-          var style = $window.getComputedStyle(elem);
+          let elem = offset[0];
+          let style = $window.getComputedStyle(elem);
           if (style.position !== "fixed") {
             offset = 0;
           } else {
@@ -215,7 +213,7 @@ function $AnchorScrollProvider() {
         if (elem) {
           elem.scrollIntoView();
 
-          var offset = getYOffset();
+          let offset = getYOffset();
 
           if (offset) {
             // `offset` is the number of pixels we should scroll UP in order to align `elem` properly.
@@ -231,7 +229,7 @@ function $AnchorScrollProvider() {
             // In such cases we do not need to scroll the whole `offset` up, just the difference between
             // the top of the element and the offset, which is enough to align the top of `elem` at the
             // desired position.
-            var elemTop = elem.getBoundingClientRect().top;
+            let elemTop = elem.getBoundingClientRect().top;
             $window.scrollBy(0, elemTop - offset);
           }
         } else {
@@ -246,7 +244,7 @@ function $AnchorScrollProvider() {
           : isNumber(hash)
             ? hash.toString()
             : $location.hash();
-        var elm;
+        let elm;
 
         // empty hash, scroll to the top of the page
         if (!hash) scrollTo(null);

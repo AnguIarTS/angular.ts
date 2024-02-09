@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc service
  * @name $xhrFactory
@@ -89,16 +87,16 @@ function createHttpBackend(
     url = url || $browser.url();
 
     if (lowercase(method) === "jsonp") {
-      var callbackPath = callbacks.createCallback(url);
-      var jsonpDone = jsonpReq(url, callbackPath, function (status, text) {
+      let callbackPath = callbacks.createCallback(url);
+      let jsonpDone = jsonpReq(url, callbackPath, function (status, text) {
         // jsonpReq only ever sets status to 200 (OK), 404 (ERROR) or -1 (WAITING)
-        var response = status === 200 && callbacks.getResponse(callbackPath);
+        let response = status === 200 && callbacks.getResponse(callbackPath);
         completeRequest(callback, status, response, "", text, "complete");
         callbacks.removeCallback(callbackPath);
       });
     } else {
-      var xhr = createXhr(method, url);
-      var abortedByTimeout = false;
+      let xhr = createXhr(method, url);
+      let abortedByTimeout = false;
 
       xhr.open(method, url, true);
       forEach(headers, function (value, key) {
@@ -108,14 +106,14 @@ function createHttpBackend(
       });
 
       xhr.onload = function requestLoaded() {
-        var statusText = xhr.statusText || "";
+        let statusText = xhr.statusText || "";
 
         // responseText is the old-school way of retrieving response (supported by IE9)
         // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
-        var response = "response" in xhr ? xhr.response : xhr.responseText;
+        let response = "response" in xhr ? xhr.response : xhr.responseText;
 
         // normalize IE9 bug (http://bugs.jquery.com/ticket/1450)
-        var status = xhr.status === 1223 ? 204 : xhr.status;
+        let status = xhr.status === 1223 ? 204 : xhr.status;
 
         // fix status code when it is 0 (0 status is undocumented).
         // Occurs when accessing file resources or on Android 4.1 stock browser
@@ -138,13 +136,13 @@ function createHttpBackend(
         );
       };
 
-      var requestError = function () {
+      let requestError = function () {
         // The response is always empty
         // See https://xhr.spec.whatwg.org/#request-error-steps and https://fetch.spec.whatwg.org/#concept-network-error
         completeRequest(callback, -1, null, null, "", "error");
       };
 
-      var requestAborted = function () {
+      let requestAborted = function () {
         completeRequest(
           callback,
           -1,
@@ -155,7 +153,7 @@ function createHttpBackend(
         );
       };
 
-      var requestTimeout = function () {
+      let requestTimeout = function () {
         // The response is always empty
         // See https://xhr.spec.whatwg.org/#request-error-steps and https://fetch.spec.whatwg.org/#concept-network-error
         completeRequest(callback, -1, null, null, "", "timeout");
@@ -206,7 +204,7 @@ function createHttpBackend(
     // xhr.abort()                        abort (The xhr object is normally inaccessible, but
     //                                    can be exposed with the xhrFactory)
     if (timeout > 0) {
-      var timeoutId = $browserDefer(function () {
+      let timeoutId = $browserDefer(function () {
         timeoutRequest("timeout");
       }, timeout);
     } else if (isPromiseLike(timeout)) {
@@ -248,7 +246,7 @@ function createHttpBackend(
     // we can't use jQuery/jqLite here because jQuery does crazy stuff with script elements, e.g.:
     // - fetches local scripts via XHR and evals them
     // - adds and immediately removes script elements from the document
-    var script = rawDocument.createElement("script"),
+    let script = rawDocument.createElement("script"),
       callback = null;
     script.type = "text/javascript";
     script.src = url;
@@ -259,8 +257,8 @@ function createHttpBackend(
       script.removeEventListener("error", callback);
       rawDocument.body.removeChild(script);
       script = null;
-      var status = -1;
-      var text = "unknown";
+      let status = -1;
+      let text = "unknown";
 
       if (event) {
         if (event.type === "load" && !callbacks.wasCalled(callbackPath)) {

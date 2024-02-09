@@ -92,8 +92,8 @@ to test the behavior without being distracted by the rendering details.
 
 ```js
   it('should say hello', function() {
-    var scopeMock = {};
-    var cntl = new MyController(scopeMock);
+    let scopeMock = {};
+    let cntl = new MyController(scopeMock);
 
     // Assert that username is pre-filled
     expect(scopeMock.username).toEqual('World');

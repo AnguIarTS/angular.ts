@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('$anchorScroll', function() {
   beforeEach(function() {
@@ -6,7 +6,7 @@ describe('$anchorScroll', function() {
       toBeInViewport: function() {
         return {
           compare: function(id) {
-            var result = {
+            let result = {
               pass: browser.driver.
                 executeScript(_script_isInViewport, id).
                 then(function(isInViewport) {
@@ -23,12 +23,12 @@ describe('$anchorScroll', function() {
       toHaveTop: function() {
         return {
           compare: function(id, expectedTop) {
-            var result = {
+            let result = {
               pass: browser.driver.
                 executeScript(_script_getTop, id).
                 then(function(actualTop) {
                   // Some browsers may report have +/-1 pixel deviation
-                  var passed = Math.abs(expectedTop - actualTop) <= 1;
+                  let passed = Math.abs(expectedTop - actualTop) <= 1;
                   result.message = 'Expected #' + id + '\'s top' + (passed ? ' not' : '') +
                                    ' to be ' + expectedTop + ', but it was ' + actualTop;
                   return passed;
@@ -62,26 +62,26 @@ describe('$anchorScroll', function() {
   });
 
   describe('with `yOffset`', function() {
-    var yOffset = 50;
-    var buttons = element.all(by.repeater('x in [1, 2, 3, 4, 5]'));
-    var anchors = element.all(by.repeater('y in [1, 2, 3, 4, 5]'));
+    let yOffset = 50;
+    let buttons = element.all(by.repeater('x in [1, 2, 3, 4, 5]'));
+    let anchors = element.all(by.repeater('y in [1, 2, 3, 4, 5]'));
 
     beforeEach(function() {
       loadFixture('anchor-scroll-y-offset');
     });
 
     it('should scroll to the correct anchor when clicking each button', function() {
-      var lastAnchor = anchors.last();
+      let lastAnchor = anchors.last();
 
       // Make sure there is enough room to scroll the last anchor to the top
       lastAnchor.getSize().then(function(size) {
-        var tempHeight = size.height - 10;
+        let tempHeight = size.height - 10;
 
         execWithTempViewportHeight(tempHeight, function() {
           buttons.each(function(button, idx) {
             // For whatever reason, we need to run the assertions inside a callback :(
             button.click().then(function() {
-              var anchorId = 'anchor-' + (idx + 1);
+              let anchorId = 'anchor-' + (idx + 1);
 
               expect(anchorId).toBeInViewport();
               expect(anchorId).toHaveTop(yOffset);
@@ -92,12 +92,12 @@ describe('$anchorScroll', function() {
     });
 
     it('should automatically scroll when navigating to a URL with a hash', function() {
-      var lastAnchor = anchors.last();
-      var lastAnchorId = 'anchor-5';
+      let lastAnchor = anchors.last();
+      let lastAnchorId = 'anchor-5';
 
       // Make sure there is enough room to scroll the last anchor to the top
       lastAnchor.getSize().then(function(size) {
-        var tempHeight = size.height - 10;
+        let tempHeight = size.height - 10;
 
         execWithTempViewportHeight(tempHeight, function() {
           // Test updating `$location.url()` from within the app
@@ -119,15 +119,15 @@ describe('$anchorScroll', function() {
     });
 
     it('should not scroll "overzealously"', function() {
-      var lastButton = buttons.last();
-      var lastAnchor = anchors.last();
-      var lastAnchorId = 'anchor-5';
+      let lastButton = buttons.last();
+      let lastAnchor = anchors.last();
+      let lastAnchorId = 'anchor-5';
 
       if (browser.params.browser === 'firefox') return;
 
       // Make sure there is not enough room to scroll the last anchor to the top
       lastAnchor.getSize().then(function(size) {
-        var tempHeight = size.height + (yOffset / 2);
+        let tempHeight = size.height + (yOffset / 2);
 
         execWithTempViewportHeight(tempHeight, function() {
           scrollIntoView(lastAnchorId);
@@ -146,16 +146,16 @@ describe('$anchorScroll', function() {
   // `document` not being defined.
   /* eslint-disable no-undef */
   function _script_getTop(id) {
-    var elem = document.getElementById(id);
-    var rect = elem.getBoundingClientRect();
+    let elem = document.getElementById(id);
+    let rect = elem.getBoundingClientRect();
 
     return rect.top;
   }
 
   function _script_isInViewport(id) {
-    var elem = document.getElementById(id);
-    var rect = elem.getBoundingClientRect();
-    var docElem = document.documentElement;
+    let elem = document.getElementById(id);
+    let rect = elem.getBoundingClientRect();
+    let docElem = document.documentElement;
 
     return (rect.top < docElem.clientHeight) &&
            (rect.bottom > 0) &&
@@ -183,8 +183,8 @@ describe('$anchorScroll', function() {
     return browser.driver.
       executeScript('return document.documentElement.clientHeight').
       then(function(oldHeight) {
-        var heightDiff = newHeight - oldHeight;
-        var win = browser.driver.manage().window();
+        let heightDiff = newHeight - oldHeight;
+        let win = browser.driver.manage().window();
 
         return win.getSize().then(function(size) {
           return win.

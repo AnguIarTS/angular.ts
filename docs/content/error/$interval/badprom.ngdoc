@@ -11,7 +11,7 @@ promise, and pass that new promise to {@link ng.$interval#cancel $interval.cance
 Example of incorrect usage that leads to this error:
 
 ```js
-var promise = $interval(doSomething, 1000, 5).then(doSomethingElse);
+let promise = $interval(doSomething, 1000, 5).then(doSomethingElse);
 $interval.cancel(promise);
 ```
 
@@ -19,7 +19,7 @@ To fix the example above, keep a reference to the promise returned by
 {@link ng.$interval $interval()} and pass that to {@link ng.$interval#cancel $interval.cancel()}:
 
 ```js
-var promise = $interval(doSomething, 1000, 5);
-var newPromise = promise.then(doSomethingElse);
+let promise = $interval(doSomething, 1000, 5);
+let newPromise = promise.then(doSomethingElse);
 $interval.cancel(promise);
 ```

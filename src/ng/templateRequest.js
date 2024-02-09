@@ -1,6 +1,4 @@
-"use strict";
-
-var $templateRequestMinErr = minErr("$templateRequest");
+let $templateRequestMinErr = minErr("$templateRequest");
 
 /**
  * @ngdoc provider
@@ -14,7 +12,7 @@ var $templateRequestMinErr = minErr("$templateRequest");
  * requesting a template.
  */
 function $TemplateRequestProvider() {
-  var httpOptions;
+  let httpOptions;
 
   /**
    * @ngdoc method
@@ -84,7 +82,7 @@ function $TemplateRequestProvider() {
           tpl = $sce.getTrustedResourceUrl(tpl);
         }
 
-        var transformResponse =
+        let transformResponse =
           $http.defaults && $http.defaults.transformResponse;
 
         if (isArray(transformResponse)) {

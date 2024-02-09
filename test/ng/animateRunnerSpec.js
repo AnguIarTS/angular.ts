@@ -1,11 +1,11 @@
-'use strict';
+
 
 describe('$$animateAsyncRun', function() {
   it('should fire the callback only when one or more RAFs have passed',
     inject(function($$animateAsyncRun, $$rAF) {
 
-    var trigger = $$animateAsyncRun();
-    var called = false;
+    let trigger = $$animateAsyncRun();
+    let called = false;
     trigger(function() {
       called = true;
     });
@@ -18,10 +18,10 @@ describe('$$animateAsyncRun', function() {
   it('should immediately fire the callback if a RAF has passed since construction',
     inject(function($$animateAsyncRun, $$rAF) {
 
-    var trigger = $$animateAsyncRun();
+    let trigger = $$animateAsyncRun();
     $$rAF.flush();
 
-    var called = false;
+    let called = false;
     trigger(function() {
       called = true;
     });
@@ -34,9 +34,9 @@ describe('$$AnimateRunner', function() {
     ['end', 'cancel', 'pause', 'resume'], function(method) {
 
     inject(function($$AnimateRunner) {
-      var host = {};
-      var spy = host[method] = jasmine.createSpy();
-      var runner = new $$AnimateRunner(host);
+      let host = {};
+      let spy = host[method] = jasmine.createSpy();
+      let runner = new $$AnimateRunner(host);
       runner[method]();
       expect(spy).toHaveBeenCalled();
     });
@@ -46,10 +46,10 @@ describe('$$AnimateRunner', function() {
     ['end', 'cancel', 'pause', 'resume'], function(method) {
 
     inject(function($$AnimateRunner) {
-      var host = {};
-      var spy = host[method] = jasmine.createSpy();
-      var runner1 = new $$AnimateRunner();
-      var runner2 = new $$AnimateRunner(host);
+      let host = {};
+      let spy = host[method] = jasmine.createSpy();
+      let runner1 = new $$AnimateRunner();
+      let runner2 = new $$AnimateRunner(host);
       runner1.setHost(runner2);
       runner1[method]();
       expect(spy).toHaveBeenCalled();
@@ -59,8 +59,8 @@ describe('$$AnimateRunner', function() {
   it('should resolve the done function only if one RAF has passed',
     inject(function($$AnimateRunner, $$rAF) {
 
-    var runner = new $$AnimateRunner();
-    var spy = jasmine.createSpy();
+    let runner = new $$AnimateRunner();
+    let spy = jasmine.createSpy();
     runner.done(spy);
     runner.complete(true);
     expect(spy).not.toHaveBeenCalled();
@@ -71,8 +71,8 @@ describe('$$AnimateRunner', function() {
   it('should resolve with the status provided in the completion function',
     inject(function($$AnimateRunner, $$rAF) {
 
-    var runner = new $$AnimateRunner();
-    var capturedValue;
+    let runner = new $$AnimateRunner();
+    let capturedValue;
     runner.done(function(val) {
       capturedValue = val;
     });
@@ -85,11 +85,11 @@ describe('$$AnimateRunner', function() {
     ['end', 'cancel'], function(method) {
 
     inject(function($$AnimateRunner) {
-      var runner1 = new $$AnimateRunner();
-      var runner2 = new $$AnimateRunner();
+      let runner1 = new $$AnimateRunner();
+      let runner2 = new $$AnimateRunner();
       runner1.setHost(runner2);
 
-      var status1, status2, signature = '';
+      let status1, status2, signature = '';
       runner1.done(function(status) {
         signature += '1';
         status1 = status;
@@ -102,7 +102,7 @@ describe('$$AnimateRunner', function() {
 
       runner1[method]();
 
-      var expectedStatus = method === 'end';
+      let expectedStatus = method === 'end';
       expect(status1).toBe(expectedStatus);
       expect(status2).toBe(expectedStatus);
       expect(signature).toBe('21');
@@ -113,23 +113,23 @@ describe('$$AnimateRunner', function() {
     ['end', 'cancel'], function(method) {
 
     inject(function($$AnimateRunner, $rootScope) {
-      var runner1 = new $$AnimateRunner();
-      var runner2 = new $$AnimateRunner();
+      let runner1 = new $$AnimateRunner();
+      let runner2 = new $$AnimateRunner();
       runner1.setHost(runner2);
 
-      var status1;
+      let status1;
       runner1.then(
         function() { status1 = 'pass'; },
         function() { status1 = 'fail'; });
 
-      var status2;
+      let status2;
       runner2.then(
         function() { status2 = 'pass'; },
         function() { status2 = 'fail'; });
 
       runner1[method]();
 
-      var expectedStatus = method === 'end' ? 'pass' : 'fail';
+      let expectedStatus = method === 'end' ? 'pass' : 'fail';
 
       expect(status1).toBeUndefined();
       expect(status2).toBeUndefined();
@@ -143,15 +143,15 @@ describe('$$AnimateRunner', function() {
   it('should expose/create the contained promise when getPromise() is called',
     inject(function($$AnimateRunner, $rootScope) {
 
-    var runner = new $$AnimateRunner();
+    let runner = new $$AnimateRunner();
     expect(isPromiseLike(runner.getPromise())).toBeTruthy();
   }));
 
   it('should expose the `catch` promise function to handle the rejected state',
     inject(function($$AnimateRunner, $rootScope) {
 
-    var runner = new $$AnimateRunner();
-    var animationFailed = false;
+    let runner = new $$AnimateRunner();
+    let animationFailed = false;
     runner.catch(function() {
       animationFailed = true;
     });
@@ -161,7 +161,7 @@ describe('$$AnimateRunner', function() {
   }));
 
   it('should use timeouts to trigger async operations when the document is hidden', function() {
-    var hidden = true;
+    let hidden = true;
 
     module(function($provide) {
 
@@ -171,8 +171,8 @@ describe('$$AnimateRunner', function() {
     });
 
     inject(function($$AnimateRunner, $rootScope, $$rAF, $timeout) {
-      var spy = jasmine.createSpy();
-      var runner = new $$AnimateRunner();
+      let spy = jasmine.createSpy();
+      let runner = new $$AnimateRunner();
       runner.done(spy);
       runner.complete(true);
       expect(spy).not.toHaveBeenCalled();
@@ -199,8 +199,8 @@ describe('$$AnimateRunner', function() {
   they('should expose the `finally` promise function to handle the final state when $prop',
     { 'rejected': 'cancel', 'resolved': 'end' }, function(method) {
     inject(function($$AnimateRunner, $rootScope) {
-        var runner = new $$AnimateRunner();
-        var animationComplete = false;
+        let runner = new $$AnimateRunner();
+        let animationComplete = false;
         runner.finally(function() {
           animationComplete = true;
         }).catch(noop);
@@ -214,11 +214,11 @@ describe('$$AnimateRunner', function() {
     it('should resolve when all runners have naturally resolved',
       inject(function($$rAF, $$AnimateRunner) {
 
-      var runner1 = new $$AnimateRunner();
-      var runner2 = new $$AnimateRunner();
-      var runner3 = new $$AnimateRunner();
+      let runner1 = new $$AnimateRunner();
+      let runner2 = new $$AnimateRunner();
+      let runner3 = new $$AnimateRunner();
 
-      var status;
+      let status;
       $$AnimateRunner.all([runner1, runner2, runner3], function(response) {
         status = response;
       });
@@ -238,13 +238,13 @@ describe('$$AnimateRunner', function() {
       { ended: 'end', cancelled: 'cancel' }, function(method) {
 
       inject(function($$AnimateRunner) {
-        var runner1 = new $$AnimateRunner();
-        var runner2 = new $$AnimateRunner();
-        var runner3 = new $$AnimateRunner();
+        let runner1 = new $$AnimateRunner();
+        let runner2 = new $$AnimateRunner();
+        let runner3 = new $$AnimateRunner();
 
-        var expectedStatus = method === 'end';
+        let expectedStatus = method === 'end';
 
-        var status;
+        let status;
         $$AnimateRunner.all([runner1, runner2, runner3], function(response) {
           status = response;
         });
@@ -260,11 +260,11 @@ describe('$$AnimateRunner', function() {
     it('should return a status of `false` if one or more runners was cancelled',
       inject(function($$AnimateRunner) {
 
-      var runner1 = new $$AnimateRunner();
-      var runner2 = new $$AnimateRunner();
-      var runner3 = new $$AnimateRunner();
+      let runner1 = new $$AnimateRunner();
+      let runner2 = new $$AnimateRunner();
+      let runner3 = new $$AnimateRunner();
 
-      var status;
+      let status;
       $$AnimateRunner.all([runner1, runner2, runner3], function(response) {
         status = response;
       });
@@ -281,13 +281,13 @@ describe('$$AnimateRunner', function() {
     it('should evaluate an array of functions in a chain',
       inject(function($$rAF, $$AnimateRunner) {
 
-      var runner1 = new $$AnimateRunner();
-      var runner2 = new $$AnimateRunner();
-      var runner3 = new $$AnimateRunner();
+      let runner1 = new $$AnimateRunner();
+      let runner2 = new $$AnimateRunner();
+      let runner3 = new $$AnimateRunner();
 
-      var log = [];
+      let log = [];
 
-      var items = [];
+      let items = [];
       items.push(function(fn) {
         runner1.done(function() {
           log.push(1);
@@ -309,7 +309,7 @@ describe('$$AnimateRunner', function() {
         });
       });
 
-      var status;
+      let status;
       $$AnimateRunner.chain(items, function(response) {
         status = response;
       });
@@ -332,16 +332,16 @@ describe('$$AnimateRunner', function() {
     it('should break the chain when a function evaluates to false',
       inject(function($$rAF, $$AnimateRunner) {
 
-      var runner1 = new $$AnimateRunner();
-      var runner2 = new $$AnimateRunner();
-      var runner3 = new $$AnimateRunner();
-      var runner4 = new $$AnimateRunner();
-      var runner5 = new $$AnimateRunner();
-      var runner6 = new $$AnimateRunner();
+      let runner1 = new $$AnimateRunner();
+      let runner2 = new $$AnimateRunner();
+      let runner3 = new $$AnimateRunner();
+      let runner4 = new $$AnimateRunner();
+      let runner5 = new $$AnimateRunner();
+      let runner6 = new $$AnimateRunner();
 
-      var log = [];
+      let log = [];
 
-      var items = [];
+      let items = [];
       items.push(function(fn) { log.push(1); runner1.done(fn); });
       items.push(function(fn) { log.push(2); runner2.done(fn); });
       items.push(function(fn) { log.push(3); runner3.done(fn); });
@@ -349,7 +349,7 @@ describe('$$AnimateRunner', function() {
       items.push(function(fn) { log.push(5); runner5.done(fn); });
       items.push(function(fn) { log.push(6); runner6.done(fn); });
 
-      var status;
+      let status;
       $$AnimateRunner.chain(items, function(response) {
         status = response;
       });

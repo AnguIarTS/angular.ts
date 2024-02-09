@@ -1,10 +1,8 @@
-"use strict";
-
 // TODO(matsko): use caching here to speed things up for detection
 // TODO(matsko): add documentation
 //  by the time...
 
-var $$AnimateJsProvider = [
+let $$AnimateJsProvider = [
   "$animateProvider",
   /** @this */ function ($animateProvider) {
     this.$get = [
@@ -12,10 +10,10 @@ var $$AnimateJsProvider = [
       "$$AnimateRunner",
       "$$jqLite",
       function ($injector, $$AnimateRunner, $$jqLite) {
-        var applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
+        let applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
         // $animateJs(element, 'enter');
         return function (element, event, classes, options) {
-          var animationClosed = false;
+          let animationClosed = false;
 
           // the `classes` argument is optional and if it is not used
           // then the classes will be resolved from the element's className
@@ -36,17 +34,17 @@ var $$AnimateJsProvider = [
             }
           }
 
-          var classesToAdd = options.addClass;
-          var classesToRemove = options.removeClass;
+          let classesToAdd = options.addClass;
+          let classesToRemove = options.removeClass;
 
           // the lookupAnimations function returns a series of animation objects that are
           // matched up with one or more of the CSS classes. These animation objects are
           // defined via the module.animation factory function. If nothing is detected then
           // we don't return anything which then makes $animation query the next driver.
-          var animations = lookupAnimations(classes);
-          var before, after;
+          let animations = lookupAnimations(classes);
+          let before, after;
           if (animations.length) {
-            var afterFn, beforeFn;
+            let afterFn, beforeFn;
             if (event === "leave") {
               beforeFn = "leave";
               afterFn = "afterLeave"; // TODO(matsko): get rid of this
@@ -88,7 +86,7 @@ var $$AnimateJsProvider = [
             applyAnimationStyles(element, options);
           }
 
-          var runner;
+          let runner;
 
           return {
             $$willAnimate: true,
@@ -108,8 +106,8 @@ var $$AnimateJsProvider = [
               }
 
               runner = new $$AnimateRunner();
-              var closeActiveAnimations;
-              var chain = [];
+              let closeActiveAnimations;
+              let chain = [];
 
               if (before) {
                 chain.push(function (fn) {
@@ -159,7 +157,7 @@ var $$AnimateJsProvider = [
           };
 
           function executeAnimationFn(fn, element, event, options, onDone) {
-            var args;
+            let args;
             switch (event) {
               case "animate":
                 args = [element, options.from, options.to, onDone];
@@ -184,7 +182,7 @@ var $$AnimateJsProvider = [
 
             args.push(options);
 
-            var value = fn.apply(fn, args);
+            let value = fn.apply(fn, args);
             if (value) {
               if (isFunction(value.start)) {
                 value = value.start();
@@ -208,18 +206,18 @@ var $$AnimateJsProvider = [
             animations,
             fnName,
           ) {
-            var operations = [];
+            let operations = [];
             forEach(animations, function (ani) {
-              var animation = ani[fnName];
+              let animation = ani[fnName];
               if (!animation) return;
 
               // note that all of these animations will run in parallel
               operations.push(function () {
-                var runner;
-                var endProgressCb;
+                let runner;
+                let endProgressCb;
 
-                var resolved = false;
-                var onAnimationComplete = function (rejected) {
+                let resolved = false;
+                let onAnimationComplete = function (rejected) {
                   if (!resolved) {
                     resolved = true;
                     (endProgressCb || noop)(rejected);
@@ -242,7 +240,7 @@ var $$AnimateJsProvider = [
                   event,
                   options,
                   function (result) {
-                    var cancelled = result === false;
+                    let cancelled = result === false;
                     onAnimationComplete(cancelled);
                   },
                 );
@@ -261,7 +259,7 @@ var $$AnimateJsProvider = [
             animations,
             fnName,
           ) {
-            var operations = groupEventedAnimations(
+            let operations = groupEventedAnimations(
               element,
               event,
               options,
@@ -269,7 +267,7 @@ var $$AnimateJsProvider = [
               fnName,
             );
             if (operations.length === 0) {
-              var a, b;
+              let a, b;
               if (fnName === "beforeSetClass") {
                 a = groupEventedAnimations(
                   element,
@@ -314,7 +312,7 @@ var $$AnimateJsProvider = [
 
             // TODO(matsko): add documentation
             return function startAnimation(callback) {
-              var runners = [];
+              let runners = [];
               if (operations.length) {
                 forEach(operations, function (animateFn) {
                   runners.push(animateFn());
@@ -342,10 +340,10 @@ var $$AnimateJsProvider = [
 
         function lookupAnimations(classes) {
           classes = isArray(classes) ? classes : classes.split(" ");
-          var matches = [],
+          let matches = [],
             flagMap = {};
-          for (var i = 0; i < classes.length; i++) {
-            var klass = classes[i],
+          for (let i = 0; i < classes.length; i++) {
+            let klass = classes[i],
               animationFactory = $animateProvider.$$registeredAnimations[klass];
             if (animationFactory && !flagMap[klass]) {
               matches.push($injector.get(animationFactory));

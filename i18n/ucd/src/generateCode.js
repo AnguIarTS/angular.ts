@@ -1,16 +1,16 @@
-'use strict';
+
 
 exports.generateCode = generateCode;
 exports.generateFunction = generateFunction;
 
 function generateCode(validRanges) {
-  var code = '/******************************************************\n' +
+  let code = '/******************************************************\n' +
              ' *         Generated file, do not modify              *\n' +
              ' *                                                    *\n' +
              ' *****************************************************/\n' +
              '"use strict";\n';
-  var keys = Object.keys(validRanges);
-  for (var i in keys) {
+  let keys = Object.keys(validRanges);
+  for (let i in keys) {
     code += generateFunction(validRanges[keys[i]], keys[i]);
   }
   return code;
@@ -18,7 +18,7 @@ function generateCode(validRanges) {
 
 
 function generateFunction(positiveElements, functionName) {
-  var result = [];
+  let result = [];
   result.push('function ', functionName, '(cp) {\n');
   positiveElements.forEach(function(range) {
     if (range[0] === range[1]) {

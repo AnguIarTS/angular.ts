@@ -1,7 +1,7 @@
-'use strict';
 
-var exec = require('shelljs').exec;
-var semver = require('semver');
+
+let exec = require('shelljs').exec;
+let semver = require('semver');
 
 /**
  * @dgProcessor generateVersionDocProcessor
@@ -17,10 +17,10 @@ module.exports = function generateVersionDocProcessor(gitData) {
     ignoredBuilds: ['1.3.4-build.3588'],
     $process: function(docs) {
 
-      var ignoredBuilds = this.ignoredBuilds;
-      var currentVersion = require('../../../build/version.json');
-      var output = exec('yarn info angular versions --json', { silent: true }).stdout.split('\n')[0];
-      var allVersions = processAllVersionsResponse(JSON.parse(output).data);
+      let ignoredBuilds = this.ignoredBuilds;
+      let currentVersion = require('../../../build/version.json');
+      let output = exec('yarn info angular versions --json', { silent: true }).stdout.split('\n')[0];
+      let allVersions = processAllVersionsResponse(JSON.parse(output).data);
 
       docs.push({
         docType: 'current-version-data',
@@ -45,11 +45,11 @@ module.exports = function generateVersionDocProcessor(gitData) {
 
       function processAllVersionsResponse(versions) {
 
-        var latestMap = {};
+        let latestMap = {};
 
         // When the docs are built on a tagged commit, yarn info won't include the latest release,
         // so we add it manually based on the local version.json file.
-        var missesCurrentVersion = !currentVersion.isSnapshot && !versions.find(function(version) {
+        let missesCurrentVersion = !currentVersion.isSnapshot && !versions.find(function(version) {
           return version === currentVersion.version;
         });
 
@@ -66,8 +66,8 @@ module.exports = function generateVersionDocProcessor(gitData) {
               return version && version.major > 0;
             })
             .map(function(version) {
-              var key = version.major + '.' + version.minor;
-              var latest = latestMap[key];
+              let key = version.major + '.' + version.minor;
+              let latest = latestMap[key];
               if (!latest || version.compare(latest) > 0) {
                 latestMap[key] = version;
               }
@@ -79,14 +79,14 @@ module.exports = function generateVersionDocProcessor(gitData) {
             .reverse();
 
         // List the latest version for each branch
-        var latest = sortObject(latestMap, reverse(semver.compare))
+        let latest = sortObject(latestMap, reverse(semver.compare))
             .map(function(version) { return makeOption(version, 'Latest'); });
 
         // Get the stable release with the highest version
-        var highestStableRelease = versions.find(semverIsStable);
+        let highestStableRelease = versions.find(semverIsStable);
 
         // Generate master and stable snapshots
-        var snapshots = [
+        let snapshots = [
           makeOption(
             {version: 'snapshot'},
             'Latest',
@@ -114,7 +114,7 @@ module.exports = function generateVersionDocProcessor(gitData) {
       }
 
       function createDocsUrl(version) {
-        var url = 'https://code.angularjs.org/' + version.version + '/docs';
+        let url = 'https://code.angularjs.org/' + version.version + '/docs';
         // Versions before 1.0.2 had a different docs folder name
         if (version.major === 1 && version.minor === 0 && version.patch < 2) {
           url += '-' + version.version;
@@ -133,12 +133,12 @@ module.exports = function generateVersionDocProcessor(gitData) {
       // Adapted from
       // https://github.com/kaelzhang/node-semver-stable/blob/34dd29842409295d49889d45871bec55a992b7f6/index.js#L25
       function semverIsStable(version) {
-        var semverObj = version.version;
+        let semverObj = version.version;
         return semverObj === null ? false : !semverObj.prerelease.length;
       }
 
       function createSnapshotStableLabel(version) {
-        var label = version.label.replace(/.$/, 'x') + '-snapshot';
+        let label = version.label.replace(/.$/, 'x') + '-snapshot';
 
         return label;
       }

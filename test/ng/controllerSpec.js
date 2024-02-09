@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('$controller', function() {
-  var $controllerProvider, $controller;
+  let $controllerProvider, $controller;
 
   beforeEach(module(function(_$controllerProvider_) {
     $controllerProvider = _$controllerProvider_;
@@ -16,7 +16,7 @@ describe('$controller', function() {
   describe('provider', function() {
 
     it('should allow registration of controllers', function() {
-      var FooCtrl = function($scope) { $scope.foo = 'bar'; },
+      let FooCtrl = function($scope) { $scope.foo = 'bar'; },
         scope = {},
         ctrl;
 
@@ -28,11 +28,11 @@ describe('$controller', function() {
     });
 
     it('should allow registration of bound controller functions', function() {
-      var FooCtrl = function($scope) { $scope.foo = 'bar'; },
+      let FooCtrl = function($scope) { $scope.foo = 'bar'; },
         scope = {},
         ctrl;
 
-      var BoundFooCtrl = FooCtrl.bind(null);
+      let BoundFooCtrl = FooCtrl.bind(null);
 
       $controllerProvider.register('FooCtrl', ['$scope', BoundFooCtrl]);
       ctrl = $controller('FooCtrl', {$scope: scope});
@@ -41,7 +41,7 @@ describe('$controller', function() {
     });
 
     it('should allow registration of map of controllers', function() {
-      var FooCtrl = function($scope) { $scope.foo = 'foo'; },
+      let FooCtrl = function($scope) { $scope.foo = 'foo'; },
           BarCtrl = function($scope) { $scope.bar = 'bar'; },
           scope = {},
           ctrl;
@@ -59,7 +59,7 @@ describe('$controller', function() {
 
 
     it('should allow registration of controllers annotated with arrays', function() {
-      var FooCtrl = function($scope) { $scope.foo = 'bar'; },
+      let FooCtrl = function($scope) { $scope.foo = 'bar'; },
           scope = {},
           ctrl;
 
@@ -106,7 +106,7 @@ describe('$controller', function() {
 
 
   it('should return instance of given controller class', function() {
-    var MyClass = function() {},
+    let MyClass = function() {},
         ctrl = $controller(MyClass);
 
     expect(ctrl).toBeDefined();
@@ -114,21 +114,21 @@ describe('$controller', function() {
   });
 
   it('should inject arguments', inject(function($http) {
-    var MyClass = function($http) {
+    let MyClass = function($http) {
       this.$http = $http;
     };
 
-    var ctrl = $controller(MyClass);
+    let ctrl = $controller(MyClass);
     expect(ctrl.$http).toBe($http);
   }));
 
 
   it('should inject given scope', function() {
-    var MyClass = function($scope) {
+    let MyClass = function($scope) {
       this.$scope = $scope;
     };
 
-    var scope = {},
+    let scope = {},
         ctrl = $controller(MyClass, {$scope: scope});
 
     expect(ctrl.$scope).toBe(scope);
@@ -136,8 +136,8 @@ describe('$controller', function() {
 
 
   it('should not instantiate a controller defined on window', inject(function($window) {
-    var scope = {};
-    var Foo = function() {};
+    let scope = {};
+    let Foo = function() {};
 
     $window.a = {Foo: Foo};
 
@@ -156,22 +156,22 @@ describe('$controller', function() {
   describe('ctrl as syntax', function() {
 
     it('should publish controller instance into scope', function() {
-      var scope = {};
+      let scope = {};
 
       $controllerProvider.register('FooCtrl', function() { this.mark = 'foo'; });
 
-      var foo = $controller('FooCtrl as foo', {$scope: scope});
+      let foo = $controller('FooCtrl as foo', {$scope: scope});
       expect(scope.foo).toBe(foo);
       expect(scope.foo.mark).toBe('foo');
     });
 
 
     it('should allow controllers with dots', function() {
-      var scope = {};
+      let scope = {};
 
       $controllerProvider.register('a.b.FooCtrl', function() { this.mark = 'foo'; });
 
-      var foo = $controller('a.b.FooCtrl as foo', {$scope: scope});
+      let foo = $controller('a.b.FooCtrl as foo', {$scope: scope});
       expect(scope.foo).toBe(foo);
       expect(scope.foo.mark).toBe('foo');
     });
@@ -219,11 +219,11 @@ describe('$controller', function() {
     });
 
     it('should allow identifiers containing `$`', function() {
-      var scope = {};
+      let scope = {};
 
       $controllerProvider.register('FooCtrl', function() { this.mark = 'foo'; });
 
-      var foo = $controller('FooCtrl as $foo', {$scope: scope});
+      let foo = $controller('FooCtrl as $foo', {$scope: scope});
       expect(scope.$foo).toBe(foo);
       expect(scope.$foo.mark).toBe('foo');
     });

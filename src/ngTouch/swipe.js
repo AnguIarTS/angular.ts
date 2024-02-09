@@ -1,5 +1,3 @@
-"use strict";
-
 /* global ngTouch: false */
 
 /**
@@ -28,9 +26,9 @@
 ngTouch.factory("$swipe", [
   function () {
     // The total distance in any direction before we make the call on swipe vs. scroll.
-    var MOVE_BUFFER_RADIUS = 10;
+    let MOVE_BUFFER_RADIUS = 10;
 
-    var POINTER_EVENTS = {
+    let POINTER_EVENTS = {
       mouse: {
         start: "mousedown",
         move: "mousemove",
@@ -51,12 +49,12 @@ ngTouch.factory("$swipe", [
     };
 
     function getCoordinates(event) {
-      var originalEvent = event.originalEvent || event;
-      var touches =
+      let originalEvent = event.originalEvent || event;
+      let touches =
         originalEvent.touches && originalEvent.touches.length
           ? originalEvent.touches
           : [originalEvent];
-      var e =
+      let e =
         (originalEvent.changedTouches && originalEvent.changedTouches[0]) ||
         touches[0];
 
@@ -67,9 +65,9 @@ ngTouch.factory("$swipe", [
     }
 
     function getEvents(pointerTypes, eventType) {
-      var res = [];
+      let res = [];
       angular.forEach(pointerTypes, function (pointerType) {
-        var eventName = POINTER_EVENTS[pointerType][eventType];
+        let eventName = POINTER_EVENTS[pointerType][eventType];
         if (eventName) {
           res.push(eventName);
         }
@@ -113,13 +111,13 @@ ngTouch.factory("$swipe", [
        */
       bind: function (element, eventHandlers, pointerTypes) {
         // Absolute total movement, used to control swipe vs. scroll.
-        var totalX, totalY;
+        let totalX, totalY;
         // Coordinates of the start position.
-        var startCoords;
+        let startCoords;
         // Last event's position.
-        var lastPos;
+        let lastPos;
         // Whether a swipe is active.
-        var active = false;
+        let active = false;
 
         pointerTypes = pointerTypes || ["mouse", "touch", "pointer"];
         element.on(getEvents(pointerTypes, "start"), function (event) {
@@ -132,7 +130,7 @@ ngTouch.factory("$swipe", [
             eventHandlers["start"](startCoords, event);
           }
         });
-        var events = getEvents(pointerTypes, "cancel");
+        let events = getEvents(pointerTypes, "cancel");
         if (events) {
           element.on(events, function (event) {
             active = false;
@@ -152,7 +150,7 @@ ngTouch.factory("$swipe", [
           // - On totalY > totalX, we let the browser handle it as a scroll.
 
           if (!startCoords) return;
-          var coords = getCoordinates(event);
+          let coords = getCoordinates(event);
 
           totalX += Math.abs(coords.x - lastPos.x);
           totalY += Math.abs(coords.y - lastPos.y);

@@ -1,5 +1,3 @@
-"use strict";
-
 // NOTE: ADVANCED_OPTIMIZATIONS mode.
 //
 // This file is compiled with Closure compiler's ADVANCED_OPTIMIZATIONS flag! Be wary of using
@@ -54,7 +52,7 @@
  *     this.gender = gender;
  *   }
  *
- *   var alice   = new Person('Alice', 'female'),
+ *   let alice   = new Person('Alice', 'female'),
  *       bob     = new Person('Bob', 'male'),
  *       ashley = new Person('Ashley', '');
  *
@@ -97,7 +95,7 @@
  *     this.gender = gender;
  *   }
  *
- *   var alice   = new Person('Alice', 'female'),
+ *   let alice   = new Person('Alice', 'female'),
  *       bob     = new Person('Bob', 'male'),
  *       sarah     = new Person('Sarah', 'female'),
  *       harry   = new Person('Harry Potter', 'male'),
@@ -115,7 +113,7 @@
  *   describe('MessageFormat plural', function() {
  *
  *     it('should pluralize initial values', function() {
- *       var messageElem = element(by.binding('recipients.length')),
+ *       let messageElem = element(by.binding('recipients.length')),
  *           decreaseRecipientsBtn = element(by.id('decreaseRecipients'));
  *
  *       expect(messageElem.getText()).toEqual('Harry Potter gave Alice and 2 other people a gift (#=2)');
@@ -157,7 +155,7 @@
  *        this.gender = gender;
  *      }
  *
- *      var alice   = new Person('Alice', 'female'),
+ *      let alice   = new Person('Alice', 'female'),
  *          bob     = new Person('Bob', 'male'),
  *          harry   = new Person('Harry Potter', 'male'),
  *          ashley   = new Person('Ashley', '');
@@ -172,7 +170,7 @@
     </example>
  */
 
-var $$MessageFormatFactory = [
+let $$MessageFormatFactory = [
   "$parse",
   "$locale",
   "$sce",
@@ -199,8 +197,8 @@ var $$MessageFormatFactory = [
       trustedContext,
       allOrNothing,
     ) {
-      var stringifier = getStringifier(trustedContext, allOrNothing, text);
-      var parser = new MessageFormatParser(
+      let stringifier = getStringifier(trustedContext, allOrNothing, text);
+      let parser = new MessageFormatParser(
         text,
         0,
         $parse,
@@ -220,7 +218,7 @@ var $$MessageFormatFactory = [
   },
 ];
 
-var $$interpolateDecorator = [
+let $$interpolateDecorator = [
   "$$messageFormat",
   "$delegate",
   function $$interpolateDecorator($$messageFormat, $interpolate) {
@@ -233,20 +231,20 @@ var $$interpolateDecorator = [
         "angular-message-format.js currently does not allow you to use custom start and end symbols for interpolation.",
       );
     }
-    var interpolate = $$messageFormat["interpolate"];
+    let interpolate = $$messageFormat["interpolate"];
     interpolate["startSymbol"] = $interpolate["startSymbol"];
     interpolate["endSymbol"] = $interpolate["endSymbol"];
     return interpolate;
   },
 ];
 
-var $interpolateMinErr;
-var isFunction;
-var noop;
-var toJson;
-var $$stringify;
+let $interpolateMinErr;
+let isFunction;
+let noop;
+let toJson;
+let $$stringify;
 
-var ngModule = window["angular"]["module"]("ngMessageFormat", ["ng"]);
+let ngModule = window["angular"]["module"]("ngMessageFormat", ["ng"]);
 ngModule["info"]({ angularVersion: '"NG_VERSION_FULL"' });
 ngModule["factory"]("$$messageFormat", $$MessageFormatFactory);
 ngModule["config"]([

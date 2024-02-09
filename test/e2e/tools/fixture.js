@@ -1,15 +1,15 @@
-'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var $ = require('cheerio');
-var util = require('./util');
 
-var root = path.resolve(__dirname, '..');
-var fixtures = path.resolve(root, 'fixtures');
+let fs = require('fs');
+let path = require('path');
+let $ = require('cheerio');
+let util = require('./util');
 
-var projectRoot = path.resolve(__dirname, '../../..');
-var build = path.resolve(projectRoot, 'build');
+let root = path.resolve(__dirname, '..');
+let fixtures = path.resolve(root, 'fixtures');
+
+let projectRoot = path.resolve(__dirname, '../../..');
+let build = path.resolve(projectRoot, 'build');
 
 function rewriteAngularSrc(src, query) {
   if (query) {
@@ -23,21 +23,21 @@ function rewriteAngularSrc(src, query) {
 }
 
 function generateFixture(test, query) {
-  var indexFile = path.resolve(fixtures, test, 'index.html');
-  var text = fs.readFileSync(indexFile, 'utf8');
+  let indexFile = path.resolve(fixtures, test, 'index.html');
+  let text = fs.readFileSync(indexFile, 'utf8');
 
-  var $$ = $.load(text);
+  let $$ = $.load(text);
 
-  var firstScript = null;
-  var jquery = null;
-  var angular = null;
+  let firstScript = null;
+  let jquery = null;
+  let angular = null;
   $$('script').each(function(i, script) {
-    var src = $(script).attr('src');
+    let src = $(script).attr('src');
     if (src === 'jquery.js' && jquery === null) jquery = script;
     else if (src === 'angular.js' && angular === null) angular = script;
     if (firstScript === null) firstScript = script;
     if (src) {
-      var s = util.stat(path.resolve(build, src));
+      let s = util.stat(path.resolve(build, src));
       if (s && s.isFile()) {
         $(script).attr('src', rewriteAngularSrc(src, query));
       } else {
@@ -56,7 +56,7 @@ function generateFixture(test, query) {
       if (firstScript) {
         $(firstScript).before(jquery);
       } else {
-        var head = $$('head');
+        let head = $$('head');
         if (head.length) {
           head.prepend(jquery);
         } else {

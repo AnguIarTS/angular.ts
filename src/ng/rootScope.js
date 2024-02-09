@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * DESIGN NOTES
  *
@@ -68,10 +66,10 @@
  * {@link guide/scope developer guide on scopes}.
  */
 function $RootScopeProvider() {
-  var TTL = 10;
-  var $rootScopeMinErr = minErr("$rootScope");
-  var lastDirtyWatch = null;
-  var applyAsyncId = null;
+  let TTL = 10;
+  let $rootScopeMinErr = minErr("$rootScope");
+  let lastDirtyWatch = null;
+  let applyAsyncId = null;
 
   this.digestTtl = function (value) {
     if (arguments.length) {
@@ -108,21 +106,6 @@ function $RootScopeProvider() {
       }
 
       function cleanUpScope($scope) {
-        // Support: IE 9 only
-        if (msie === 9) {
-          // There is a memory leak in IE9 if all child scopes are not disconnected
-          // completely when a scope is destroyed. So this code will recurse up through
-          // all this scopes children
-          //
-          // See issue https://github.com/angular/angular.js/issues/10706
-          if ($scope.$$childHead) {
-            cleanUpScope($scope.$$childHead);
-          }
-          if ($scope.$$nextSibling) {
-            cleanUpScope($scope.$$nextSibling);
-          }
-        }
-
         // The code below works around IE9 and V8's memory leaks
         //
         // See:
@@ -155,8 +138,8 @@ function $RootScopeProvider() {
      * ## Inheritance
      * A scope can inherit from a parent scope, as in this example:
      * ```js
-         var parent = $rootScope;
-         var child = parent.$new();
+         let parent = $rootScope;
+         let child = parent.$new();
 
          parent.salutation = "Hello";
          expect(child.salutation).toEqual('Hello');
@@ -255,7 +238,7 @@ function $RootScopeProvider() {
          *
          */
         $new: function (isolate, parent) {
-          var child;
+          let child;
 
           parent = parent || this;
 
@@ -337,7 +320,7 @@ function $RootScopeProvider() {
        * @example
        * ```js
            // let's assume that scope was dependency injected as the $rootScope
-           var scope = $rootScope;
+           let scope = $rootScope;
            scope.name = 'misko';
            scope.counter = 0;
 
@@ -362,7 +345,7 @@ function $RootScopeProvider() {
 
 
            // Using a function as a watchExpression
-           var food;
+           let food;
            scope.foodCounter = 0;
            expect(scope.foodCounter).toEqual(0);
            scope.$watch(
@@ -414,13 +397,13 @@ function $RootScopeProvider() {
           objectEquality,
           prettyPrintExpression,
         ) {
-          var get = $parse(watchExp);
-          var fn = isFunction(listener) ? listener : noop;
+          let get = $parse(watchExp);
+          let fn = isFunction(listener) ? listener : noop;
 
           if (get.$$watchDelegate) {
             return get.$$watchDelegate(this, fn, objectEquality, get, watchExp);
           }
-          var scope = this,
+          let scope = this,
             array = scope.$$watchers,
             watcher = {
               fn: fn,
@@ -443,7 +426,7 @@ function $RootScopeProvider() {
           incrementWatchersCount(this, 1);
 
           return function deregisterWatch() {
-            var index = arrayRemove(array, watcher);
+            let index = arrayRemove(array, watcher);
             if (index >= 0) {
               incrementWatchersCount(scope, -1);
               if (index < array.$$digestWatchIndex) {
@@ -480,16 +463,16 @@ function $RootScopeProvider() {
          * @returns {function()} Returns a de-registration function for all listeners.
          */
         $watchGroup: function (watchExpressions, listener) {
-          var oldValues = new Array(watchExpressions.length);
-          var newValues = new Array(watchExpressions.length);
-          var deregisterFns = [];
-          var self = this;
-          var changeReactionScheduled = false;
-          var firstRun = true;
+          let oldValues = new Array(watchExpressions.length);
+          let newValues = new Array(watchExpressions.length);
+          let deregisterFns = [];
+          let self = this;
+          let changeReactionScheduled = false;
+          let firstRun = true;
 
           if (!watchExpressions.length) {
             // No expressions means we call the listener ASAP
-            var shouldCall = true;
+            let shouldCall = true;
             self.$evalAsync(function () {
               if (shouldCall) listener(newValues, newValues, self);
             });
@@ -515,7 +498,7 @@ function $RootScopeProvider() {
           }
 
           forEach(watchExpressions, function (expr, i) {
-            var unwatchFn = self.$watch(
+            let unwatchFn = self.$watch(
               expr,
               function watchGroupSubAction(value) {
                 newValues[i] = value;
@@ -539,7 +522,7 @@ function $RootScopeProvider() {
                 listener(newValues, oldValues, self);
               }
             } finally {
-              for (var i = 0; i < watchExpressions.length; i++) {
+              for (let i = 0; i < watchExpressions.length; i++) {
                 oldValues[i] = newValues[i];
               }
             }
@@ -615,26 +598,26 @@ function $RootScopeProvider() {
           $watchCollectionInterceptor.$stateful =
             !$watchCollectionInterceptor.$$pure;
 
-          var self = this;
+          let self = this;
           // the current value, updated on each dirty-check run
-          var newValue;
+          let newValue;
           // a shallow copy of the newValue from the last dirty-check run,
           // updated to match newValue during dirty-check run
-          var oldValue;
+          let oldValue;
           // a shallow copy of the newValue from when the last change happened
-          var veryOldValue;
+          let veryOldValue;
           // only track veryOldValue if the listener is asking for it
-          var trackVeryOldValue = listener.length > 1;
-          var changeDetected = 0;
-          var changeDetector = $parse(obj, $watchCollectionInterceptor);
-          var internalArray = [];
-          var internalObject = {};
-          var initRun = true;
-          var oldLength = 0;
+          let trackVeryOldValue = listener.length > 1;
+          let changeDetected = 0;
+          let changeDetector = $parse(obj, $watchCollectionInterceptor);
+          let internalArray = [];
+          let internalObject = {};
+          let initRun = true;
+          let oldLength = 0;
 
           function $watchCollectionInterceptor(_value) {
             newValue = _value;
-            var newLength, key, bothNaN, newItem, oldItem;
+            let newLength, key, bothNaN, newItem, oldItem;
 
             // If the new value is undefined, then return undefined as the watch may be a one-time watch
             if (isUndefined(newValue)) return;
@@ -661,7 +644,7 @@ function $RootScopeProvider() {
                 oldValue.length = oldLength = newLength;
               }
               // copy the items to oldValue and look for changes.
-              for (var i = 0; i < newLength; i++) {
+              for (let i = 0; i < newLength; i++) {
                 oldItem = oldValue[i];
                 newItem = newValue[i];
 
@@ -730,13 +713,13 @@ function $RootScopeProvider() {
                 veryOldValue = newValue;
               } else if (isArrayLike(newValue)) {
                 veryOldValue = new Array(newValue.length);
-                for (var i = 0; i < newValue.length; i++) {
+                for (let i = 0; i < newValue.length; i++) {
                   veryOldValue[i] = newValue[i];
                 }
               } else {
                 // if object
                 veryOldValue = {};
-                for (var key in newValue) {
+                for (let key in newValue) {
                   if (hasOwnProperty.call(newValue, key)) {
                     veryOldValue[key] = newValue[key];
                   }
@@ -775,7 +758,7 @@ function $RootScopeProvider() {
        *
        * @example
        * ```js
-           var scope = ...;
+           let scope = ...;
            scope.name = 'misko';
            scope.counter = 0;
 
@@ -800,7 +783,7 @@ function $RootScopeProvider() {
        *
        */
         $digest: function () {
-          var watch,
+          let watch,
             value,
             last,
             fn,
@@ -837,7 +820,7 @@ function $RootScopeProvider() {
             // be reentered recursively. Calling $digest from a function passed to $evalAsync would
             // lead to a '$digest already in progress' error.
             for (
-              var asyncQueuePosition = 0;
+              let asyncQueuePosition = 0;
               asyncQueuePosition < asyncQueue.length;
               asyncQueuePosition++
             ) {
@@ -1080,7 +1063,7 @@ function $RootScopeProvider() {
         $destroy: function () {
           // We can't destroy a scope that has been already destroyed.
           if (this.$$destroyed) return;
-          var parent = this.$parent;
+          let parent = this.$parent;
 
           this.$broadcast("$destroy");
           this.$$destroyed = true;
@@ -1091,7 +1074,7 @@ function $RootScopeProvider() {
           }
 
           incrementWatchersCount(this, -this.$$watchersCount);
-          for (var eventName in this.$$listenerCount) {
+          for (let eventName in this.$$listenerCount) {
             decrementListenerCount(
               this,
               this.$$listenerCount[eventName],
@@ -1142,7 +1125,7 @@ function $RootScopeProvider() {
        *
        * @example
        * ```js
-           var scope = ng.$rootScope.Scope();
+           let scope = ng.$rootScope.Scope();
            scope.a = 1;
            scope.b = 2;
 
@@ -1297,7 +1280,7 @@ function $RootScopeProvider() {
          *    - `function(scope)`: execute the function with current `scope` parameter.
          */
         $applyAsync: function (expr) {
-          var scope = this;
+          let scope = this;
           if (expr) {
             applyAsyncQueue.push($applyAsyncExpression);
           }
@@ -1337,13 +1320,13 @@ function $RootScopeProvider() {
          * @returns {function()} Returns a deregistration function for this listener.
          */
         $on: function (name, listener) {
-          var namedListeners = this.$$listeners[name];
+          let namedListeners = this.$$listeners[name];
           if (!namedListeners) {
             this.$$listeners[name] = namedListeners = [];
           }
           namedListeners.push(listener);
 
-          var current = this;
+          let current = this;
           do {
             if (!current.$$listenerCount[name]) {
               current.$$listenerCount[name] = 0;
@@ -1351,9 +1334,9 @@ function $RootScopeProvider() {
             current.$$listenerCount[name]++;
           } while ((current = current.$parent));
 
-          var self = this;
+          let self = this;
           return function () {
-            var indexOfListener = namedListeners.indexOf(listener);
+            let indexOfListener = namedListeners.indexOf(listener);
             if (indexOfListener !== -1) {
               // Use delete in the hope of the browser deallocating the memory for the array entry,
               // while not shifting the array indexes of other listeners.
@@ -1387,7 +1370,7 @@ function $RootScopeProvider() {
          * @return {Object} Event object (see {@link ng.$rootScope.Scope#$on}).
          */
         $emit: function (name, args) {
-          var empty = [],
+          let empty = [],
             namedListeners,
             scope = this,
             stopPropagation = false,
@@ -1459,7 +1442,7 @@ function $RootScopeProvider() {
          * @return {Object} Event object, see {@link ng.$rootScope.Scope#$on}
          */
         $broadcast: function (name, args) {
-          var target = this,
+          let target = this,
             current = target,
             next = target,
             event = {
@@ -1473,7 +1456,7 @@ function $RootScopeProvider() {
 
           if (!target.$$listenerCount[name]) return event;
 
-          var listenerArgs = concat([event], arguments, 1),
+          let listenerArgs = concat([event], arguments, 1),
             listeners,
             i,
             length;
@@ -1519,14 +1502,14 @@ function $RootScopeProvider() {
         },
       };
 
-      var $rootScope = new Scope();
+      let $rootScope = new Scope();
 
       //The internal queues. Expose them on the $rootScope for debugging/testing purposes.
-      var asyncQueue = ($rootScope.$$asyncQueue = []);
-      var postDigestQueue = ($rootScope.$$postDigestQueue = []);
-      var applyAsyncQueue = ($rootScope.$$applyAsyncQueue = []);
+      let asyncQueue = ($rootScope.$$asyncQueue = []);
+      let postDigestQueue = ($rootScope.$$postDigestQueue = []);
+      let applyAsyncQueue = ($rootScope.$$applyAsyncQueue = []);
 
-      var postDigestQueuePosition = 0;
+      let postDigestQueuePosition = 0;
 
       return $rootScope;
 

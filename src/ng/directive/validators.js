@@ -1,4 +1,3 @@
-"use strict";
 /**
  * @ngdoc directive
  * @name ngRequired
@@ -48,9 +47,9 @@
  *     </div>
  *   </file>
  *   <file name="protractor.js" type="protractor">
-       var required = element(by.binding('form.input.$error.required'));
-       var model = element(by.binding('model'));
-       var input = element(by.id('input'));
+       let required = element(by.binding('form.input.$error.required'));
+       let model = element(by.binding('model'));
+       let input = element(by.id('input'));
 
        it('should set the required error', function() {
          expect(required.getText()).toContain('true');
@@ -62,7 +61,7 @@
  *   </file>
  * </example>
  */
-var requiredDirective = [
+let requiredDirective = [
   "$parse",
   function ($parse) {
     return {
@@ -71,7 +70,7 @@ var requiredDirective = [
       link: function (scope, elm, attr, ctrl) {
         if (!ctrl) return;
         // For boolean attributes like required, presence means true
-        var value =
+        let value =
           attr.hasOwnProperty("required") || $parse(attr.ngRequired)(scope);
 
         if (!attr.ngRequired) {
@@ -161,8 +160,8 @@ var requiredDirective = [
  *     </div>
  *   </file>
  *   <file name="protractor.js" type="protractor">
-       var model = element(by.binding('model'));
-       var input = element(by.id('input'));
+       let model = element(by.binding('model'));
+       let input = element(by.id('input'));
 
        it('should validate the input with the default pattern', function() {
          input.sendKeys('aaa');
@@ -176,15 +175,15 @@ var requiredDirective = [
  *   </file>
  * </example>
  */
-var patternDirective = [
+let patternDirective = [
   "$parse",
   function ($parse) {
     return {
       restrict: "A",
       require: "?ngModel",
       compile: function (tElm, tAttr) {
-        var patternExp;
-        var parseFn;
+        let patternExp;
+        let parseFn;
 
         if (tAttr.ngPattern) {
           patternExp = tAttr.ngPattern;
@@ -207,7 +206,7 @@ var patternDirective = [
         return function (scope, elm, attr, ctrl) {
           if (!ctrl) return;
 
-          var attrVal = attr.pattern;
+          let attrVal = attr.pattern;
 
           if (attr.ngPattern) {
             attrVal = parseFn(scope);
@@ -215,10 +214,10 @@ var patternDirective = [
             patternExp = attr.pattern;
           }
 
-          var regexp = parsePatternAttr(attrVal, patternExp, elm);
+          let regexp = parsePatternAttr(attrVal, patternExp, elm);
 
           attr.$observe("pattern", function (newVal) {
-            var oldRegexp = regexp;
+            let oldRegexp = regexp;
 
             regexp = parsePatternAttr(newVal, patternExp, elm);
 
@@ -300,8 +299,8 @@ var patternDirective = [
  *     </div>
  *   </file>
  *   <file name="protractor.js" type="protractor">
-       var model = element(by.binding('model'));
-       var input = element(by.id('input'));
+       let model = element(by.binding('model'));
+       let input = element(by.id('input'));
 
        it('should validate the input with the default maxlength', function() {
          input.sendKeys('abcdef');
@@ -315,7 +314,7 @@ var patternDirective = [
  *   </file>
  * </example>
  */
-var maxlengthDirective = [
+let maxlengthDirective = [
   "$parse",
   function ($parse) {
     return {
@@ -324,8 +323,8 @@ var maxlengthDirective = [
       link: function (scope, elm, attr, ctrl) {
         if (!ctrl) return;
 
-        var maxlength = attr.maxlength || $parse(attr.ngMaxlength)(scope);
-        var maxlengthParsed = parseLength(maxlength);
+        let maxlength = attr.maxlength || $parse(attr.ngMaxlength)(scope);
+        let maxlengthParsed = parseLength(maxlength);
 
         attr.$observe("maxlength", function (value) {
           if (maxlength !== value) {
@@ -402,8 +401,8 @@ var maxlengthDirective = [
  *     </div>
  *   </file>
  *   <file name="protractor.js" type="protractor">
-       var model = element(by.binding('model'));
-       var input = element(by.id('input'));
+       let model = element(by.binding('model'));
+       let input = element(by.id('input'));
 
        it('should validate the input with the default minlength', function() {
          input.sendKeys('ab');
@@ -415,7 +414,7 @@ var maxlengthDirective = [
  *   </file>
  * </example>
  */
-var minlengthDirective = [
+let minlengthDirective = [
   "$parse",
   function ($parse) {
     return {
@@ -424,8 +423,8 @@ var minlengthDirective = [
       link: function (scope, elm, attr, ctrl) {
         if (!ctrl) return;
 
-        var minlength = attr.minlength || $parse(attr.ngMinlength)(scope);
-        var minlengthParsed = parseLength(minlength) || -1;
+        let minlength = attr.minlength || $parse(attr.ngMinlength)(scope);
+        let minlengthParsed = parseLength(minlength) || -1;
 
         attr.$observe("minlength", function (value) {
           if (minlength !== value) {
@@ -465,6 +464,6 @@ function parsePatternAttr(regex, patternExp, elm) {
 }
 
 function parseLength(val) {
-  var intVal = toInt(val);
+  let intVal = toInt(val);
   return isNumberNaN(intVal) ? -1 : intVal;
 }

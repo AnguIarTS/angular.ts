@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('$filter', function() {
-  var $filterProvider, $filter;
+  let $filterProvider, $filter;
 
   beforeEach(module(function(_$filterProvider_) {
     $filterProvider = _$filterProvider_;
@@ -13,22 +13,22 @@ describe('$filter', function() {
 
   describe('provider', function() {
     it('should allow registration of filters', function() {
-      var FooFilter = function() {
+      let FooFilter = function() {
         return function() { return 'foo'; };
       };
 
       $filterProvider.register('foo', FooFilter);
 
-      var fooFilter = $filter('foo');
+      let fooFilter = $filter('foo');
       expect(fooFilter()).toBe('foo');
     });
 
     it('should allow registration of a map of filters', function() {
-      var FooFilter = function() {
+      let FooFilter = function() {
         return function() { return 'foo'; };
       };
 
-      var BarFilter = function() {
+      let BarFilter = function() {
         return function() { return 'bar'; };
       };
 
@@ -37,10 +37,10 @@ describe('$filter', function() {
         'bar': BarFilter
       });
 
-      var fooFilter = $filter('foo');
+      let fooFilter = $filter('foo');
       expect(fooFilter()).toBe('foo');
 
-      var barFilter = $filter('bar');
+      let barFilter = $filter('bar');
       expect(barFilter()).toBe('bar');
     });
   });

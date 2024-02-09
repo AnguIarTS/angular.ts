@@ -1,4 +1,4 @@
-'use strict';
+
 
 angular.module('DocsController', ['currentVersionData'])
 
@@ -8,7 +8,7 @@ angular.module('DocsController', ['currentVersionData'])
   function($scope, $rootScope, $location, $window, $cookies,
               NG_PAGES, NG_NAVIGATION, CURRENT_NG_VERSION) {
 
-  var errorPartialPath = 'Error404.html';
+  let errorPartialPath = 'Error404.html';
 
   $scope.navClass = function(navItem) {
     return {
@@ -19,7 +19,7 @@ angular.module('DocsController', ['currentVersionData'])
   };
 
   $scope.$on('$includeContentLoaded', function() {
-    var pagePath = $scope.currentPage ? $scope.currentPage.path : $location.path();
+    let pagePath = $scope.currentPage ? $scope.currentPage.path : $location.path();
     $window._gaq.push(['_trackPageview', pagePath]);
     $scope.loading = false;
   });
@@ -33,7 +33,7 @@ angular.module('DocsController', ['currentVersionData'])
 
     path = path.replace(/^\/?(.+?)(\/index)?\/?$/, '$1');
 
-    var currentPage = $scope.currentPage = NG_PAGES[path];
+    let currentPage = $scope.currentPage = NG_PAGES[path];
 
     $scope.loading = true;
     $scope.loadingError = false;
@@ -41,9 +41,9 @@ angular.module('DocsController', ['currentVersionData'])
     if (currentPage) {
       $scope.partialPath = 'partials/' + path + '.html';
       $scope.currentArea = NG_NAVIGATION[currentPage.area];
-      var pathParts = currentPage.path.split('/');
-      var breadcrumb = $scope.breadcrumb = [];
-      var breadcrumbPath = '';
+      let pathParts = currentPage.path.split('/');
+      let breadcrumb = $scope.breadcrumb = [];
+      let breadcrumbPath = '';
       angular.forEach(pathParts, function(part) {
         breadcrumbPath += part;
         breadcrumb.push({ name: (NG_PAGES[breadcrumbPath] && NG_PAGES[breadcrumbPath].name) || part, url: breadcrumbPath });
@@ -69,7 +69,7 @@ angular.module('DocsController', ['currentVersionData'])
   $scope.loading = false;
   $scope.loadingError = false;
 
-  var INDEX_PATH = /^(\/|\/index[^.]*.html)$/;
+  let INDEX_PATH = /^(\/|\/index[^.]*.html)$/;
   if (!$location.path() || INDEX_PATH.test($location.path())) {
     $location.path('/api').replace();
   }

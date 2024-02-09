@@ -1,4 +1,4 @@
-'use strict';
+
 
 exports.config = {
   allScriptsTimeout: 11000,
@@ -16,7 +16,7 @@ exports.config = {
     /* global angular: false, browser: false, jasmine: false */
 
     // Disable animations so e2e tests run more quickly
-    var disableNgAnimate = function() {
+    let disableNgAnimate = function() {
       angular.module('disableNgAnimate', []).run(['$animate', function($animate) {
         $animate.enabled(false);
       }]);

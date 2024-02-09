@@ -1,8 +1,8 @@
-'use strict';
 
-var helper = {
+
+let helper = {
   loadFixture: function(fixture) {
-    var i = 0;
+    let i = 0;
     while (fixture[i] === '/') ++i;
     fixture = fixture.slice(i);
     if (!/\/(index\.html)?$/.test(fixture)) {

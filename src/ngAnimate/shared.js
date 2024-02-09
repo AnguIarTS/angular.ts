@@ -1,19 +1,17 @@
-"use strict";
+let ELEMENT_NODE = 1;
+let COMMENT_NODE = 8;
 
-var ELEMENT_NODE = 1;
-var COMMENT_NODE = 8;
+let ADD_CLASS_SUFFIX = "-add";
+let REMOVE_CLASS_SUFFIX = "-remove";
+let EVENT_CLASS_PREFIX = "ng-";
+let ACTIVE_CLASS_SUFFIX = "-active";
+let PREPARE_CLASS_SUFFIX = "-prepare";
 
-var ADD_CLASS_SUFFIX = "-add";
-var REMOVE_CLASS_SUFFIX = "-remove";
-var EVENT_CLASS_PREFIX = "ng-";
-var ACTIVE_CLASS_SUFFIX = "-active";
-var PREPARE_CLASS_SUFFIX = "-prepare";
-
-var NG_ANIMATE_CLASSNAME = "ng-animate";
-var NG_ANIMATE_CHILDREN_DATA = "$$ngAnimateChildren";
+let NG_ANIMATE_CLASSNAME = "ng-animate";
+let NG_ANIMATE_CHILDREN_DATA = "$$ngAnimateChildren";
 
 // Detect proper transitionend/animationend event names.
-var CSS_PREFIX = "",
+let CSS_PREFIX = "",
   TRANSITION_PROP,
   TRANSITIONEND_EVENT,
   ANIMATION_PROP,
@@ -52,20 +50,20 @@ if (
   ANIMATIONEND_EVENT = "animationend";
 }
 
-var DURATION_KEY = "Duration";
-var PROPERTY_KEY = "Property";
-var DELAY_KEY = "Delay";
-var TIMING_KEY = "TimingFunction";
-var ANIMATION_ITERATION_COUNT_KEY = "IterationCount";
-var ANIMATION_PLAYSTATE_KEY = "PlayState";
-var SAFE_FAST_FORWARD_DURATION_VALUE = 9999;
+let DURATION_KEY = "Duration";
+let PROPERTY_KEY = "Property";
+let DELAY_KEY = "Delay";
+let TIMING_KEY = "TimingFunction";
+let ANIMATION_ITERATION_COUNT_KEY = "IterationCount";
+let ANIMATION_PLAYSTATE_KEY = "PlayState";
+let SAFE_FAST_FORWARD_DURATION_VALUE = 9999;
 
-var ANIMATION_DELAY_PROP = ANIMATION_PROP + DELAY_KEY;
-var ANIMATION_DURATION_PROP = ANIMATION_PROP + DURATION_KEY;
-var TRANSITION_DELAY_PROP = TRANSITION_PROP + DELAY_KEY;
-var TRANSITION_DURATION_PROP = TRANSITION_PROP + DURATION_KEY;
+let ANIMATION_DELAY_PROP = ANIMATION_PROP + DELAY_KEY;
+let ANIMATION_DURATION_PROP = ANIMATION_PROP + DURATION_KEY;
+let TRANSITION_DELAY_PROP = TRANSITION_PROP + DELAY_KEY;
+let TRANSITION_DURATION_PROP = TRANSITION_PROP + DURATION_KEY;
 
-var ngMinErr = angular.$$minErr("ng");
+let ngMinErr = angular.$$minErr("ng");
 function assertArg(arg, name, reason) {
   if (!arg) {
     throw ngMinErr(
@@ -88,7 +86,7 @@ function mergeClasses(a, b) {
 }
 
 function packageStyles(options) {
-  var styles = {};
+  let styles = {};
   if (options && (options.to || options.from)) {
     styles.to = options.to;
     styles.from = options.from;
@@ -97,7 +95,7 @@ function packageStyles(options) {
 }
 
 function pendClasses(classes, fix, isPrefix) {
-  var className = "";
+  let className = "";
   classes = isArray(classes)
     ? classes
     : classes && isString(classes) && classes.length
@@ -113,7 +111,7 @@ function pendClasses(classes, fix, isPrefix) {
 }
 
 function removeFromArray(arr, val) {
-  var index = arr.indexOf(val);
+  let index = arr.indexOf(val);
   if (val >= 0) {
     arr.splice(index, 1);
   }
@@ -146,8 +144,8 @@ function stripCommentsFromElement(element) {
 
 function extractElementNode(element) {
   if (!element[0]) return element;
-  for (var i = 0; i < element.length; i++) {
-    var elm = element[i];
+  for (let i = 0; i < element.length; i++) {
+    let elm = element[i];
     if (elm.nodeType === ELEMENT_NODE) {
       return elm;
     }
@@ -182,7 +180,7 @@ function applyAnimationClassesFactory($$jqLite) {
 function prepareAnimationOptions(options) {
   options = options || {};
   if (!options.$$prepared) {
-    var domOperation = options.domOperation || noop;
+    let domOperation = options.domOperation || noop;
     options.domOperation = function () {
       options.$$domOperationFired = true;
       domOperation();
@@ -213,13 +211,13 @@ function applyAnimationToStyles(element, options) {
 }
 
 function mergeAnimationDetails(element, oldAnimation, newAnimation) {
-  var target = oldAnimation.options || {};
-  var newOptions = newAnimation.options || {};
+  let target = oldAnimation.options || {};
+  let newOptions = newAnimation.options || {};
 
-  var toAdd = (target.addClass || "") + " " + (newOptions.addClass || "");
-  var toRemove =
+  let toAdd = (target.addClass || "") + " " + (newOptions.addClass || "");
+  let toRemove =
     (target.removeClass || "") + " " + (newOptions.removeClass || "");
-  var classes = resolveElementClasses(element.attr("class"), toAdd, toRemove);
+  let classes = resolveElementClasses(element.attr("class"), toAdd, toRemove);
 
   if (newOptions.preparationClasses) {
     target.preparationClasses = concatWithSpace(
@@ -230,7 +228,7 @@ function mergeAnimationDetails(element, oldAnimation, newAnimation) {
   }
 
   // noop is basically when there is no callback; otherwise something has been set
-  var realDomOperation =
+  let realDomOperation =
     target.domOperation !== noop ? target.domOperation : null;
 
   extend(target, newOptions);
@@ -259,10 +257,10 @@ function mergeAnimationDetails(element, oldAnimation, newAnimation) {
 }
 
 function resolveElementClasses(existing, toAdd, toRemove) {
-  var ADD_CLASS = 1;
-  var REMOVE_CLASS = -1;
+  let ADD_CLASS = 1;
+  let REMOVE_CLASS = -1;
 
-  var flags = {};
+  let flags = {};
   existing = splitClassesToLookup(existing);
 
   toAdd = splitClassesToLookup(toAdd);
@@ -275,13 +273,13 @@ function resolveElementClasses(existing, toAdd, toRemove) {
     flags[key] = flags[key] === ADD_CLASS ? null : REMOVE_CLASS;
   });
 
-  var classes = {
+  let classes = {
     addClass: "",
     removeClass: "",
   };
 
   forEach(flags, function (val, klass) {
-    var prop, allow;
+    let prop, allow;
     if (val === ADD_CLASS) {
       prop = "addClass";
       allow = !existing[klass] || existing[klass + REMOVE_CLASS_SUFFIX];
@@ -302,7 +300,7 @@ function resolveElementClasses(existing, toAdd, toRemove) {
       classes = classes.split(" ");
     }
 
-    var obj = {};
+    let obj = {};
     forEach(classes, function (klass) {
       // sometimes the split leaves empty string values
       // incase extra spaces were applied to the options
@@ -321,7 +319,7 @@ function getDomNode(element) {
 }
 
 function applyGeneratedPreparationClasses($$jqLite, element, event, options) {
-  var classes = "";
+  let classes = "";
   if (event) {
     classes = pendClasses(event, EVENT_CLASS_PREFIX, true);
   }
@@ -355,15 +353,15 @@ function clearGeneratedClasses(element, options) {
 }
 
 function blockKeyframeAnimations(node, applyBlock) {
-  var value = applyBlock ? "paused" : "";
-  var key = ANIMATION_PROP + ANIMATION_PLAYSTATE_KEY;
+  let value = applyBlock ? "paused" : "";
+  let key = ANIMATION_PROP + ANIMATION_PLAYSTATE_KEY;
   applyInlineStyle(node, [key, value]);
   return [key, value];
 }
 
 function applyInlineStyle(node, styleTuple) {
-  var prop = styleTuple[0];
-  var value = styleTuple[1];
+  let prop = styleTuple[0];
+  let value = styleTuple[1];
   node.style[prop] = value;
 }
 
@@ -373,12 +371,12 @@ function concatWithSpace(a, b) {
   return a + " " + b;
 }
 
-var helpers = {
+let helpers = {
   blockTransitions: function (node, duration) {
     // we use a negative delay value since it performs blocking
     // yet it doesn't kill any existing transitions running on the
     // same element which makes this safe for class-based animations
-    var value = duration ? "-" + duration + "s" : "";
+    let value = duration ? "-" + duration + "s" : "";
     applyInlineStyle(node, [TRANSITION_DELAY_PROP, value]);
     return [TRANSITION_DELAY_PROP, value];
   },

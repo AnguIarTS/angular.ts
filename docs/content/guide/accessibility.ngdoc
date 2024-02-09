@@ -124,7 +124,7 @@ attributes (if they have not been explicitly specified by the developer):
 
     function showAttrsDirective($timeout) {
       return function(scope, elem, attrs) {
-        var pre = document.createElement('pre');
+        let pre = document.createElement('pre');
         elem.after(pre);
 
         scope.$watchCollection(function() {
@@ -160,8 +160,8 @@ attributes (if they have not been explicitly specified by the developer):
     }
   </file>
   <file name="protractor.js" type="protractor">
-    var checkbox = element(by.css('custom-checkbox'));
-    var checkedCheckbox = element(by.css('custom-checkbox.checked'));
+    let checkbox = element(by.css('custom-checkbox'));
+    let checkedCheckbox = element(by.css('custom-checkbox.checked'));
 
     it('should have the `checked` class only when checked', function() {
       expect(checkbox.isPresent()).toBe(true);
@@ -400,10 +400,10 @@ tell ngAria to ignore the attribute globally.
   })
   .directive('showAttrs', function() {
     return function(scope, el, attrs) {
-      var pre = document.createElement('pre');
+      let pre = document.createElement('pre');
       el.after(pre);
       scope.$watch(function() {
-        var attrs = {};
+        let attrs = {};
         Array.prototype.slice.call(el[0].attributes, 0).forEach(function(item) {
           if (item.name !== 'show-attrs') {
             attrs[item.name] = item.value;

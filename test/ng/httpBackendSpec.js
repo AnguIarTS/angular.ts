@@ -1,9 +1,9 @@
 /* global createHttpBackend: false, createMockXhr: false, MockXhr: false */
-'use strict';
+
 
 describe('$httpBackend', function() {
 
-  var $backend, $browser, $jsonpCallbacks,
+  let $backend, $browser, $jsonpCallbacks,
       xhr, fakeDocument, callback;
 
   beforeEach(inject(function($injector) {
@@ -21,7 +21,7 @@ describe('$httpBackend', function() {
           fakeDocument.$$scripts.push(script);
         }),
         removeChild: jasmine.createSpy('body.removeChild').and.callFake(function(script) {
-          var index = fakeDocument.$$scripts.indexOf(script);
+          let index = fakeDocument.$$scripts.indexOf(script);
           if (index !== -1) {
             fakeDocument.$$scripts.splice(index, 1);
           }
@@ -72,7 +72,7 @@ describe('$httpBackend', function() {
 
   it('should pass the correct falsy value to send if falsy body is set (excluding undefined, NaN)',
     function() {
-      var values = [false, 0, '', null];
+      let values = [false, 0, '', null];
       angular.forEach(values, function(value) {
         $backend('GET', '/some-url', value, noop);
         xhr = MockXhr.$$lastInstance;
@@ -302,7 +302,7 @@ describe('$httpBackend', function() {
 
 
   it('should abort request on canceler promise resolution', inject(function($q, $browser) {
-    var canceler = $q.defer();
+    let canceler = $q.defer();
 
     callback.and.callFake(function(status, response, headers, statusText, xhrStatus) {
       expect(status).toBe(-1);
@@ -362,7 +362,7 @@ describe('$httpBackend', function() {
 
 
   it('should call $xhrFactory with method and url', function() {
-    var mockXhrFactory = jasmine.createSpy('mockXhrFactory').and.callFake(createMockXhr);
+    let mockXhrFactory = jasmine.createSpy('mockXhrFactory').and.callFake(createMockXhr);
     $backend = createHttpBackend($browser, mockXhrFactory, $browser.defer, $jsonpCallbacks, fakeDocument);
     $backend('GET', '/some-url', 'some-data', noop);
     expect(mockXhrFactory).toHaveBeenCalledWith('GET', '/some-url');
@@ -370,8 +370,8 @@ describe('$httpBackend', function() {
 
 
   it('should set up event listeners', function() {
-    var progressFn = function() {};
-    var uploadProgressFn = function() {};
+    let progressFn = function() {};
+    let uploadProgressFn = function() {};
     $backend('GET', '/url', null, callback, {}, null, null, null,
         {progress: progressFn}, {progress: uploadProgressFn});
     xhr = MockXhr.$$lastInstance;
@@ -385,7 +385,7 @@ describe('$httpBackend', function() {
     it('should set responseType and return xhr.response', function() {
       $backend('GET', '/whatever', null, callback, {}, null, null, 'blob');
 
-      var xhrInstance = MockXhr.$$lastInstance;
+      let xhrInstance = MockXhr.$$lastInstance;
       expect(xhrInstance.responseType).toBe('blob');
 
       callback.and.callFake(function(status, response) {
@@ -404,8 +404,8 @@ describe('$httpBackend', function() {
 
       $backend('GET', '/whatever', null, callback, {}, null, null, 'blob');
 
-      var xhrInstance = MockXhr.$$lastInstance;
-      var responseText = '{"some": "object"}';
+      let xhrInstance = MockXhr.$$lastInstance;
+      let responseText = '{"some": "object"}';
       expect(xhrInstance.responseType).toBe('blob');
 
       callback.and.callFake(function(status, response) {
@@ -422,7 +422,7 @@ describe('$httpBackend', function() {
 
   describe('JSONP', function() {
 
-    var SCRIPT_URL = /([^?]*)\?cb=(.*)/;
+    let SCRIPT_URL = /([^?]*)\?cb=(.*)/;
 
 
     it('should add script tag for JSONP request', function() {
@@ -434,7 +434,7 @@ describe('$httpBackend', function() {
       $backend('JSONP', 'http://example.org/path?cb=JSON_CALLBACK', null, callback);
       expect(fakeDocument.$$scripts.length).toBe(1);
 
-      var script = fakeDocument.$$scripts.shift(),
+      let script = fakeDocument.$$scripts.shift(),
           url = script.src.match(SCRIPT_URL);
 
       expect(url[1]).toBe('http://example.org/path');
@@ -452,7 +452,7 @@ describe('$httpBackend', function() {
       expect(fakeDocument.$$scripts.length).toBe(1);
 
 
-      var script = fakeDocument.$$scripts.shift(),
+      let script = fakeDocument.$$scripts.shift(),
           callbackId = script.src.match(SCRIPT_URL)[2];
 
       $jsonpCallbacks[callbackId]('some-data');
@@ -484,7 +484,7 @@ describe('$httpBackend', function() {
       expect(fakeDocument.$$scripts.length).toBe(1);
       expect($browser.deferredFns[0].time).toBe(2000);
 
-      var script = fakeDocument.$$scripts.shift(),
+      let script = fakeDocument.$$scripts.shift(),
         callbackId = script.src.match(SCRIPT_URL)[2];
 
       $browser.defer.flush();
@@ -548,7 +548,7 @@ describe('$httpBackend', function() {
 
     it('should convert 0 to 404 if no content - relative url', function() {
       /* global urlParsingNode: true */
-      var originalUrlParsingNode = urlParsingNode;
+      let originalUrlParsingNode = urlParsingNode;
 
       //temporarily overriding the DOM element to pretend that the test runs origin with file:// protocol
       urlParsingNode = {

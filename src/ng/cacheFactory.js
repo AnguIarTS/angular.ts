@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc service
  * @name $cacheFactory
@@ -11,7 +9,7 @@
  *
  * ```js
  *
- *  var cache = $cacheFactory('cacheId');
+ *  let cache = $cacheFactory('cacheId');
  *  expect($cacheFactory.get('cacheId')).toBe(cache);
  *  expect($cacheFactory.get('noSuchCacheId')).not.toBeDefined();
  *
@@ -84,7 +82,7 @@
  */
 function $CacheFactoryProvider() {
   this.$get = function () {
-    var caches = {};
+    let caches = {};
 
     function cacheFactory(cacheId, options) {
       if (cacheId in caches) {
@@ -95,7 +93,7 @@ function $CacheFactoryProvider() {
         );
       }
 
-      var size = 0,
+      let size = 0,
         stats = extend({}, options, { id: cacheId }),
         data = createMap(),
         capacity = (options && options.capacity) || Number.MAX_VALUE,
@@ -164,7 +162,7 @@ function $CacheFactoryProvider() {
         put: function (key, value) {
           if (isUndefined(value)) return;
           if (capacity < Number.MAX_VALUE) {
-            var lruEntry = lruHash[key] || (lruHash[key] = { key: key });
+            let lruEntry = lruHash[key] || (lruHash[key] = { key: key });
 
             refresh(lruEntry);
           }
@@ -192,7 +190,7 @@ function $CacheFactoryProvider() {
          */
         get: function (key) {
           if (capacity < Number.MAX_VALUE) {
-            var lruEntry = lruHash[key];
+            let lruEntry = lruHash[key];
 
             if (!lruEntry) return;
 
@@ -214,7 +212,7 @@ function $CacheFactoryProvider() {
          */
         remove: function (key) {
           if (capacity < Number.MAX_VALUE) {
-            var lruEntry = lruHash[key];
+            let lruEntry = lruHash[key];
 
             if (!lruEntry) return;
 
@@ -322,7 +320,7 @@ function $CacheFactoryProvider() {
      * @returns {Object} - key-value map of `cacheId` to the result of calling `cache#info`
      */
     cacheFactory.info = function () {
-      var info = {};
+      let info = {};
       forEach(caches, function (cache, cacheId) {
         info[cacheId] = cache.info();
       });
@@ -375,7 +373,7 @@ function $CacheFactoryProvider() {
  * Adding via the `$templateCache` service:
  *
  * ```js
- * var myApp = angular.module('myApp', []);
+ * let myApp = angular.module('myApp', []);
  * myApp.run(function($templateCache) {
  *   $templateCache.put('templateId.html', 'This is the content of the template');
  * });

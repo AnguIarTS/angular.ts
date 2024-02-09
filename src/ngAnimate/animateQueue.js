@@ -1,15 +1,13 @@
-"use strict";
-
-var NG_ANIMATE_ATTR_NAME = "data-ng-animate";
-var NG_ANIMATE_PIN_DATA = "$ngAnimatePin";
-var $$AnimateQueueProvider = [
+let NG_ANIMATE_ATTR_NAME = "data-ng-animate";
+let NG_ANIMATE_PIN_DATA = "$ngAnimatePin";
+let $$AnimateQueueProvider = [
   "$animateProvider",
   /** @this */ function ($animateProvider) {
-    var PRE_DIGEST_STATE = 1;
-    var RUNNING_STATE = 2;
-    var ONE_SPACE = " ";
+    let PRE_DIGEST_STATE = 1;
+    let RUNNING_STATE = 2;
+    let ONE_SPACE = " ";
 
-    var rules = (this.rules = {
+    let rules = (this.rules = {
       skip: [],
       cancel: [],
       join: [],
@@ -29,8 +27,8 @@ var $$AnimateQueueProvider = [
         return null;
       }
 
-      var keys = classString.split(ONE_SPACE);
-      var map = Object.create(null);
+      let keys = classString.split(ONE_SPACE);
+      let map = Object.create(null);
 
       forEach(keys, function (key) {
         map[key] = true;
@@ -40,7 +38,7 @@ var $$AnimateQueueProvider = [
 
     function hasMatchingClasses(newClassString, currentClassString) {
       if (newClassString && currentClassString) {
-        var currentClassMap = makeTruthyCssClassMap(currentClassString);
+        let currentClassMap = makeTruthyCssClassMap(currentClassString);
         return newClassString.split(ONE_SPACE).some(function (className) {
           return currentClassMap[className];
         });
@@ -54,8 +52,8 @@ var $$AnimateQueueProvider = [
     }
 
     function hasAnimationClasses(animation, and) {
-      var a = (animation.addClass || "").length > 0;
-      var b = (animation.removeClass || "").length > 0;
+      let a = (animation.addClass || "").length > 0;
+      let b = (animation.removeClass || "").length > 0;
       return and ? a && b : a || b;
     }
 
@@ -104,10 +102,10 @@ var $$AnimateQueueProvider = [
 
       if (currentAnimation.structural) return false;
 
-      var nA = newAnimation.addClass;
-      var nR = newAnimation.removeClass;
-      var cA = currentAnimation.addClass;
-      var cR = currentAnimation.removeClass;
+      let nA = newAnimation.addClass;
+      let nR = newAnimation.removeClass;
+      let cA = currentAnimation.addClass;
+      let cR = currentAnimation.removeClass;
 
       // early detection to save the global CPU shortage :)
       if (
@@ -145,16 +143,16 @@ var $$AnimateQueueProvider = [
         $$forceReflow,
         $$isDocumentHidden,
       ) {
-        var activeAnimationsLookup = new $$Map();
-        var disabledElementsLookup = new $$Map();
-        var animationsEnabled = null;
+        let activeAnimationsLookup = new $$Map();
+        let disabledElementsLookup = new $$Map();
+        let animationsEnabled = null;
 
         function removeFromDisabledElementsLookup(evt) {
           disabledElementsLookup.delete(evt.target);
         }
 
         function postDigestTaskFactory() {
-          var postDigestCalled = false;
+          let postDigestCalled = false;
           return function (fn) {
             // we only issue a call to postDigest before
             // it has first passed. This prevents any callbacks
@@ -175,7 +173,7 @@ var $$AnimateQueueProvider = [
         // compiled. The $templateRequest.totalPendingRequests variable keeps track of
         // all of the remote templates being currently downloaded. If there are no
         // templates currently downloading then the watcher will still fire anyway.
-        var deregisterWatch = $rootScope.$watch(
+        let deregisterWatch = $rootScope.$watch(
           function () {
             return $templateRequest.totalPendingRequests === 0;
           },
@@ -202,21 +200,21 @@ var $$AnimateQueueProvider = [
           },
         );
 
-        var callbackRegistry = Object.create(null);
+        let callbackRegistry = Object.create(null);
 
         // remember that the `customFilter`/`classNameFilter` are set during the
         // provider/config stage therefore we can optimize here and setup helper functions
-        var customFilter = $animateProvider.customFilter();
-        var classNameFilter = $animateProvider.classNameFilter();
-        var returnTrue = function () {
+        let customFilter = $animateProvider.customFilter();
+        let classNameFilter = $animateProvider.classNameFilter();
+        let returnTrue = function () {
           return true;
         };
 
-        var isAnimatableByFilter = customFilter || returnTrue;
-        var isAnimatableClassName = !classNameFilter
+        let isAnimatableByFilter = customFilter || returnTrue;
+        let isAnimatableClassName = !classNameFilter
           ? returnTrue
           : function (node, options) {
-              var className = [
+              let className = [
                 node.getAttribute("class"),
                 options.addClass,
                 options.removeClass,
@@ -224,14 +222,14 @@ var $$AnimateQueueProvider = [
               return classNameFilter.test(className);
             };
 
-        var applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
+        let applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
 
         function normalizeAnimationDetails(element, animation) {
           return mergeAnimationDetails(element, animation, {});
         }
 
         // IE9-11 has no method "contains" in SVG element and in Node.prototype. Bug #10259.
-        var contains =
+        let contains =
           window.Node.prototype.contains ||
           /** @this */ function (arg) {
             // eslint-disable-next-line no-bitwise
@@ -239,8 +237,8 @@ var $$AnimateQueueProvider = [
           };
 
         function findCallbacks(targetParentNode, targetNode, event) {
-          var matches = [];
-          var entries = callbackRegistry[event];
+          let matches = [];
+          let entries = callbackRegistry[event];
           if (entries) {
             forEach(entries, function (entry) {
               if (contains.call(entry.node, targetNode)) {
@@ -258,9 +256,9 @@ var $$AnimateQueueProvider = [
         }
 
         function filterFromRegistry(list, matchContainer, matchCallback) {
-          var containerNode = extractElementNode(matchContainer);
+          let containerNode = extractElementNode(matchContainer);
           return list.filter(function (entry) {
-            var isMatch =
+            let isMatch =
               entry.node === containerNode &&
               (!matchCallback || entry.callback === matchCallback);
             return !isMatch;
@@ -275,9 +273,9 @@ var $$AnimateQueueProvider = [
           }
         }
 
-        var $animate = {
+        let $animate = {
           on: function (event, container, callback) {
-            var node = extractElementNode(container);
+            let node = extractElementNode(container);
             callbackRegistry[event] = callbackRegistry[event] || [];
             callbackRegistry[event].push({
               node: node,
@@ -286,7 +284,7 @@ var $$AnimateQueueProvider = [
 
             // Remove the callback when the element is removed from the DOM
             jqLite(container).on("$destroy", function () {
-              var animationDetails = activeAnimationsLookup.get(node);
+              let animationDetails = activeAnimationsLookup.get(node);
 
               if (!animationDetails) {
                 // If there's an animation ongoing, the callback calling code will remove
@@ -300,7 +298,7 @@ var $$AnimateQueueProvider = [
           off: function (event, container, callback) {
             if (arguments.length === 1 && !isString(arguments[0])) {
               container = arguments[0];
-              for (var eventType in callbackRegistry) {
+              for (let eventType in callbackRegistry) {
                 callbackRegistry[eventType] = filterFromRegistry(
                   callbackRegistry[eventType],
                   container,
@@ -310,7 +308,7 @@ var $$AnimateQueueProvider = [
               return;
             }
 
-            var entries = callbackRegistry[event];
+            let entries = callbackRegistry[event];
             if (!entries) return;
 
             callbackRegistry[event] =
@@ -341,19 +339,19 @@ var $$AnimateQueueProvider = [
           //  (element) - element getter
           //  (element, bool) - element setter<F37>
           enabled: function (element, bool) {
-            var argCount = arguments.length;
+            let argCount = arguments.length;
 
             if (argCount === 0) {
               // () - Global getter
               bool = !!animationsEnabled;
             } else {
-              var hasElement = isElement(element);
+              let hasElement = isElement(element);
 
               if (!hasElement) {
                 // (bool) - Global setter
                 bool = animationsEnabled = !!element;
               } else {
-                var node = getDomNode(element);
+                let node = getDomNode(element);
 
                 if (argCount === 1) {
                   // (element) - Element getter
@@ -383,20 +381,20 @@ var $$AnimateQueueProvider = [
           // we always make a copy of the options since
           // there should never be any side effects on
           // the input data when running `$animateCss`.
-          var options = copy(initialOptions);
+          let options = copy(initialOptions);
 
-          var element = stripCommentsFromElement(originalElement);
-          var node = getDomNode(element);
-          var parentNode = node && node.parentNode;
+          let element = stripCommentsFromElement(originalElement);
+          let node = getDomNode(element);
+          let parentNode = node && node.parentNode;
 
           options = prepareAnimationOptions(options);
 
           // we create a fake runner with a working promise.
           // These methods will become available after the digest has passed
-          var runner = new $$AnimateRunner();
+          let runner = new $$AnimateRunner();
 
           // this is used to trigger callbacks in postDigest mode
-          var runInNextPostDigestOrNow = postDigestTaskFactory();
+          let runInNextPostDigestOrNow = postDigestTaskFactory();
 
           if (isArray(options.addClass)) {
             options.addClass = options.addClass.join(" ");
@@ -435,19 +433,19 @@ var $$AnimateQueueProvider = [
             return runner;
           }
 
-          var isStructural = ["enter", "move", "leave"].indexOf(event) >= 0;
+          let isStructural = ["enter", "move", "leave"].indexOf(event) >= 0;
 
-          var documentHidden = $$isDocumentHidden();
+          let documentHidden = $$isDocumentHidden();
 
           // This is a hard disable of all animations the element itself, therefore  there is no need to
           // continue further past this point if not enabled
           // Animations are also disabled if the document is currently hidden (page is not visible
           // to the user), because browsers slow down or do not flush calls to requestAnimationFrame
-          var skipAnimations =
+          let skipAnimations =
             documentHidden || disabledElementsLookup.get(node);
-          var existingAnimation =
+          let existingAnimation =
             (!skipAnimations && activeAnimationsLookup.get(node)) || {};
-          var hasExistingAnimation = !!existingAnimation.state;
+          let hasExistingAnimation = !!existingAnimation.state;
 
           // there is no point in traversing the same collection of parent ancestors if a followup
           // animation will be run on the same element that already did all that checking work
@@ -473,7 +471,7 @@ var $$AnimateQueueProvider = [
             closeChildAnimations(node);
           }
 
-          var newAnimation = {
+          let newAnimation = {
             structural: isStructural,
             element: element,
             event: event,
@@ -485,7 +483,7 @@ var $$AnimateQueueProvider = [
           };
 
           if (hasExistingAnimation) {
-            var skipAnimationFlag = isAllowed(
+            let skipAnimationFlag = isAllowed(
               "skip",
               newAnimation,
               existingAnimation,
@@ -499,7 +497,7 @@ var $$AnimateQueueProvider = [
                 return existingAnimation.runner;
               }
             }
-            var cancelAnimationFlag = isAllowed(
+            let cancelAnimationFlag = isAllowed(
               "cancel",
               newAnimation,
               existingAnimation,
@@ -525,7 +523,7 @@ var $$AnimateQueueProvider = [
               // a joined animation means that this animation will take over the existing one
               // so an example would involve a leave animation taking over an enter. Then when
               // the postDigest kicks in the enter will be ignored.
-              var joinAnimationFlag = isAllowed(
+              let joinAnimationFlag = isAllowed(
                 "join",
                 newAnimation,
                 existingAnimation,
@@ -563,7 +561,7 @@ var $$AnimateQueueProvider = [
           // when the options are merged and cleaned up we may end up not having to do
           // an animation at all, therefore we should check this before issuing a post
           // digest callback. Structural animations will always run no matter what.
-          var isValidAnimation = newAnimation.structural;
+          let isValidAnimation = newAnimation.structural;
           if (!isValidAnimation) {
             // animate (from/to) can be quickly checked first, otherwise we check if any classes are present
             isValidAnimation =
@@ -579,7 +577,7 @@ var $$AnimateQueueProvider = [
           }
 
           // the counter keeps track of cancelled animations
-          var counter = (existingAnimation.counter || 0) + 1;
+          let counter = (existingAnimation.counter || 0) + 1;
           newAnimation.counter = counter;
 
           markElementAnimationState(node, PRE_DIGEST_STATE, newAnimation);
@@ -594,18 +592,18 @@ var $$AnimateQueueProvider = [
 
             element = stripCommentsFromElement(originalElement);
 
-            var animationDetails = activeAnimationsLookup.get(node);
-            var animationCancelled = !animationDetails;
+            let animationDetails = activeAnimationsLookup.get(node);
+            let animationCancelled = !animationDetails;
             animationDetails = animationDetails || {};
 
             // if addClass/removeClass is called before something like enter then the
             // registered parent element may not be present. The code below will ensure
             // that a final value for parent element is obtained
-            var parentElement = element.parent() || [];
+            let parentElement = element.parent() || [];
 
             // animate/structural/class-based animations all have requirements. Otherwise there
             // is no point in performing an animation. The parent node must also be set.
-            var isValidAnimation =
+            let isValidAnimation =
               parentElement.length > 0 &&
               (animationDetails.event === "animate" ||
                 animationDetails.structural ||
@@ -655,7 +653,7 @@ var $$AnimateQueueProvider = [
                 : animationDetails.event;
 
             markElementAnimationState(node, RUNNING_STATE);
-            var realRunner = $$animation(
+            let realRunner = $$animation(
               element,
               event,
               animationDetails.options,
@@ -668,7 +666,7 @@ var $$AnimateQueueProvider = [
 
             realRunner.done(function (status) {
               close(!status);
-              var animationDetails = activeAnimationsLookup.get(node);
+              let animationDetails = activeAnimationsLookup.get(node);
               if (animationDetails && animationDetails.counter === counter) {
                 clearElementAnimationState(node);
               }
@@ -680,7 +678,7 @@ var $$AnimateQueueProvider = [
 
           function notifyProgress(runner, event, phase, data) {
             runInNextPostDigestOrNow(function () {
-              var callbacks = findCallbacks(parentNode, node, event);
+              let callbacks = findCallbacks(parentNode, node, event);
               if (callbacks.length) {
                 // do not optimize this call here to RAF because
                 // we don't know how heavy the callback code here will
@@ -709,12 +707,12 @@ var $$AnimateQueueProvider = [
         }
 
         function closeChildAnimations(node) {
-          var children = node.querySelectorAll(
+          let children = node.querySelectorAll(
             "[" + NG_ANIMATE_ATTR_NAME + "]",
           );
           forEach(children, function (child) {
-            var state = parseInt(child.getAttribute(NG_ANIMATE_ATTR_NAME), 10);
-            var animationDetails = activeAnimationsLookup.get(child);
+            let state = parseInt(child.getAttribute(NG_ANIMATE_ATTR_NAME), 10);
+            let animationDetails = activeAnimationsLookup.get(child);
             if (animationDetails) {
               switch (state) {
                 case RUNNING_STATE:
@@ -741,16 +739,16 @@ var $$AnimateQueueProvider = [
          * d) the element is not a child of the $rootElement
          */
         function areAnimationsAllowed(node, parentNode, event) {
-          var bodyNode = $document[0].body;
-          var rootNode = getDomNode($rootElement);
+          let bodyNode = $document[0].body;
+          let rootNode = getDomNode($rootElement);
 
-          var bodyNodeDetected = node === bodyNode || node.nodeName === "HTML";
-          var rootNodeDetected = node === rootNode;
-          var parentAnimationDetected = false;
-          var elementDisabled = disabledElementsLookup.get(node);
-          var animateChildren;
+          let bodyNodeDetected = node === bodyNode || node.nodeName === "HTML";
+          let rootNodeDetected = node === rootNode;
+          let parentAnimationDetected = false;
+          let elementDisabled = disabledElementsLookup.get(node);
+          let animateChildren;
 
-          var parentHost = jqLite.data(node, NG_ANIMATE_PIN_DATA);
+          let parentHost = jqLite.data(node, NG_ANIMATE_PIN_DATA);
           if (parentHost) {
             parentNode = getDomNode(parentHost);
           }
@@ -767,12 +765,12 @@ var $$AnimateQueueProvider = [
               break;
             }
 
-            var details = activeAnimationsLookup.get(parentNode) || {};
+            let details = activeAnimationsLookup.get(parentNode) || {};
             // either an enter, leave or move animation will commence
             // therefore we can't allow any animations to take place
             // but if a parent animation is class-based then that's ok
             if (!parentAnimationDetected) {
-              var parentNodeDisabled = disabledElementsLookup.get(parentNode);
+              let parentNodeDisabled = disabledElementsLookup.get(parentNode);
 
               if (parentNodeDisabled === true && elementDisabled !== false) {
                 // disable animations if the user hasn't explicitly enabled animations on the
@@ -787,7 +785,7 @@ var $$AnimateQueueProvider = [
             }
 
             if (isUndefined(animateChildren) || animateChildren === true) {
-              var value = jqLite.data(parentNode, NG_ANIMATE_CHILDREN_DATA);
+              let value = jqLite.data(parentNode, NG_ANIMATE_CHILDREN_DATA);
               if (isDefined(value)) {
                 animateChildren = value;
               }
@@ -821,7 +819,7 @@ var $$AnimateQueueProvider = [
             parentNode = parentNode.parentNode;
           }
 
-          var allowAnimation =
+          let allowAnimation =
             (!parentAnimationDetected || animateChildren) &&
             elementDisabled !== true;
           return allowAnimation && rootNodeDetected && bodyNodeDetected;
@@ -833,8 +831,8 @@ var $$AnimateQueueProvider = [
 
           node.setAttribute(NG_ANIMATE_ATTR_NAME, state);
 
-          var oldValue = activeAnimationsLookup.get(node);
-          var newValue = oldValue ? extend(oldValue, details) : details;
+          let oldValue = activeAnimationsLookup.get(node);
+          let newValue = oldValue ? extend(oldValue, details) : details;
           activeAnimationsLookup.set(node, newValue);
         }
       },

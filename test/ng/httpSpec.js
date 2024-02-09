@@ -1,4 +1,4 @@
-'use strict';
+
 
 /* global MockXhr: false */
 
@@ -6,8 +6,8 @@
 
 describe('$http', function() {
 
-  var callback, mockedCookies;
-  var customParamSerializer = function(params) {
+  let callback, mockedCookies;
+  let customParamSerializer = function(params) {
     return Object.keys(params).join('_');
   };
 
@@ -40,7 +40,7 @@ describe('$http', function() {
     describe('interceptors', function() {
       it('should chain request, requestReject, response and responseReject interceptors', function() {
         module(function($httpProvider) {
-          var savedConfig, savedResponse;
+          let savedConfig, savedResponse;
           $httpProvider.interceptors.push(function($q) {
             return {
               request: function(config) {
@@ -77,7 +77,7 @@ describe('$http', function() {
           });
         });
         inject(function($http, $httpBackend, $rootScope) {
-          var response;
+          let response;
           $httpBackend.expect('GET', '/url/1/2').respond('response');
           $http({method: 'GET', url: '/url'}).then(function(r) {
             response = r;
@@ -117,7 +117,7 @@ describe('$http', function() {
           });
         });
         inject(function($http, $httpBackend) {
-          var response;
+          let response;
           $httpBackend.expect('GET', '/url/outer/inner').respond('response');
           $http({method: 'GET', url: '/url'}).then(function(r) {
             response = r;
@@ -131,7 +131,7 @@ describe('$http', function() {
 
     describe('request interceptors', function() {
       it('should pass request config as a promise', function() {
-        var run = false;
+        let run = false;
         module(function($httpProvider) {
           $httpProvider.interceptors.push(function() {
             return {
@@ -196,7 +196,7 @@ describe('$http', function() {
       });
 
       it('should reject the http promise if an interceptor fails', function() {
-        var reason = new Error('interceptor failed');
+        let reason = new Error('interceptor failed');
         module(function($httpProvider) {
           $httpProvider.interceptors.push(function($q) {
             return {
@@ -207,7 +207,7 @@ describe('$http', function() {
           });
         });
         inject(function($http, $httpBackend, $rootScope) {
-          var success = jasmine.createSpy(), error = jasmine.createSpy();
+          let success = jasmine.createSpy(), error = jasmine.createSpy();
           $http.get('/url').then(success, error);
           $rootScope.$apply();
           expect(success).not.toHaveBeenCalled();
@@ -228,8 +228,8 @@ describe('$http', function() {
           });
         });
         inject(function($http, $httpBackend, $rootScope) {
-          var config = { headers: { foo: 'bar'} };
-          var configCopy = angular.copy(config);
+          let config = { headers: { foo: 'bar'} };
+          let configCopy = angular.copy(config);
           $httpBackend.expect('GET', '/intercepted').respond('');
           $http.get('/url', config);
           $rootScope.$apply();
@@ -285,7 +285,7 @@ describe('$http', function() {
 
 
   describe('the instance', function() {
-    var $httpBackend, $http, $rootScope, $sce;
+    let $httpBackend, $http, $rootScope, $sce;
 
     beforeEach(module(function($sceDelegateProvider) {
       // Setup a special trusted url that we can use in testing JSONP requests
@@ -546,7 +546,7 @@ describe('$http', function() {
       /* global parseHeaders: false */
 
       it('should parse basic', function() {
-        var parsed = parseHeaders(
+        let parsed = parseHeaders(
             'date: Thu, 04 Aug 2011 20:23:08 GMT\n' +
             'content-encoding: gzip\n' +
             'transfer-encoding: chunked\n' +
@@ -749,7 +749,7 @@ describe('$http', function() {
       });
 
       it('should send execute result if header value is function', function() {
-        var headerConfig = {'Accept': function() { return 'Rewritten'; }};
+        let headerConfig = {'Accept': function() { return 'Rewritten'; }};
 
         function checkHeaders(headers) {
           return headers['Accept'] === 'Rewritten';
@@ -771,7 +771,7 @@ describe('$http', function() {
       });
 
       it('should expose a config object to header functions', function() {
-        var config = {
+        let config = {
           foo: 'Rewritten',
           headers: {'Accept': function(config) {
             return config.foo;
@@ -784,7 +784,7 @@ describe('$http', function() {
       });
 
       it('should not allow modifications to a config object in header functions', function() {
-        var config = {
+        let config = {
           headers: {'Accept': function(config) {
             config.foo = 'bar';
             return 'Rewritten';
@@ -826,7 +826,7 @@ describe('$http', function() {
        $http.get('/url').then(callback);
        $httpBackend.flush();
        expect(callback).toHaveBeenCalledOnce();
-       var headers = callback.calls.mostRecent().args[0].headers;
+       let headers = callback.calls.mostRecent().args[0].headers;
        expect(headers('custom-empty-response-Header')).toEqual('');
        expect(headers('ToString')).toBe(null);
        expect(headers('Constructor')).toBe('');
@@ -903,7 +903,7 @@ describe('$http', function() {
 
     describe('jsonp trust', function() {
       it('should throw error if the url is not a trusted resource', function() {
-        var success, error;
+        let success, error;
         $http({method: 'JSONP', url: 'http://example.org/path'})
               .catch(function(e) { error = e; });
         $rootScope.$digest();
@@ -924,7 +924,7 @@ describe('$http', function() {
       });
 
       it('should error if the URL contains more than one `?` query indicator', function() {
-        var error;
+        let error;
         $http({ method: 'JSONP', url: $sce.trustAsResourceUrl('http://example.org/path?a=b?c=d')})
             .catch(function(e) { error = e; });
         $rootScope.$digest();
@@ -932,7 +932,7 @@ describe('$http', function() {
       });
 
       it('should error if the URL contains a JSON_CALLBACK parameter', function() {
-        var error;
+        let error;
         $http({ method: 'JSONP', url: $sce.trustAsResourceUrl('http://example.org/path?callback=JSON_CALLBACK')})
             .catch(function(e) { error = e; });
         $rootScope.$digest();
@@ -958,7 +958,7 @@ describe('$http', function() {
       });
 
       it('should error if a param contains a JSON_CALLBACK value', function() {
-        var error;
+        let error;
         $http({ method: 'JSONP', url: $sce.trustAsResourceUrl('http://example.org/path'), params: {callback: 'JSON_CALLBACK'}})
             .catch(function(e) { error = e; });
         $rootScope.$digest();
@@ -972,7 +972,7 @@ describe('$http', function() {
       });
 
       it('should allow encoded params that look like they contain the value JSON_CALLBACK or the configured callback key', function() {
-        var error;
+        let error;
         error = undefined;
         $httpBackend.expect('JSONP', 'http://example.org/path?other=JSON_C%2541LLBACK&callback=JSON_CALLBACK').respond('');
         $http({ method: 'JSONP', url: $sce.trustAsResourceUrl('http://example.org/path'), params: {other: 'JSON_C%41LLBACK'}})
@@ -989,7 +989,7 @@ describe('$http', function() {
       });
 
       it('should error if there is already a param matching the jsonpCallbackParam key', function() {
-        var error;
+        let error;
         $http({ method: 'JSONP', url: $sce.trustAsResourceUrl('http://example.org/path'), params: {callback: 'evilThing'}})
             .catch(function(e) { error = e; });
         $rootScope.$digest();
@@ -1046,8 +1046,8 @@ describe('$http', function() {
 
 
       it('should pass the event handlers through to the backend', function() {
-        var progressFn = jasmine.createSpy('progressFn');
-        var uploadProgressFn = jasmine.createSpy('uploadProgressFn');
+        let progressFn = jasmine.createSpy('progressFn');
+        let uploadProgressFn = jasmine.createSpy('uploadProgressFn');
         $httpBackend.when('GET').respond(200);
         $http({
           method: 'GET',
@@ -1056,11 +1056,11 @@ describe('$http', function() {
           uploadEventHandlers: {progress: uploadProgressFn}
         });
         $rootScope.$apply();
-        var mockXHR = MockXhr.$$lastInstance;
+        let mockXHR = MockXhr.$$lastInstance;
         expect(mockXHR.$$events.progress).toEqual(jasmine.any(Function));
         expect(mockXHR.upload.$$events.progress).toEqual(jasmine.any(Function));
 
-        var eventObj = {};
+        let eventObj = {};
         spyOn($rootScope, '$digest');
 
         mockXHR.$$events.progress(eventObj);
@@ -1099,7 +1099,7 @@ describe('$http', function() {
 
 
           it('should ignore File objects', function() {
-            var file = {
+            let file = {
               some: true,
               // $httpBackend compares toJson values by default,
               // we need to be sure it's not serialized into json string
@@ -1122,7 +1122,7 @@ describe('$http', function() {
           if (!window.Blob) return;
 
           // eslint-disable-next-line no-undef
-          var blob = new Blob(['blob!'], { type: 'text/plain' });
+          let blob = new Blob(['blob!'], { type: 'text/plain' });
 
           $httpBackend.expect('POST', '/url', '[object Blob]').respond('');
           $http({ method: 'POST', url: '/url', data: blob });
@@ -1132,7 +1132,7 @@ describe('$http', function() {
           if (!window.FormData) return;
 
           // eslint-disable-next-line no-undef
-          var formData = new FormData();
+          let formData = new FormData();
           formData.append('angular', 'is great');
 
           $httpBackend.expect('POST', '/url', '[object FormData]').respond('');
@@ -1166,7 +1166,7 @@ describe('$http', function() {
         });
 
         it('should not allow modifications to headers in a transform functions', function() {
-          var config = {
+          let config = {
             headers: {'Accept': 'bar'},
             transformRequest: function(data, headers) {
               angular.extend(headers(), {
@@ -1385,7 +1385,7 @@ describe('$http', function() {
           );
 
           it('should return JSON data with error message if JSON is invalid', function() {
-            var errCallback = jasmine.createSpy('error');
+            let errCallback = jasmine.createSpy('error');
             $httpBackend.expect('GET', '/url').respond('{abcd}', {'Content-Type': 'application/json'});
             $http.get('/url').then(callback).catch(errCallback);
             $httpBackend.flush();
@@ -1414,7 +1414,7 @@ describe('$http', function() {
           });
 
           it('should return response unprocessed if JSON is invalid but content-type is not application/json', function() {
-            var response = '{abcd}';
+            let response = '{abcd}';
             $httpBackend.expect('GET', '/url').respond(response, {'Content-Type': 'text/plain'});
 
             $http.get('/url').then(callback);
@@ -1424,7 +1424,7 @@ describe('$http', function() {
           });
 
           it('should return response unprocessed if JSON is invalid but content-type is not specified', function() {
-            var response = '{abcd}';
+            let response = '{abcd}';
             $httpBackend.expect('GET', '/url').respond(response);
 
             $http.get('/url').then(callback);
@@ -1476,8 +1476,8 @@ describe('$http', function() {
 
 
         it('should apply `transformResponse` even if the response data is empty', function() {
-          var callback = jasmine.createSpy('transformResponse');
-          var config = {transformResponse: callback};
+          let callback = jasmine.createSpy('transformResponse');
+          let config = {transformResponse: callback};
 
           $httpBackend.expect('GET', '/url1').respond(200, undefined);
           $httpBackend.expect('GET', '/url2').respond(200, null);
@@ -1498,7 +1498,7 @@ describe('$http', function() {
 
     describe('cache', function() {
 
-      var cache;
+      let cache;
 
       beforeEach(inject(function($cacheFactory) {
         cache = $cacheFactory('testCache');
@@ -1647,7 +1647,7 @@ describe('$http', function() {
 
 
       it('should not share the pending cached headers object instance', inject(function($rootScope) {
-        var firstResult;
+        let firstResult;
         callback.and.callFake(function(result) {
           expect(result.headers()).toEqual(firstResult.headers());
           expect(result.headers()).not.toBe(firstResult.headers());
@@ -1798,7 +1798,7 @@ describe('$http', function() {
         });
 
         it('should have less priority than explicitly given cache', inject(function($cacheFactory) {
-          var localCache = $cacheFactory('localCache');
+          let localCache = $cacheFactory('localCache');
           $http.defaults.cache = cache;
 
           // Fill local cache.
@@ -1843,7 +1843,7 @@ describe('$http', function() {
     describe('timeout', function() {
 
       it('should abort requests when timeout promise resolves', inject(function($q) {
-        var canceler = $q.defer();
+        let canceler = $q.defer();
 
         $httpBackend.expect('GET', '/some').respond(200);
 
@@ -1868,8 +1868,8 @@ describe('$http', function() {
 
 
       it('should timeout request when numerical timeout is exceeded', inject(function($timeout) {
-        var onFulfilled = jasmine.createSpy('onFulfilled');
-        var onRejected = jasmine.createSpy('onRejected').and.callFake(function(response) {
+        let onFulfilled = jasmine.createSpy('onFulfilled');
+        let onRejected = jasmine.createSpy('onRejected').and.callFake(function(response) {
           expect(response.xhrStatus).toBe('timeout');
         });
 
@@ -1889,8 +1889,8 @@ describe('$http', function() {
 
 
       it('should reject promise when timeout promise resolves', inject(function($timeout) {
-        var onFulfilled = jasmine.createSpy('onFulfilled');
-        var onRejected = jasmine.createSpy('onRejected').and.callFake(function(response) {
+        let onFulfilled = jasmine.createSpy('onFulfilled');
+        let onRejected = jasmine.createSpy('onRejected').and.callFake(function(response) {
           expect(response.xhrStatus).toBe('timeout');
         });
 
@@ -1980,7 +1980,7 @@ describe('$http', function() {
       });
 
       it('should expose default param serializer at runtime', function() {
-        var paramSerializer = $http.defaults.paramSerializer;
+        let paramSerializer = $http.defaults.paramSerializer;
         expect(paramSerializer({foo: 'foo', bar: ['bar', 'baz']})).toEqual('bar=bar&bar=baz&foo=foo');
       });
     });
@@ -1988,11 +1988,11 @@ describe('$http', function() {
 
 
   describe('$browser\'s outstandingRequestCount', function() {
-    var $http;
-    var $httpBackend;
-    var $rootScope;
-    var incOutstandingRequestCountSpy;
-    var completeOutstandingRequestSpy;
+    let $http;
+    let $httpBackend;
+    let $rootScope;
+    let incOutstandingRequestCountSpy;
+    let completeOutstandingRequestSpy;
 
 
     describe('without interceptors', function() {
@@ -2065,10 +2065,10 @@ describe('$http', function() {
 
 
     describe('with interceptors', function() {
-      var reqInterceptorDeferred;
-      var resInterceptorDeferred;
-      var reqInterceptorFulfilled;
-      var resInterceptorFulfilled;
+      let reqInterceptorDeferred;
+      let resInterceptorDeferred;
+      let reqInterceptorFulfilled;
+      let resInterceptorFulfilled;
 
       beforeEach(module(function($httpProvider) {
         reqInterceptorDeferred = null;
@@ -2209,8 +2209,8 @@ describe('$http', function() {
 
 
   describe('XSRF', function() {
-    var $http;
-    var $httpBackend;
+    let $http;
+    let $httpBackend;
 
     beforeEach(module(function($httpProvider) {
       $httpProvider.xsrfTrustedOrigins.push(
@@ -2296,7 +2296,7 @@ describe('$http', function() {
         mockedCookies['XSRF-TOKEN'] = 'foo';
       }
 
-      var testCache = $cacheFactory('testCache');
+      let testCache = $cacheFactory('testCache');
       spyOn(testCache, 'get').and.callFake(setCookie);
 
       $httpBackend.expect('GET', '/url', null, checkHeaders).respond(null);
@@ -2310,7 +2310,7 @@ describe('$http', function() {
       function checkHeaders(headers) {
         return isUndefined(headers['X-XSRF-TOKEN']);
       }
-      var requestUrls = [
+      let requestUrls = [
         'https://api.example.com/path',
         'http://trusted.example.com',
         'https://trusted2.example.com:1338'
@@ -2331,8 +2331,8 @@ describe('$http', function() {
         function checkHeaders(headers) {
           return headers['X-XSRF-TOKEN'] === 'secret';
         }
-        var currentUrl = 'https://example.com/path';
-        var requestUrls = [
+        let currentUrl = 'https://example.com/path';
+        let requestUrls = [
           'https://trusted.example.com/path',
           'https://trusted2.example.com:1337/path'
         ];
@@ -2351,7 +2351,7 @@ describe('$http', function() {
 
 
   it('should pass timeout, withCredentials and responseType', function() {
-    var $httpBackend = jasmine.createSpy('$httpBackend');
+    let $httpBackend = jasmine.createSpy('$httpBackend');
 
     $httpBackend.and.callFake(function(m, u, d, c, h, timeout, withCredentials, responseType) {
       expect(timeout).toBe(12345);
@@ -2380,7 +2380,7 @@ describe('$http', function() {
 
 
   it('should use withCredentials from default', function() {
-    var $httpBackend = jasmine.createSpy('$httpBackend');
+    let $httpBackend = jasmine.createSpy('$httpBackend');
 
     $httpBackend.and.callFake(function(m, u, d, c, h, timeout, withCredentials, responseType) {
       expect(withCredentials).toBe(true);
@@ -2408,7 +2408,7 @@ describe('$http', function() {
 
 
 describe('$http with $applyAsync', function() {
-  var $http, $httpBackend, $rootScope, $browser, log;
+  let $http, $httpBackend, $rootScope, $browser, log;
   beforeEach(module(function($httpProvider) {
     $httpProvider.useApplyAsync(true);
   }, provideLog));
@@ -2428,7 +2428,7 @@ describe('$http with $applyAsync', function() {
 
 
   it('should schedule coalesced apply on response', function() {
-    var handler = jasmine.createSpy('handler');
+    let handler = jasmine.createSpy('handler');
     $httpBackend.expect('GET', '/template1.html').respond(200, '<h1>Header!</h1>', {});
     $http.get('/template1.html').then(handler);
     // Ensure requests are sent
@@ -2486,7 +2486,7 @@ describe('$http with $applyAsync', function() {
 
 describe('$http param serializers', function() {
 
-  var defSer, jqrSer;
+  let defSer, jqrSer;
   beforeEach(inject(function($httpParamSerializer, $httpParamSerializerJQLike) {
     defSer = $httpParamSerializer;
     jqrSer = $httpParamSerializerJQLike;

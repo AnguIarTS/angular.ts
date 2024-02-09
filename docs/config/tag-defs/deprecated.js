@@ -1,13 +1,13 @@
-'use strict';
 
-var OPTION_MATCHER = /^\s*([\w-]+)="([^"]+)"\s+([\s\S]*)/;
-var VALID_OPTIONS = ['sinceVersion', 'removeVersion'];
+
+let OPTION_MATCHER = /^\s*([\w-]+)="([^"]+)"\s+([\s\S]*)/;
+let VALID_OPTIONS = ['sinceVersion', 'removeVersion'];
 
 module.exports = {
   name: 'deprecated',
   transforms: function(doc, tag, value) {
-    var result = {};
-    var invalidOptions = [];
+    let result = {};
+    let invalidOptions = [];
     value = value.trim();
     while (OPTION_MATCHER.test(value)) {
       value = value.replace(OPTION_MATCHER, function(_, key, value, rest) {

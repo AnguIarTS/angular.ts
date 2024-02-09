@@ -1,9 +1,13 @@
-"use strict";
-
-/* exported toDebugString */
+import {
+  copy,
+  isObject,
+  isUndefined,
+  isValidObjectMaxDepth,
+  toJsonReplacer,
+} from "./ng/utils";
 
 function serializeObject(obj, maxDepth) {
-  var seen = [];
+  let seen = [];
 
   // There is no direct way to stringify object until reaching a specific depth
   // and a very deep object can cause a performance issue, so we copy the object
@@ -11,7 +15,7 @@ function serializeObject(obj, maxDepth) {
   if (isValidObjectMaxDepth(maxDepth)) {
     // This file is also included in `angular-loader`, so `copy()` might not always be available in
     // the closure. Therefore, it is lazily retrieved as `angular.copy()` when needed.
-    obj = angular.copy(obj, null, maxDepth);
+    obj = copy(obj, null, maxDepth);
   }
   return JSON.stringify(obj, function (key, val) {
     val = toJsonReplacer(key, val);
@@ -24,7 +28,7 @@ function serializeObject(obj, maxDepth) {
   });
 }
 
-function toDebugString(obj, maxDepth) {
+export function toDebugString(obj, maxDepth) {
   if (typeof obj === "function") {
     return obj.toString().replace(/ \{[\s\S]*$/, "");
   } else if (isUndefined(obj)) {

@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('ngKeyup and ngKeydown directives', function() {
-  var element;
+  let element;
 
   afterEach(function() {
     dealoc(element);

@@ -1,20 +1,20 @@
-'use strict';
+
 
 describe('$$cookieReader', function() {
-  var $$cookieReader, document;
+  let $$cookieReader, document;
 
 
   describe('with access to `document.cookie`', function() {
 
     function deleteAllCookies() {
-      var cookies = document.cookie.split(';');
-      var path = window.location.pathname;
+      let cookies = document.cookie.split(';');
+      let path = window.location.pathname;
 
-      for (var i = 0; i < cookies.length; i++) {
-        var cookie = cookies[i];
-        var eqPos = cookie.indexOf('=');
-        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-        var parts = path.split('/');
+      for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        let eqPos = cookie.indexOf('=');
+        let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        let parts = path.split('/');
         while (parts.length) {
           document.cookie = name + '=;path=' + (parts.join('/') || '/') + ';expires=Thu, 01 Jan 1970 00:00:00 GMT';
           parts.pop();
@@ -113,7 +113,7 @@ describe('$$cookieReader', function() {
 
 
   describe('without access to `document.cookie`', function() {
-    var cookieSpy;
+    let cookieSpy;
 
     beforeEach(module(function($provide) {
       cookieSpy = jasmine.createSpy('cookie').and.throwError('Can\'t touch this!');

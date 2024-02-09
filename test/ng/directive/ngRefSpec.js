@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('ngRef', function() {
 
@@ -27,7 +27,7 @@ describe('ngRef', function() {
 
   describe('on a component', function() {
 
-    var myComponentController, attributeDirectiveController, $rootScope, $compile;
+    let myComponentController, attributeDirectiveController, $rootScope, $compile;
 
     beforeEach(module(function($compileProvider) {
       $compileProvider.component('myComponent', {
@@ -98,7 +98,7 @@ describe('ngRef', function() {
     });
 
     it('should not leak to parent scopes', function() {
-      var template =
+      let template =
         '<div ng-if="true">' +
           '<my-component ng-ref="myComponent"></my-component>' +
         '</div>';
@@ -107,31 +107,31 @@ describe('ngRef', function() {
     });
 
     it('should nullify the variable once the component is destroyed', function() {
-      var template = '<div><my-component ng-ref="myComponent"></my-component></div>';
+      let template = '<div><my-component ng-ref="myComponent"></my-component></div>';
 
-      var element = $compile(template)($rootScope);
+      let element = $compile(template)($rootScope);
       expect($rootScope.myComponent).toBe(myComponentController);
 
-      var componentElement = element.children();
-      var isolateScope = componentElement.isolateScope();
+      let componentElement = element.children();
+      let isolateScope = componentElement.isolateScope();
       componentElement.remove();
       isolateScope.$destroy();
       expect($rootScope.myComponent).toBe(null);
     });
 
     it('should be compatible with entering/leaving components', inject(function($animate) {
-      var template = '<my-component ng-ref="myComponent"></my-component>';
+      let template = '<my-component ng-ref="myComponent"></my-component>';
       $rootScope.$ctrl = {};
-      var parent = $compile('<div></div>')($rootScope);
+      let parent = $compile('<div></div>')($rootScope);
 
-      var leaving = $compile(template)($rootScope);
-      var leavingController = myComponentController;
+      let leaving = $compile(template)($rootScope);
+      let leavingController = myComponentController;
 
       $animate.enter(leaving, parent);
       expect($rootScope.myComponent).toBe(leavingController);
 
-      var entering = $compile(template)($rootScope);
-      var enteringController = myComponentController;
+      let entering = $compile(template)($rootScope);
+      let enteringController = myComponentController;
 
       $animate.enter(entering, parent);
       $animate.leave(leaving, parent);
@@ -149,20 +149,20 @@ describe('ngRef', function() {
 
   it('should bind the jqlite wrapped DOM element if there is no component', inject(function($compile, $rootScope) {
 
-    var el = $compile('<span ng-ref="mySpan">my text</span>')($rootScope);
+    let el = $compile('<span ng-ref="mySpan">my text</span>')($rootScope);
 
     expect($rootScope.mySpan).toEqualJq(el);
     expect($rootScope.mySpan[0].textContent).toBe('my text');
   }));
 
   it('should nullify the expression value if the DOM element is destroyed', inject(function($compile, $rootScope) {
-    var element = $compile('<div><span ng-ref="mySpan">my text</span></div>')($rootScope);
+    let element = $compile('<div><span ng-ref="mySpan">my text</span></div>')($rootScope);
     element.children().remove();
     expect($rootScope.mySpan).toBe(null);
   }));
 
   it('should bind the controller of an element directive', function() {
-    var myDirectiveController;
+    let myDirectiveController;
 
     module(function($compileProvider) {
       $compileProvider.directive('myDirective', function() {
@@ -195,7 +195,7 @@ describe('ngRef', function() {
 
       inject(function($compile, $rootScope) {
 
-        var el = $compile('<my-component ng-ref="myEl" ng-ref-read="$element"></my-component>')($rootScope);
+        let el = $compile('<my-component ng-ref="myEl" ng-ref-read="$element"></my-component>')($rootScope);
         expect($rootScope.myEl).toEqualJq(el);
         expect($rootScope.myEl[0].textContent).toBe('my text');
       });
@@ -215,7 +215,7 @@ describe('ngRef', function() {
       });
 
       inject(function($compile, $rootScope) {
-        var el = $compile('<my-directive ng-ref="myEl" ng-ref-read="$element"></my-directive>')($rootScope);
+        let el = $compile('<my-directive ng-ref="myEl" ng-ref-read="$element"></my-directive>')($rootScope);
 
         expect($rootScope.myEl).toEqualJq(el);
         expect($rootScope.myEl[0].textContent).toBe('my text');
@@ -224,7 +224,7 @@ describe('ngRef', function() {
 
 
     it('should bind an attribute-directive controller if ngRefRead="controllerName" is set', function() {
-      var attrDirective1Controller;
+      let attrDirective1Controller;
 
       module(function($compileProvider) {
         $compileProvider.directive('elementDirective', function() {
@@ -254,7 +254,7 @@ describe('ngRef', function() {
       });
 
       inject(function($compile, $rootScope) {
-        var el = $compile('<element-directive' +
+        let el = $compile('<element-directive' +
           'attribute-directive-1' +
           'attribute-directive-2' +
           'ng-ref="myController"' +
@@ -291,7 +291,7 @@ describe('ngRef', function() {
 
 
   it('should bind the jqlite element if the controller is on an attribute-directive', function() {
-    var myDirectiveController;
+    let myDirectiveController;
 
     module(function($compileProvider) {
       $compileProvider.directive('myDirective', function() {
@@ -306,7 +306,7 @@ describe('ngRef', function() {
     });
 
     inject(function($compile, $rootScope) {
-      var el = $compile('<div my-directive ng-ref="myEl"></div>')($rootScope);
+      let el = $compile('<div my-directive ng-ref="myEl"></div>')($rootScope);
 
       expect(myDirectiveController).toBeDefined();
       expect($rootScope.myEl).toEqualJq(el);
@@ -316,7 +316,7 @@ describe('ngRef', function() {
 
 
   it('should bind the jqlite element if the controller is on an class-directive', function() {
-    var myDirectiveController;
+    let myDirectiveController;
 
     module(function($compileProvider) {
       $compileProvider.directive('myDirective', function() {
@@ -331,7 +331,7 @@ describe('ngRef', function() {
     });
 
     inject(function($compile, $rootScope) {
-      var el = $compile('<div class="my-directive" ng-ref="myEl"></div>')($rootScope);
+      let el = $compile('<div class="my-directive" ng-ref="myEl"></div>')($rootScope);
 
       expect(myDirectiveController).toBeDefined();
       expect($rootScope.myEl).toEqualJq(el);
@@ -354,8 +354,8 @@ describe('ngRef', function() {
       });
 
       inject(function($compile, $rootScope) {
-        var template = '<my-component ng-ref="myComponent">{{myComponent.text}}</my-component>';
-        var element = $compile(template)($rootScope);
+        let template = '<my-component ng-ref="myComponent">{{myComponent.text}}</my-component>';
+        let element = $compile(template)($rootScope);
         $rootScope.$apply();
         expect(element.text()).toBe('SUCCESS');
         dealoc(element);
@@ -380,13 +380,13 @@ describe('ngRef', function() {
       });
 
       inject(function($compile, $rootScope) {
-        var template =
+        let template =
           '<div>' +
             '<my-component ng-ref="myComponent">' +
               '{{myComponent.text}}' +
             '</my-component>' +
           '</div>';
-        var element = $compile(template)($rootScope);
+        let element = $compile(template)($rootScope);
         $rootScope.$apply();
         expect(element.text()).toBe('SUCCESS');
         dealoc(element);
@@ -405,13 +405,13 @@ describe('ngRef', function() {
       });
 
       inject(function($compile, $rootScope) {
-        var template =
+        let template =
           '<div>' +
             '<my-component ng-if="present" ng-ref="myComponent" >' +
                 '{{myComponent.text}}' +
             '</my-component>' +
           '</div>';
-        var element = $compile(template)($rootScope);
+        let element = $compile(template)($rootScope);
 
         $rootScope.$apply('present = false');
         expect(element.text()).toBe('');
@@ -426,7 +426,7 @@ describe('ngRef', function() {
     });
 
     it('should be compatible with element transclude & destroy components', function() {
-      var myComponentController;
+      let myComponentController;
       module(function($compileProvider) {
         $compileProvider
           .component('myTranscludingComponent', {
@@ -434,7 +434,7 @@ describe('ngRef', function() {
             controller: function($animate, $element, $transclude) {
               myComponentController = this;
 
-              var currentClone, currentScope;
+              let currentClone, currentScope;
               this.transclude = function(text) {
                 this.text = text;
                 $transclude(function(clone, newScope) {
@@ -452,13 +452,13 @@ describe('ngRef', function() {
       });
 
       inject(function($compile, $rootScope) {
-        var template =
+        let template =
           '<div>' +
             '<my-transcluding-component ng-ref="myComponent">' +
               '{{myComponent.text}}' +
             '</my-transcluding-component>' +
           '</div>';
-        var element = $compile(template)($rootScope);
+        let element = $compile(template)($rootScope);
         $rootScope.$apply();
         expect(element.text()).toBe('');
 
@@ -491,13 +491,13 @@ describe('ngRef', function() {
       });
 
       inject(function($compile, $rootScope) {
-        var template =
+        let template =
           '<div>' +
             '<my-directive ng-ref="myDirective">' +
               '{{myDirective.text}}' +
             '</my-directive>' +
           '</div>';
-        var element = $compile(template)($rootScope);
+        let element = $compile(template)($rootScope);
         $rootScope.$apply();
         expect(element.text()).toBe('SUCCESS');
         dealoc(element);
@@ -517,8 +517,8 @@ describe('ngRef', function() {
     });
 
     inject(function($compile, $httpBackend, $rootScope) {
-      var template = '<div><http-component ng-ref="controller"></http-component></div>';
-      var element = $compile(template)($rootScope);
+      let template = '<div><http-component ng-ref="controller"></http-component></div>';
+      let element = $compile(template)($rootScope);
       $httpBackend.expect('GET', 'template.html').respond('ok');
       $rootScope.$apply();
       expect($rootScope.controller).toBeUndefined();
@@ -530,7 +530,7 @@ describe('ngRef', function() {
 
 
   it('should work with ngRepeat-ed components', function() {
-    var controllers = [];
+    let controllers = [];
 
     module(function($compileProvider) {
       $compileProvider.component('myComponent', {
@@ -546,8 +546,8 @@ describe('ngRef', function() {
       $rootScope.elements = [0,1,2,3,4];
       $rootScope.controllers = []; // Initialize the array because ngRepeat creates a child scope
 
-      var template = '<div><my-component ng-repeat="(key, el) in elements" ng-ref="controllers[key]"></my-component></div>';
-      var element = $compile(template)($rootScope);
+      let template = '<div><my-component ng-repeat="(key, el) in elements" ng-ref="controllers[key]"></my-component></div>';
+      let element = $compile(template)($rootScope);
       $rootScope.$apply();
 
       expect($rootScope.controllers).toEqual(controllers);

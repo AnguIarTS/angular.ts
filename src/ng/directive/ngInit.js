@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngInit
@@ -54,7 +52,7 @@
      </file>
      <file name="protractor.js" type="protractor">
        it('should alias index positions', function() {
-         var elements = element.all(by.css('.example-init'));
+         let elements = element.all(by.css('.example-init'));
          expect(elements.get(0).getText()).toBe('list[ 0 ][ 0 ] = a;');
          expect(elements.get(1).getText()).toBe('list[ 0 ][ 1 ] = b;');
          expect(elements.get(2).getText()).toBe('list[ 1 ][ 0 ] = c;');
@@ -63,7 +61,7 @@
      </file>
    </example>
  */
-var ngInitDirective = ngDirective({
+let ngInitDirective = ngDirective({
   priority: 450,
   compile: function () {
     return {

@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc function
  * @module ng
@@ -20,7 +18,7 @@
  * Typical usage
  * ```js
  *   // create an injector
- *   var $injector = angular.injector(['ng']);
+ *   let $injector = angular.injector(['ng']);
  *
  *   // use the injector to kick off your application
  *   // use the type inference to auto inject arguments, or use implicit injection
@@ -43,11 +41,11 @@
  * it into the current AngularJS scope.
  *
  * ```js
- * var $div = $('<div ng-controller="MyCtrl">{{content.label}}</div>');
+ * let $div = $('<div ng-controller="MyCtrl">{{content.label}}</div>');
  * $(document.body).append($div);
  *
  * angular.element(document).injector().invoke(function($compile) {
- *   var scope = angular.element($div).scope();
+ *   let scope = angular.element($div).scope();
  *   $compile($div)(scope);
  * });
  * ```
@@ -62,19 +60,19 @@
  * Implicit module which gets automatically added to each {@link auto.$injector $injector}.
  */
 
-var ARROW_ARG = /^([^(]+?)=>/;
-var FN_ARGS = /^[^(]*\(\s*([^)]*)\)/m;
-var FN_ARG_SPLIT = /,/;
-var FN_ARG = /^\s*(_?)(\S+?)\1\s*$/;
-var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
-var $injectorMinErr = minErr("$injector");
+let ARROW_ARG = /^([^(]+?)=>/;
+let FN_ARGS = /^[^(]*\(\s*([^)]*)\)/m;
+let FN_ARG_SPLIT = /,/;
+let FN_ARG = /^\s*(_?)(\S+?)\1\s*$/;
+let STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
+let $injectorMinErr = minErr("$injector");
 
 function stringifyFn(fn) {
   return Function.prototype.toString.call(fn);
 }
 
 function extractArgs(fn) {
-  var fnText = stringifyFn(fn).replace(STRIP_COMMENTS, ""),
+  let fnText = stringifyFn(fn).replace(STRIP_COMMENTS, ""),
     args = fnText.match(ARROW_ARG) || fnText.match(FN_ARGS);
   return args;
 }
@@ -82,7 +80,7 @@ function extractArgs(fn) {
 function anonFn(fn) {
   // For anonymous functions, showing at the very least the function signature can help in
   // debugging.
-  var args = extractArgs(fn);
+  let args = extractArgs(fn);
   if (args) {
     return "function(" + (args[1] || "").replace(/[\s\r\n]+/, " ") + ")";
   }
@@ -90,7 +88,7 @@ function anonFn(fn) {
 }
 
 function annotate(fn, strictDi, name) {
-  var $inject, argDecl, last;
+  let $inject, argDecl, last;
 
   if (typeof fn === "function") {
     if (!($inject = fn.$inject)) {
@@ -140,7 +138,7 @@ function annotate(fn, strictDi, name) {
  * The following always holds true:
  *
  * ```js
- *   var $injector = angular.injector();
+ *   let $injector = angular.injector();
  *   expect($injector.get('$injector')).toBe($injector);
  *   expect($injector.invoke(function($injector) {
  *     return $injector;
@@ -194,7 +192,7 @@ function annotate(fn, strictDi, name) {
  * For example:
  *
  * ```
- * var info = $injector.modules['ngAnimate'].info();
+ * let info = $injector.modules['ngAnimate'].info();
  * ```
  *
  * **Do not use this property to attempt to modify the modules after the application
@@ -289,7 +287,7 @@ function annotate(fn, strictDi, name) {
  * represent names of services to be injected into the function.
  * ```js
  *   // Given
- *   var MyController = function(obfuscatedScope, obfuscatedRoute) {
+ *   let MyController = function(obfuscatedScope, obfuscatedRoute) {
  *     // ...
  *   }
  *   // Define function dependencies
@@ -312,7 +310,7 @@ function annotate(fn, strictDi, name) {
  *   });
  *
  *   // We are forced to write break inlining
- *   var tmpFn = function(obfuscatedCompile, obfuscatedRootScope) {
+ *   let tmpFn = function(obfuscatedCompile, obfuscatedRootScope) {
  *     // ...
  *   };
  *   tmpFn.$inject = ['$compile', '$rootScope'];
@@ -460,7 +458,7 @@ function annotate(fn, strictDi, name) {
  * ```js
  *  // Define the eventTracker provider
  *  function EventTrackerProvider() {
- *    var trackingUrl = '/track';
+ *    let trackingUrl = '/track';
  *
  *    // A provider method for configuring where the tracked events should been saved
  *    this.setTrackingUrl = function(url) {
@@ -469,11 +467,11 @@ function annotate(fn, strictDi, name) {
  *
  *    // The service factory function
  *    this.$get = ['$http', function($http) {
- *      var trackedEvents = {};
+ *      let trackedEvents = {};
  *      return {
  *        // Call this to track an event
  *        event: function(event) {
- *          var count = trackedEvents[event] || 0;
+ *          let count = trackedEvents[event] || 0;
  *          count += 1;
  *          trackedEvents[event] = count;
  *          return count;
@@ -487,7 +485,7 @@ function annotate(fn, strictDi, name) {
  *  }
  *
  *  describe('eventTracker', function() {
- *    var postSpy;
+ *    let postSpy;
  *
  *    beforeEach(module(function($provide) {
  *      // Register the eventTracker provider
@@ -584,7 +582,7 @@ function annotate(fn, strictDi, name) {
  * Here is an example of registering a service using
  * {@link auto.$provide#service $provide.service(class)}.
  * ```js
- *   var Ping = function($http) {
+ *   let Ping = function($http) {
  *     this.$http = $http;
  *   };
  *
@@ -698,7 +696,7 @@ function annotate(fn, strictDi, name) {
 
 function createInjector(modulesToLoad, strictDi) {
   strictDi = strictDi === true;
-  var INSTANTIATING = {},
+  let INSTANTIATING = {},
     providerSuffix = "Provider",
     path = [],
     loadedModules = new NgMap(),
@@ -729,7 +727,7 @@ function createInjector(modulesToLoad, strictDi) {
     protoInstanceInjector = createInternalInjector(
       instanceCache,
       function (serviceName, caller) {
-        var provider = providerInjector.get(
+        let provider = providerInjector.get(
           serviceName + providerSuffix,
           caller,
         );
@@ -747,7 +745,7 @@ function createInjector(modulesToLoad, strictDi) {
     $get: valueFn(protoInstanceInjector),
   };
   instanceInjector.modules = providerInjector.modules = createMap();
-  var runBlocks = loadModules(modulesToLoad);
+  let runBlocks = loadModules(modulesToLoad);
   instanceInjector = protoInstanceInjector.get("$injector");
   instanceInjector.strictDi = strictDi;
   forEach(runBlocks, function (fn) {
@@ -793,7 +791,7 @@ function createInjector(modulesToLoad, strictDi) {
 
   function enforceReturnValue(name, factory) {
     return /** @this */ function enforcedReturnValue() {
-      var result = instanceInjector.invoke(factory, this);
+      let result = instanceInjector.invoke(factory, this);
       if (isUndefined(result)) {
         throw $injectorMinErr(
           "undef",
@@ -831,11 +829,11 @@ function createInjector(modulesToLoad, strictDi) {
   }
 
   function decorator(serviceName, decorFn) {
-    var origProvider = providerInjector.get(serviceName + providerSuffix),
+    let origProvider = providerInjector.get(serviceName + providerSuffix),
       orig$get = origProvider.$get;
 
     origProvider.$get = function () {
-      var origInstance = instanceInjector.invoke(orig$get, origProvider);
+      let origInstance = instanceInjector.invoke(orig$get, origProvider);
       return instanceInjector.invoke(decorFn, null, {
         $delegate: origInstance,
       });
@@ -851,16 +849,16 @@ function createInjector(modulesToLoad, strictDi) {
       "modulesToLoad",
       "not an array",
     );
-    var runBlocks = [],
+    let runBlocks = [],
       moduleFn;
     forEach(modulesToLoad, function (module) {
       if (loadedModules.get(module)) return;
       loadedModules.set(module, true);
 
       function runInvokeQueue(queue) {
-        var i, ii;
+        let i, ii;
         for (i = 0, ii = queue.length; i < ii; i++) {
-          var invokeArgs = queue[i],
+          let invokeArgs = queue[i],
             provider = providerInjector.get(invokeArgs[0]);
 
           provider[invokeArgs[1]].apply(provider, invokeArgs[2]);
@@ -939,11 +937,11 @@ function createInjector(modulesToLoad, strictDi) {
     }
 
     function injectionArgs(fn, locals, serviceName) {
-      var args = [],
+      let args = [],
         $inject = createInjector.$$annotate(fn, strictDi, serviceName);
 
-      for (var i = 0, length = $inject.length; i < length; i++) {
-        var key = $inject[i];
+      for (let i = 0, length = $inject.length; i < length; i++) {
+        let key = $inject[i];
         if (typeof key !== "string") {
           throw $injectorMinErr(
             "itkn",
@@ -961,12 +959,7 @@ function createInjector(modulesToLoad, strictDi) {
     }
 
     function isClass(func) {
-      // Support: IE 9-11 only
-      // IE 9-11 do not support classes and IE9 leaks with the code below.
-      if (msie || typeof func !== "function") {
-        return false;
-      }
-      var result = func.$$ngIsClass;
+      let result = func.$$ngIsClass;
       if (!isBoolean(result)) {
         result = func.$$ngIsClass = /^class\b/.test(stringifyFn(func));
       }
@@ -979,7 +972,7 @@ function createInjector(modulesToLoad, strictDi) {
         locals = null;
       }
 
-      var args = injectionArgs(fn, locals, serviceName);
+      let args = injectionArgs(fn, locals, serviceName);
       if (isArray(fn)) {
         fn = fn[fn.length - 1];
       }
@@ -997,8 +990,8 @@ function createInjector(modulesToLoad, strictDi) {
     function instantiate(Type, locals, serviceName) {
       // Check if Type is annotated and use just the given function at n-1 as parameter
       // e.g. someModule.factory('greeter', ['$window', function(renamed$window) {}]);
-      var ctor = isArray(Type) ? Type[Type.length - 1] : Type;
-      var args = injectionArgs(Type, locals, serviceName);
+      let ctor = isArray(Type) ? Type[Type.length - 1] : Type;
+      let args = injectionArgs(Type, locals, serviceName);
       // Empty object at position 0 is ignored for invocation with `new`, but required.
       args.unshift(null);
       return new (Function.prototype.bind.apply(ctor, args))();

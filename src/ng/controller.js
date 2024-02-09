@@ -1,12 +1,10 @@
-"use strict";
+let $controllerMinErr = minErr("$controller");
 
-var $controllerMinErr = minErr("$controller");
-
-var CNTRL_REG = /^(\S+)(\s+as\s+([\w$]+))?$/;
+let CNTRL_REG = /^(\S+)(\s+as\s+([\w$]+))?$/;
 function identifierForController(controller, ident) {
   if (ident && isString(ident)) return ident;
   if (isString(controller)) {
-    var match = CNTRL_REG.exec(controller);
+    let match = CNTRL_REG.exec(controller);
     if (match) return match[3];
   }
 }
@@ -24,7 +22,7 @@ function identifierForController(controller, ident) {
  * {@link ng.$controllerProvider#register register} method.
  */
 function $ControllerProvider() {
-  var controllers = {};
+  let controllers = {};
 
   /**
    * @ngdoc method
@@ -88,7 +86,7 @@ function $ControllerProvider() {
         //                     callback is invoked.
         //   param `ident` --- An optional label which overrides the label parsed from the controller
         //                     expression, if any.
-        var instance, match, constructor, identifier;
+        let instance, match, constructor, identifier;
         later = later === true;
         if (ident && isString(ident)) {
           identifier = ident;
@@ -132,7 +130,7 @@ function $ControllerProvider() {
           // This feature is not intended for use by applications, and is thus not documented
           // publicly.
           // Object creation: http://jsperf.com/create-constructor/2
-          var controllerPrototype = (
+          let controllerPrototype = (
             isArray(expression) ? expression[expression.length - 1] : expression
           ).prototype;
           instance = Object.create(controllerPrototype || null);
@@ -148,7 +146,7 @@ function $ControllerProvider() {
 
           return extend(
             function $controllerInit() {
-              var result = $injector.invoke(
+              let result = $injector.invoke(
                 expression,
                 instance,
                 locals,

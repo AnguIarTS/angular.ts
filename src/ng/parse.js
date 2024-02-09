@@ -1,5 +1,3 @@
-"use strict";
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *     Any commits to this file should be reviewed with security in mind.  *
  *   Changes to this file can potentially create security vulnerabilities. *
@@ -11,9 +9,9 @@
  *     Or gives undesired access to variables likes document or window?    *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-var $parseMinErr = minErr("$parse");
+let $parseMinErr = minErr("$parse");
 
-var objectValueOf = {}.constructor.prototype.valueOf;
+let objectValueOf = {}.constructor.prototype.valueOf;
 
 // Sandboxing AngularJS Expressions
 // ------------------------------
@@ -47,14 +45,14 @@ function getStringValue(name) {
   return name + "";
 }
 
-var OPERATORS = createMap();
+let OPERATORS = createMap();
 forEach(
   "+ - * / % === !== == != < > <= >= && || ! = |".split(" "),
   function (operator) {
     OPERATORS[operator] = true;
   },
 );
-var ESCAPE = {
+let ESCAPE = {
   n: "\n",
   f: "\f",
   r: "\r",
@@ -69,7 +67,7 @@ var ESCAPE = {
 /**
  * @constructor
  */
-var Lexer = function Lexer(options) {
+let Lexer = function Lexer(options) {
   this.options = options;
 };
 
@@ -82,7 +80,7 @@ Lexer.prototype = {
     this.tokens = [];
 
     while (this.index < this.text.length) {
-      var ch = this.text.charAt(this.index);
+      let ch = this.text.charAt(this.index);
       if (ch === '"' || ch === "'") {
         this.readString(ch);
       } else if (
@@ -98,13 +96,13 @@ Lexer.prototype = {
       } else if (this.isWhitespace(ch)) {
         this.index++;
       } else {
-        var ch2 = ch + this.peek();
-        var ch3 = ch2 + this.peek(2);
-        var op1 = OPERATORS[ch];
-        var op2 = OPERATORS[ch2];
-        var op3 = OPERATORS[ch3];
+        let ch2 = ch + this.peek();
+        let ch3 = ch2 + this.peek(2);
+        let op1 = OPERATORS[ch];
+        let op2 = OPERATORS[ch2];
+        let op3 = OPERATORS[ch3];
         if (op1 || op2 || op3) {
-          var token = op3 ? ch3 : op2 ? ch2 : ch;
+          let token = op3 ? ch3 : op2 ? ch2 : ch;
           this.tokens.push({ index: this.index, text: token, operator: true });
           this.index += token.length;
         } else {
@@ -124,7 +122,7 @@ Lexer.prototype = {
   },
 
   peek: function (i) {
-    var num = i || 1;
+    let num = i || 1;
     return this.index + num < this.text.length
       ? this.text.charAt(this.index + num)
       : false;
@@ -178,13 +176,13 @@ Lexer.prototype = {
   },
 
   peekMultichar: function () {
-    var ch = this.text.charAt(this.index);
-    var peek = this.peek();
+    let ch = this.text.charAt(this.index);
+    let peek = this.peek();
     if (!peek) {
       return ch;
     }
-    var cp1 = ch.charCodeAt(0);
-    var cp2 = peek.charCodeAt(0);
+    let cp1 = ch.charCodeAt(0);
+    let cp2 = peek.charCodeAt(0);
     if (cp1 >= 0xd800 && cp1 <= 0xdbff && cp2 >= 0xdc00 && cp2 <= 0xdfff) {
       return ch + peek;
     }
@@ -197,7 +195,7 @@ Lexer.prototype = {
 
   throwError: function (error, start, end) {
     end = end || this.index;
-    var colStr = isDefined(start)
+    let colStr = isDefined(start)
       ? "s " +
         start +
         "-" +
@@ -216,14 +214,14 @@ Lexer.prototype = {
   },
 
   readNumber: function () {
-    var number = "";
-    var start = this.index;
+    let number = "";
+    let start = this.index;
     while (this.index < this.text.length) {
-      var ch = lowercase(this.text.charAt(this.index));
+      let ch = lowercase(this.text.charAt(this.index));
       if (ch === "." || this.isNumber(ch)) {
         number += ch;
       } else {
-        var peekCh = this.peek();
+        let peekCh = this.peek();
         if (ch === "e" && this.isExpOperator(peekCh)) {
           number += ch;
         } else if (
@@ -254,10 +252,10 @@ Lexer.prototype = {
   },
 
   readIdent: function () {
-    var start = this.index;
+    let start = this.index;
     this.index += this.peekMultichar().length;
     while (this.index < this.text.length) {
-      var ch = this.peekMultichar();
+      let ch = this.peekMultichar();
       if (!this.isIdentifierContinue(ch)) {
         break;
       }
@@ -271,24 +269,24 @@ Lexer.prototype = {
   },
 
   readString: function (quote) {
-    var start = this.index;
+    let start = this.index;
     this.index++;
-    var string = "";
-    var rawString = quote;
-    var escape = false;
+    let string = "";
+    let rawString = quote;
+    let escape = false;
     while (this.index < this.text.length) {
-      var ch = this.text.charAt(this.index);
+      let ch = this.text.charAt(this.index);
       rawString += ch;
       if (escape) {
         if (ch === "u") {
-          var hex = this.text.substring(this.index + 1, this.index + 5);
+          let hex = this.text.substring(this.index + 1, this.index + 5);
           if (!hex.match(/[\da-f]{4}/i)) {
             this.throwError("Invalid unicode escape [\\u" + hex + "]");
           }
           this.index += 4;
           string += String.fromCharCode(parseInt(hex, 16));
         } else {
-          var rep = ESCAPE[ch];
+          let rep = ESCAPE[ch];
           string = string + (rep || ch);
         }
         escape = false;
@@ -312,7 +310,7 @@ Lexer.prototype = {
   },
 };
 
-var AST = function AST(lexer, options) {
+let AST = function AST(lexer, options) {
   this.lexer = lexer;
   this.options = options;
 };
@@ -342,7 +340,7 @@ AST.prototype = {
     this.text = text;
     this.tokens = this.lexer.lex(text);
 
-    var value = this.program();
+    let value = this.program();
 
     if (this.tokens.length !== 0) {
       this.throwError("is an unexpected token", this.tokens[0]);
@@ -352,7 +350,7 @@ AST.prototype = {
   },
 
   program: function () {
-    var body = [];
+    let body = [];
     while (true) {
       if (this.tokens.length > 0 && !this.peek("}", ")", ";", "]"))
         body.push(this.expressionStatement());
@@ -367,7 +365,7 @@ AST.prototype = {
   },
 
   filterChain: function () {
-    var left = this.expression();
+    let left = this.expression();
     while (this.expect("|")) {
       left = this.filter(left);
     }
@@ -379,7 +377,7 @@ AST.prototype = {
   },
 
   assignment: function () {
-    var result = this.ternary();
+    let result = this.ternary();
     if (this.expect("=")) {
       if (!isAssignable(result)) {
         throw $parseMinErr("lval", "Trying to assign a value to a non l-value");
@@ -396,9 +394,9 @@ AST.prototype = {
   },
 
   ternary: function () {
-    var test = this.logicalOR();
-    var alternate;
-    var consequent;
+    let test = this.logicalOR();
+    let alternate;
+    let consequent;
     if (this.expect("?")) {
       alternate = this.expression();
       if (this.consume(":")) {
@@ -415,7 +413,7 @@ AST.prototype = {
   },
 
   logicalOR: function () {
-    var left = this.logicalAND();
+    let left = this.logicalAND();
     while (this.expect("||")) {
       left = {
         type: AST.LogicalExpression,
@@ -428,7 +426,7 @@ AST.prototype = {
   },
 
   logicalAND: function () {
-    var left = this.equality();
+    let left = this.equality();
     while (this.expect("&&")) {
       left = {
         type: AST.LogicalExpression,
@@ -441,8 +439,8 @@ AST.prototype = {
   },
 
   equality: function () {
-    var left = this.relational();
-    var token;
+    let left = this.relational();
+    let token;
     while ((token = this.expect("==", "!=", "===", "!=="))) {
       left = {
         type: AST.BinaryExpression,
@@ -455,8 +453,8 @@ AST.prototype = {
   },
 
   relational: function () {
-    var left = this.additive();
-    var token;
+    let left = this.additive();
+    let token;
     while ((token = this.expect("<", ">", "<=", ">="))) {
       left = {
         type: AST.BinaryExpression,
@@ -469,8 +467,8 @@ AST.prototype = {
   },
 
   additive: function () {
-    var left = this.multiplicative();
-    var token;
+    let left = this.multiplicative();
+    let token;
     while ((token = this.expect("+", "-"))) {
       left = {
         type: AST.BinaryExpression,
@@ -483,8 +481,8 @@ AST.prototype = {
   },
 
   multiplicative: function () {
-    var left = this.unary();
-    var token;
+    let left = this.unary();
+    let token;
     while ((token = this.expect("*", "/", "%"))) {
       left = {
         type: AST.BinaryExpression,
@@ -497,7 +495,7 @@ AST.prototype = {
   },
 
   unary: function () {
-    var token;
+    let token;
     if ((token = this.expect("+", "-", "!"))) {
       return {
         type: AST.UnaryExpression,
@@ -511,7 +509,7 @@ AST.prototype = {
   },
 
   primary: function () {
-    var primary;
+    let primary;
     if (this.expect("(")) {
       primary = this.filterChain();
       this.consume(")");
@@ -534,7 +532,7 @@ AST.prototype = {
       this.throwError("not a primary expression", this.peek());
     }
 
-    var next;
+    let next;
     while ((next = this.expect("(", "[", "."))) {
       if (next.text === "(") {
         primary = {
@@ -566,8 +564,8 @@ AST.prototype = {
   },
 
   filter: function (baseExpression) {
-    var args = [baseExpression];
-    var result = {
+    let args = [baseExpression];
+    let result = {
       type: AST.CallExpression,
       callee: this.identifier(),
       arguments: args,
@@ -582,7 +580,7 @@ AST.prototype = {
   },
 
   parseArguments: function () {
-    var args = [];
+    let args = [];
     if (this.peekToken().text !== ")") {
       do {
         args.push(this.filterChain());
@@ -592,7 +590,7 @@ AST.prototype = {
   },
 
   identifier: function () {
-    var token = this.consume();
+    let token = this.consume();
     if (!token.identifier) {
       this.throwError("is not a valid identifier", token);
     }
@@ -605,7 +603,7 @@ AST.prototype = {
   },
 
   arrayDeclaration: function () {
-    var elements = [];
+    let elements = [];
     if (this.peekToken().text !== "]") {
       do {
         if (this.peek("]")) {
@@ -621,7 +619,7 @@ AST.prototype = {
   },
 
   object: function () {
-    var properties = [],
+    let properties = [],
       property;
     if (this.peekToken().text !== "}") {
       do {
@@ -683,7 +681,7 @@ AST.prototype = {
       );
     }
 
-    var token = this.expect(e1);
+    let token = this.expect(e1);
     if (!token) {
       this.throwError("is unexpected, expecting [" + e1 + "]", this.peek());
     }
@@ -707,8 +705,8 @@ AST.prototype = {
 
   peekAhead: function (i, e1, e2, e3, e4) {
     if (this.tokens.length > i) {
-      var token = this.tokens[i];
-      var t = token.text;
+      let token = this.tokens[i];
+      let t = token.text;
       if (
         t === e1 ||
         t === e2 ||
@@ -723,7 +721,7 @@ AST.prototype = {
   },
 
   expect: function (e1, e2, e3, e4) {
-    var token = this.peek(e1, e2, e3, e4);
+    let token = this.peek(e1, e2, e3, e4);
     if (token) {
       this.tokens.shift();
       return token;
@@ -748,12 +746,12 @@ function plusFn(l, r) {
 }
 
 function isStateless($filter, filterName) {
-  var fn = $filter(filterName);
+  let fn = $filter(filterName);
   return !fn.$stateful;
 }
 
-var PURITY_ABSOLUTE = 1;
-var PURITY_RELATIVE = 2;
+let PURITY_ABSOLUTE = 1;
+let PURITY_RELATIVE = 2;
 
 // Detect nodes which could depend on non-shallow state of objects
 function isPure(node, parentIsPure) {
@@ -782,11 +780,11 @@ function isPure(node, parentIsPure) {
 }
 
 function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
-  var allConstants;
-  var argsToWatch;
-  var isStatelessFilter;
+  let allConstants;
+  let argsToWatch;
+  let isStatelessFilter;
 
-  var astIsPure = (ast.isPure = isPure(ast, parentIsPure));
+  let astIsPure = (ast.isPure = isPure(ast, parentIsPure));
 
   switch (ast.type) {
     case AST.Program:
@@ -904,8 +902,8 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
 
 function getInputs(body) {
   if (body.length !== 1) return;
-  var lastExpression = body[0].expression;
-  var candidate = lastExpression.toWatch;
+  let lastExpression = body[0].expression;
+  let candidate = lastExpression.toWatch;
   if (candidate.length !== 1) return candidate;
   return candidate[0] !== lastExpression ? candidate : undefined;
 }
@@ -945,7 +943,7 @@ function ASTCompiler($filter) {
 
 ASTCompiler.prototype = {
   compile: function (ast) {
-    var self = this;
+    let self = this;
     this.state = {
       nextId: 0,
       filters: {},
@@ -954,23 +952,23 @@ ASTCompiler.prototype = {
       inputs: [],
     };
     findConstantAndWatchExpressions(ast, self.$filter);
-    var extra = "";
-    var assignable;
+    let extra = "";
+    let assignable;
     this.stage = "assign";
     if ((assignable = assignableAST(ast))) {
       this.state.computing = "assign";
-      var result = this.nextId();
+      let result = this.nextId();
       this.recurse(assignable, result);
       this.return_(result);
       extra = "fn.assign=" + this.generateFunction("assign", "s,v,l");
     }
-    var toWatch = getInputs(ast.body);
+    let toWatch = getInputs(ast.body);
     self.stage = "inputs";
     forEach(toWatch, function (watch, key) {
-      var fnKey = "fn" + key;
+      let fnKey = "fn" + key;
       self.state[fnKey] = { vars: [], body: [], own: {} };
       self.state.computing = fnKey;
-      var intoId = self.nextId();
+      let intoId = self.nextId();
       self.recurse(watch, intoId);
       self.return_(intoId);
       self.state.inputs.push({ name: fnKey, isPure: watch.isPure });
@@ -979,7 +977,7 @@ ASTCompiler.prototype = {
     this.state.computing = "fn";
     this.stage = "main";
     this.recurse(ast);
-    var fnString =
+    let fnString =
       // The build and minification steps remove the string "use strict" from the code, but this is done using a regex.
       // This is a workaround for this until we do a better job at only removing the prefix only when we should.
       '"' +
@@ -988,14 +986,14 @@ ASTCompiler.prototype = {
       this.STRICT +
       '";\n' +
       this.filterPrefix() +
-      "var fn=" +
+      "let fn=" +
       this.generateFunction("fn", "s,l,a,i") +
       extra +
       this.watchFns() +
       "return fn;";
 
     // eslint-disable-next-line no-new-func
-    var fn = new Function(
+    let fn = new Function(
       "$filter",
       "getStringValue",
       "ifDefined",
@@ -1011,12 +1009,12 @@ ASTCompiler.prototype = {
   STRICT: "strict",
 
   watchFns: function () {
-    var result = [];
-    var inputs = this.state.inputs;
-    var self = this;
+    let result = [];
+    let inputs = this.state.inputs;
+    let self = this;
     forEach(inputs, function (input) {
       result.push(
-        "var " + input.name + "=" + self.generateFunction(input.name, "s"),
+        "let " + input.name + "=" + self.generateFunction(input.name, "s"),
       );
       if (input.isPure) {
         result.push(
@@ -1051,18 +1049,18 @@ ASTCompiler.prototype = {
   },
 
   filterPrefix: function () {
-    var parts = [];
-    var self = this;
+    let parts = [];
+    let self = this;
     forEach(this.state.filters, function (id, filter) {
       parts.push(id + "=$filter(" + self.escape(filter) + ")");
     });
-    if (parts.length) return "var " + parts.join(",") + ";";
+    if (parts.length) return "let " + parts.join(",") + ";";
     return "";
   },
 
   varsPrefix: function (section) {
     return this.state[section].vars.length
-      ? "var " + this.state[section].vars.join(",") + ";"
+      ? "let " + this.state[section].vars.join(",") + ";"
       : "";
   },
 
@@ -1078,7 +1076,7 @@ ASTCompiler.prototype = {
     create,
     skipWatchIdCheck,
   ) {
-    var left,
+    let left,
       right,
       self = this,
       args,
@@ -1256,7 +1254,7 @@ ASTCompiler.prototype = {
           right = self.filter(ast.callee.name);
           args = [];
           forEach(ast.arguments, function (expr) {
-            var argument = self.nextId();
+            let argument = self.nextId();
             self.recurse(expr, argument);
             args.push(argument);
           });
@@ -1402,8 +1400,8 @@ ASTCompiler.prototype = {
   },
 
   getHasOwnProperty: function (element, property) {
-    var key = element + "." + property;
-    var own = this.current().own;
+    let key = element + "." + property;
+    let own = this.current().own;
     if (!own.hasOwnProperty(key)) {
       own[key] = this.nextId(
         false,
@@ -1442,7 +1440,7 @@ ASTCompiler.prototype = {
     if (test === true) {
       alternate();
     } else {
-      var body = this.current().body;
+      let body = this.current().body;
       body.push("if(", test, "){");
       alternate();
       body.push("}");
@@ -1467,8 +1465,8 @@ ASTCompiler.prototype = {
   },
 
   nonComputedMember: function (left, right) {
-    var SAFE_IDENTIFIER = /^[$_a-zA-Z][$_a-zA-Z0-9]*$/;
-    var UNSAFE_CHARACTERS = /[^$_a-zA-Z0-9]/g;
+    let SAFE_IDENTIFIER = /^[$_a-zA-Z][$_a-zA-Z0-9]*$/;
+    let UNSAFE_CHARACTERS = /[^$_a-zA-Z0-9]/g;
     if (SAFE_IDENTIFIER.test(right)) {
       return left + "." + right;
     } else {
@@ -1502,14 +1500,14 @@ ASTCompiler.prototype = {
     create,
     skipWatchIdCheck,
   ) {
-    var self = this;
+    let self = this;
     return function () {
       self.recurse(ast, intoId, nameId, recursionFn, create, skipWatchIdCheck);
     };
   },
 
   lazyAssign: function (id, value) {
-    var self = this;
+    let self = this;
     return function () {
       self.assign(id, value);
     };
@@ -1536,7 +1534,7 @@ ASTCompiler.prototype = {
   },
 
   nextId: function (skip, init) {
-    var id = "v" + this.state.nextId++;
+    let id = "v" + this.state.nextId++;
     if (!skip) {
       this.current().vars.push(id + (init ? "=" + init : ""));
     }
@@ -1554,36 +1552,36 @@ function ASTInterpreter($filter) {
 
 ASTInterpreter.prototype = {
   compile: function (ast) {
-    var self = this;
+    let self = this;
     findConstantAndWatchExpressions(ast, self.$filter);
-    var assignable;
-    var assign;
+    let assignable;
+    let assign;
     if ((assignable = assignableAST(ast))) {
       assign = this.recurse(assignable);
     }
-    var toWatch = getInputs(ast.body);
-    var inputs;
+    let toWatch = getInputs(ast.body);
+    let inputs;
     if (toWatch) {
       inputs = [];
       forEach(toWatch, function (watch, key) {
-        var input = self.recurse(watch);
+        let input = self.recurse(watch);
         input.isPure = watch.isPure;
         watch.input = input;
         inputs.push(input);
         watch.watchId = key;
       });
     }
-    var expressions = [];
+    let expressions = [];
     forEach(ast.body, function (expression) {
       expressions.push(self.recurse(expression.expression));
     });
-    var fn =
+    let fn =
       ast.body.length === 0
         ? noop
         : ast.body.length === 1
           ? expressions[0]
           : function (scope, locals) {
-              var lastValue;
+              let lastValue;
               forEach(expressions, function (exp) {
                 lastValue = exp(scope, locals);
               });
@@ -1601,7 +1599,7 @@ ASTInterpreter.prototype = {
   },
 
   recurse: function (ast, context, create) {
-    var left,
+    let left,
       right,
       self = this,
       args;
@@ -1649,21 +1647,21 @@ ASTInterpreter.prototype = {
         if (!ast.filter) right = this.recurse(ast.callee, true);
         return ast.filter
           ? function (scope, locals, assign, inputs) {
-              var values = [];
-              for (var i = 0; i < args.length; ++i) {
+              let values = [];
+              for (let i = 0; i < args.length; ++i) {
                 values.push(args[i](scope, locals, assign, inputs));
               }
-              var value = right.apply(undefined, values, inputs);
+              let value = right.apply(undefined, values, inputs);
               return context
                 ? { context: undefined, name: undefined, value: value }
                 : value;
             }
           : function (scope, locals, assign, inputs) {
-              var rhs = right(scope, locals, assign, inputs);
-              var value;
+              let rhs = right(scope, locals, assign, inputs);
+              let value;
               if (rhs.value != null) {
-                var values = [];
-                for (var i = 0; i < args.length; ++i) {
+                let values = [];
+                for (let i = 0; i < args.length; ++i) {
                   values.push(args[i](scope, locals, assign, inputs));
                 }
                 value = rhs.value.apply(rhs.context, values);
@@ -1674,8 +1672,8 @@ ASTInterpreter.prototype = {
         left = this.recurse(ast.left, true, 1);
         right = this.recurse(ast.right);
         return function (scope, locals, assign, inputs) {
-          var lhs = left(scope, locals, assign, inputs);
-          var rhs = right(scope, locals, assign, inputs);
+          let lhs = left(scope, locals, assign, inputs);
+          let rhs = right(scope, locals, assign, inputs);
           lhs.context[lhs.name] = rhs;
           return context ? { value: rhs } : rhs;
         };
@@ -1685,8 +1683,8 @@ ASTInterpreter.prototype = {
           args.push(self.recurse(expr));
         });
         return function (scope, locals, assign, inputs) {
-          var value = [];
-          for (var i = 0; i < args.length; ++i) {
+          let value = [];
+          for (let i = 0; i < args.length; ++i) {
             value.push(args[i](scope, locals, assign, inputs));
           }
           return context ? { value: value } : value;
@@ -1712,8 +1710,8 @@ ASTInterpreter.prototype = {
           }
         });
         return function (scope, locals, assign, inputs) {
-          var value = {};
-          for (var i = 0; i < args.length; ++i) {
+          let value = {};
+          for (let i = 0; i < args.length; ++i) {
             if (args[i].computed) {
               value[args[i].key(scope, locals, assign, inputs)] = args[i].value(
                 scope,
@@ -1744,7 +1742,7 @@ ASTInterpreter.prototype = {
 
   "unary+": function (argument, context) {
     return function (scope, locals, assign, inputs) {
-      var arg = argument(scope, locals, assign, inputs);
+      let arg = argument(scope, locals, assign, inputs);
       if (isDefined(arg)) {
         arg = +arg;
       } else {
@@ -1755,7 +1753,7 @@ ASTInterpreter.prototype = {
   },
   "unary-": function (argument, context) {
     return function (scope, locals, assign, inputs) {
-      var arg = argument(scope, locals, assign, inputs);
+      let arg = argument(scope, locals, assign, inputs);
       if (isDefined(arg)) {
         arg = -arg;
       } else {
@@ -1766,29 +1764,29 @@ ASTInterpreter.prototype = {
   },
   "unary!": function (argument, context) {
     return function (scope, locals, assign, inputs) {
-      var arg = !argument(scope, locals, assign, inputs);
+      let arg = !argument(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
     };
   },
   "binary+": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var lhs = left(scope, locals, assign, inputs);
-      var rhs = right(scope, locals, assign, inputs);
-      var arg = plusFn(lhs, rhs);
+      let lhs = left(scope, locals, assign, inputs);
+      let rhs = right(scope, locals, assign, inputs);
+      let arg = plusFn(lhs, rhs);
       return context ? { value: arg } : arg;
     };
   },
   "binary-": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var lhs = left(scope, locals, assign, inputs);
-      var rhs = right(scope, locals, assign, inputs);
-      var arg = (isDefined(lhs) ? lhs : 0) - (isDefined(rhs) ? rhs : 0);
+      let lhs = left(scope, locals, assign, inputs);
+      let rhs = right(scope, locals, assign, inputs);
+      let arg = (isDefined(lhs) ? lhs : 0) - (isDefined(rhs) ? rhs : 0);
       return context ? { value: arg } : arg;
     };
   },
   "binary*": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) *
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1796,7 +1794,7 @@ ASTInterpreter.prototype = {
   },
   "binary/": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) /
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1804,7 +1802,7 @@ ASTInterpreter.prototype = {
   },
   "binary%": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) %
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1812,7 +1810,7 @@ ASTInterpreter.prototype = {
   },
   "binary===": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) ===
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1820,7 +1818,7 @@ ASTInterpreter.prototype = {
   },
   "binary!==": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) !==
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1829,7 +1827,7 @@ ASTInterpreter.prototype = {
   "binary==": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
       // eslint-disable-next-line eqeqeq
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) ==
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1838,7 +1836,7 @@ ASTInterpreter.prototype = {
   "binary!=": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
       // eslint-disable-next-line eqeqeq
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) !=
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1846,7 +1844,7 @@ ASTInterpreter.prototype = {
   },
   "binary<": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) <
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1854,7 +1852,7 @@ ASTInterpreter.prototype = {
   },
   "binary>": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) >
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1862,7 +1860,7 @@ ASTInterpreter.prototype = {
   },
   "binary<=": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) <=
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1870,7 +1868,7 @@ ASTInterpreter.prototype = {
   },
   "binary>=": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) >=
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1878,7 +1876,7 @@ ASTInterpreter.prototype = {
   },
   "binary&&": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) &&
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1886,7 +1884,7 @@ ASTInterpreter.prototype = {
   },
   "binary||": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      var arg =
+      let arg =
         left(scope, locals, assign, inputs) ||
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1894,7 +1892,7 @@ ASTInterpreter.prototype = {
   },
   "ternary?:": function (test, alternate, consequent, context) {
     return function (scope, locals, assign, inputs) {
-      var arg = test(scope, locals, assign, inputs)
+      let arg = test(scope, locals, assign, inputs)
         ? alternate(scope, locals, assign, inputs)
         : consequent(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1909,11 +1907,11 @@ ASTInterpreter.prototype = {
   },
   identifier: function (name, context, create) {
     return function (scope, locals, assign, inputs) {
-      var base = locals && name in locals ? locals : scope;
+      let base = locals && name in locals ? locals : scope;
       if (create && create !== 1 && base && base[name] == null) {
         base[name] = {};
       }
-      var value = base ? base[name] : undefined;
+      let value = base ? base[name] : undefined;
       if (context) {
         return { context: base, name: name, value: value };
       } else {
@@ -1923,9 +1921,9 @@ ASTInterpreter.prototype = {
   },
   computedMember: function (left, right, context, create) {
     return function (scope, locals, assign, inputs) {
-      var lhs = left(scope, locals, assign, inputs);
-      var rhs;
-      var value;
+      let lhs = left(scope, locals, assign, inputs);
+      let rhs;
+      let value;
       if (lhs != null) {
         rhs = right(scope, locals, assign, inputs);
         rhs = getStringValue(rhs);
@@ -1945,13 +1943,13 @@ ASTInterpreter.prototype = {
   },
   nonComputedMember: function (left, right, context, create) {
     return function (scope, locals, assign, inputs) {
-      var lhs = left(scope, locals, assign, inputs);
+      let lhs = left(scope, locals, assign, inputs);
       if (create && create !== 1) {
         if (lhs && lhs[right] == null) {
           lhs[right] = {};
         }
       }
-      var value = lhs != null ? lhs[right] : undefined;
+      let value = lhs != null ? lhs[right] : undefined;
       if (context) {
         return { context: lhs, name: right, value: value };
       } else {
@@ -1981,8 +1979,8 @@ Parser.prototype = {
   constructor: Parser,
 
   parse: function (text) {
-    var ast = this.getAst(text);
-    var fn = this.astCompiler.compile(ast.ast);
+    let ast = this.getAst(text);
+    let fn = this.astCompiler.compile(ast.ast);
     fn.literal = isLiteral(ast.ast);
     fn.constant = isConstant(ast.ast);
     fn.oneTime = ast.oneTime;
@@ -1990,7 +1988,7 @@ Parser.prototype = {
   },
 
   getAst: function (exp) {
-    var oneTime = false;
+    let oneTime = false;
     exp = exp.trim();
 
     if (exp.charAt(0) === ":" && exp.charAt(1) === ":") {
@@ -2022,10 +2020,10 @@ function getValueOf(value) {
  * Converts AngularJS {@link guide/expression expression} into a function.
  *
  * ```js
- *   var getter = $parse('user.name');
- *   var setter = getter.assign;
- *   var context = {user:{name:'AngularJS'}};
- *   var locals = {user:{name:'local'}};
+ *   let getter = $parse('user.name');
+ *   let setter = getter.assign;
+ *   let context = {user:{name:'AngularJS'}};
+ *   let locals = {user:{name:'local'}};
  *
  *   expect(getter(context)).toEqual('AngularJS');
  *   setter(context, 'newValue');
@@ -2062,14 +2060,14 @@ function getValueOf(value) {
  *  service.
  */
 function $ParseProvider() {
-  var cache = createMap();
-  var literals = {
+  let cache = createMap();
+  let literals = {
     true: true,
     false: false,
     null: null,
     undefined: undefined,
   };
-  var identStart, identContinue;
+  let identStart, identContinue;
 
   /**
    * @ngdoc method
@@ -2119,8 +2117,8 @@ function $ParseProvider() {
   this.$get = [
     "$filter",
     function ($filter) {
-      var noUnsafeEval = csp().noUnsafeEval;
-      var $parseOptions = {
+      let noUnsafeEval = csp().noUnsafeEval;
+      let $parseOptions = {
         csp: noUnsafeEval,
         literals: copy(literals),
         isIdentifierStart: isFunction(identStart) && identStart,
@@ -2130,7 +2128,7 @@ function $ParseProvider() {
       return $parse;
 
       function $parse(exp, interceptorFn) {
-        var parsedExpression, cacheKey;
+        let parsedExpression, cacheKey;
 
         switch (typeof exp) {
           case "string":
@@ -2140,8 +2138,8 @@ function $ParseProvider() {
             parsedExpression = cache[cacheKey];
 
             if (!parsedExpression) {
-              var lexer = new Lexer($parseOptions);
-              var parser = new Parser(lexer, $filter, $parseOptions);
+              let lexer = new Lexer($parseOptions);
+              let parser = new Parser(lexer, $filter, $parseOptions);
               parsedExpression = parser.parse(exp);
 
               cache[cacheKey] = addWatchDelegate(parsedExpression);
@@ -2157,8 +2155,8 @@ function $ParseProvider() {
       }
 
       function $$getAst(exp) {
-        var lexer = new Lexer($parseOptions);
-        var parser = new Parser(lexer, $filter, $parseOptions);
+        let lexer = new Lexer($parseOptions);
+        let parser = new Parser(lexer, $filter, $parseOptions);
         return parser.getAst(exp).ast;
       }
 
@@ -2201,15 +2199,15 @@ function $ParseProvider() {
         parsedExpression,
         prettyPrintExpression,
       ) {
-        var inputExpressions = parsedExpression.inputs;
-        var lastResult;
+        let inputExpressions = parsedExpression.inputs;
+        let lastResult;
 
         if (inputExpressions.length === 1) {
-          var oldInputValueOf = expressionInputDirtyCheck; // init to something unique so that equals check fails
+          let oldInputValueOf = expressionInputDirtyCheck; // init to something unique so that equals check fails
           inputExpressions = inputExpressions[0];
           return scope.$watch(
             function expressionInputWatch(scope) {
-              var newInputValue = inputExpressions(scope);
+              let newInputValue = inputExpressions(scope);
               if (
                 !expressionInputDirtyCheck(
                   newInputValue,
@@ -2230,19 +2228,19 @@ function $ParseProvider() {
           );
         }
 
-        var oldInputValueOfValues = [];
-        var oldInputValues = [];
-        for (var i = 0, ii = inputExpressions.length; i < ii; i++) {
+        let oldInputValueOfValues = [];
+        let oldInputValues = [];
+        for (let i = 0, ii = inputExpressions.length; i < ii; i++) {
           oldInputValueOfValues[i] = expressionInputDirtyCheck; // init to something unique so that equals check fails
           oldInputValues[i] = null;
         }
 
         return scope.$watch(
           function expressionInputsWatch(scope) {
-            var changed = false;
+            let changed = false;
 
-            for (var i = 0, ii = inputExpressions.length; i < ii; i++) {
-              var newInputValue = inputExpressions[i](scope);
+            for (let i = 0, ii = inputExpressions.length; i < ii; i++) {
+              let newInputValue = inputExpressions[i](scope);
               if (
                 changed ||
                 (changed = !expressionInputDirtyCheck(
@@ -2281,13 +2279,13 @@ function $ParseProvider() {
         parsedExpression,
         prettyPrintExpression,
       ) {
-        var isDone = parsedExpression.literal ? isAllDefined : isDefined;
-        var unwatch, lastValue;
+        let isDone = parsedExpression.literal ? isAllDefined : isDefined;
+        let unwatch, lastValue;
 
-        var exp = parsedExpression.$$intercepted || parsedExpression;
-        var post = parsedExpression.$$interceptor || identity;
+        let exp = parsedExpression.$$intercepted || parsedExpression;
+        let post = parsedExpression.$$interceptor || identity;
 
-        var useInputs = parsedExpression.inputs && !exp.inputs;
+        let useInputs = parsedExpression.inputs && !exp.inputs;
 
         // Propagate the literal/inputs/constant attributes
         // ... but not oneTime since we are handling it
@@ -2326,7 +2324,7 @@ function $ParseProvider() {
       }
 
       function isAllDefined(value) {
-        var allDefined = true;
+        let allDefined = true;
         forEach(value, function (val) {
           if (!isDefined(val)) allDefined = false;
         });
@@ -2339,7 +2337,7 @@ function $ParseProvider() {
         objectEquality,
         parsedExpression,
       ) {
-        var unwatch = scope.$watch(
+        let unwatch = scope.$watch(
           function constantWatch(scope) {
             unwatch();
             return parsedExpression(scope);
@@ -2385,10 +2383,10 @@ function $ParseProvider() {
           parsedExpression = parsedExpression.$$intercepted;
         }
 
-        var useInputs = false;
+        let useInputs = false;
 
-        var fn = function interceptedExpression(scope, locals, assign, inputs) {
-          var value =
+        let fn = function interceptedExpression(scope, locals, assign, inputs) {
+          let value =
             useInputs && inputs
               ? inputs[0]
               : parsedExpression(scope, locals, assign, inputs);

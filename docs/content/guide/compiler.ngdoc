@@ -82,7 +82,7 @@ Here is a directive which makes any element draggable. Notice the `draggable` at
     angular.module('drag', []).
       directive('draggable', function($document) {
         return function(scope, element, attr) {
-          var startX = 0, startY = 0, x = 0, y = 0;
+          let startX = 0, startY = 0, x = 0, y = 0;
           element.css({
            position: 'relative',
            border: '1px solid red',
@@ -189,20 +189,20 @@ Below is the corresponding code using the `$compile` service.
 This should help give you an idea of what AngularJS does internally.
 
 ```js
-  var $compile = ...; // injected into your code
-  var scope = ...;
-  var parent = ...; // DOM element where the compiled template can be appended
+  let $compile = ...; // injected into your code
+  let scope = ...;
+  let parent = ...; // DOM element where the compiled template can be appended
 
-  var html = '<div ng-bind="exp"></div>';
+  let html = '<div ng-bind="exp"></div>';
 
   // Step 1: parse HTML into DOM element
-  var template = angular.element(html);
+  let template = angular.element(html);
 
   // Step 2: compile the template
-  var linkFn = $compile(template);
+  let linkFn = $compile(template);
 
   // Step 3: link the compiled template with the scope.
-  var element = linkFn(scope);
+  let element = linkFn(scope);
 
   // Step 4: Append to DOM (optional)
   parent.appendChild(element);
@@ -393,7 +393,7 @@ to a button with `ngClick` on it:
 angular.module('app').directive('addMouseover', function($compile) {
   return {
     link: function(scope, element, attrs) {
-      var newEl = angular.element('<span ng-show="showHint"> My Hint</span>');
+      let newEl = angular.element('<span ng-show="showHint"> My Hint</span>');
       element.on('mouseenter mouseleave', function() {
         scope.$apply('showHint = !showHint');
       });
@@ -422,7 +422,7 @@ be compiled:
 angular.module('app').directive('addMouseover', function($compile) {
   return {
     link: function(scope, element, attrs) {
-      var newEl = angular.element('<span ng-show="showHint"> My Hint</span>');
+      let newEl = angular.element('<span ng-show="showHint"> My Hint</span>');
       element.on('mouseenter mouseleave', function() {
         scope.$apply('showHint = !showHint');
       });
@@ -473,7 +473,7 @@ angular.module('app').directive('addOptions', function($compile) {
 
       // The third argument is the max priority. Only directives with priority < 100 will be compiled,
       // therefore we don't need to remove the attribute
-      var compiled = $compile(templateElement, null, 100);
+      let compiled = $compile(templateElement, null, 100);
 
       return function linkFn(scope) {
         compiled(scope) // Link compiled element to scope

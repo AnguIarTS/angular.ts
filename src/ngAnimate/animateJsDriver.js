@@ -1,6 +1,4 @@
-"use strict";
-
-var $$AnimateJsDriverProvider = [
+let $$AnimateJsDriverProvider = [
   "$$animationProvider",
   /** @this */ function ($$animationProvider) {
     $$animationProvider.drivers.push("$$animateJsDriver");
@@ -10,13 +8,13 @@ var $$AnimateJsDriverProvider = [
       function ($$animateJs, $$AnimateRunner) {
         return function initDriverFn(animationDetails) {
           if (animationDetails.from && animationDetails.to) {
-            var fromAnimation = prepareAnimation(animationDetails.from);
-            var toAnimation = prepareAnimation(animationDetails.to);
+            let fromAnimation = prepareAnimation(animationDetails.from);
+            let toAnimation = prepareAnimation(animationDetails.to);
             if (!fromAnimation && !toAnimation) return;
 
             return {
               start: function () {
-                var animationRunners = [];
+                let animationRunners = [];
 
                 if (fromAnimation) {
                   animationRunners.push(fromAnimation.start());
@@ -28,7 +26,7 @@ var $$AnimateJsDriverProvider = [
 
                 $$AnimateRunner.all(animationRunners, done);
 
-                var runner = new $$AnimateRunner({
+                let runner = new $$AnimateRunner({
                   end: endFnFactory(),
                   cancel: endFnFactory(),
                 });
@@ -56,10 +54,10 @@ var $$AnimateJsDriverProvider = [
 
         function prepareAnimation(animationDetails) {
           // TODO(matsko): make sure to check for grouped animations and delegate down to normal animations
-          var element = animationDetails.element;
-          var event = animationDetails.event;
-          var options = animationDetails.options;
-          var classes = animationDetails.classes;
+          let element = animationDetails.element;
+          let event = animationDetails.event;
+          let options = animationDetails.options;
+          let classes = animationDetails.classes;
           return $$animateJs(element, event, classes, options);
         }
       },

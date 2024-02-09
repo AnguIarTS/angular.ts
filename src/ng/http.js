@@ -1,16 +1,14 @@
-"use strict";
-
-var APPLICATION_JSON = "application/json";
-var CONTENT_TYPE_APPLICATION_JSON = {
+let APPLICATION_JSON = "application/json";
+let CONTENT_TYPE_APPLICATION_JSON = {
   "Content-Type": APPLICATION_JSON + ";charset=utf-8",
 };
-var JSON_START = /^\[|^\{(?!\{)/;
-var JSON_ENDS = {
+let JSON_START = /^\[|^\{(?!\{)/;
+let JSON_ENDS = {
   "[": /]$/,
   "{": /}$/,
 };
-var JSON_PROTECTION_PREFIX = /^\)]\}',?\n/;
-var $httpMinErr = minErr("$http");
+let JSON_PROTECTION_PREFIX = /^\)]\}',?\n/;
+let $httpMinErr = minErr("$http");
 
 function serializeValue(v) {
   if (isObject(v)) {
@@ -40,7 +38,7 @@ function $HttpParamSerializerProvider() {
   this.$get = function () {
     return function ngParamSerializer(params) {
       if (!params) return "";
-      var parts = [];
+      let parts = [];
       forEachSorted(params, function (value, key) {
         if (value === null || isUndefined(value) || isFunction(value)) return;
         if (isArray(value)) {
@@ -110,7 +108,7 @@ function $HttpParamSerializerJQLikeProvider() {
   this.$get = function () {
     return function jQueryLikeParamSerializer(params) {
       if (!params) return "";
-      var parts = [];
+      let parts = [];
       serialize(params, "", true);
       return parts.join("&");
 
@@ -149,11 +147,11 @@ function $HttpParamSerializerJQLikeProvider() {
 function defaultHttpResponseTransform(data, headers) {
   if (isString(data)) {
     // Strip json vulnerability protection prefix and trim whitespace
-    var tempData = data.replace(JSON_PROTECTION_PREFIX, "").trim();
+    let tempData = data.replace(JSON_PROTECTION_PREFIX, "").trim();
 
     if (tempData) {
-      var contentType = headers("Content-Type");
-      var hasJsonContentType =
+      let contentType = headers("Content-Type");
+      let hasJsonContentType =
         contentType && contentType.indexOf(APPLICATION_JSON) === 0;
 
       if (hasJsonContentType || isJsonLike(tempData)) {
@@ -179,7 +177,7 @@ function defaultHttpResponseTransform(data, headers) {
 }
 
 function isJsonLike(str) {
-  var jsonStart = str.match(JSON_START);
+  let jsonStart = str.match(JSON_START);
   return jsonStart && JSON_ENDS[jsonStart[0]].test(str);
 }
 
@@ -190,7 +188,7 @@ function isJsonLike(str) {
  * @returns {Object} Parsed headers as key value object
  */
 function parseHeaders(headers) {
-  var parsed = createMap(),
+  let parsed = createMap(),
     i;
 
   function fillInParsed(key, val) {
@@ -229,13 +227,13 @@ function parseHeaders(headers) {
  *   - if called with no arguments returns an object containing all headers.
  */
 function headersGetter(headers) {
-  var headersObj;
+  let headersObj;
 
   return function (name) {
     if (!headersObj) headersObj = parseHeaders(headers);
 
     if (name) {
-      var value = headersObj[lowercase(name)];
+      let value = headersObj[lowercase(name)];
       if (value === undefined) {
         value = null;
       }
@@ -335,7 +333,7 @@ function $HttpProvider() {
    * XSRF token. Defaults value is `'X-XSRF-TOKEN'`.
    *
    */
-  var defaults = (this.defaults = {
+  let defaults = (this.defaults = {
     // transform incoming response data
     transformResponse: [defaultHttpResponseTransform],
 
@@ -366,7 +364,7 @@ function $HttpProvider() {
     jsonpCallbackParam: "callback",
   });
 
-  var useApplyAsync = false;
+  let useApplyAsync = false;
   /**
    * @ngdoc method
    * @name $httpProvider#useApplyAsync
@@ -407,7 +405,7 @@ function $HttpProvider() {
    *
    * {@link ng.$http#interceptors Interceptors detailed info}
    */
-  var interceptorFactories = (this.interceptors = []);
+  let interceptorFactories = (this.interceptors = []);
 
   /**
    * @ngdoc property
@@ -449,7 +447,7 @@ function $HttpProvider() {
    *   }]);
    * ```
    */
-  var xsrfTrustedOrigins = (this.xsrfTrustedOrigins = []);
+  let xsrfTrustedOrigins = (this.xsrfTrustedOrigins = []);
 
   /**
    * @ngdoc property
@@ -490,7 +488,7 @@ function $HttpProvider() {
       $injector,
       $sce,
     ) {
-      var defaultCache = $cacheFactory("$http");
+      let defaultCache = $cacheFactory("$http");
 
       /**
        * Make sure that default param serializer is exposed as a function
@@ -504,7 +502,7 @@ function $HttpProvider() {
        * The reversal is needed so that we can build up the interception chain around the
        * server request.
        */
-      var reversedInterceptors = [];
+      let reversedInterceptors = [];
 
       forEach(interceptorFactories, function (interceptorFactory) {
         reversedInterceptors.unshift(
@@ -517,7 +515,7 @@ function $HttpProvider() {
       /**
        * A function to check request URLs against a list of allowed origins.
        */
-      var urlIsAllowedOrigin = urlIsAllowedOriginFactory(xsrfTrustedOrigins);
+      let urlIsAllowedOrigin = urlIsAllowedOriginFactory(xsrfTrustedOrigins);
 
       /**
      * @ngdoc service
@@ -633,7 +631,7 @@ function $HttpProvider() {
      * Use the `headers` property, setting the desired header to `undefined`. For example:
      *
      * ```js
-     * var req = {
+     * let req = {
      *  method: 'POST',
      *  url: 'http://example.com',
      *  headers: {
@@ -1062,11 +1060,11 @@ function $HttpProvider() {
   Hello, $http!
 </file>
 <file name="protractor.js" type="protractor">
-  var status = element(by.binding('status'));
-  var data = element(by.binding('data'));
-  var fetchBtn = element(by.id('fetchbtn'));
-  var sampleGetBtn = element(by.id('samplegetbtn'));
-  var invalidJsonpBtn = element(by.id('invalidjsonpbtn'));
+  let status = element(by.binding('status'));
+  let data = element(by.binding('data'));
+  let fetchBtn = element(by.id('fetchbtn'));
+  let sampleGetBtn = element(by.id('samplegetbtn'));
+  let invalidJsonpBtn = element(by.id('invalidjsonpbtn'));
 
   it('should make an xhr GET request', function() {
     sampleGetBtn.click();
@@ -1077,7 +1075,7 @@ function $HttpProvider() {
 
 // Commented out due to flakes. See https://github.com/angular/angular.js/issues/9185
 // it('should make a JSONP request to angularjs.org', function() {
-//   var sampleJsonpBtn = element(by.id('samplejsonpbtn'));
+//   let sampleJsonpBtn = element(by.id('samplejsonpbtn'));
 //   sampleJsonpBtn.click();
 //   fetchBtn.click();
 //   expect(status.getText()).toMatch('200');
@@ -1111,7 +1109,7 @@ function $HttpProvider() {
           );
         }
 
-        var config = extend(
+        let config = extend(
           {
             method: "get",
             transformRequest: defaults.transformRequest,
@@ -1130,9 +1128,9 @@ function $HttpProvider() {
 
         $browser.$$incOutstandingRequestCount("$http");
 
-        var requestInterceptors = [];
-        var responseInterceptors = [];
-        var promise = $q.resolve(config);
+        let requestInterceptors = [];
+        let responseInterceptors = [];
+        let promise = $q.resolve(config);
 
         // apply interceptors
         forEach(reversedInterceptors, function (interceptor) {
@@ -1158,9 +1156,9 @@ function $HttpProvider() {
         return promise;
 
         function chainInterceptors(promise, interceptors) {
-          for (var i = 0, ii = interceptors.length; i < ii; ) {
-            var thenFn = interceptors[i++];
-            var rejectFn = interceptors[i++];
+          for (let i = 0, ii = interceptors.length; i < ii; ) {
+            let thenFn = interceptors[i++];
+            let rejectFn = interceptors[i++];
 
             promise = promise.then(thenFn, rejectFn);
           }
@@ -1175,7 +1173,7 @@ function $HttpProvider() {
         }
 
         function executeHeaderFns(headers, config) {
-          var headerContent,
+          let headerContent,
             processedHeaders = {};
 
           forEach(headers, function (headerFn, header) {
@@ -1193,7 +1191,7 @@ function $HttpProvider() {
         }
 
         function mergeHeaders(config) {
-          var defHeaders = defaults.headers,
+          let defHeaders = defaults.headers,
             reqHeaders = extend({}, config.headers),
             defHeaderName,
             lowercaseDefHeaderName,
@@ -1223,8 +1221,8 @@ function $HttpProvider() {
         }
 
         function serverRequest(config) {
-          var headers = config.headers;
-          var reqData = transformData(
+          let headers = config.headers;
+          let reqData = transformData(
             config.data,
             headersGetter(headers),
             undefined,
@@ -1256,7 +1254,7 @@ function $HttpProvider() {
 
         function transformResponse(response) {
           // make a copy since the response must be cacheable
-          var resp = extend({}, response);
+          let resp = extend({}, response);
           resp.data = transformData(
             response.data,
             response.headers,
@@ -1446,7 +1444,7 @@ function $HttpProvider() {
        * $httpBackend, defaults, $log, $rootScope, defaultCache, $http.pendingRequests
        */
       function sendReq(config, reqData) {
-        var deferred = $q.defer(),
+        let deferred = $q.defer(),
           promise = deferred.promise,
           cache,
           cachedResp,
@@ -1517,7 +1515,7 @@ function $HttpProvider() {
         // if we won't have the response in cache, set the xsrf headers and
         // send the request to the backend
         if (isUndefined(cachedResp)) {
-          var xsrfValue = urlIsAllowedOrigin(config.url)
+          let xsrfValue = urlIsAllowedOrigin(config.url)
             ? $$cookieReader()[config.xsrfCookieName || defaults.xsrfCookieName]
             : undefined;
           if (xsrfValue) {
@@ -1543,7 +1541,7 @@ function $HttpProvider() {
 
         function createApplyHandlers(eventHandlers) {
           if (eventHandlers) {
-            var applyHandlers = {};
+            let applyHandlers = {};
             forEach(eventHandlers, function (eventHandler, key) {
               applyHandlers[key] = function (event) {
                 if (useApplyAsync) {
@@ -1637,7 +1635,7 @@ function $HttpProvider() {
         }
 
         function removePendingReq() {
-          var idx = $http.pendingRequests.indexOf(config);
+          let idx = $http.pendingRequests.indexOf(config);
           if (idx !== -1) $http.pendingRequests.splice(idx, 1);
         }
       }
@@ -1650,7 +1648,7 @@ function $HttpProvider() {
       }
 
       function sanitizeJsonpCallbackParam(url, cbKey) {
-        var parts = url.split("?");
+        let parts = url.split("?");
         if (parts.length > 2) {
           // Throw if the url contains more than one `?` query indicator
           throw $httpMinErr(
@@ -1659,7 +1657,7 @@ function $HttpProvider() {
             url,
           );
         }
-        var params = parseKeyValue(parts[1]);
+        let params = parseKeyValue(parts[1]);
         forEach(params, function (value, key) {
           if (value === "JSON_CALLBACK") {
             // Throw if the url already contains a reference to JSON_CALLBACK

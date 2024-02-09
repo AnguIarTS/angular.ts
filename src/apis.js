@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * Computes a hash of an 'obj'.
  * Hash of a:
@@ -13,7 +11,7 @@
  *         The resulting string key is in 'type:hashKey' format.
  */
 function hashKey(obj, nextUidFn) {
-  var key = obj && obj.$$hashKey;
+  let key = obj && obj.$$hashKey;
 
   if (key) {
     if (typeof key === "function") {
@@ -22,7 +20,7 @@ function hashKey(obj, nextUidFn) {
     return key;
   }
 
-  var objType = typeof obj;
+  let objType = typeof obj;
   if (objType === "function" || (objType === "object" && obj !== null)) {
     key = obj.$$hashKey = objType + ":" + (nextUidFn || nextUid)();
   } else {
@@ -36,7 +34,7 @@ function hashKey(obj, nextUidFn) {
 // Should be bug/feature equivalent to the native implementations of supported browsers
 // (for the features required in Angular).
 // See https://kangax.github.io/compat-table/es6/#test-Map
-var nanKey = Object.create(null);
+let nanKey = Object.create(null);
 function NgMapShim() {
   this._keys = [];
   this._values = [];
@@ -56,19 +54,19 @@ NgMapShim.prototype = {
   },
   get: function (key) {
     key = this._transformKey(key);
-    var idx = this._idx(key);
+    let idx = this._idx(key);
     if (idx !== -1) {
       return this._values[idx];
     }
   },
   has: function (key) {
     key = this._transformKey(key);
-    var idx = this._idx(key);
+    let idx = this._idx(key);
     return idx !== -1;
   },
   set: function (key, value) {
     key = this._transformKey(key);
-    var idx = this._idx(key);
+    let idx = this._idx(key);
     if (idx === -1) {
       idx = this._lastIndex = this._keys.length;
     }
@@ -80,7 +78,7 @@ NgMapShim.prototype = {
   },
   delete: function (key) {
     key = this._transformKey(key);
-    var idx = this._idx(key);
+    let idx = this._idx(key);
     if (idx === -1) {
       return false;
     }
@@ -95,9 +93,9 @@ NgMapShim.prototype = {
 // For now, always use `NgMapShim`, even if `window.Map` is available. Some native implementations
 // are still buggy (often in subtle ways) and can cause hard-to-debug failures. When native `Map`
 // implementations get more stable, we can reconsider switching to `window.Map` (when available).
-var NgMap = NgMapShim;
+let NgMap = NgMapShim;
 
-var $$MapProvider = [
+let $$MapProvider = [
   /** @this */ function () {
     this.$get = [
       function () {

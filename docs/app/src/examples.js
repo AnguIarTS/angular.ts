@@ -1,10 +1,10 @@
-'use strict';
+
 
 angular.module('examples', [])
 
 .directive('runnableExample', [function() {
-  var exampleClassNameSelector = '.runnable-example-file';
-  var tpl =
+  let exampleClassNameSelector = '.runnable-example-file';
+  let tpl =
     '<nav class="runnable-example-tabs" ng-if="tabs">' +
     '  <a ng-class="{active:$index==activeTabIndex}"' +
          'ng-repeat="tab in tabs track by $index" ' +
@@ -20,7 +20,7 @@ angular.module('examples', [])
     scope : true,
     controller : ['$scope', function($scope) {
       $scope.setTab = function(index) {
-        var tab = $scope.tabs[index];
+        let tab = $scope.tabs[index];
         $scope.activeTabIndex = index;
         $scope.$broadcast('tabChange', index, tab);
       };
@@ -28,9 +28,9 @@ angular.module('examples', [])
     compile : function(element) {
       element.html(tpl + element.html());
       return function(scope, element) {
-        var node = element[0];
-        var examples = node.querySelectorAll(exampleClassNameSelector);
-        var tabs = [];
+        let node = element[0];
+        let examples = node.querySelectorAll(exampleClassNameSelector);
+        let tabs = [];
         angular.forEach(examples, function(child, index) {
           tabs.push(child.getAttribute('name'));
         });
@@ -41,7 +41,7 @@ angular.module('examples', [])
             angular.forEach(examples, function(child) {
               child.style.display = 'none';
             });
-            var selected = examples[index];
+            let selected = examples[index];
             selected.style.display = 'block';
           });
           scope.setTab(0);
@@ -60,10 +60,10 @@ angular.module('examples', [])
      * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
      * newWindow param allows for this possibility.
      */
-    var target = newWindow ? '_blank' : '_self';
-    var form = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
+    let target = newWindow ? '_blank' : '_self';
+    let form = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
     angular.forEach(fields, function(value, name) {
-      var input = angular.element('<input type="hidden" name="' +  name + '">');
+      let input = angular.element('<input type="hidden" name="' +  name + '">');
       input.attr('value', value);
       form.append(input);
     });
@@ -74,11 +74,11 @@ angular.module('examples', [])
 }])
 
 .factory('createCopyrightNotice', function() {
-    var COPYRIGHT = 'Copyright ' + (new Date()).getFullYear() + ' Google LLC. All Rights Reserved.\n'
+    let COPYRIGHT = 'Copyright ' + (new Date()).getFullYear() + ' Google LLC. All Rights Reserved.\n'
      + 'Use of this source code is governed by an MIT-style license that\n'
      + 'can be found in the LICENSE file at http://angular.io/license';
-    var COPYRIGHT_JS_CSS = '\n\n/*\n' + COPYRIGHT + '\n*/';
-    var COPYRIGHT_HTML = '\n\n<!-- \n' + COPYRIGHT + '\n-->';
+    let COPYRIGHT_JS_CSS = '\n\n/*\n' + COPYRIGHT + '\n*/';
+    let COPYRIGHT_HTML = '\n\n<!-- \n' + COPYRIGHT + '\n-->';
 
     return function getCopyright(filename) {
       switch (filename.substr(filename.lastIndexOf('.'))) {
@@ -103,7 +103,7 @@ angular.module('examples', [])
     controllerAs: 'plnkr',
     template: '<button ng-click="plnkr.open($event)" class="btn pull-right"> <i class="glyphicon glyphicon-edit">&nbsp;</i> Edit in Plunker</button> ',
     controller: [function PlnkrOpenerCtrl() {
-      var ctrl = this;
+      let ctrl = this;
 
       ctrl.example = {
         path: ctrl.examplePath,
@@ -122,7 +122,7 @@ angular.module('examples', [])
           ctrl.example.manifest = data.manifest;
 
           // Build a pretty title for the Plunkr
-          var exampleNameParts = data.manifest.name.split('-');
+          let exampleNameParts = data.manifest.name.split('-');
           exampleNameParts.unshift('AngularJS');
           angular.forEach(exampleNameParts, function(part, index) {
             exampleNameParts[index] = part.charAt(0).toUpperCase() + part.substr(1);
@@ -135,9 +135,9 @@ angular.module('examples', [])
 
       ctrl.open = function(clickEvent) {
 
-        var newWindow = clickEvent.ctrlKey || clickEvent.metaKey;
+        let newWindow = clickEvent.ctrlKey || clickEvent.metaKey;
 
-        var postData = {
+        let postData = {
           'tags[0]': 'angularjs',
           'tags[1]': 'example',
           'private': true
@@ -176,7 +176,7 @@ angular.module('examples', [])
         return response.data;
       })
       .then(function(manifest) {
-        var filePromises = [];
+        let filePromises = [];
 
         angular.forEach(manifest.files, function(filename) {
           filePromises.push($http.get(exampleFolder + '/' + filename, { transformResponse: [] })

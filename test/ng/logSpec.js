@@ -1,8 +1,8 @@
 /* global $LogProvider: false */
-'use strict';
+
 
 describe('$log', function() {
-  var $window, logger, log, warn, info, error, debug;
+  let $window, logger, log, warn, info, error, debug;
 
   beforeEach(module(function($provide) {
     $window = {
@@ -69,7 +69,7 @@ describe('$log', function() {
   runTests({ie9Mode: true});
 
   function runTests(options) {
-    var ie9Mode = options.ie9Mode;
+    let ie9Mode = options.ie9Mode;
 
     function attachMockConsoleTo$window() {
       // Support: IE 9 only
@@ -159,7 +159,7 @@ describe('$log', function() {
       });
 
       describe('$log.error', function() {
-        var e, $log;
+        let e, $log;
 
         function TestError() {
           Error.prototype.constructor.apply(this, arguments);

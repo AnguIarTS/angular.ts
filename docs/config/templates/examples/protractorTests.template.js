@@ -1,5 +1,5 @@
 describe("{$ doc.description $}", function() {
-  var rootEl;
+  let rootEl;
   beforeEach(function() {
     rootEl = browser.rootEl;{% if doc['ng-app-included'] %}
     browser.rootEl = '[ng-app]';{% endif %}

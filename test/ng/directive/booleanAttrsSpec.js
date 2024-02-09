@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('boolean attr directives', function() {
-  var element;
+  let element;
 
   afterEach(function() {
     dealoc(element);

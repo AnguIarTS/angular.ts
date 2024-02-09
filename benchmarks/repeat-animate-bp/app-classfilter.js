@@ -1,4 +1,4 @@
-'use strict';
+
 
 angular.module('repeatAnimateBenchmark', ['ngAnimate'])
   .config(function($animateProvider) {

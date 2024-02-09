@@ -1,9 +1,7 @@
-"use strict";
-
-var $$rAFSchedulerFactory = [
+export const $$rAFSchedulerFactory = [
   "$$rAF",
   function ($$rAF) {
-    var queue, cancelFn;
+    let queue, cancelFn;
 
     function scheduler(tasks) {
       // we make a copy since RAFScheduler mutates the state
@@ -38,9 +36,9 @@ var $$rAFSchedulerFactory = [
     function nextTick() {
       if (!queue.length) return;
 
-      var items = queue.shift();
-      for (var i = 0; i < items.length; i++) {
-        items[i]();
+      let items = queue.shift();
+      for (const element of items) {
+        element();
       }
 
       if (!cancelFn) {

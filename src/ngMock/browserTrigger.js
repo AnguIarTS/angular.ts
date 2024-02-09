@@ -1,5 +1,3 @@
-"use strict";
-
 (function () {
   /**
    * @ngdoc function
@@ -65,12 +63,12 @@
     if (!element) return;
 
     eventData = eventData || {};
-    var relatedTarget = eventData.relatedTarget || element;
-    var keys = eventData.keys;
-    var x = eventData.x;
-    var y = eventData.y;
+    let relatedTarget = eventData.relatedTarget || element;
+    let keys = eventData.keys;
+    let x = eventData.x;
+    let y = eventData.y;
 
-    var inputType = element.type ? element.type.toLowerCase() : null,
+    let inputType = element.type ? element.type.toLowerCase() : null,
       nodeName = element.nodeName.toLowerCase();
     if (!eventType) {
       eventType = {
@@ -101,7 +99,7 @@
       return keys.indexOf(key) !== -1;
     }
 
-    var evnt;
+    let evnt;
     if (/transitionend/.test(eventType)) {
       if (window.WebKitTransitionEvent) {
         evnt = new window.WebKitTransitionEvent(eventType, eventData);
@@ -228,11 +226,11 @@
   }
 
   function createTouchEvent(element, eventType, x, y) {
-    var evnt = new window.Event(eventType);
+    let evnt = new window.Event(eventType);
     x = x || 0;
     y = y || 0;
 
-    var touch = window.document.createTouch(
+    let touch = window.document.createTouch(
       window,
       element,
       Date.now(),
@@ -241,7 +239,7 @@
       x,
       y,
     );
-    var touches = window.document.createTouchList(touch);
+    let touches = window.document.createTouchList(touch);
 
     evnt.touches = touches;
 
@@ -253,15 +251,15 @@
       return supportsEventBubblingInDetachedTree._cached;
     }
     supportsEventBubblingInDetachedTree._cached = false;
-    var doc = window.document;
+    let doc = window.document;
     if (doc) {
-      var parent = doc.createElement("div"),
+      let parent = doc.createElement("div"),
         child = parent.cloneNode();
       parent.appendChild(child);
       parent.addEventListener("e", function () {
         supportsEventBubblingInDetachedTree._cached = true;
       });
-      var evnt = window.document.createEvent("Events");
+      let evnt = window.document.createEvent("Events");
       evnt.initEvent("e", true, true);
       child.dispatchEvent(evnt);
     }
@@ -269,9 +267,9 @@
   }
 
   function triggerForPath(element, evnt) {
-    var stop = false;
+    let stop = false;
 
-    var _stopPropagation = evnt.stopPropagation;
+    let _stopPropagation = evnt.stopPropagation;
     evnt.stopPropagation = function () {
       stop = true;
       _stopPropagation.apply(evnt, arguments);

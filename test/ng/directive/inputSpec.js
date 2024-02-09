@@ -1,12 +1,12 @@
-'use strict';
+
 
 /* globals generateInputCompilerHelper: false */
 
 describe('input', function() {
-  var helper = {}, $compile, $rootScope, $browser, $sniffer;
+  let helper = {}, $compile, $rootScope, $browser, $sniffer;
 
   // UA sniffing to exclude Edge from some date input tests
-  var isEdge = /\bEdge\//.test(window.navigator.userAgent);
+  let isEdge = /\bEdge\//.test(window.navigator.userAgent);
 
   generateInputCompilerHelper(helper);
 
@@ -19,7 +19,7 @@ describe('input', function() {
 
 
   it('should bind to a model', function() {
-    var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
+    let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
 
     $rootScope.$apply('name = \'misko\'');
 
@@ -32,8 +32,8 @@ describe('input', function() {
       toBeOff: function() {
         return {
           compare: function(actual, attributeName) {
-            var actualValue = actual.attr(attributeName);
-            var message = function() {
+            let actualValue = actual.attr(attributeName);
+            let message = function() {
               return 'Attribute \'' + attributeName + '\' expected to be off but was \'' + actualValue +
                 '\' in: ' + angular.mock.dump(actual);
             };
@@ -47,7 +47,7 @@ describe('input', function() {
       }
     });
 
-    var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias"/>');
+    let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias"/>');
     expect(inputElm.prop('readOnly')).toBe(false);
     expect(inputElm.prop('disabled')).toBe(false);
 
@@ -58,7 +58,7 @@ describe('input', function() {
 
 
   it('should update the model on "blur" event', function() {
-    var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
+    let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
 
     helper.changeInputValueTo('adam');
     expect($rootScope.name).toEqual('adam');
@@ -76,8 +76,8 @@ describe('input', function() {
 
   it('should not set the `val` property when the value is equal to the current value', inject(function($rootScope, $compile) {
     // This is a workaround for Firefox validation. Look at #12102.
-    var input = jqLite('<input type="text" ng-model="foo" required/>');
-    var setterCalls = 0;
+    let input = jqLite('<input type="text" ng-model="foo" required/>');
+    let setterCalls = 0;
     $rootScope.foo = '';
     Object.defineProperty(input[0], 'value', {
       get: function() {
@@ -97,7 +97,7 @@ describe('input', function() {
 
       $sniffer.android = false;
 
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias"" />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias"" />');
       helper.changeInputValueTo('a');
       expect($rootScope.name).toEqual('a');
       browserTrigger(inputElm, 'compositionstart');
@@ -112,7 +112,7 @@ describe('input', function() {
     it('should update the model between "compositionstart" and "compositionend" on android', function() {
       $sniffer.android = true;
 
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias"" />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias"" />');
       helper.changeInputValueTo('a');
       expect($rootScope.name).toEqual('a');
       browserTrigger(inputElm, 'compositionstart');
@@ -125,7 +125,7 @@ describe('input', function() {
 
 
     it('should update the model on "compositionend"', function() {
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" />');
       browserTrigger(inputElm, 'compositionstart');
       helper.changeInputValueTo('caitp');
       expect($rootScope.name).toBeUndefined();
@@ -138,7 +138,7 @@ describe('input', function() {
       // This tests a bug workaround for IE9-11
       // During composition, when an input is de-focussed by clicking away from it,
       // the compositionupdate event is called with '', followed by a change event.
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" />');
       browserTrigger(inputElm, 'compositionstart');
       helper.changeInputValueTo('caitp');
       expect($rootScope.name).toBeUndefined();
@@ -160,31 +160,19 @@ describe('input', function() {
     //These tests try simulate various scenarios which do/do-not fire the extra input event
 
     it('should not dirty the model on an input event in response to a placeholder change', function() {
-      var inputElm = helper.compileInput('<input type="text" placeholder="Test" attr-capture ng-model="unsetValue" name="name" />');
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
+      let inputElm = helper.compileInput('<input type="text" placeholder="Test" attr-capture ng-model="unsetValue" name="name" />');
       expect(inputElm.attr('placeholder')).toBe('Test');
       expect(inputElm).toBePristine();
 
       helper.attrs.$set('placeholder', '');
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
       expect(inputElm.attr('placeholder')).toBe('');
       expect(inputElm).toBePristine();
 
       helper.attrs.$set('placeholder', 'Test Again');
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
       expect(inputElm.attr('placeholder')).toBe('Test Again');
       expect(inputElm).toBePristine();
 
       helper.attrs.$set('placeholder', undefined);
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
       expect(inputElm.attr('placeholder')).toBeUndefined();
       expect(inputElm).toBePristine();
 
@@ -194,24 +182,15 @@ describe('input', function() {
 
 
     it('should not dirty the model on an input event in response to a interpolated placeholder change', function() {
-      var inputElm = helper.compileInput('<input type="text" placeholder="{{ph}}" ng-model="unsetValue" name="name" />');
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
+      let inputElm = helper.compileInput('<input type="text" placeholder="{{ph}}" ng-model="unsetValue" name="name" />');
       expect(inputElm).toBePristine();
 
       $rootScope.ph = 1;
       $rootScope.$digest();
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
       expect(inputElm).toBePristine();
 
       $rootScope.ph = '';
       $rootScope.$digest();
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
       expect(inputElm).toBePristine();
 
       helper.changeInputValueTo('foo');
@@ -221,14 +200,11 @@ describe('input', function() {
 
     it('should dirty the model on an input event while in focus even if the placeholder changes', function() {
       $rootScope.ph = 'Test';
-      var inputElm = helper.compileInput('<input type="text" ng-attr-placeholder="{{ph}}" ng-model="unsetValue" name="name" />');
+      let inputElm = helper.compileInput('<input type="text" ng-attr-placeholder="{{ph}}" ng-model="unsetValue" name="name" />');
       expect(inputElm).toBePristine();
 
       browserTrigger(inputElm, 'focusin');
       browserTrigger(inputElm, 'focus');
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
       expect(inputElm.attr('placeholder')).toBe('Test');
       expect(inputElm).toBePristine();
 
@@ -242,21 +218,15 @@ describe('input', function() {
 
 
     it('should not dirty the model on an input event in response to a ng-attr-placeholder change', function() {
-      var inputElm = helper.compileInput('<input type="text" ng-attr-placeholder="{{ph}}" ng-model="unsetValue" name="name" />');
+      let inputElm = helper.compileInput('<input type="text" ng-attr-placeholder="{{ph}}" ng-model="unsetValue" name="name" />');
       expect(inputElm).toBePristine();
 
       $rootScope.ph = 1;
       $rootScope.$digest();
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
       expect(inputElm).toBePristine();
 
       $rootScope.ph = '';
       $rootScope.$digest();
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
       expect(inputElm).toBePristine();
 
       helper.changeInputValueTo('foo');
@@ -265,18 +235,12 @@ describe('input', function() {
 
 
     it('should not dirty the model on an input event in response to a focus', function() {
-      var inputElm = helper.compileInput('<input type="text" placeholder="Test" ng-model="unsetValue" name="name" />');
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
+      let inputElm = helper.compileInput('<input type="text" placeholder="Test" ng-model="unsetValue" name="name" />');
       expect(inputElm.attr('placeholder')).toBe('Test');
       expect(inputElm).toBePristine();
 
       browserTrigger(inputElm, 'focusin');
       browserTrigger(inputElm, 'focus');
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
       expect(inputElm.attr('placeholder')).toBe('Test');
       expect(inputElm).toBePristine();
 
@@ -286,24 +250,15 @@ describe('input', function() {
 
 
     it('should not dirty the model on an input event in response to a blur', function() {
-      var inputElm = helper.compileInput('<input type="text" placeholder="Test" ng-model="unsetValue" name="name" />');
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
+      let inputElm = helper.compileInput('<input type="text" placeholder="Test" ng-model="unsetValue" name="name" />');
       expect(inputElm.attr('placeholder')).toBe('Test');
       expect(inputElm).toBePristine();
 
       browserTrigger(inputElm, 'focusin');
       browserTrigger(inputElm, 'focus');
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
       expect(inputElm).toBePristine();
 
       browserTrigger(inputElm, 'focusout');
-      if (msie) {
-        browserTrigger(inputElm, 'input');
-      }
       browserTrigger(inputElm, 'blur');
       expect(inputElm).toBePristine();
 
@@ -314,7 +269,7 @@ describe('input', function() {
 
     it('should dirty the model on an input event if there is a placeholder and value', function() {
       $rootScope.name = 'foo';
-      var inputElm = helper.compileInput('<input type="text" placeholder="Test" ng-model="name" value="init" name="name" />');
+      let inputElm = helper.compileInput('<input type="text" placeholder="Test" ng-model="name" value="init" name="name" />');
       expect(inputElm.val()).toBe($rootScope.name);
       expect(inputElm).toBePristine();
 
@@ -325,7 +280,7 @@ describe('input', function() {
 
     it('should dirty the model on an input event if there is a placeholder and value after focusing', function() {
       $rootScope.name = 'foo';
-      var inputElm = helper.compileInput('<input type="text" placeholder="Test" ng-model="name" value="init" name="name" />');
+      let inputElm = helper.compileInput('<input type="text" placeholder="Test" ng-model="name" value="init" name="name" />');
       expect(inputElm.val()).toBe($rootScope.name);
       expect(inputElm).toBePristine();
 
@@ -338,7 +293,7 @@ describe('input', function() {
 
     it('should dirty the model on an input event if there is a placeholder and value after bluring', function() {
       $rootScope.name = 'foo';
-      var inputElm = helper.compileInput('<input type="text" placeholder="Test" ng-model="name" value="init" name="name" />');
+      let inputElm = helper.compileInput('<input type="text" placeholder="Test" ng-model="name" value="init" name="name" />');
       expect(inputElm.val()).toBe($rootScope.name);
       expect(inputElm).toBePristine();
 
@@ -358,7 +313,7 @@ describe('input', function() {
 
     it('should interpolate input names', function() {
       $rootScope.nameID = '47';
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="name{{nameID}}" />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="name{{nameID}}" />');
       expect($rootScope.form.name47.$pristine).toBeTruthy();
       helper.changeInputValueTo('caitp');
       expect($rootScope.form.name47.$dirty).toBeTruthy();
@@ -367,9 +322,9 @@ describe('input', function() {
 
     it('should rename form controls in form when interpolated name changes', function() {
       $rootScope.nameID = 'A';
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="name{{nameID}}" />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="name{{nameID}}" />');
       expect($rootScope.form.nameA.$name).toBe('nameA');
-      var oldModel = $rootScope.form.nameA;
+      let oldModel = $rootScope.form.nameA;
       $rootScope.nameID = 'B';
       $rootScope.$digest();
       expect($rootScope.form.nameA).toBeUndefined();
@@ -380,8 +335,8 @@ describe('input', function() {
 
     it('should rename form controls in null form when interpolated name changes', function() {
       $rootScope.nameID = 'A';
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="name{{nameID}}" />');
-      var model = inputElm.controller('ngModel');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="name{{nameID}}" />');
+      let model = inputElm.controller('ngModel');
       expect(model.$name).toBe('nameA');
 
       $rootScope.nameID = 'B';
@@ -391,7 +346,7 @@ describe('input', function() {
   });
 
   describe('"change" event', function() {
-    var assertBrowserSupportsChangeEvent;
+    let assertBrowserSupportsChangeEvent;
 
     beforeEach(function() {
       assertBrowserSupportsChangeEvent = function(inputEventSupported) {
@@ -399,7 +354,7 @@ describe('input', function() {
         $sniffer.hasEvent = function(eventName) {
           return !(eventName === 'input' && !inputEventSupported);
         };
-        var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" />');
+        let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" />');
 
         inputElm.val('mark');
         browserTrigger(inputElm, 'change');
@@ -421,7 +376,7 @@ describe('input', function() {
 
     if (!_jqLiteMode) {
       describe('double $digest when triggering an event using jQuery', function() {
-        var run;
+        let run;
 
         beforeEach(function() {
           run = function(scope) {
@@ -430,7 +385,7 @@ describe('input', function() {
 
             scope = scope || $rootScope;
 
-            var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />', false, scope);
+            let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />', false, scope);
 
             scope.field = 'fake field';
             scope.$watch('field', function() {
@@ -461,7 +416,7 @@ describe('input', function() {
 
 
     it('should update the model on "paste" event if the input value changes', function() {
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
 
       browserTrigger(inputElm, 'keydown');
       $browser.defer.flush();
@@ -474,7 +429,7 @@ describe('input', function() {
     });
 
     it('should update the model on "drop" event if the input value changes', function() {
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
 
       browserTrigger(inputElm, 'keydown');
       $browser.defer.flush();
@@ -487,7 +442,7 @@ describe('input', function() {
     });
 
     it('should update the model on "cut" event', function() {
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
 
       inputElm.val('john');
       browserTrigger(inputElm, 'cut');
@@ -497,8 +452,8 @@ describe('input', function() {
 
 
     it('should cancel the delayed dirty if a change occurs', function() {
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" />');
-      var ctrl = inputElm.controller('ngModel');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" />');
+      let ctrl = inputElm.controller('ngModel');
 
       browserTrigger(inputElm, 'keydown', {target: inputElm[0]});
       inputElm.val('f');
@@ -517,7 +472,7 @@ describe('input', function() {
   describe('ngTrim', function() {
 
     it('should update the model and trim the value', function() {
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-change="change()" />');
 
       helper.changeInputValueTo('  a  ');
       expect($rootScope.name).toEqual('a');
@@ -525,7 +480,7 @@ describe('input', function() {
 
 
     it('should update the model and not trim the value', function() {
-      var inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-trim="false" />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="name" name="alias" ng-trim="false" />');
 
       helper.changeInputValueTo('  a  ');
       expect($rootScope.name).toEqual('  a  ');
@@ -534,7 +489,7 @@ describe('input', function() {
 
 
   it('should allow complex reference binding', function() {
-    var inputElm = helper.compileInput('<input type="text" ng-model="obj[\'abc\'].name"/>');
+    let inputElm = helper.compileInput('<input type="text" ng-model="obj[\'abc\'].name"/>');
 
     $rootScope.$apply('obj = { abc: { name: \'Misko\'} }');
     expect(inputElm.val()).toEqual('Misko');
@@ -542,7 +497,7 @@ describe('input', function() {
 
 
   it('should ignore input without ngModel directive', function() {
-    var inputElm = helper.compileInput('<input type="text" name="whatever" required />');
+    let inputElm = helper.compileInput('<input type="text" name="whatever" required />');
 
     helper.changeInputValueTo('');
     expect(inputElm.hasClass('ng-valid')).toBe(false);
@@ -554,13 +509,13 @@ describe('input', function() {
 
   it('should report error on assignment error', function() {
     expect(function() {
-      var inputElm = helper.compileInput('<input type="text" ng-model="throw \'\'">');
+      let inputElm = helper.compileInput('<input type="text" ng-model="throw \'\'">');
     }).toThrowMinErr('$parse', 'syntax', 'Syntax Error: Token \'\'\'\' is an unexpected token at column 7 of the expression [throw \'\'] starting at [\'\'].');
   });
 
 
   it('should render as blank if null', function() {
-    var inputElm = helper.compileInput('<input type="text" ng-model="age" />');
+    let inputElm = helper.compileInput('<input type="text" ng-model="age" />');
 
     $rootScope.$apply('age = null');
 
@@ -570,7 +525,7 @@ describe('input', function() {
 
 
   it('should render 0 even if it is a number', function() {
-    var inputElm = helper.compileInput('<input type="text" ng-model="value" />');
+    let inputElm = helper.compileInput('<input type="text" ng-model="value" />');
     $rootScope.$apply('value = 0');
 
     expect(inputElm.val()).toBe('0');
@@ -578,9 +533,9 @@ describe('input', function() {
 
 
   it('should render the $viewValue when $modelValue is empty', function() {
-    var inputElm = helper.compileInput('<input type="text" ng-model="value" />');
+    let inputElm = helper.compileInput('<input type="text" ng-model="value" />');
 
-    var ctrl = inputElm.controller('ngModel');
+    let ctrl = inputElm.controller('ngModel');
 
     ctrl.$modelValue = null;
 
@@ -596,7 +551,7 @@ describe('input', function() {
   // INPUT TYPES
   describe('month', function() {
     it('should throw if model is not a Date object', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="january"/>');
+      let inputElm = helper.compileInput('<input type="month" ng-model="january"/>');
 
       expect(function() {
         $rootScope.$apply(function() {
@@ -607,7 +562,7 @@ describe('input', function() {
 
 
     it('should set the view if the model is a valid Date object', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="march"/>');
+      let inputElm = helper.compileInput('<input type="month" ng-model="march"/>');
 
       $rootScope.$apply(function() {
         $rootScope.march = new Date(2013, 2, 1);
@@ -618,7 +573,7 @@ describe('input', function() {
 
 
     it('should set the model undefined if the input is an invalid month string', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="value"/>');
+      let inputElm = helper.compileInput('<input type="month" ng-model="value"/>');
 
       $rootScope.$apply(function() {
         $rootScope.value = new Date(2013, 0, 1);
@@ -639,8 +594,8 @@ describe('input', function() {
 
 
     it('should not set error=month when a later parser returns undefined', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="value"/>');
-      var ctrl = inputElm.controller('ngModel');
+      let inputElm = helper.compileInput('<input type="month" ng-model="value"/>');
+      let ctrl = inputElm.controller('ngModel');
 
       ctrl.$parsers.push(function() {
         return undefined;
@@ -669,7 +624,7 @@ describe('input', function() {
 
 
     it('should render as blank if null', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="month" ng-model="test" />');
 
       $rootScope.$apply('test = null');
 
@@ -679,7 +634,7 @@ describe('input', function() {
 
 
     it('should come up blank when no value specified', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="month" ng-model="test" />');
 
       expect(inputElm.val()).toBe('');
 
@@ -691,7 +646,7 @@ describe('input', function() {
 
 
     it('should parse empty string to null', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="month" ng-model="test" />');
 
       $rootScope.$apply(function() {
         $rootScope.test = new Date(2011, 0, 1);
@@ -704,7 +659,7 @@ describe('input', function() {
 
 
     it('should use UTC if specified in the options', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="month" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       helper.changeInputValueTo('2013-07');
       expect(+$rootScope.value).toBe(Date.UTC(2013, 6, 1));
@@ -717,7 +672,7 @@ describe('input', function() {
 
 
     it('should be possible to override the timezone', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="month" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       helper.changeInputValueTo('2013-07');
       expect(+$rootScope.value).toBe(Date.UTC(2013, 6, 1));
@@ -734,8 +689,8 @@ describe('input', function() {
     they('should use any timezone if specified in the options (format: $prop)',
       {'+HHmm': '+0500', '+HH:mm': '+05:00'},
       function(tz) {
-        var ngModelOptions = '{timezone: \'' + tz + '\'}';
-        var inputElm = helper.compileInput(
+        let ngModelOptions = '{timezone: \'' + tz + '\'}';
+        let inputElm = helper.compileInput(
             '<input type="month" ng-model="value" ng-model-options="' + ngModelOptions + '" />');
 
         helper.changeInputValueTo('2013-07');
@@ -750,7 +705,7 @@ describe('input', function() {
 
 
     it('should label parse errors as `month`', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="val" name="alias" />', {
+      let inputElm = helper.compileInput('<input type="month" ng-model="val" name="alias" />', {
         valid: false,
         badInput: true
       });
@@ -765,7 +720,7 @@ describe('input', function() {
     // Edge does not support years with any number of digits other than 4.
     if (!isEdge) {
       it('should allow four or more digits in year', function() {
-        var inputElm = helper.compileInput('<input type="month" ng-model="value"  ng-model-options="{timezone: \'UTC\'}"/>');
+        let inputElm = helper.compileInput('<input type="month" ng-model="value"  ng-model-options="{timezone: \'UTC\'}"/>');
 
         helper.changeInputValueTo('10123-03');
         expect(+$rootScope.value).toBe(Date.UTC(10123, 2, 1, 0, 0, 0));
@@ -778,7 +733,7 @@ describe('input', function() {
     }
 
     it('should only change the month of a bound date', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="month" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       $rootScope.$apply(function() {
         $rootScope.value = new Date(Date.UTC(2013, 7, 1, 1, 0, 0, 0));
@@ -789,7 +744,7 @@ describe('input', function() {
     });
 
     it('should only change the month of a bound date in any timezone', function() {
-      var inputElm = helper.compileInput('<input type="month" ng-model="value" ng-model-options="{timezone: \'+0500\'}" />');
+      let inputElm = helper.compileInput('<input type="month" ng-model="value" ng-model-options="{timezone: \'+0500\'}" />');
 
       $rootScope.$apply(function() {
         $rootScope.value = new Date(Date.UTC(2013, 6, 31, 20, 0, 0));
@@ -800,7 +755,7 @@ describe('input', function() {
     });
 
     describe('min', function() {
-      var inputElm;
+      let inputElm;
       beforeEach(function() {
         $rootScope.minVal = '2013-01';
         inputElm = helper.compileInput('<input type="month" ng-model="value" name="alias" min="{{ minVal }}" />');
@@ -858,7 +813,7 @@ describe('input', function() {
     });
 
     describe('max', function() {
-      var inputElm;
+      let inputElm;
       beforeEach(function() {
         $rootScope.maxVal = '2013-01';
         inputElm = helper.compileInput('<input type="month" ng-model="value" name="alias" max="{{ maxVal }}" />');
@@ -936,7 +891,7 @@ describe('input', function() {
 
   describe('week', function() {
     it('should throw if model is not a Date object', function() {
-      var inputElm = helper.compileInput('<input type="week" ng-model="secondWeek"/>');
+      let inputElm = helper.compileInput('<input type="week" ng-model="secondWeek"/>');
 
       expect(function() {
         $rootScope.$apply(function() {
@@ -947,7 +902,7 @@ describe('input', function() {
 
 
     it('should set the view if the model is a valid Date object', function() {
-      var inputElm = helper.compileInput('<input type="week" ng-model="secondWeek"/>');
+      let inputElm = helper.compileInput('<input type="week" ng-model="secondWeek"/>');
 
       $rootScope.$apply(function() {
         $rootScope.secondWeek = new Date(2013, 0, 11);
@@ -958,7 +913,7 @@ describe('input', function() {
 
 
     it('should not affect the hours or minutes of a bound date', function() {
-      var inputElm = helper.compileInput('<input type="week" ng-model="secondWeek"/>');
+      let inputElm = helper.compileInput('<input type="week" ng-model="secondWeek"/>');
 
       $rootScope.$apply(function() {
         $rootScope.secondWeek = new Date(2013, 0, 11, 1, 0, 0, 0);
@@ -971,7 +926,7 @@ describe('input', function() {
 
 
     it('should set the model undefined if the input is an invalid week string', function() {
-      var inputElm = helper.compileInput('<input type="week" ng-model="value"/>');
+      let inputElm = helper.compileInput('<input type="week" ng-model="value"/>');
 
       $rootScope.$apply(function() {
         $rootScope.value = new Date(2013, 0, 11);
@@ -991,7 +946,7 @@ describe('input', function() {
 
 
     it('should render as blank if null', function() {
-      var inputElm = helper.compileInput('<input type="week" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="week" ng-model="test" />');
 
       $rootScope.$apply('test = null');
 
@@ -1001,7 +956,7 @@ describe('input', function() {
 
 
     it('should come up blank when no value specified', function() {
-      var inputElm = helper.compileInput('<input type="week" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="week" ng-model="test" />');
 
       expect(inputElm.val()).toBe('');
 
@@ -1013,7 +968,7 @@ describe('input', function() {
 
 
     it('should parse empty string to null', function() {
-      var inputElm = helper.compileInput('<input type="week" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="week" ng-model="test" />');
 
       $rootScope.$apply(function() {
         $rootScope.test = new Date(2011, 0, 1);
@@ -1028,7 +983,7 @@ describe('input', function() {
     // Edge does not support years with any number of digits other than 4.
     if (!isEdge) {
       it('should allow four or more digits in year', function() {
-        var inputElm = helper.compileInput('<input type="week" ng-model="value"  ng-model-options="{timezone: \'UTC\'}"/>');
+        let inputElm = helper.compileInput('<input type="week" ng-model="value"  ng-model-options="{timezone: \'UTC\'}"/>');
 
         helper.changeInputValueTo('10123-W03');
         expect(+$rootScope.value).toBe(Date.UTC(10123, 0, 21));
@@ -1041,7 +996,7 @@ describe('input', function() {
     }
 
     it('should use UTC if specified in the options', function() {
-      var inputElm = helper.compileInput('<input type="week" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="week" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       helper.changeInputValueTo('2013-W03');
       expect(+$rootScope.value).toBe(Date.UTC(2013, 0, 17));
@@ -1054,7 +1009,7 @@ describe('input', function() {
 
 
     it('should be possible to override the timezone', function() {
-      var inputElm = helper.compileInput('<input type="week" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="week" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       // January 19 2013 is a Saturday
       $rootScope.$apply(function() {
@@ -1080,8 +1035,8 @@ describe('input', function() {
     they('should use any timezone if specified in the options (format: $prop)',
       {'+HHmm': '+0500', '+HH:mm': '+05:00'},
       function(tz) {
-        var ngModelOptions = '{timezone: \'' + tz + '\'}';
-        var inputElm = helper.compileInput(
+        let ngModelOptions = '{timezone: \'' + tz + '\'}';
+        let inputElm = helper.compileInput(
             '<input type="week" ng-model="value" ng-model-options="' + ngModelOptions + '" />');
 
         helper.changeInputValueTo('2013-W03');
@@ -1096,7 +1051,7 @@ describe('input', function() {
 
 
     it('should label parse errors as `week`', function() {
-      var inputElm = helper.compileInput('<input type="week" ng-model="val" name="alias" />', {
+      let inputElm = helper.compileInput('<input type="week" ng-model="val" name="alias" />', {
         valid: false,
         badInput: true
       });
@@ -1107,7 +1062,7 @@ describe('input', function() {
     });
 
     describe('min', function() {
-      var inputElm;
+      let inputElm;
       beforeEach(function() {
         $rootScope.minVal = '2013-W01';
         inputElm = helper.compileInput('<input type="week" ng-model="value" name="alias" min="{{ minVal }}" />');
@@ -1165,7 +1120,7 @@ describe('input', function() {
     });
 
     describe('max', function() {
-      var inputElm;
+      let inputElm;
 
       beforeEach(function() {
         $rootScope.maxVal = '2013-W01';
@@ -1246,7 +1201,7 @@ describe('input', function() {
 
   describe('datetime-local', function() {
     it('should throw if model is not a Date object', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="lunchtime"/>');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="lunchtime"/>');
 
       expect(function() {
         $rootScope.$apply(function() {
@@ -1257,7 +1212,7 @@ describe('input', function() {
 
 
     it('should set the view if the model if a valid Date object.', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="halfSecondToNextYear"/>');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="halfSecondToNextYear"/>');
 
       $rootScope.$apply(function() {
         $rootScope.halfSecondToNextYear = new Date(2013, 11, 31, 23, 59, 59, 500);
@@ -1268,7 +1223,7 @@ describe('input', function() {
 
 
     it('should set the model undefined if the view is invalid', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="breakMe"/>');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="breakMe"/>');
 
       $rootScope.$apply(function() {
         $rootScope.breakMe = new Date(2009, 0, 6, 16, 25, 1, 337);
@@ -1287,7 +1242,7 @@ describe('input', function() {
 
 
     it('should render as blank if null', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="test" />');
 
       $rootScope.$apply('test = null');
 
@@ -1297,7 +1252,7 @@ describe('input', function() {
 
 
     it('should come up blank when no value specified', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="test" />');
 
       expect(inputElm.val()).toBe('');
 
@@ -1309,7 +1264,7 @@ describe('input', function() {
 
 
     it('should parse empty string to null', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="test" />');
 
       $rootScope.$apply(function() {
         $rootScope.test = new Date(2011, 0, 1);
@@ -1322,7 +1277,7 @@ describe('input', function() {
 
 
     it('should use UTC if specified in the options', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       helper.changeInputValueTo('2000-01-01T01:02:03.456');
       expect(+$rootScope.value).toBe(Date.UTC(2000, 0, 1, 1, 2, 3, 456));
@@ -1335,7 +1290,7 @@ describe('input', function() {
 
 
     it('should be possible to override the timezone', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       helper.changeInputValueTo('2000-01-01T01:02:03.456');
       expect(+$rootScope.value).toBe(Date.UTC(2000, 0, 1, 1, 2, 3, 456));
@@ -1356,8 +1311,8 @@ describe('input', function() {
     they('should use any timezone if specified in the options (format: $prop)',
       {'+HHmm': '+0500', '+HH:mm': '+05:00'},
       function(tz) {
-        var ngModelOptions = '{timezone: \'' + tz + '\'}';
-        var inputElm = helper.compileInput(
+        let ngModelOptions = '{timezone: \'' + tz + '\'}';
+        let inputElm = helper.compileInput(
             '<input type="datetime-local" ng-model="value" ng-model-options="' + ngModelOptions + '" />');
 
         helper.changeInputValueTo('2000-01-01T06:02:03.456');
@@ -1372,7 +1327,7 @@ describe('input', function() {
 
 
     it('should fallback to default timezone in case an unknown timezone was passed', function() {
-      var inputElm = helper.compileInput(
+      let inputElm = helper.compileInput(
         '<input type="datetime-local" ng-model="value1" ng-model-options="{timezone: \'WTF\'}" />' +
         '<input type="datetime-local" ng-model="value2" />');
 
@@ -1383,7 +1338,7 @@ describe('input', function() {
 
 
     it('should allow to specify the milliseconds', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="value"" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="value"" />');
 
       helper.changeInputValueTo('2000-01-01T01:02:03.500');
       expect(+$rootScope.value).toBe(+new Date(2000, 0, 1, 1, 2, 3, 500));
@@ -1391,7 +1346,7 @@ describe('input', function() {
 
 
     it('should allow to specify single digit milliseconds', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="value"" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="value"" />');
 
       helper.changeInputValueTo('2000-01-01T01:02:03.4');
       expect(+$rootScope.value).toBe(+new Date(2000, 0, 1, 1, 2, 3, 400));
@@ -1399,7 +1354,7 @@ describe('input', function() {
 
 
     it('should allow to specify the seconds', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="value"" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="value"" />');
 
       helper.changeInputValueTo('2000-01-01T01:02:03.456');
       expect(+$rootScope.value).toBe(+new Date(2000, 0, 1, 1, 2, 3, 456));
@@ -1412,7 +1367,7 @@ describe('input', function() {
 
 
     it('should allow to skip the seconds', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="value"" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="value"" />');
 
       helper.changeInputValueTo('2000-01-01T01:02');
       expect(+$rootScope.value).toBe(+new Date(2000, 0, 1, 1, 2, 0));
@@ -1423,7 +1378,7 @@ describe('input', function() {
     // Edge does not support years with any number of digits other than 4.
     if (!isEdge) {
       it('should allow four or more digits in year', function() {
-        var inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" />');
+        let inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" />');
 
           helper.changeInputValueTo('10123-01-01T01:02:03.456');
           expect(+$rootScope.value).toBe(+new Date(10123, 0, 1, 1, 2, 3, 456));
@@ -1438,7 +1393,7 @@ describe('input', function() {
 
 
     it('should label parse errors as `datetimelocal`', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="val" name="alias" />', {
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="val" name="alias" />', {
         valid: false,
         badInput: true
       });
@@ -1449,11 +1404,11 @@ describe('input', function() {
     });
 
     it('should use the timeSecondsFormat specified in ngModelOptions', function() {
-      var inputElm = helper.compileInput(
+      let inputElm = helper.compileInput(
         '<input type="datetime-local" ng-model-options="{timeSecondsFormat: \'\'}" ng-model="time"/>'
       );
 
-      var ctrl = inputElm.controller('ngModel');
+      let ctrl = inputElm.controller('ngModel');
 
       $rootScope.$apply(function() {
         $rootScope.time = new Date(1970, 0, 1, 15, 41, 0, 500);
@@ -1482,7 +1437,7 @@ describe('input', function() {
 
 
     it('should strip empty milliseconds and seconds if specified in ngModelOptions', function() {
-      var inputElm = helper.compileInput(
+      let inputElm = helper.compileInput(
         '<input type="datetime-local" ng-model-options="{timeStripZeroSeconds: true}" ng-model="threeFortyOnePm"/>'
       );
 
@@ -1513,7 +1468,7 @@ describe('input', function() {
 
 
     it('should apply timeStripZeroSeconds after timeSecondsFormat', function() {
-      var inputElm = helper.compileInput('<input type="datetime-local"' +
+      let inputElm = helper.compileInput('<input type="datetime-local"' +
         ' ng-model-options="{timeSecondsFormat: \'ss\', timeStripZeroSeconds: true}"' +
         ' ng-model="threeFortyOnePm"/>');
 
@@ -1531,7 +1486,7 @@ describe('input', function() {
     });
 
     describe('min', function() {
-      var inputElm;
+      let inputElm;
       beforeEach(function() {
         $rootScope.minVal = '2000-01-01T12:30:00';
         inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" name="alias" min="{{ minVal }}" />');
@@ -1590,7 +1545,7 @@ describe('input', function() {
     });
 
     describe('max', function() {
-      var inputElm;
+      let inputElm;
       beforeEach(function() {
         $rootScope.maxVal = '2019-01-01T01:02:00';
         inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" name="alias" max="{{ maxVal }}" />');
@@ -1667,7 +1622,7 @@ describe('input', function() {
 
     it('should validate even if max value changes on-the-fly', function() {
       $rootScope.max = '2013-01-01T01:02:00';
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" name="alias" max="{{max}}" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" name="alias" max="{{max}}" />');
 
       helper.changeInputValueTo('2014-01-01T12:34:00');
       expect(inputElm).toBeInvalid();
@@ -1686,7 +1641,7 @@ describe('input', function() {
 
     it('should validate even if min value changes on-the-fly', function() {
       $rootScope.min = '2013-01-01T01:02:00';
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" name="alias" min="{{min}}" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" name="alias" min="{{min}}" />');
 
       helper.changeInputValueTo('2010-01-01T12:34:00');
       expect(inputElm).toBeInvalid();
@@ -1705,7 +1660,7 @@ describe('input', function() {
 
     it('should validate even if ng-max value changes on-the-fly', function() {
       $rootScope.max = '2013-01-01T01:02:00';
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" name="alias" ng-max="max" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" name="alias" ng-max="max" />');
 
       helper.changeInputValueTo('2014-01-01T12:34:00');
       expect(inputElm).toBeInvalid();
@@ -1724,7 +1679,7 @@ describe('input', function() {
 
     it('should validate even if ng-min value changes on-the-fly', function() {
       $rootScope.min = '2013-01-01T01:02:00';
-      var inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" name="alias" ng-min="min" />');
+      let inputElm = helper.compileInput('<input type="datetime-local" ng-model="value" name="alias" ng-min="min" />');
 
       helper.changeInputValueTo('2010-01-01T12:34:00');
       expect(inputElm).toBeInvalid();
@@ -1762,7 +1717,7 @@ describe('input', function() {
 
   describe('time', function() {
     it('should throw if model is not a Date object', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="lunchtime"/>');
+      let inputElm = helper.compileInput('<input type="time" ng-model="lunchtime"/>');
 
       expect(function() {
         $rootScope.$apply(function() {
@@ -1773,7 +1728,7 @@ describe('input', function() {
 
 
     it('should set the view if the model is a valid Date object.', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="threeFortyOnePm"/>');
+      let inputElm = helper.compileInput('<input type="time" ng-model="threeFortyOnePm"/>');
 
       $rootScope.$apply(function() {
         $rootScope.threeFortyOnePm = new Date(1970, 0, 1, 15, 41, 0, 500);
@@ -1784,7 +1739,7 @@ describe('input', function() {
 
 
     it('should set the model to undefined if the view is invalid', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="breakMe"/>');
+      let inputElm = helper.compileInput('<input type="time" ng-model="breakMe"/>');
 
       $rootScope.$apply(function() {
         $rootScope.breakMe = new Date(1970, 0, 1, 16, 25, 0);
@@ -1803,7 +1758,7 @@ describe('input', function() {
 
 
     it('should set blank if null', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="test" />');
 
       $rootScope.$apply('test = null');
 
@@ -1813,7 +1768,7 @@ describe('input', function() {
 
 
     it('should set blank when no value specified', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="test" />');
 
       expect(inputElm.val()).toBe('');
 
@@ -1824,11 +1779,11 @@ describe('input', function() {
     });
 
     it('should use the timeSecondsFormat specified in ngModelOptions', function() {
-      var inputElm = helper.compileInput(
+      let inputElm = helper.compileInput(
         '<input type="time" ng-model-options="{timeSecondsFormat: \'\'}" ng-model="time"/>'
       );
 
-      var ctrl = inputElm.controller('ngModel');
+      let ctrl = inputElm.controller('ngModel');
 
       $rootScope.$apply(function() {
         $rootScope.time = new Date(1970, 0, 1, 15, 41, 0, 500);
@@ -1857,7 +1812,7 @@ describe('input', function() {
 
 
     it('should strip empty milliseconds and seconds if specified in ngModelOptions', function() {
-      var inputElm = helper.compileInput(
+      let inputElm = helper.compileInput(
         '<input type="time" ng-model-options="{timeStripZeroSeconds: true}" ng-model="threeFortyOnePm"/>'
       );
 
@@ -1888,7 +1843,7 @@ describe('input', function() {
 
 
     it('should apply timeStripZeroSeconds after timeSecondsFormat', function() {
-      var inputElm = helper.compileInput('<input type="time"' +
+      let inputElm = helper.compileInput('<input type="time"' +
         ' ng-model-options="{timeSecondsFormat: \'ss\', timeStripZeroSeconds: true}"' +
         ' ng-model="threeFortyOnePm"/>');
 
@@ -1907,7 +1862,7 @@ describe('input', function() {
 
 
     it('should parse empty string to null', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="test" />');
 
       $rootScope.$apply(function() {
         $rootScope.test = new Date(2011, 0, 1);
@@ -1920,7 +1875,7 @@ describe('input', function() {
 
 
     it('should use UTC if specified in the options', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       helper.changeInputValueTo('23:02:00');
       expect(+$rootScope.value).toBe(Date.UTC(1970, 0, 1, 23, 2, 0));
@@ -1933,7 +1888,7 @@ describe('input', function() {
 
 
     it('should be possible to override the timezone', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       helper.changeInputValueTo('23:02:00');
       expect(+$rootScope.value).toBe(Date.UTC(1970, 0, 1, 23, 2, 0));
@@ -1954,8 +1909,8 @@ describe('input', function() {
     they('should use any timezone if specified in the options (format: $prop)',
       {'+HHmm': '+0500', '+HH:mm': '+05:00'},
       function(tz) {
-        var ngModelOptions = '{timezone: \'' + tz + '\'}';
-        var inputElm = helper.compileInput(
+        let ngModelOptions = '{timezone: \'' + tz + '\'}';
+        let inputElm = helper.compileInput(
             '<input type="time" ng-model="value" ng-model-options="' + ngModelOptions + '" />');
 
         helper.changeInputValueTo('23:02:00');
@@ -1970,7 +1925,7 @@ describe('input', function() {
 
 
     it('should allow to specify the milliseconds', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="value"" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="value"" />');
 
       helper.changeInputValueTo('01:02:03.500');
       expect(+$rootScope.value).toBe(+new Date(1970, 0, 1, 1, 2, 3, 500));
@@ -1978,7 +1933,7 @@ describe('input', function() {
 
 
     it('should allow to specify single digit milliseconds', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="value"" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="value"" />');
 
       helper.changeInputValueTo('01:02:03.4');
       expect(+$rootScope.value).toBe(+new Date(1970, 0, 1, 1, 2, 3, 400));
@@ -1986,7 +1941,7 @@ describe('input', function() {
 
 
     it('should allow to specify the seconds', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="value"" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="value"" />');
 
       helper.changeInputValueTo('01:02:03');
       expect(+$rootScope.value).toBe(+new Date(1970, 0, 1, 1, 2, 3));
@@ -1999,7 +1954,7 @@ describe('input', function() {
 
 
     it('should allow to skip the seconds', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="value"" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="value"" />');
 
       helper.changeInputValueTo('01:02');
       expect(+$rootScope.value).toBe(+new Date(1970, 0, 1, 1, 2, 0));
@@ -2007,7 +1962,7 @@ describe('input', function() {
 
 
     it('should label parse errors as `time`', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="val" name="alias" />', {
+      let inputElm = helper.compileInput('<input type="time" ng-model="val" name="alias" />', {
         valid: false,
         badInput: true
       });
@@ -2019,7 +1974,7 @@ describe('input', function() {
 
 
     it('should only change hours and minute of a bound date', function() {
-      var inputElm = helper.compileInput('<input type="time" ng-model="value"" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="value"" />');
 
       $rootScope.$apply(function() {
         $rootScope.value = new Date(2013, 2, 3, 1, 0, 0);
@@ -2030,7 +1985,7 @@ describe('input', function() {
     });
 
     describe('min', function() {
-      var inputElm;
+      let inputElm;
       beforeEach(function() {
         $rootScope.minVal = '09:30:00';
         inputElm = helper.compileInput('<input type="time" ng-model="value" name="alias" min="{{ minVal }}" />');
@@ -2088,7 +2043,7 @@ describe('input', function() {
     });
 
     describe('max', function() {
-      var inputElm;
+      let inputElm;
       beforeEach(function() {
         $rootScope.maxVal = '22:30:00';
         inputElm = helper.compileInput('<input type="time" ng-model="value" name="alias" max="{{ maxVal }}" />');
@@ -2153,7 +2108,7 @@ describe('input', function() {
 
     it('should validate even if max value changes on-the-fly', function() {
       $rootScope.max = '04:02:00';
-      var inputElm = helper.compileInput('<input type="time" ng-model="value" name="alias" max="{{max}}" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="value" name="alias" max="{{max}}" />');
 
       helper.changeInputValueTo('05:34:00');
       expect(inputElm).toBeInvalid();
@@ -2167,7 +2122,7 @@ describe('input', function() {
 
     it('should validate even if min value changes on-the-fly', function() {
       $rootScope.min = '08:45:00';
-      var inputElm = helper.compileInput('<input type="time" ng-model="value" name="alias" min="{{min}}" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="value" name="alias" min="{{min}}" />');
 
       helper.changeInputValueTo('06:15:00');
       expect(inputElm).toBeInvalid();
@@ -2181,7 +2136,7 @@ describe('input', function() {
 
     it('should validate even if ng-max value changes on-the-fly', function() {
       $rootScope.max = '04:02:00';
-      var inputElm = helper.compileInput('<input type="time" ng-model="value" name="alias" ng-max="max" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="value" name="alias" ng-max="max" />');
 
       helper.changeInputValueTo('05:34:00');
       expect(inputElm).toBeInvalid();
@@ -2195,7 +2150,7 @@ describe('input', function() {
 
     it('should validate even if ng-min value changes on-the-fly', function() {
       $rootScope.min = '08:45:00';
-      var inputElm = helper.compileInput('<input type="time" ng-model="value" name="alias" ng-min="min" />');
+      let inputElm = helper.compileInput('<input type="time" ng-model="value" name="alias" ng-min="min" />');
 
       helper.changeInputValueTo('06:15:00');
       expect(inputElm).toBeInvalid();
@@ -2210,7 +2165,7 @@ describe('input', function() {
 
   describe('date', function() {
     it('should throw if model is not a Date object.', function() {
-      var inputElm = helper.compileInput('<input type="date" ng-model="birthday"/>');
+      let inputElm = helper.compileInput('<input type="date" ng-model="birthday"/>');
 
       expect(function() {
         $rootScope.$apply(function() {
@@ -2221,7 +2176,7 @@ describe('input', function() {
 
 
     it('should set the view to empty when the model is an InvalidDate', function() {
-      var inputElm = helper.compileInput('<input type="date" ng-model="val"/>');
+      let inputElm = helper.compileInput('<input type="date" ng-model="val"/>');
       // reset the element type to text otherwise newer browsers
       // would always set the input.value to empty for invalid dates...
       inputElm.attr('type', 'text');
@@ -2235,7 +2190,7 @@ describe('input', function() {
 
 
     it('should set the view if the model if a valid Date object.', function() {
-      var inputElm = helper.compileInput('<input type="date" ng-model="christmas"/>');
+      let inputElm = helper.compileInput('<input type="date" ng-model="christmas"/>');
 
       $rootScope.$apply(function() {
         $rootScope.christmas = new Date(2013, 11, 25);
@@ -2246,7 +2201,7 @@ describe('input', function() {
 
 
     it('should set the model undefined if the view is invalid', function() {
-      var inputElm = helper.compileInput('<input type="date" ng-model="arrMatey"/>');
+      let inputElm = helper.compileInput('<input type="date" ng-model="arrMatey"/>');
 
       $rootScope.$apply(function() {
         $rootScope.arrMatey = new Date(2014, 8, 14);
@@ -2265,7 +2220,7 @@ describe('input', function() {
 
 
     it('should render as blank if null', function() {
-      var inputElm = helper.compileInput('<input type="date" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="test" />');
 
       $rootScope.$apply('test = null');
 
@@ -2275,7 +2230,7 @@ describe('input', function() {
 
 
     it('should come up blank when no value specified', function() {
-      var inputElm = helper.compileInput('<input type="date" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="test" />');
 
       expect(inputElm.val()).toBe('');
 
@@ -2287,7 +2242,7 @@ describe('input', function() {
 
 
     it('should parse empty string to null', function() {
-      var inputElm = helper.compileInput('<input type="date" ng-model="test" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="test" />');
 
       $rootScope.$apply(function() {
         $rootScope.test = new Date(2011, 0, 1);
@@ -2300,7 +2255,7 @@ describe('input', function() {
 
 
     it('should use UTC if specified in the options', function() {
-      var inputElm = helper.compileInput('<input type="date" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       helper.changeInputValueTo('2000-01-01');
       expect(+$rootScope.value).toBe(Date.UTC(2000, 0, 1));
@@ -2313,7 +2268,7 @@ describe('input', function() {
 
 
     it('should be possible to override the timezone', function() {
-      var inputElm = helper.compileInput('<input type="date" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       helper.changeInputValueTo('2000-01-01');
       expect(+$rootScope.value).toBe(Date.UTC(2000, 0, 1));
@@ -2333,8 +2288,8 @@ describe('input', function() {
     they('should use any timezone if specified in the options (format: $prop)',
       {'+HHmm': '+0500', '+HH:mm': '+05:00'},
       function(tz) {
-        var ngModelOptions = '{timezone: \'' + tz + '\'}';
-        var inputElm = helper.compileInput(
+        let ngModelOptions = '{timezone: \'' + tz + '\'}';
+        let inputElm = helper.compileInput(
             '<input type="date" ng-model="value" ng-model-options="' + ngModelOptions + '" />');
 
         helper.changeInputValueTo('2000-01-01');
@@ -2349,7 +2304,7 @@ describe('input', function() {
 
     if (!isEdge) {
       it('should allow four or more digits in year', function() {
-        var inputElm = helper.compileInput('<input type="date" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+        let inputElm = helper.compileInput('<input type="date" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
           helper.changeInputValueTo('10123-01-01');
           expect(+$rootScope.value).toBe(Date.UTC(10123, 0, 1, 0, 0, 0));
@@ -2363,7 +2318,7 @@ describe('input', function() {
     }
 
     it('should label parse errors as `date`', function() {
-      var inputElm = helper.compileInput('<input type="date" ng-model="val" name="alias" />', {
+      let inputElm = helper.compileInput('<input type="date" ng-model="val" name="alias" />', {
         valid: false,
         badInput: true
       });
@@ -2375,9 +2330,9 @@ describe('input', function() {
 
 
     it('should work with multiple date types bound to the same model', function() {
-      var formElm = jqLite('<form name="form"></form>');
+      let formElm = jqLite('<form name="form"></form>');
 
-      var timeElm = jqLite('<input type="time" ng-model="val" />'),
+      let timeElm = jqLite('<input type="time" ng-model="val" />'),
           monthElm = jqLite('<input type="month" ng-model="val" />'),
           weekElm = jqLite('<input type="week" ng-model="val" />');
 
@@ -2416,7 +2371,7 @@ describe('input', function() {
     });
 
     it('should not reuse the hours part of a previous date object after changing the timezone', function() {
-      var inputElm = helper.compileInput('<input type="date" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="value" ng-model-options="{timezone: \'UTC\'}" />');
 
       helper.changeInputValueTo('2000-01-01');
       // The Date parser sets the hours part of the Date to 0 (00:00) (UTC)
@@ -2446,7 +2401,7 @@ describe('input', function() {
     describe('min', function() {
 
       it('should invalidate', function() {
-        var inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" min="2000-01-01" />');
+        let inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" min="2000-01-01" />');
         helper.changeInputValueTo('1999-12-31');
         expect(inputElm).toBeInvalid();
         expect($rootScope.value).toBeFalsy();
@@ -2454,7 +2409,7 @@ describe('input', function() {
       });
 
       it('should validate', function() {
-        var inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" min="2000-01-01" />');
+        let inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" min="2000-01-01" />');
         helper.changeInputValueTo('2000-01-01');
         expect(inputElm).toBeValid();
         expect(+$rootScope.value).toBe(+new Date(2000, 0, 1));
@@ -2462,7 +2417,7 @@ describe('input', function() {
       });
 
       it('should parse ISO-based date strings as a valid min date value', function() {
-        var inputElm = helper.compileInput('<input name="myControl" type="date" min="{{ min }}" ng-model="value">');
+        let inputElm = helper.compileInput('<input name="myControl" type="date" min="{{ min }}" ng-model="value">');
 
         $rootScope.value = new Date(2010, 1, 1, 0, 0, 0);
         $rootScope.min = new Date(2014, 10, 10, 0, 0, 0).toISOString();
@@ -2472,7 +2427,7 @@ describe('input', function() {
       });
 
       it('should parse interpolated Date objects as a valid min date value', function() {
-        var inputElm = helper.compileInput('<input name="myControl" type="date" min="{{ min }}" ng-model="value">');
+        let inputElm = helper.compileInput('<input name="myControl" type="date" min="{{ min }}" ng-model="value">');
 
         $rootScope.value = new Date(2010, 1, 1, 0, 0, 0);
         $rootScope.min = new Date(2014, 10, 10, 0, 0, 0);
@@ -2482,7 +2437,7 @@ describe('input', function() {
       });
 
       it('should validate if min is empty', function() {
-        var inputElm = helper.compileInput(
+        let inputElm = helper.compileInput(
             '<input type="date" name="alias" ng-model="value" min />');
 
         $rootScope.value = new Date(-9999, 0, 1, 0, 0, 0);
@@ -2495,7 +2450,7 @@ describe('input', function() {
         $rootScope.minVal = '2000-01-01';
         $rootScope.value = new Date(2010, 1, 1, 0, 0, 0);
 
-        var inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
+        let inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
           '<input type="date" ng-model="value" validation-spy="min" min="{{ minVal }}" />' +
           '</div>');
         $rootScope.$digest();
@@ -2515,7 +2470,7 @@ describe('input', function() {
     describe('max', function() {
 
       it('should invalidate', function() {
-        var inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" max="2019-01-01" />');
+        let inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" max="2019-01-01" />');
         helper.changeInputValueTo('2019-12-31');
         expect(inputElm).toBeInvalid();
         expect($rootScope.value).toBeFalsy();
@@ -2523,7 +2478,7 @@ describe('input', function() {
       });
 
       it('should validate', function() {
-        var inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" max="2019-01-01" />');
+        let inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" max="2019-01-01" />');
         helper.changeInputValueTo('2000-01-01');
         expect(inputElm).toBeValid();
         expect(+$rootScope.value).toBe(+new Date(2000, 0, 1));
@@ -2531,7 +2486,7 @@ describe('input', function() {
       });
 
       it('should parse ISO-based date strings as a valid max date value', function() {
-        var inputElm = helper.compileInput('<input name="myControl" type="date" max="{{ max }}" ng-model="value">');
+        let inputElm = helper.compileInput('<input name="myControl" type="date" max="{{ max }}" ng-model="value">');
 
         $rootScope.value = new Date(2020, 1, 1, 0, 0, 0);
         $rootScope.max = new Date(2014, 10, 10, 0, 0, 0).toISOString();
@@ -2541,7 +2496,7 @@ describe('input', function() {
       });
 
       it('should parse interpolated Date objects as a valid max date value', function() {
-        var inputElm = helper.compileInput('<input name="myControl" type="date" max="{{ max }}" ng-model="value">');
+        let inputElm = helper.compileInput('<input name="myControl" type="date" max="{{ max }}" ng-model="value">');
 
         $rootScope.value = new Date(2020, 1, 1, 0, 0, 0);
         $rootScope.max = new Date(2014, 10, 10, 0, 0, 0);
@@ -2551,7 +2506,7 @@ describe('input', function() {
       });
 
       it('should validate if max is empty', function() {
-        var inputElm = helper.compileInput(
+        let inputElm = helper.compileInput(
             '<input type="date" name="alias" ng-model="value" max />');
 
         $rootScope.value = new Date(9999, 11, 31, 23, 59, 59);
@@ -2561,7 +2516,7 @@ describe('input', function() {
       });
 
       it('should validate when timezone is provided.', function() {
-        var inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" ' +
+        let inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" ' +
             'max="{{ maxVal }}" ng-model-options="{timezone: \'UTC\', allowInvalid: true}"/>');
 
         $rootScope.maxVal = '2013-12-01';
@@ -2582,7 +2537,7 @@ describe('input', function() {
         $rootScope.maxVal = '2000-01-01';
         $rootScope.value = new Date(2020, 1, 1, 0, 0, 0);
 
-        var inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
+        let inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
           '<input type="date" ng-model="value" validation-spy="max" max="{{ maxVal }}" />' +
           '</div>');
         $rootScope.$digest();
@@ -2601,7 +2556,7 @@ describe('input', function() {
 
     it('should validate even if max value changes on-the-fly', function() {
       $rootScope.max = '2013-01-01';
-      var inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" max="{{max}}" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" max="{{max}}" />');
 
       helper.changeInputValueTo('2014-01-01');
       expect(inputElm).toBeInvalid();
@@ -2620,7 +2575,7 @@ describe('input', function() {
 
     it('should validate even if min value changes on-the-fly', function() {
       $rootScope.min = '2013-01-01';
-      var inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" min="{{min}}" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" min="{{min}}" />');
 
       helper.changeInputValueTo('2010-01-01');
       expect(inputElm).toBeInvalid();
@@ -2639,7 +2594,7 @@ describe('input', function() {
 
     it('should validate even if ng-max value changes on-the-fly', function() {
       $rootScope.max = '2013-01-01';
-      var inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" ng-max="max" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" ng-max="max" />');
 
       helper.changeInputValueTo('2014-01-01');
       expect(inputElm).toBeInvalid();
@@ -2658,7 +2613,7 @@ describe('input', function() {
 
     it('should validate even if ng-min value changes on-the-fly', function() {
       $rootScope.min = '2013-01-01';
-      var inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" ng-min="min" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" ng-min="min" />');
 
       helper.changeInputValueTo('2010-01-01');
       expect(inputElm).toBeInvalid();
@@ -2677,7 +2632,7 @@ describe('input', function() {
 
     it('should allow Date objects as valid ng-max values', function() {
       $rootScope.max = new Date(2012, 1, 1, 1, 2, 0);
-      var inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" ng-max="max" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" ng-max="max" />');
 
       helper.changeInputValueTo('2014-01-01');
       expect(inputElm).toBeInvalid();
@@ -2696,7 +2651,7 @@ describe('input', function() {
 
     it('should allow Date objects as valid ng-min values', function() {
       $rootScope.min = new Date(2013, 1, 1, 1, 2, 0);
-      var inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" ng-min="min" />');
+      let inputElm = helper.compileInput('<input type="date" ng-model="value" name="alias" ng-min="min" />');
 
       helper.changeInputValueTo('2010-01-01');
       expect(inputElm).toBeInvalid();
@@ -2731,7 +2686,7 @@ describe('input', function() {
 
 
     describe('ISO_DATE_REGEXP', function() {
-      var dates = [
+      let dates = [
         // Validate date
         ['00:00:00.0000+01:01', false],             // date must be specified
         ['2010.06.15T00:00:00.0000+01:01', false],  // date must use dash separator
@@ -2834,8 +2789,8 @@ describe('input', function() {
       ];
 
       they('should validate date: $prop', dates, function(item) {
-        var date = item[0];
-        var valid = item[1];
+        let date = item[0];
+        let valid = item[1];
 
         /* global ISO_DATE_REGEXP: false */
         expect(ISO_DATE_REGEXP.test(date)).toBe(valid);
@@ -2852,8 +2807,8 @@ describe('input', function() {
       they('should re-validate and dirty when partially editing the input value ($prop event)',
         ['keydown', 'wheel', 'mousedown'],
         function(validationEvent) {
-          var mockValidity = {valid: true, badInput: false};
-          var inputElm = helper.compileInput('<input type="' + inputType + '" ng-model="val" name="alias" />', mockValidity);
+          let mockValidity = {valid: true, badInput: false};
+          let inputElm = helper.compileInput('<input type="' + inputType + '" ng-model="val" name="alias" />', mockValidity);
 
           expect(inputElm).toBeValid();
           expect($rootScope.form.alias.$pristine).toBeTruthy();
@@ -2870,8 +2825,8 @@ describe('input', function() {
       they('should do nothing when $prop event fired but validity does not change',
         ['keydown', 'wheel', 'mousedown'],
         function(validationEvent) {
-          var mockValidity = {valid: true, badInput: false};
-          var inputElm = helper.compileInput('<input type="' + inputType + '" ng-model="val" name="alias" />', mockValidity);
+          let mockValidity = {valid: true, badInput: false};
+          let inputElm = helper.compileInput('<input type="' + inputType + '" ng-model="val" name="alias" />', mockValidity);
 
           expect(inputElm).toBeValid();
           expect($rootScope.form.alias.$pristine).toBeTruthy();
@@ -2886,8 +2841,8 @@ describe('input', function() {
       they('should re-validate dirty when already $invalid and partially editing the input value ($prop event)',
         ['keydown', 'wheel', 'mousedown'],
         function(validationEvent) {
-          var mockValidity = {valid: false, valueMissing: true, badInput: false};
-          var inputElm = helper.compileInput('<input type="' + inputType + '" required ng-model="val" name="alias" />', mockValidity);
+          let mockValidity = {valid: false, valueMissing: true, badInput: false};
+          let inputElm = helper.compileInput('<input type="' + inputType + '" required ng-model="val" name="alias" />', mockValidity);
 
           expect(inputElm).toBeInvalid();
           expect($rootScope.form.alias.$pristine).toBeTruthy();
@@ -2905,8 +2860,8 @@ describe('input', function() {
       they('should do nothing when already $invalid and $prop event fired but validity does not change',
         ['keydown', 'wheel', 'mousedown'],
         function(validationEvent) {
-          var mockValidity = {valid: false, valueMissing: true, badInput: false};
-          var inputElm = helper.compileInput('<input type="' + inputType + '" required ng-model="val" name="alias" />', mockValidity);
+          let mockValidity = {valid: false, valueMissing: true, badInput: false};
+          let inputElm = helper.compileInput('<input type="' + inputType + '" required ng-model="val" name="alias" />', mockValidity);
 
           expect(inputElm).toBeInvalid();
           expect($rootScope.form.alias.$pristine).toBeTruthy();
@@ -2924,16 +2879,16 @@ describe('input', function() {
   describe('number', function() {
 
     // Helpers for min / max tests
-    var subtract = function(value) {
+    let subtract = function(value) {
       return value - 5;
     };
 
-    var add = function(value) {
+    let add = function(value) {
       return value + 5;
     };
 
     it('should reset the model if view is invalid', function() {
-      var inputElm = helper.compileInput('<input type="number" ng-model="age"/>');
+      let inputElm = helper.compileInput('<input type="number" ng-model="age"/>');
 
       $rootScope.$apply('age = 123');
       expect(inputElm.val()).toBe('123');
@@ -2951,7 +2906,7 @@ describe('input', function() {
 
 
     it('should render as blank if null', function() {
-      var inputElm = helper.compileInput('<input type="number" ng-model="age" />');
+      let inputElm = helper.compileInput('<input type="number" ng-model="age" />');
 
       $rootScope.$apply('age = null');
 
@@ -2961,7 +2916,7 @@ describe('input', function() {
 
 
     it('should come up blank when no value specified', function() {
-      var inputElm = helper.compileInput('<input type="number" ng-model="age" />');
+      let inputElm = helper.compileInput('<input type="number" ng-model="age" />');
 
       expect(inputElm.val()).toBe('');
 
@@ -2973,7 +2928,7 @@ describe('input', function() {
 
 
     it('should parse empty string to null', function() {
-      var inputElm = helper.compileInput('<input type="number" ng-model="age" />');
+      let inputElm = helper.compileInput('<input type="number" ng-model="age" />');
 
       $rootScope.$apply('age = 10');
 
@@ -2984,7 +2939,7 @@ describe('input', function() {
 
 
     it('should only invalidate the model if suffering from bad input when the data is parsed', function() {
-      var inputElm = helper.compileInput('<input type="number" ng-model="age" />', {
+      let inputElm = helper.compileInput('<input type="number" ng-model="age" />', {
         valid: false,
         badInput: true
       });
@@ -3000,11 +2955,11 @@ describe('input', function() {
 
 
     it('should validate number if transition from bad input to empty string', function() {
-      var validity = {
+      let validity = {
         valid: false,
         badInput: true
       };
-      var inputElm = helper.compileInput('<input type="number" ng-model="age" />', validity);
+      let inputElm = helper.compileInput('<input type="number" ng-model="age" />', validity);
       helper.changeInputValueTo('10a');
       validity.badInput = false;
       validity.valid = true;
@@ -3015,7 +2970,7 @@ describe('input', function() {
 
 
     it('should validate with undefined viewValue when $validate() called', function() {
-      var inputElm = helper.compileInput('<input type="number" name="alias" ng-model="value" />');
+      let inputElm = helper.compileInput('<input type="number" name="alias" ng-model="value" />');
 
       $rootScope.form.alias.$validate();
 
@@ -3027,13 +2982,13 @@ describe('input', function() {
     it('should throw if the model value is not a number', function() {
       expect(function() {
         $rootScope.value = 'one';
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" />');
       }).toThrowMinErr('ngModel', 'numfmt', 'Expected `one` to be a number');
     });
 
 
     it('should parse exponential notation', function() {
-      var inputElm = helper.compileInput('<input type="number" name="alias" ng-model="value" />');
+      let inputElm = helper.compileInput('<input type="number" name="alias" ng-model="value" />');
 
       // #.###e+##
       $rootScope.form.alias.$setViewValue('1.23214124123412412e+26');
@@ -3097,11 +3052,11 @@ describe('input', function() {
     });
 
     it('should not set $error number if any other parser fails', function() {
-      var inputElm = helper.compileInput('<input type="number" ng-model="age"/>');
-      var ctrl = inputElm.controller('ngModel');
+      let inputElm = helper.compileInput('<input type="number" ng-model="age"/>');
+      let ctrl = inputElm.controller('ngModel');
 
-      var previousParserFail = false;
-      var laterParserFail = false;
+      let previousParserFail = false;
+      let laterParserFail = false;
 
       ctrl.$parsers.unshift(function(value) {
         return previousParserFail ? undefined : value;
@@ -3167,7 +3122,7 @@ describe('input', function() {
     describe('min', function() {
 
       it('should validate', function() {
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" min="10" />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" min="10" />');
 
         helper.changeInputValueTo('1');
         expect(inputElm).toBeInvalid();
@@ -3182,10 +3137,10 @@ describe('input', function() {
 
 
       it('should validate against the viewValue', function() {
-        var inputElm = helper.compileInput(
+        let inputElm = helper.compileInput(
           '<input type="number" ng-model-options="{allowInvalid: true}" ng-model="value" name="alias" min="10" />');
 
-        var ngModelCtrl = inputElm.controller('ngModel');
+        let ngModelCtrl = inputElm.controller('ngModel');
         ngModelCtrl.$parsers.push(subtract);
 
         helper.changeInputValueTo('10');
@@ -3205,7 +3160,7 @@ describe('input', function() {
 
       it('should validate even if min value changes on-the-fly', function() {
         $rootScope.min = undefined;
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" min="{{min}}" />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" min="{{min}}" />');
         expect(inputElm).toBeValid();
 
         helper.changeInputValueTo('15');
@@ -3235,7 +3190,7 @@ describe('input', function() {
       it('should only validate once after compilation when inside ngRepeat', function() {
         $rootScope.value = 5;
         $rootScope.minVal = 3;
-        var inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
+        let inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
           '<input type="number" ng-model="value" validation-spy="min" min="{{ minVal }}" />' +
           '</div>');
         $rootScope.$digest();
@@ -3248,7 +3203,7 @@ describe('input', function() {
     describe('ngMin', function() {
 
       it('should validate', function() {
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" ng-min="50" />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" ng-min="50" />');
 
         helper.changeInputValueTo('1');
         expect(inputElm).toBeInvalid();
@@ -3263,9 +3218,9 @@ describe('input', function() {
 
 
       it('should validate against the viewValue', function() {
-        var inputElm = helper.compileInput(
+        let inputElm = helper.compileInput(
           '<input type="number" ng-model-options="{allowInvalid: true}" ng-model="value" name="alias" ng-min="10" />');
-        var ngModelCtrl = inputElm.controller('ngModel');
+        let ngModelCtrl = inputElm.controller('ngModel');
         ngModelCtrl.$parsers.push(subtract);
 
         helper.changeInputValueTo('10');
@@ -3285,7 +3240,7 @@ describe('input', function() {
 
       it('should validate even if the ngMin value changes on-the-fly', function() {
         $rootScope.min = undefined;
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" ng-min="min" />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" ng-min="min" />');
         expect(inputElm).toBeValid();
 
         helper.changeInputValueTo('15');
@@ -3315,7 +3270,7 @@ describe('input', function() {
       it('should only validate once after compilation when inside ngRepeat', function() {
         $rootScope.value = 5;
         $rootScope.minVal = 3;
-        var inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
+        let inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
           '<input type="number" ng-model="value" validation-spy="min" ng-min="minVal" />' +
           '</div>');
         $rootScope.$digest();
@@ -3328,7 +3283,7 @@ describe('input', function() {
     describe('max', function() {
 
       it('should validate', function() {
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" max="10" />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" max="10" />');
 
         helper.changeInputValueTo('20');
         expect(inputElm).toBeInvalid();
@@ -3343,9 +3298,9 @@ describe('input', function() {
 
 
       it('should validate against the viewValue', function() {
-        var inputElm = helper.compileInput('<input type="number"' +
+        let inputElm = helper.compileInput('<input type="number"' +
           'ng-model-options="{allowInvalid: true}" ng-model="value" name="alias" max="10" />');
-        var ngModelCtrl = inputElm.controller('ngModel');
+        let ngModelCtrl = inputElm.controller('ngModel');
         ngModelCtrl.$parsers.push(add);
 
         helper.changeInputValueTo('10');
@@ -3365,7 +3320,7 @@ describe('input', function() {
 
       it('should validate even if max value changes on-the-fly', function() {
         $rootScope.max = undefined;
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" max="{{max}}" />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" max="{{max}}" />');
         expect(inputElm).toBeValid();
 
         helper.changeInputValueTo('5');
@@ -3395,7 +3350,7 @@ describe('input', function() {
       it('should only validate once after compilation when inside ngRepeat', function() {
         $rootScope.value = 5;
         $rootScope.maxVal = 3;
-        var inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
+        let inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
           '<input type="number" ng-model="value" validation-spy="max" name="alias" max="{{ maxVal }}" />' +
           '</div>');
         $rootScope.$digest();
@@ -3408,7 +3363,7 @@ describe('input', function() {
     describe('ngMax', function() {
 
       it('should validate', function() {
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" ng-max="5" />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" ng-max="5" />');
 
         helper.changeInputValueTo('20');
         expect(inputElm).toBeInvalid();
@@ -3423,9 +3378,9 @@ describe('input', function() {
 
 
       it('should validate against the viewValue', function() {
-        var inputElm = helper.compileInput('<input type="number"' +
+        let inputElm = helper.compileInput('<input type="number"' +
           'ng-model-options="{allowInvalid: true}" ng-model="value" name="alias" ng-max="10" />');
-        var ngModelCtrl = inputElm.controller('ngModel');
+        let ngModelCtrl = inputElm.controller('ngModel');
         ngModelCtrl.$parsers.push(add);
 
         helper.changeInputValueTo('10');
@@ -3445,7 +3400,7 @@ describe('input', function() {
 
       it('should validate even if the ngMax value changes on-the-fly', function() {
         $rootScope.max = undefined;
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" ng-max="max" />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" ng-max="max" />');
         expect(inputElm).toBeValid();
 
         helper.changeInputValueTo('5');
@@ -3475,7 +3430,7 @@ describe('input', function() {
       it('should only validate once after compilation when inside ngRepeat', function() {
         $rootScope.value = 5;
         $rootScope.maxVal = 3;
-        var inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
+        let inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
           '<input type="number" ng-model="value" validation-spy="max" ng-max="maxVal" />' +
           '</div>');
         $rootScope.$digest();
@@ -3495,7 +3450,7 @@ describe('input', function() {
         it('should validate', function() {
           $rootScope.step = 10;
           $rootScope.value = 20;
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="number" ng-model="value" name="alias" ' + attrHtml + ' />');
 
           expect(inputElm.val()).toBe('20');
@@ -3524,7 +3479,7 @@ describe('input', function() {
 
         it('should validate even if the step value changes on-the-fly', function() {
           $rootScope.step = 10;
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="number" ng-model="value" name="alias" ' + attrHtml + ' />');
 
           helper.changeInputValueTo('10');
@@ -3571,9 +3526,9 @@ describe('input', function() {
           $rootScope.min = 5;
           $rootScope.step = 10;
           $rootScope.value = 10;
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="number" ng-model="value" min="{{min}}" ' + attrHtml + ' />');
-          var ngModel = inputElm.controller('ngModel');
+          let ngModel = inputElm.controller('ngModel');
 
           expect(inputElm.val()).toBe('10');
           expect(inputElm).toBeInvalid();
@@ -3623,9 +3578,9 @@ describe('input', function() {
         it('should correctly validate even in cases where the JS floating point arithmetic fails',
           function() {
             $rootScope.step = 0.1;
-            var inputElm = helper.compileInput(
+            let inputElm = helper.compileInput(
                 '<input type="number" ng-model="value" ' + attrHtml + ' />');
-            var ngModel = inputElm.controller('ngModel');
+            let ngModel = inputElm.controller('ngModel');
 
             expect(inputElm.val()).toBe('');
             expect(inputElm).toBeValid();
@@ -3662,7 +3617,7 @@ describe('input', function() {
         it('should validate only once after compilation inside ngRepeat', function() {
           $rootScope.step = 10;
           $rootScope.value = 20;
-          var inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
+          let inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
               '<input type="number" ng-model="value" name="alias" ' + attrHtml + ' validation-spy="step" />' +
               '</div>');
 
@@ -3676,7 +3631,7 @@ describe('input', function() {
     describe('required', function() {
 
       it('should be valid even if value is 0', function() {
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" required />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" required />');
 
         helper.changeInputValueTo('0');
         expect(inputElm).toBeValid();
@@ -3685,7 +3640,7 @@ describe('input', function() {
       });
 
       it('should be valid even if value 0 is set from model', function() {
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" required />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" required />');
 
         $rootScope.$apply('value = 0');
 
@@ -3695,7 +3650,7 @@ describe('input', function() {
       });
 
       it('should register required on non boolean elements', function() {
-        var inputElm = helper.compileInput('<div ng-model="value" name="alias" required>');
+        let inputElm = helper.compileInput('<div ng-model="value" name="alias" required>');
 
         $rootScope.$apply('value = \'\'');
 
@@ -3704,7 +3659,7 @@ describe('input', function() {
       });
 
       it('should not invalidate number if ng-required=false and viewValue has not been committed', function() {
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" ng-required="required">');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" name="alias" ng-required="required">');
 
         $rootScope.$apply('required = false');
 
@@ -3713,7 +3668,7 @@ describe('input', function() {
 
       it('should only validate once after compilation when inside ngRepeat', function() {
         $rootScope.value = 'text';
-        var inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
+        let inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
             '<input ng-model="value" validation-spy="required" required />' +
           '</div>');
         $rootScope.$digest();
@@ -3727,7 +3682,7 @@ describe('input', function() {
       describe('when the ngRequired expression initially evaluates to true', function() {
 
         it('should be valid even if value is 0', function() {
-          var inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="true" />');
+          let inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="true" />');
 
           helper.changeInputValueTo('0');
           expect(inputElm).toBeValid();
@@ -3736,7 +3691,7 @@ describe('input', function() {
         });
 
         it('should be valid even if value 0 is set from model', function() {
-          var inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="true" />');
+          let inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="true" />');
 
           $rootScope.$apply('value = 0');
 
@@ -3746,7 +3701,7 @@ describe('input', function() {
         });
 
         it('should register required on non boolean elements', function() {
-          var inputElm = helper.compileInput('<div ng-model="value" name="numberInput" ng-required="true">');
+          let inputElm = helper.compileInput('<div ng-model="value" name="numberInput" ng-required="true">');
 
           $rootScope.$apply('value = \'\'');
 
@@ -3755,7 +3710,7 @@ describe('input', function() {
         });
 
         it('should change from invalid to valid when the value is empty and the ngRequired expression changes to false', function() {
-          var inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="ngRequiredExpr" />');
+          let inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="ngRequiredExpr" />');
 
           $rootScope.$apply('ngRequiredExpr = true');
 
@@ -3773,7 +3728,7 @@ describe('input', function() {
         it('should only validate once after compilation when inside ngRepeat', function() {
           $rootScope.value = 'text';
           $rootScope.isRequired = true;
-          var inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
+          let inputElm = helper.compileInput('<div ng-repeat="input in [0]">' +
               '<input ng-model="value" validation-spy="required" ng-required="isRequired" />' +
             '</div>');
           $rootScope.$digest();
@@ -3785,7 +3740,7 @@ describe('input', function() {
       describe('when the ngRequired expression initially evaluates to false', function() {
 
         it('should be valid even if value is empty', function() {
-          var inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="false" />');
+          let inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="false" />');
 
           expect(inputElm).toBeValid();
           expect($rootScope.value).toBeUndefined();
@@ -3794,7 +3749,7 @@ describe('input', function() {
         });
 
         it('should be valid if value is non-empty', function() {
-          var inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="false" />');
+          let inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="false" />');
 
           helper.changeInputValueTo('42');
           expect(inputElm).toBeValid();
@@ -3803,7 +3758,7 @@ describe('input', function() {
         });
 
         it('should not register required on non boolean elements', function() {
-          var inputElm = helper.compileInput('<div ng-model="value" name="numberInput" ng-required="false">');
+          let inputElm = helper.compileInput('<div ng-model="value" name="numberInput" ng-required="false">');
 
           $rootScope.$apply('value = \'\'');
 
@@ -3812,7 +3767,7 @@ describe('input', function() {
         });
 
         it('should change from valid to invalid when the value is empty and the ngRequired expression changes to true', function() {
-          var inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="ngRequiredExpr" />');
+          let inputElm = helper.compileInput('<input type="number" ng-model="value" name="numberInput" ng-required="ngRequiredExpr" />');
 
           $rootScope.$apply('ngRequiredExpr = false');
 
@@ -3832,7 +3787,7 @@ describe('input', function() {
     describe('minlength', function() {
 
       it('should invalidate values that are shorter than the given minlength', function() {
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" ng-minlength="3" />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" ng-minlength="3" />');
 
         helper.changeInputValueTo('12');
         expect(inputElm).toBeInvalid();
@@ -3842,8 +3797,8 @@ describe('input', function() {
       });
 
       it('should listen on ng-minlength when minlength is observed', function() {
-        var value = 0;
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" ng-minlength="min" attr-capture />');
+        let value = 0;
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" ng-minlength="min" attr-capture />');
         helper.attrs.$observe('minlength', function(v) {
           value = toInt(helper.attrs.minlength);
         });
@@ -3856,7 +3811,7 @@ describe('input', function() {
       });
 
       it('should observe the standard minlength attribute and register it as a validator on the model', function() {
-        var inputElm = helper.compileInput('<input type="number" name="input" ng-model="value" minlength="{{ min }}" />');
+        let inputElm = helper.compileInput('<input type="number" name="input" ng-model="value" minlength="{{ min }}" />');
         $rootScope.$apply(function() {
           $rootScope.min = 10;
         });
@@ -3878,7 +3833,7 @@ describe('input', function() {
     describe('maxlength', function() {
 
       it('should invalidate values that are longer than the given maxlength', function() {
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" ng-maxlength="5" />');
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" ng-maxlength="5" />');
 
         helper.changeInputValueTo('12345678');
         expect(inputElm).toBeInvalid();
@@ -3888,8 +3843,8 @@ describe('input', function() {
       });
 
       it('should listen on ng-maxlength when maxlength is observed', function() {
-        var value = 0;
-        var inputElm = helper.compileInput('<input type="number" ng-model="value" ng-maxlength="max" attr-capture />');
+        let value = 0;
+        let inputElm = helper.compileInput('<input type="number" ng-model="value" ng-maxlength="max" attr-capture />');
         helper.attrs.$observe('maxlength', function(v) {
           value = toInt(helper.attrs.maxlength);
         });
@@ -3902,7 +3857,7 @@ describe('input', function() {
       });
 
       it('should observe the standard maxlength attribute and register it as a validator on the model', function() {
-        var inputElm = helper.compileInput('<input type="number" name="input" ng-model="value" maxlength="{{ max }}" />');
+        let inputElm = helper.compileInput('<input type="number" name="input" ng-model="value" maxlength="{{ max }}" />');
         $rootScope.$apply(function() {
           $rootScope.max = 1;
         });
@@ -3922,10 +3877,10 @@ describe('input', function() {
   });
 
   describe('range', function() {
-    var scope;
+    let scope;
 
-    var rangeTestEl = angular.element('<input type="range">');
-    var supportsRange = rangeTestEl[0].type === 'range';
+    let rangeTestEl = angular.element('<input type="range">');
+    let supportsRange = rangeTestEl[0].type === 'range';
     beforeEach(function() {
       scope = $rootScope;
     });
@@ -3938,7 +3893,7 @@ describe('input', function() {
       // sense if the input value is a string. These browsers will mark the input as invalid instead.
 
       it('should render as 50 if null', function() {
-        var inputElm = helper.compileInput('<input type="range" ng-model="age" />');
+        let inputElm = helper.compileInput('<input type="range" ng-model="age" />');
 
         helper.changeInputValueTo('25');
         expect(scope.age).toBe(25);
@@ -3949,7 +3904,7 @@ describe('input', function() {
       });
 
       it('should set model to 50 when no value specified and default min/max', function() {
-        var inputElm = helper.compileInput('<input type="range" ng-model="age" />');
+        let inputElm = helper.compileInput('<input type="range" ng-model="age" />');
 
         expect(inputElm.val()).toBe('50');
 
@@ -3959,7 +3914,7 @@ describe('input', function() {
       });
 
       it('should parse non-number values to 50 when default min/max', function() {
-        var inputElm = helper.compileInput('<input type="range" ng-model="age" />');
+        let inputElm = helper.compileInput('<input type="range" ng-model="age" />');
 
         scope.$apply('age = 10');
         expect(inputElm.val()).toBe('10');
@@ -3971,7 +3926,7 @@ describe('input', function() {
     } else {
 
       it('should reset the model if view is invalid', function() {
-        var inputElm = helper.compileInput('<input type="range" ng-model="age"/>');
+        let inputElm = helper.compileInput('<input type="range" ng-model="age"/>');
 
         scope.$apply('age = 100');
         expect(inputElm.val()).toBe('100');
@@ -3984,7 +3939,7 @@ describe('input', function() {
     }
 
     it('should parse the input value to a Number', function() {
-      var inputElm = helper.compileInput('<input type="range" ng-model="age" />');
+      let inputElm = helper.compileInput('<input type="range" ng-model="age" />');
 
       helper.changeInputValueTo('75');
       expect(scope.age).toBe(75);
@@ -3994,7 +3949,7 @@ describe('input', function() {
     it('should only invalidate the model if suffering from bad input when the data is parsed', function() {
       scope.age = 60;
 
-      var inputElm = helper.compileInput('<input type="range" ng-model="age" />', {
+      let inputElm = helper.compileInput('<input type="range" ng-model="age" />', {
         valid: false,
         badInput: true
       });
@@ -4011,7 +3966,7 @@ describe('input', function() {
     it('should throw if the model value is not a number', function() {
       expect(function() {
         scope.value = 'one';
-        var inputElm = helper.compileInput('<input type="range" ng-model="value" />');
+        let inputElm = helper.compileInput('<input type="range" ng-model="value" />');
       }).toThrowMinErr('ngModel', 'numfmt', 'Expected `one` to be a number');
     });
 
@@ -4023,7 +3978,7 @@ describe('input', function() {
         it('should initialize correctly with non-default model and min value', function() {
           scope.value = -3;
           scope.min = -5;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="{{min}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="{{min}}" />');
 
           expect(inputElm).toBeValid();
           expect(inputElm.val()).toBe('-3');
@@ -4033,7 +3988,7 @@ describe('input', function() {
 
         // Browsers that implement range will never allow you to set the value < min values
         it('should adjust invalid input values', function() {
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="10" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="10" />');
 
           helper.changeInputValueTo('5');
           expect(inputElm).toBeValid();
@@ -4049,7 +4004,7 @@ describe('input', function() {
         it('should set the model to the min val if it is less than the min val', function() {
           scope.value = -10;
           // Default min is 0
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="{{min}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="{{min}}" />');
 
           expect(inputElm).toBeValid();
           expect(inputElm.val()).toBe('0');
@@ -4064,7 +4019,7 @@ describe('input', function() {
 
         it('should adjust the element and model value when the min value changes on-the-fly', function() {
           scope.min = 10;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="{{min}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="{{min}}" />');
 
           helper.changeInputValueTo('15');
           expect(inputElm).toBeValid();
@@ -4109,7 +4064,7 @@ describe('input', function() {
         // input[type=range] will become type=text in browsers that don't support it
 
         it('should validate if "range" is not implemented', function() {
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="10" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="10" />');
 
           helper.changeInputValueTo('5');
           expect(inputElm).toBeInvalid();
@@ -4124,7 +4079,7 @@ describe('input', function() {
 
         it('should not assume a min val of 0 if the min interpolates to a non-number', function() {
           scope.value = -10;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="{{min}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="{{min}}" />');
 
           expect(inputElm).toBeValid();
           expect(inputElm.val()).toBe('-10');
@@ -4152,7 +4107,7 @@ describe('input', function() {
 
         it('should validate even if the min value changes on-the-fly', function() {
           scope.min = 10;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="{{min}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" min="{{min}}" />');
 
           helper.changeInputValueTo('15');
           expect(inputElm).toBeValid();
@@ -4203,7 +4158,7 @@ describe('input', function() {
         it('should initialize correctly with non-default model and max value', function() {
           scope.value = 130;
           scope.max = 150;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" />');
 
           expect(inputElm).toBeValid();
           expect(inputElm.val()).toBe('130');
@@ -4212,7 +4167,7 @@ describe('input', function() {
         });
 
         it('should validate', function() {
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="10" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="10" />');
 
           helper.changeInputValueTo('20');
           expect(inputElm).toBeValid();
@@ -4228,7 +4183,7 @@ describe('input', function() {
         it('should set the model to the max val if it is greater than the max val', function() {
           scope.value = 110;
           // Default max is 100
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" />');
 
           expect(inputElm).toBeValid();
           expect(inputElm.val()).toBe('100');
@@ -4243,7 +4198,7 @@ describe('input', function() {
 
         it('should adjust the element and model value if the max value changes on-the-fly', function() {
           scope.max = 10;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" />');
 
           helper.changeInputValueTo('5');
           expect(inputElm).toBeValid();
@@ -4286,7 +4241,7 @@ describe('input', function() {
 
       } else {
         it('should validate if "range" is not implemented', function() {
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="10" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="10" />');
 
           helper.changeInputValueTo('20');
           expect(inputElm).toBeInvalid();
@@ -4301,7 +4256,7 @@ describe('input', function() {
 
         it('should not assume a max val of 100 if the max attribute interpolates to a non-number', function() {
           scope.value = 120;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" />');
 
           expect(inputElm).toBeValid();
           expect(inputElm.val()).toBe('120');
@@ -4329,7 +4284,7 @@ describe('input', function() {
 
         it('should validate even if the max value changes on-the-fly', function() {
           scope.max = 10;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" />');
 
           helper.changeInputValueTo('5');
           expect(inputElm).toBeValid();
@@ -4380,7 +4335,7 @@ describe('input', function() {
         it('should set the correct initial value when min and max are specified', function() {
           scope.max = 80;
           scope.min = 40;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" min="{{min}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" min="{{min}}" />');
 
           expect(inputElm.val()).toBe('60');
           expect(scope.value).toBe(60);
@@ -4388,7 +4343,7 @@ describe('input', function() {
 
         it('should set element and model value to min if max is less than min', function() {
           scope.min = 40;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" min="{{min}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" max="{{max}}" min="{{min}}" />');
 
           expect(inputElm.val()).toBe('70');
           expect(scope.value).toBe(70);
@@ -4411,7 +4366,7 @@ describe('input', function() {
         // Other browsers fail in various edge cases, which is why they are not tested here.
 
         it('should round the input value to the nearest step on user input', function() {
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" step="5" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" step="5" />');
 
           helper.changeInputValueTo('5');
           expect(inputElm).toBeValid();
@@ -4440,7 +4395,7 @@ describe('input', function() {
         });
 
         it('should round the input value to the nearest step when setting the model', function() {
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" step="5" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" step="5" />');
 
           scope.$apply('value = 10');
           expect(inputElm.val()).toBe('10');
@@ -4489,7 +4444,7 @@ describe('input', function() {
         it('should validate if "range" is not implemented', function() {
           scope.step = 10;
           scope.value = 20;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" step="{{step}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" step="{{step}}" />');
 
           expect(inputElm.val()).toBe('20');
           expect(inputElm).toBeValid();
@@ -4517,7 +4472,7 @@ describe('input', function() {
 
         it('should validate even if the step value changes on-the-fly', function() {
           scope.step = 10;
-          var inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" step="{{step}}" />');
+          let inputElm = helper.compileInput('<input type="range" ng-model="value" name="alias" step="{{step}}" />');
 
           helper.changeInputValueTo('10');
           expect(inputElm).toBeValid();
@@ -4563,9 +4518,9 @@ describe('input', function() {
           $rootScope.min = 5;
           $rootScope.step = 10;
           $rootScope.value = 10;
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="range" ng-model="value" min="{{min}}" step="{{step}}" />');
-          var ngModel = inputElm.controller('ngModel');
+          let ngModel = inputElm.controller('ngModel');
 
           expect(inputElm.val()).toBe('10');
           expect(inputElm).toBeInvalid();
@@ -4613,9 +4568,9 @@ describe('input', function() {
         it('should correctly validate even in cases where the JS floating point arithmetic fails',
           function() {
             $rootScope.step = 0.1;
-            var inputElm = helper.compileInput(
+            let inputElm = helper.compileInput(
                 '<input type="range" ng-model="value" step="{{step}}" />');
-            var ngModel = inputElm.controller('ngModel');
+            let ngModel = inputElm.controller('ngModel');
 
             expect(inputElm.val()).toBe('');
             expect(inputElm).toBeValid();
@@ -4655,9 +4610,9 @@ describe('input', function() {
   describe('email', function() {
 
     it('should validate e-mail', function() {
-      var inputElm = helper.compileInput('<input type="email" ng-model="email" name="alias" />');
+      let inputElm = helper.compileInput('<input type="email" ng-model="email" name="alias" />');
 
-      var widget = $rootScope.form.alias;
+      let widget = $rootScope.form.alias;
       helper.changeInputValueTo('vojta@google.com');
 
       expect($rootScope.email).toBe('vojta@google.com');
@@ -4779,8 +4734,8 @@ describe('input', function() {
   describe('url', function() {
 
     it('should validate url', function() {
-      var inputElm = helper.compileInput('<input type="url" ng-model="url" name="alias" />');
-      var widget = $rootScope.form.alias;
+      let inputElm = helper.compileInput('<input type="url" ng-model="url" name="alias" />');
+      let widget = $rootScope.form.alias;
 
       helper.changeInputValueTo('http://www.something.com');
       expect($rootScope.url).toBe('http://www.something.com');
@@ -4797,7 +4752,7 @@ describe('input', function() {
     describe('URL_REGEXP', function() {
       // See valid URLs in RFC3987 (http://tools.ietf.org/html/rfc3987)
       // Note: We are being more lenient, because browsers are too.
-      var urls = [
+      let urls = [
         ['scheme://hostname', true],
         ['scheme://username:password@host.name:7678/pa/t.h?q=u&e=r&y#fragment', true],
 
@@ -4899,8 +4854,8 @@ describe('input', function() {
       ];
 
       they('should validate url: $prop', urls, function(item) {
-        var url = item[0];
-        var valid = item[1];
+        let url = item[0];
+        let valid = item[1];
 
         /* global URL_REGEXP: false */
         expect(URL_REGEXP.test(url)).toBe(valid);
@@ -4912,7 +4867,7 @@ describe('input', function() {
   describe('radio', function() {
 
     they('should update the model on $prop event', ['click', 'change'], function(event) {
-      var inputElm = helper.compileInput(
+      let inputElm = helper.compileInput(
           '<input type="radio" ng-model="color" value="white" />' +
           '<input type="radio" ng-model="color" value="red" />' +
           '<input type="radio" ng-model="color" value="blue" />');
@@ -4933,7 +4888,7 @@ describe('input', function() {
     });
 
     it('should treat the value as a string when evaluating checked-ness', function() {
-      var inputElm = helper.compileInput(
+      let inputElm = helper.compileInput(
           '<input type="radio" ng-model="model" value="0" />');
 
       $rootScope.$apply('model = \'0\'');
@@ -4946,7 +4901,7 @@ describe('input', function() {
 
     it('should allow {{expr}} as value', function() {
       $rootScope.some = 11;
-      var inputElm = helper.compileInput(
+      let inputElm = helper.compileInput(
           '<input type="radio" ng-model="value" value="{{some}}" />' +
           '<input type="radio" ng-model="value" value="{{other}}" />');
 
@@ -4971,7 +4926,7 @@ describe('input', function() {
 
     it('should allow the use of ngTrim', function() {
       $rootScope.some = 11;
-      var inputElm = helper.compileInput(
+      let inputElm = helper.compileInput(
           '<input type="radio" ng-model="value" value="opt1" />' +
           '<input type="radio" ng-model="value" value="  opt2  " />' +
           '<input type="radio" ng-model="value" ng-trim="false" value="  opt3  " />' +
@@ -5020,7 +4975,7 @@ describe('input', function() {
   describe('checkbox', function() {
 
     it('should ignore checkbox without ngModel directive', function() {
-      var inputElm = helper.compileInput('<input type="checkbox" name="whatever" required />');
+      let inputElm = helper.compileInput('<input type="checkbox" name="whatever" required />');
 
       helper.changeInputValueTo('');
       expect(inputElm.hasClass('ng-valid')).toBe(false);
@@ -5031,7 +4986,7 @@ describe('input', function() {
 
 
     they('should update the model on $prop event', ['click', 'change'], function(event) {
-      var inputElm = helper.compileInput('<input type="checkbox" ng-model="checkbox" />');
+      let inputElm = helper.compileInput('<input type="checkbox" ng-model="checkbox" />');
 
       expect(inputElm[0].checked).toBe(false);
 
@@ -5048,7 +5003,7 @@ describe('input', function() {
 
 
     it('should format booleans', function() {
-      var inputElm = helper.compileInput('<input type="checkbox" ng-model="name" />');
+      let inputElm = helper.compileInput('<input type="checkbox" ng-model="name" />');
 
       $rootScope.$apply('name = false');
       expect(inputElm[0].checked).toBe(false);
@@ -5059,7 +5014,7 @@ describe('input', function() {
 
 
     it('should support type="checkbox" with non-standard capitalization', function() {
-      var inputElm = helper.compileInput('<input type="checkBox" ng-model="checkbox" />');
+      let inputElm = helper.compileInput('<input type="checkBox" ng-model="checkbox" />');
 
       browserTrigger(inputElm, 'click');
       expect($rootScope.checkbox).toBe(true);
@@ -5070,7 +5025,7 @@ describe('input', function() {
 
 
     it('should allow custom enumeration', function() {
-      var inputElm = helper.compileInput('<input type="checkbox" ng-model="name" ng-true-value="\'y\'" ' +
+      let inputElm = helper.compileInput('<input type="checkbox" ng-model="name" ng-true-value="\'y\'" ' +
           'ng-false-value="\'n\'">');
 
       $rootScope.$apply('name = \'y\'');
@@ -5092,27 +5047,27 @@ describe('input', function() {
 
     it('should throw if ngTrueValue is present and not a constant expression', function() {
       expect(function() {
-        var inputElm = helper.compileInput('<input type="checkbox" ng-model="value" ng-true-value="yes" />');
+        let inputElm = helper.compileInput('<input type="checkbox" ng-model="value" ng-true-value="yes" />');
       }).toThrowMinErr('ngModel', 'constexpr', 'Expected constant expression for `ngTrueValue`, but saw `yes`.');
     });
 
 
     it('should throw if ngFalseValue is present and not a constant expression', function() {
       expect(function() {
-        var inputElm = helper.compileInput('<input type="checkbox" ng-model="value" ng-false-value="no" />');
+        let inputElm = helper.compileInput('<input type="checkbox" ng-model="value" ng-false-value="no" />');
       }).toThrowMinErr('ngModel', 'constexpr', 'Expected constant expression for `ngFalseValue`, but saw `no`.');
     });
 
 
     it('should not throw if ngTrueValue or ngFalseValue are not present', function() {
       expect(function() {
-        var inputElm = helper.compileInput('<input type="checkbox" ng-model="value" />');
+        let inputElm = helper.compileInput('<input type="checkbox" ng-model="value" />');
       }).not.toThrow();
     });
 
 
     it('should be required if false', function() {
-      var inputElm = helper.compileInput('<input type="checkbox" ng-model="value" required />');
+      let inputElm = helper.compileInput('<input type="checkbox" ng-model="value" required />');
 
       browserTrigger(inputElm, 'click');
       expect(inputElm[0].checked).toBe(true);
@@ -5125,7 +5080,7 @@ describe('input', function() {
 
 
     it('should pass validation for "required" when trueValue is a string', function() {
-      var inputElm = helper.compileInput('<input type="checkbox" required name="cb"' +
+      let inputElm = helper.compileInput('<input type="checkbox" required name="cb"' +
         'ng-model="value" ng-true-value="\'yes\'" />');
 
       expect(inputElm).toBeInvalid();
@@ -5142,7 +5097,7 @@ describe('input', function() {
   describe('textarea', function() {
 
     it('should process textarea', function() {
-      var inputElm = helper.compileInput('<textarea ng-model="name"></textarea>');
+      let inputElm = helper.compileInput('<textarea ng-model="name"></textarea>');
 
       $rootScope.$apply('name = \'Adam\'');
       expect(inputElm.val()).toEqual('Adam');
@@ -5156,7 +5111,7 @@ describe('input', function() {
 
 
     it('should ignore textarea without ngModel directive', function() {
-      var inputElm = helper.compileInput('<textarea name="whatever" required></textarea>');
+      let inputElm = helper.compileInput('<textarea name="whatever" required></textarea>');
 
       helper.changeInputValueTo('');
       expect(inputElm.hasClass('ng-valid')).toBe(false);
@@ -5170,7 +5125,7 @@ describe('input', function() {
   describe('ngValue', function() {
 
     it('should update the dom "value" property and attribute', function() {
-      var inputElm = helper.compileInput('<input type="submit" ng-value="value">');
+      let inputElm = helper.compileInput('<input type="submit" ng-value="value">');
 
       $rootScope.$apply('value = \'something\'');
 
@@ -5179,7 +5134,7 @@ describe('input', function() {
     });
 
     it('should clear the "dom" value property and attribute when the value is undefined', function() {
-      var inputElm = helper.compileInput('<input type="text" ng-value="value">');
+      let inputElm = helper.compileInput('<input type="text" ng-value="value">');
 
       $rootScope.$apply('value = "something"');
 
@@ -5206,7 +5161,7 @@ describe('input', function() {
       input: '<input type="text" ng-value="value">',
       textarea: '<textarea ng-value="value"></textarea>'
     }, function(tmpl) {
-      var element = helper.compileInput(tmpl);
+      let element = helper.compileInput(tmpl);
 
       helper.changeInputValueTo('newValue');
       expect(element[0].value).toBe('newValue');
@@ -5220,7 +5175,7 @@ describe('input', function() {
     });
 
     it('should evaluate and set constant expressions', function() {
-      var inputElm = helper.compileInput('<input type="radio" ng-model="selected" ng-value="true">' +
+      let inputElm = helper.compileInput('<input type="radio" ng-model="selected" ng-value="true">' +
                    '<input type="radio" ng-model="selected" ng-value="false">' +
                    '<input type="radio" ng-model="selected" ng-value="1">');
 
@@ -5237,7 +5192,7 @@ describe('input', function() {
 
     it('should use strict comparison between model and value', function() {
       $rootScope.selected = false;
-      var inputElm = helper.compileInput('<input type="radio" ng-model="selected" ng-value="false">' +
+      let inputElm = helper.compileInput('<input type="radio" ng-model="selected" ng-value="false">' +
                    '<input type="radio" ng-model="selected" ng-value="\'\'">' +
                    '<input type="radio" ng-model="selected" ng-value="0">');
 
@@ -5248,7 +5203,7 @@ describe('input', function() {
 
 
     it('should watch the expression', function() {
-      var inputElm = helper.compileInput('<input type="radio" ng-model="selected" ng-value="value">');
+      let inputElm = helper.compileInput('<input type="radio" ng-model="selected" ng-value="value">');
 
       $rootScope.$apply(function() {
         $rootScope.selected = $rootScope.value = {some: 'object'};
@@ -5274,7 +5229,7 @@ describe('input', function() {
         $rootScope.selected = 1;
       });
 
-      var inputElms = helper.formElm.find('input');
+      let inputElms = helper.formElm.find('input');
       expect(inputElms[0].checked).toBe(true);
       expect(inputElms[1].checked).toBe(false);
 
@@ -5294,7 +5249,7 @@ describe('input', function() {
         $rootScope.items = [{id: 1, selected: true}, {id: 2, selected: false}];
       });
 
-      var inputElms = helper.formElm.find('input');
+      let inputElms = helper.formElm.find('input');
       expect(inputElms[0].checked).toBe(true);
       expect(inputElms[1].checked).toBe(false);
       expect(inputElms[2].checked).toBe(false);
@@ -5316,7 +5271,7 @@ describe('input', function() {
         $rootScope.items = [{id: 1, selected: true}, {id: 2, selected: false}];
       });
 
-      var inputElms = helper.formElm.find('input');
+      let inputElms = helper.formElm.find('input');
       expect(inputElms[0].checked).toBe(true);
       expect(inputElms[1].checked).toBe(false);
       expect(inputElms[2].checked).toBe(false);
@@ -5331,14 +5286,14 @@ describe('input', function() {
   describe('password', function() {
     // Under no circumstances should input[type=password] trim inputs
     it('should not trim if ngTrim is unspecified', function() {
-      var inputElm = helper.compileInput('<input type="password" ng-model="password">');
+      let inputElm = helper.compileInput('<input type="password" ng-model="password">');
       helper.changeInputValueTo(' - - untrimmed - - ');
       expect($rootScope.password.length).toBe(' - - untrimmed - - '.length);
     });
 
 
     it('should not trim if ngTrim !== false', function() {
-      var inputElm = helper.compileInput('<input type="password" ng-model="password" ng-trim="true">');
+      let inputElm = helper.compileInput('<input type="password" ng-model="password" ng-trim="true">');
       helper.changeInputValueTo(' - - untrimmed - - ');
       expect($rootScope.password.length).toBe(' - - untrimmed - - '.length);
       dealoc(inputElm);
@@ -5346,7 +5301,7 @@ describe('input', function() {
 
 
     it('should not trim if ngTrim === false', function() {
-      var inputElm = helper.compileInput('<input type="password" ng-model="password" ng-trim="false">');
+      let inputElm = helper.compileInput('<input type="password" ng-model="password" ng-trim="false">');
       helper.changeInputValueTo(' - - untrimmed - - ');
       expect($rootScope.password.length).toBe(' - - untrimmed - - '.length);
       dealoc(inputElm);

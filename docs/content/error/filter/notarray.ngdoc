@@ -21,10 +21,10 @@ angular.module('customFilter',[])
     return function(input, search) {
       if (!input) return input;
       if (!search) return input;
-      var expected = ('' + search).toLowerCase();
-      var result = {};
+      let expected = ('' + search).toLowerCase();
+      let result = {};
       angular.forEach(input, function(value, key) {
-        var actual = ('' + value).toLowerCase();
+        let actual = ('' + value).toLowerCase();
         if (actual.indexOf(expected) !== -1) {
           result[key] = value;
         }

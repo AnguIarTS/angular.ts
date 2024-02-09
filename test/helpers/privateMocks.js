@@ -1,4 +1,4 @@
-'use strict';
+
 
 /* globals xit */
 function assertCompareNodes(a,b,not) {
@@ -8,10 +8,10 @@ function assertCompareNodes(a,b,not) {
 }
 
 function baseThey(msg, vals, spec, itFn) {
-  var valsIsArray = angular.isArray(vals);
+  let valsIsArray = angular.isArray(vals);
 
   angular.forEach(vals, function(val, key) {
-    var m = msg.split('$prop').join(angular.toJson(valsIsArray ? val : key));
+    let m = msg.split('$prop').join(angular.toJson(valsIsArray ? val : key));
     itFn(m, function() {
       spec.call(this, val);
     });
@@ -39,11 +39,11 @@ function browserSupportsCssAnimations() {
 function createMockStyleSheet(doc) {
   doc = doc ? doc[0] : window.document;
 
-  var node = doc.createElement('style');
-  var head = doc.getElementsByTagName('head')[0];
+  let node = doc.createElement('style');
+  let head = doc.getElementsByTagName('head')[0];
   head.appendChild(node);
 
-  var ss = doc.styleSheets[doc.styleSheets.length - 1];
+  let ss = doc.styleSheets[doc.styleSheets.length - 1];
 
   return {
     addRule: function(selector, styles) {
@@ -59,7 +59,7 @@ function createMockStyleSheet(doc) {
     addPossiblyPrefixedRule: function(selector, styles) {
       // Support: Android <5, Blackberry Browser 10, default Chrome in Android 4.4.x
       // Mentioned browsers need a -webkit- prefix for transitions & animations.
-      var prefixedStyles = styles.split(/\s*;\s*/g)
+      let prefixedStyles = styles.split(/\s*;\s*/g)
         .filter(function(style) {
           return style && /^(?:transition|animation)\b/.test(style);
         })

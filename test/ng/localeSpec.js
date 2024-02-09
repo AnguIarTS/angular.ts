@@ -1,9 +1,9 @@
-'use strict';
+
 
 describe('$locale', function() {
   /* global $LocaleProvider: false */
 
-  var $locale;
+  let $locale;
   beforeEach(inject(function(_$locale_) {
     $locale = _$locale_;
   }));
@@ -14,7 +14,7 @@ describe('$locale', function() {
 
 
   it('should have NUMBER_FORMATS', function() {
-    var numberFormats = $locale.NUMBER_FORMATS;
+    let numberFormats = $locale.NUMBER_FORMATS;
     expect(numberFormats).toBeDefined();
     expect(numberFormats.PATTERNS.length).toBe(2);
     angular.forEach(numberFormats.PATTERNS, function(pattern) {
@@ -32,7 +32,7 @@ describe('$locale', function() {
 
 
   it('should have DATETIME_FORMATS', function() {
-    var datetime = $locale.DATETIME_FORMATS;
+    let datetime = $locale.DATETIME_FORMATS;
     expect(datetime).toBeDefined();
     expect(datetime.DAY.length).toBe(7);
     expect(datetime.SHORTDAY.length).toBe(7);

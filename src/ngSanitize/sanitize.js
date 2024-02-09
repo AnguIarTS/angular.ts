@@ -1,5 +1,3 @@
-"use strict";
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *     Any commits to this file should be reviewed with security in mind.  *
  *   Changes to this file can potentially create security vulnerabilities. *
@@ -11,17 +9,17 @@
  *     Or gives undesired access to variables likes document or window?    *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-var $sanitizeMinErr = angular.$$minErr("$sanitize");
-var bind;
-var extend;
-var forEach;
-var isArray;
-var isDefined;
-var lowercase;
-var noop;
-var nodeContains;
-var htmlParser;
-var htmlSanitizeWriter;
+let $sanitizeMinErr = angular.$$minErr("$sanitize");
+let bind;
+let extend;
+let forEach;
+let isArray;
+let isDefined;
+let lowercase;
+let noop;
+let nodeContains;
+let htmlParser;
+let htmlSanitizeWriter;
 
 /**
  * @ngdoc module
@@ -144,8 +142,8 @@ var htmlSanitizeWriter;
  * Creates and configures {@link $sanitize} instance.
  */
 function $SanitizeProvider() {
-  var hasBeenInstantiated = false;
-  var svgEnabled = false;
+  let hasBeenInstantiated = false;
+  let svgEnabled = false;
 
   this.$get = [
     "$$sanitizeUri",
@@ -155,7 +153,7 @@ function $SanitizeProvider() {
         extend(validElements, svgElements);
       }
       return function (html) {
-        var buf = [];
+        let buf = [];
         htmlParser(
           html,
           htmlSanitizeWriter(buf, function (uri, isImage) {
@@ -326,7 +324,7 @@ function $SanitizeProvider() {
     };
 
   // Regular Expressions for parsing tags and attributes
-  var SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
+  let SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
     // Match everything outside of normal chars and " (quote character)
     NON_ALPHANUMERIC_REGEXP = /([^#-~ |!])/g;
 
@@ -336,11 +334,11 @@ function $SanitizeProvider() {
 
   // Safe Void Elements - HTML5
   // http://dev.w3.org/html5/spec/Overview.html#void-elements
-  var voidElements = stringToMap("area,br,col,hr,img,wbr");
+  let voidElements = stringToMap("area,br,col,hr,img,wbr");
 
   // Elements that you can, intentionally, leave open (and which close themselves)
   // http://dev.w3.org/html5/spec/Overview.html#optional-tags
-  var optionalEndTagBlockElements = stringToMap(
+  let optionalEndTagBlockElements = stringToMap(
       "colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr",
     ),
     optionalEndTagInlineElements = stringToMap("rp,rt"),
@@ -351,7 +349,7 @@ function $SanitizeProvider() {
     );
 
   // Safe Block Elements - HTML5
-  var blockElements = extend(
+  let blockElements = extend(
     {},
     optionalEndTagBlockElements,
     stringToMap(
@@ -362,7 +360,7 @@ function $SanitizeProvider() {
   );
 
   // Inline Elements - HTML5
-  var inlineElements = extend(
+  let inlineElements = extend(
     {},
     optionalEndTagInlineElements,
     stringToMap(
@@ -376,16 +374,16 @@ function $SanitizeProvider() {
   // https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Elements
   // Note: the elements animate,animateColor,animateMotion,animateTransform,set are intentionally omitted.
   // They can potentially allow for arbitrary javascript to be executed. See #11290
-  var svgElements = stringToMap(
+  let svgElements = stringToMap(
     "circle,defs,desc,ellipse,font-face,font-face-name,font-face-src,g,glyph," +
       "hkern,image,linearGradient,line,marker,metadata,missing-glyph,mpath,path,polygon,polyline," +
       "radialGradient,rect,stop,svg,switch,text,title,tspan",
   );
 
   // Blocked Elements (will be stripped)
-  var blockedElements = stringToMap("script,style");
+  let blockedElements = stringToMap("script,style");
 
-  var validElements = extend(
+  let validElements = extend(
     {},
     voidElements,
     blockElements,
@@ -394,11 +392,11 @@ function $SanitizeProvider() {
   );
 
   //Attributes that have href and hence need to be sanitized
-  var uriAttrs = stringToMap(
+  let uriAttrs = stringToMap(
     "background,cite,href,longdesc,src,xlink:href,xml:base",
   );
 
-  var htmlAttrs = stringToMap(
+  let htmlAttrs = stringToMap(
     "abbr,align,alt,axis,bgcolor,border,cellpadding,cellspacing,class,clear," +
       "color,cols,colspan,compact,coords,dir,face,headers,height,hreflang,hspace," +
       "ismap,lang,language,nohref,nowrap,rel,rev,rows,rowspan,rules," +
@@ -408,7 +406,7 @@ function $SanitizeProvider() {
 
   // SVG attributes (without "id" and "name" attributes)
   // https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Attributes
-  var svgAttrs = stringToMap(
+  let svgAttrs = stringToMap(
     "accent-height,accumulate,additive,alphabetic,arabic-form,ascent," +
       "baseProfile,bbox,begin,by,calcMode,cap-height,class,color,color-rendering,content," +
       "cx,cy,d,dx,dy,descent,display,dur,end,fill,fill-rule,font-family,font-size,font-stretch," +
@@ -427,14 +425,14 @@ function $SanitizeProvider() {
     true,
   );
 
-  var validAttrs = extend({}, uriAttrs, svgAttrs, htmlAttrs);
+  let validAttrs = extend({}, uriAttrs, svgAttrs, htmlAttrs);
 
   function stringToMap(str, lowercaseKeys) {
     return arrayToMap(str.split(","), lowercaseKeys);
   }
 
   function arrayToMap(items, lowercaseKeys) {
-    var obj = {},
+    let obj = {},
       i;
     for (i = 0; i < items.length; i++) {
       obj[lowercaseKeys ? lowercase(items[i]) : items[i]] = true;
@@ -453,7 +451,7 @@ function $SanitizeProvider() {
    * We use the DOMParser API by default and fall back to createHTMLDocument if DOMParser is not
    * available.
    */
-  var getInertBodyElement /* function(html: string): HTMLBodyElement */ =
+  let getInertBodyElement /* function(html: string): HTMLBodyElement */ =
     (function (window, document) {
       if (isDOMParserAvailable()) {
         return getInertBodyElement_DOMParser;
@@ -462,8 +460,8 @@ function $SanitizeProvider() {
       if (!document || !document.implementation) {
         throw $sanitizeMinErr("noinert", "Can't create an inert html document");
       }
-      var inertDocument = document.implementation.createHTMLDocument("inert");
-      var inertBodyElement = (
+      let inertDocument = document.implementation.createHTMLDocument("inert");
+      let inertBodyElement = (
         inertDocument.documentElement || inertDocument.getDocumentElement()
       ).querySelector("body");
       return getInertBodyElement_InertDocument;
@@ -481,7 +479,7 @@ function $SanitizeProvider() {
         // e.g. leading whitespace is maintained and tags like `<meta>` do not get hoisted to the `<head>` tag.
         html = "<remove></remove>" + html;
         try {
-          var body = new window.DOMParser().parseFromString(
+          let body = new window.DOMParser().parseFromString(
             html,
             "text/html",
           ).body;
@@ -524,11 +522,11 @@ function $SanitizeProvider() {
       html = "" + html;
     }
 
-    var inertBodyElement = getInertBodyElement(html);
+    let inertBodyElement = getInertBodyElement(html);
     if (!inertBodyElement) return "";
 
     //mXSS protection
-    var mXSSAttempts = 5;
+    let mXSSAttempts = 5;
     do {
       if (mXSSAttempts === 0) {
         throw $sanitizeMinErr(
@@ -543,7 +541,7 @@ function $SanitizeProvider() {
       inertBodyElement = getInertBodyElement(html);
     } while (html !== inertBodyElement.innerHTML);
 
-    var node = inertBodyElement.firstChild;
+    let node = inertBodyElement.firstChild;
     while (node) {
       switch (node.nodeType) {
         case 1: // ELEMENT_NODE
@@ -557,7 +555,7 @@ function $SanitizeProvider() {
           break;
       }
 
-      var nextNode;
+      let nextNode;
       if (!(nextNode = node.firstChild)) {
         if (node.nodeType === 1) {
           handler.end(node.nodeName.toLowerCase());
@@ -583,9 +581,9 @@ function $SanitizeProvider() {
   }
 
   function attrToMap(attrs) {
-    var map = {};
-    for (var i = 0, ii = attrs.length; i < ii; i++) {
-      var attr = attrs[i];
+    let map = {};
+    for (let i = 0, ii = attrs.length; i < ii; i++) {
+      let attr = attrs[i];
       map[attr.name] = attr.value;
     }
     return map;
@@ -602,8 +600,8 @@ function $SanitizeProvider() {
     return value
       .replace(/&/g, "&amp;")
       .replace(SURROGATE_PAIR_REGEXP, function (value) {
-        var hi = value.charCodeAt(0);
-        var low = value.charCodeAt(1);
+        let hi = value.charCodeAt(0);
+        let low = value.charCodeAt(1);
         return "&#" + ((hi - 0xd800) * 0x400 + (low - 0xdc00) + 0x10000) + ";";
       })
       .replace(NON_ALPHANUMERIC_REGEXP, function (value) {
@@ -624,8 +622,8 @@ function $SanitizeProvider() {
    * }
    */
   function htmlSanitizeWriterImpl(buf, uriValidator) {
-    var ignoreCurrentElement = false;
-    var out = bind(buf, buf.push);
+    let ignoreCurrentElement = false;
+    let out = bind(buf, buf.push);
     return {
       start: function (tag, attrs) {
         tag = lowercase(tag);
@@ -636,8 +634,8 @@ function $SanitizeProvider() {
           out("<");
           out(tag);
           forEach(attrs, function (value, key) {
-            var lkey = lowercase(key);
-            var isImage =
+            let lkey = lowercase(key);
+            let isImage =
               (tag === "img" && lkey === "src") || lkey === "background";
             if (
               validAttrs[lkey] === true &&
@@ -687,10 +685,10 @@ function $SanitizeProvider() {
   function stripCustomNsAttrs(node) {
     while (node) {
       if (node.nodeType === window.Node.ELEMENT_NODE) {
-        var attrs = node.attributes;
-        for (var i = 0, l = attrs.length; i < l; i++) {
-          var attrNode = attrs[i];
-          var attrName = attrNode.name.toLowerCase();
+        let attrs = node.attributes;
+        for (let i = 0, l = attrs.length; i < l; i++) {
+          let attrNode = attrs[i];
+          let attrName = attrNode.name.toLowerCase();
           if (
             attrName === "xmlns:ns1" ||
             attrName.lastIndexOf("ns1:", 0) === 0
@@ -702,7 +700,7 @@ function $SanitizeProvider() {
         }
       }
 
-      var nextNode = node.firstChild;
+      let nextNode = node.firstChild;
       if (nextNode) {
         stripCustomNsAttrs(nextNode);
       }
@@ -713,7 +711,7 @@ function $SanitizeProvider() {
 
   function getNonDescendant(propName, node) {
     // An element is clobbered if its `propName` property points to one of its descendants
-    var nextNode = node[propName];
+    let nextNode = node[propName];
     if (nextNode && nodeContains.call(node, nextNode)) {
       throw $sanitizeMinErr(
         "elclob",
@@ -726,8 +724,8 @@ function $SanitizeProvider() {
 }
 
 function sanitizeText(chars) {
-  var buf = [];
-  var writer = htmlSanitizeWriter(buf, noop);
+  let buf = [];
+  let writer = htmlSanitizeWriter(buf, noop);
   writer.chars(chars);
   return buf.join("");
 }

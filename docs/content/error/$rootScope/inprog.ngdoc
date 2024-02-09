@@ -266,15 +266,15 @@ It is this second call that caused the error.  If we look at the angular.js code
 this call is made by an AngularJS directive.
 
 ```
-var ngEventDirectives = {};
+let ngEventDirectives = {};
 forEach(
   'click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup keypress submit focus blur copy cut paste'.split(' '),
   function(name) {
-    var directiveName = directiveNormalize('ng-' + name);
+    let directiveName = directiveNormalize('ng-' + name);
     ngEventDirectives[directiveName] = ['$parse', function($parse) {
       return {
         compile: function($element, attr) {
-          var fn = $parse(attr[directiveName]);
+          let fn = $parse(attr[directiveName]);
           return function(scope, element, attr) {
             element.on(lowercase(name), function(event) {
               scope.$apply(function() {

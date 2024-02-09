@@ -1,8 +1,8 @@
-'use strict';
 
-var _ = require('lodash');
-var fs = require('fs');
-var path = require('canonical-path');
+
+let _ = require('lodash');
+let fs = require('fs');
+let path = require('canonical-path');
 
 /**
  * @dgProcessor generateKeywordsProcessor
@@ -28,18 +28,18 @@ module.exports = function generateKeywordsProcessor(log, readFilesProcessor) {
     $process: function(docs) {
 
       // Keywords to ignore
-      var wordsToIgnore = [];
-      var propertiesToIgnore;
-      var docTypesToIgnore;
-      var areasToSearch;
+      let wordsToIgnore = [];
+      let propertiesToIgnore;
+      let docTypesToIgnore;
+      let areasToSearch;
 
       // Keywords start with "ng:" or one of $, _ or a letter
-      var KEYWORD_REGEX = /^((ng:|[$_a-z])[\w\-_]+)/;
+      let KEYWORD_REGEX = /^((ng:|[$_a-z])[\w\-_]+)/;
 
       // Load up the keywords to ignore, if specified in the config
       if (this.ignoreWordsFile) {
 
-        var ignoreWordsPath = path.resolve(readFilesProcessor.basePath, this.ignoreWordsFile);
+        let ignoreWordsPath = path.resolve(readFilesProcessor.basePath, this.ignoreWordsFile);
         wordsToIgnore = fs.readFileSync(ignoreWordsPath, 'utf8').toString().split(/[,\s\n\r]+/gm);
 
         log.debug('Loaded ignore words from "' + ignoreWordsPath + '"');
@@ -53,12 +53,12 @@ module.exports = function generateKeywordsProcessor(log, readFilesProcessor) {
       docTypesToIgnore = _.keyBy(this.docTypesToIgnore);
       log.debug('Doc types to ignore', docTypesToIgnore);
 
-      var ignoreWordsMap = _.keyBy(wordsToIgnore);
+      let ignoreWordsMap = _.keyBy(wordsToIgnore);
 
       // If the title contains a name starting with ng, e.g. "ngController", then add the module name
       // without the ng to the title text, e.g. "controller".
       function extractTitleWords(title) {
-        var match = /ng([A-Z]\w*)/.exec(title);
+        let match = /ng([A-Z]\w*)/.exec(title);
         if (match) {
           title = title + ' ' + match[1].toLowerCase();
         }
@@ -67,11 +67,11 @@ module.exports = function generateKeywordsProcessor(log, readFilesProcessor) {
 
     function extractWords(text, words, keywordMap) {
 
-      var tokens = text.toLowerCase().split(/[.\s,`'"#]+/mg);
+      let tokens = text.toLowerCase().split(/[.\s,`'"#]+/mg);
       _.forEach(tokens, function(token) {
-        var match = token.match(KEYWORD_REGEX);
+        let match = token.match(KEYWORD_REGEX);
         if (match) {
-          var key = match[1];
+          let key = match[1];
           if (!keywordMap[key]) {
             keywordMap[key] = true;
             words.push(key);
@@ -88,10 +88,10 @@ module.exports = function generateKeywordsProcessor(log, readFilesProcessor) {
       _.forEach(docs, function(doc) {
 
 
-        var words = [];
-        var keywordMap = _.clone(ignoreWordsMap);
-        var members = [];
-        var membersMap = {};
+        let words = [];
+        let keywordMap = _.clone(ignoreWordsMap);
+        let members = [];
+        let membersMap = {};
 
         // Search each top level property of the document for search terms
         _.forEach(doc, function(value, key) {

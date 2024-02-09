@@ -1,9 +1,9 @@
-'use strict';
 
-var converter = require('../src/converter.js');
+
+let converter = require('../src/converter.js');
 
 describe('convertNumberData', function() {
-  var convert = converter.convertNumberData,
+  let convert = converter.convertNumberData,
       dataObj = { DECIMAL_SEP: ',',
                   GROUP_SEP: '.',
                   DECIMAL_PATTERN: '#,##0.###;#,##0.###-',
@@ -11,7 +11,7 @@ describe('convertNumberData', function() {
                   DEF_CURRENCY_CODE: 'USD' };
 
   it('should convert number object', function() {
-    var processedData = convert(dataObj, {USD: ['x', '$', 'y']});
+    let processedData = convert(dataObj, {USD: ['x', '$', 'y']});
     expect(processedData.DECIMAL_SEP).toBe(',');
     expect(processedData.GROUP_SEP).toBe('.');
     expect(processedData.PATTERNS.length).toBe(2);
@@ -27,7 +27,7 @@ describe('convertNumberData', function() {
 
 
 describe('convertDatetimeData', function() {
-  var convert = converter.convertDatetimeData,
+  let convert = converter.convertDatetimeData,
       dataObj = { MONTHS: ['Enero', 'Pebrero'],
                   STANDALONEMONTHS: ['Enero', 'Pebrero'],
                   SHORTMONTHS: ['Ene', 'Peb'],
@@ -38,7 +38,7 @@ describe('convertDatetimeData', function() {
                   TIMEFORMATS: ['e', 'f', 'g', 'h'] };
 
   it('should convert empty datetime obj', function() {
-    var processedData = convert(dataObj);
+    let processedData = convert(dataObj);
     expect(processedData.MONTH).toEqual(['Enero', 'Pebrero']);
     expect(processedData.STANDALONEMONTH).toEqual(['Enero', 'Pebrero']);
     expect(processedData.SHORTMONTH).toEqual(['Ene', 'Peb']);

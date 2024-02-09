@@ -1,6 +1,6 @@
-'use strict';
 
-var config = require('./protractor-shared-conf').config;
+
+let config = require('./protractor-shared-conf').config;
 
 config.specs = [
   'test/e2e/tests/**/*.js',

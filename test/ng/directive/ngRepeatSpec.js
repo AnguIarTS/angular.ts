@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('ngRepeat', function() {
-  var element, $compile, scope, $exceptionHandler, $compileProvider;
+  let element, $compile, scope, $exceptionHandler, $compileProvider;
 
   beforeEach(module(function(_$compileProvider_) {
     $compileProvider = _$compileProvider_;
@@ -108,7 +108,7 @@ describe('ngRepeat', function() {
                                        '<a name=\'x\'>c</a>' +
                                      '</p>';
 
-    var htmlCollection = window.document.getElementsByTagName('a');
+    let htmlCollection = window.document.getElementsByTagName('a');
     scope.items = htmlCollection;
     scope.$digest();
     expect(element.find('li').length).toEqual(3);
@@ -121,7 +121,7 @@ describe('ngRepeat', function() {
     Collection.prototype = new Array();
     Collection.prototype.length = 0;
 
-    var collection = new Collection();
+    let collection = new Collection();
     collection.push({ name: 'x' });
     collection.push({ name: 'y' });
     collection.push({ name: 'z' });
@@ -174,7 +174,7 @@ describe('ngRepeat', function() {
         '<li ng-repeat="(key, value) in items">{{key}}:{{value}}|</li>' +
       '</ul>')(scope);
 
-    var items = Object.create(null);
+    let items = Object.create(null);
     items.misko = 'swe';
     items.shyam = 'set';
 
@@ -195,8 +195,8 @@ describe('ngRepeat', function() {
               '</ul>')(scope);
       scope.items = [{id: 'misko'}, {id: 'igor'}];
       scope.$digest();
-      var li0 = element.find('li')[0];
-      var li1 = element.find('li')[1];
+      let li0 = element.find('li')[0];
+      let li1 = element.find('li')[1];
 
       scope.items.push(scope.items.shift());
       scope.$digest();
@@ -212,8 +212,8 @@ describe('ngRepeat', function() {
               '</ul>')(scope);
       scope.items = [{name: 'misko'}, {name: 'igor'}];
       scope.$digest();
-      var li0 = element.find('li')[0];
-      var li1 = element.find('li')[1];
+      let li0 = element.find('li')[0];
+      let li1 = element.find('li')[1];
 
       scope.items.push(scope.items.shift());
       scope.$digest();
@@ -239,7 +239,7 @@ describe('ngRepeat', function() {
 
     it('should track using provided function when a filter is present', function() {
       scope.newArray = function(items) {
-        var newArray = [];
+        let newArray = [];
         angular.forEach(items, function(item) {
           newArray.push({
             id: item.id,
@@ -260,8 +260,8 @@ describe('ngRepeat', function() {
 
       expect(element.text()).toBe('igor;misko;');
 
-      var li0 = element.find('li')[0];
-      var li1 = element.find('li')[1];
+      let li0 = element.find('li')[0];
+      let li1 = element.find('li')[1];
 
       scope.items.push(scope.items.shift());
       scope.$digest();
@@ -508,7 +508,7 @@ describe('ngRepeat', function() {
         'fundefined',
         '$$parent'
       ], function(name) {
-        var expr = 'item in items | filter:x as ' + name + ' track by $index';
+        let expr = 'item in items | filter:x as ' + name + ' track by $index';
         element = $compile('<div><div ng-repeat="' + expr + '"></div></div>')(scope);
         scope.$digest();
         expect(scope[name]).toEqual([
@@ -551,7 +551,7 @@ describe('ngRepeat', function() {
         'obj.property',
         'foo=6'
       ], function(expr) {
-        var expression = ('item in items | filter:x as ' + expr + ' track by $index').replace(/"/g, '&quot;');
+        let expression = ('item in items | filter:x as ' + expr + ' track by $index').replace(/"/g, '&quot;');
         element = $compile(
           '<div>' +
           '  <div ng-repeat="' + expression + '">{{item}}</div>' +
@@ -600,7 +600,7 @@ describe('ngRepeat', function() {
 
 
   it('should not ngRepeat over parent properties', function() {
-    var Class = function() {};
+    let Class = function() {};
     Class.prototype.abc = function() {};
     Class.prototype.value = 'abc';
 
@@ -858,7 +858,7 @@ describe('ngRepeat', function() {
     scope.array = ['a', 'b'];
     scope.$digest();
 
-    var lis = element.find('li');
+    let lis = element.find('li');
     lis.eq(0).data('mark', 'a');
     lis.eq(1).data('mark', 'b');
 
@@ -945,7 +945,7 @@ describe('ngRepeat', function() {
       element = jqLite('<span replace-me-with-repeater></span>');
       $compile(element)($rootScope);
       expect(element.text()).toBe('');
-      var logs = [];
+      let logs = [];
       $rootScope.log = function(t) { logs.push(t); };
 
       // This creates one item, but it has no parent so we can't get to it
@@ -975,7 +975,7 @@ describe('ngRepeat', function() {
       element = jqLite('<span>-</span><span replace-me-with-repeater></span><span>-</span>');
       $compile(element)($rootScope);
       expect(element.text()).toBe('--');
-      var logs = [];
+      let logs = [];
       $rootScope.log = function(t) { logs.push(t); };
 
       // This creates one item, but it has no parent so we can't get to it
@@ -1050,8 +1050,8 @@ describe('ngRepeat', function() {
   });
 
   it('should add separator comments after each item', inject(function($compile, $rootScope) {
-    var check = function() {
-      var children = element.find('div');
+    let check = function() {
+      let children = element.find('div');
       expect(children.length).toBe(3);
 
       // Note: COMMENT_NODE === 8
@@ -1096,11 +1096,11 @@ describe('ngRepeat', function() {
 
     $rootScope.$digest();
 
-    var ends = element.find('p');
+    let ends = element.find('p');
     expect(ends.length).toBe(3);
 
     // insert an extra element inside the second block
-    var extra = angular.element('<strong></strong>')[0];
+    let extra = angular.element('<strong></strong>')[0];
     element[0].insertBefore(extra, ends[1]);
 
     $rootScope.values.splice(1, 1);
@@ -1129,11 +1129,11 @@ describe('ngRepeat', function() {
 
     $rootScope.$digest();
 
-    var ends = element.find('p');
+    let ends = element.find('p');
     expect(ends.length).toBe(3);
 
     // insert an extra element inside the third block
-    var extra = angular.element('<strong></strong>')[0];
+    let extra = angular.element('<strong></strong>')[0];
     element[0].insertBefore(extra, ends[2]);
 
     // move the third block to the beginning
@@ -1150,7 +1150,7 @@ describe('ngRepeat', function() {
 
 
   describe('stability', function() {
-    var a, b, c, d, lis;
+    let a, b, c, d, lis;
 
     beforeEach(function() {
       element = $compile(
@@ -1171,7 +1171,7 @@ describe('ngRepeat', function() {
     it('should preserve the order of elements', function() {
       scope.items = [a, c, d];
       scope.$digest();
-      var newElements = element.find('li');
+      let newElements = element.find('li');
       expect(newElements[0]).toEqual(lis[0]);
       expect(newElements[1]).toEqual(lis[2]);
       expect(newElements[2]).not.toEqual(lis[1]);
@@ -1189,7 +1189,7 @@ describe('ngRepeat', function() {
       // recover
       scope.items = [a];
       scope.$digest();
-      var newElements = element.find('li');
+      let newElements = element.find('li');
       expect(newElements.length).toEqual(1);
       expect(newElements[0]).toEqual(lis[0]);
 
@@ -1211,7 +1211,7 @@ describe('ngRepeat', function() {
       // recover
       scope.items = [a];
       scope.$digest();
-      var newElements = element.find('li');
+      let newElements = element.find('li');
       expect(newElements.length).toEqual(1);
       expect(newElements[0]).toEqual(lis[0]);
 
@@ -1229,7 +1229,7 @@ describe('ngRepeat', function() {
 
       scope.items = [c, b, a];
       scope.$digest();
-      var newElements = element.find('li');
+      let newElements = element.find('li');
       expect(newElements.length).toEqual(3);
       expect(newElements[0]).toEqual(lis[2]);
       expect(newElements[1]).toEqual(lis[1]);
@@ -1248,7 +1248,7 @@ describe('ngRepeat', function() {
 
       scope.items = ['ahoj', 'hello', 'cau'];
       scope.$digest();
-      var newLis = element.find('li');
+      let newLis = element.find('li');
       expect(newLis.length).toEqual(3);
       expect(newLis[0]).toEqual(lis[2]);
       expect(newLis[1]).toEqual(lis[0]);
@@ -1270,7 +1270,7 @@ describe('ngRepeat', function() {
       scope.items.shift();
       scope.$digest();
 
-      var newLis = element.find('li');
+      let newLis = element.find('li');
       expect(newLis.length).toBe(2);
       expect(newLis[0]).toBe(lis[1]);
     });
@@ -1361,9 +1361,9 @@ describe('ngRepeat', function() {
 
 describe('ngRepeat and transcludes', function() {
   it('should allow access to directive controller from children when used in a replace template', function() {
-    var controller;
+    let controller;
     module(function($compileProvider) {
-      var directive = $compileProvider.directive;
+      let directive = $compileProvider.directive;
       directive('template', valueFn({
         template: '<div ng-repeat="l in [1]"><span test></span></div>',
         replace: true,
@@ -1379,7 +1379,7 @@ describe('ngRepeat and transcludes', function() {
       }));
     });
     inject(function($compile, $rootScope) {
-      var element = $compile('<div><div template></div></div>')($rootScope);
+      let element = $compile('<div><div template></div></div>')($rootScope);
       $rootScope.$apply();
       expect(controller.flag).toBe(true);
       dealoc(element);
@@ -1398,7 +1398,7 @@ describe('ngRepeat and transcludes', function() {
     });
     inject(function($compile, $rootScope) {
       $rootScope.val = 'transcluded content';
-      var element = $compile('<iso><span ng-bind="val"></span></iso>')($rootScope);
+      let element = $compile('<iso><span ng-bind="val"></span></iso>')($rootScope);
       $rootScope.$digest();
       expect(trim(element.text())).toEqual('transcluded content');
       dealoc(element);
@@ -1415,7 +1415,7 @@ describe('ngRepeat and transcludes', function() {
       }));
     });
     inject(function($compile, $rootScope) {
-      var element = $compile('<div><span ng-repeat="a in [1]"><span assert-a></span></span></div>')($rootScope);
+      let element = $compile('<div><span ng-repeat="a in [1]"><span assert-a></span></span></div>')($rootScope);
       $rootScope.$digest();
       dealoc(element);
     });
@@ -1433,11 +1433,11 @@ describe('ngRepeat and transcludes', function() {
       });
     });
     inject(function($compile, $rootScope) {
-      var element = $compile('<svg-container><circle ng-repeat="r in rows"></circle></svg-container>')($rootScope);
+      let element = $compile('<svg-container><circle ng-repeat="r in rows"></circle></svg-container>')($rootScope);
       $rootScope.rows = [1];
       $rootScope.$apply();
 
-      var circle = element.find('circle');
+      let circle = element.find('circle');
       expect(circle[0].toString()).toMatch(/SVG/);
       dealoc(element);
     });
@@ -1445,7 +1445,7 @@ describe('ngRepeat and transcludes', function() {
 });
 
 describe('ngRepeat animations', function() {
-  var body, element, $rootElement;
+  let body, element, $rootElement;
 
   function html(content) {
     $rootElement.html(content);
@@ -1472,7 +1472,7 @@ describe('ngRepeat animations', function() {
   it('should fire off the enter animation',
     inject(function($compile, $rootScope, $animate) {
 
-    var item;
+    let item;
 
     element = $compile(html(
       '<div><div ' +
@@ -1502,7 +1502,7 @@ describe('ngRepeat animations', function() {
   it('should fire off the leave animation',
     inject(function($compile, $rootScope, $animate) {
 
-    var item;
+    let item;
 
     element = $compile(html(
       '<div><div ' +
@@ -1538,8 +1538,8 @@ describe('ngRepeat animations', function() {
     inject(function($compile, $rootScope, $animate, $document, $sniffer, $timeout) {
       if (!$sniffer.transitions) return;
 
-      var item;
-      var ss = createMockStyleSheet($document);
+      let item;
+      let ss = createMockStyleSheet($document);
 
       try {
 
@@ -1572,7 +1572,7 @@ describe('ngRepeat animations', function() {
   it('should fire off the move animation',
     inject(function($compile, $rootScope, $animate) {
 
-      var item;
+      let item;
 
       element = $compile(html(
         '<div>' +

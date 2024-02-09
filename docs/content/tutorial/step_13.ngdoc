@@ -174,7 +174,7 @@ angular.module('phoneDetail', [
       templateUrl: 'phone-detail/phone-detail.template.html',
       controller: ['$routeParams', 'Phone',
         function PhoneDetailController($routeParams, Phone) {
-          var self = this;
+          let self = this;
           self.phone = Phone.get({phoneId: $routeParams.phoneId}, function(phone) {
             self.setImage(phone.images[0]);
           });
@@ -250,7 +250,7 @@ ignores functions and `$`-prefixed properties, such as those added by the `$reso
 ```js
 describe('Phone', function() {
   ...
-  var phonesData = [...];
+  let phonesData = [...];
 
   // Add a custom equality tester before each test
   beforeEach(function() {
@@ -270,7 +270,7 @@ describe('Phone', function() {
   });
 
   it('should fetch the phones data from `/phones/phones.json`', function() {
-    var phones = Phone.query();
+    let phones = Phone.query();
 
     expect(phones).toEqual([]);
 

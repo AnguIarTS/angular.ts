@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc service
  * @name $q
@@ -43,7 +41,7 @@
  *     });
  *   }
  *
- *   var promise = asyncGreet('Robin Hood');
+ *   let promise = asyncGreet('Robin Hood');
  *   promise.then(function(greeting) {
  *     alert('Success: ' + greeting);
  *   }, function(reason) {
@@ -69,7 +67,7 @@
  *   // are available in the current lexical scope (they could have been injected or passed in).
  *
  *   function asyncGreet(name) {
- *     var deferred = $q.defer();
+ *     let deferred = $q.defer();
  *
  *     setTimeout(function() {
  *       deferred.notify('About to greet ' + name + '.');
@@ -84,7 +82,7 @@
  *     return deferred.promise;
  *   }
  *
- *   var promise = asyncGreet('Robin Hood');
+ *   let promise = asyncGreet('Robin Hood');
  *   promise.then(function(greeting) {
  *     alert('Success: ' + greeting);
  *   }, function(reason) {
@@ -191,9 +189,9 @@
  *
  *  ```js
  *    it('should simulate promise', inject(function($q, $rootScope) {
- *      var deferred = $q.defer();
- *      var promise = deferred.promise;
- *      var resolvedValue;
+ *      let deferred = $q.defer();
+ *      let promise = deferred.promise;
+ *      let resolvedValue;
  *
  *      promise.then(function(value) { resolvedValue = value; });
  *      expect(resolvedValue).toBeUndefined();
@@ -225,7 +223,7 @@
  * @description
  */
 function $QProvider() {
-  var errorOnUnhandledRejections = true;
+  let errorOnUnhandledRejections = true;
   this.$get = [
     "$rootScope",
     "$exceptionHandler",
@@ -265,7 +263,7 @@ function $QProvider() {
 
 /** @this */
 function $$QProvider() {
-  var errorOnUnhandledRejections = true;
+  let errorOnUnhandledRejections = true;
   this.$get = [
     "$browser",
     "$exceptionHandler",
@@ -301,9 +299,9 @@ function $$QProvider() {
  * @returns {object} Promise manager.
  */
 function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
-  var $qMinErr = minErr("$q", TypeError);
-  var queueSize = 0;
-  var checkQueue = [];
+  let $qMinErr = minErr("$q", TypeError);
+  let queueSize = 0;
+  let checkQueue = [];
 
   /**
    * @ngdoc method
@@ -320,7 +318,7 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
   }
 
   function Deferred() {
-    var promise = (this.promise = new Promise());
+    let promise = (this.promise = new Promise());
     //Non prototype methods necessary to support unbound execution :/
     this.resolve = function (val) {
       resolvePromise(promise, val);
@@ -346,7 +344,7 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
       ) {
         return this;
       }
-      var result = new Promise();
+      let result = new Promise();
 
       this.$$state.pending = this.$$state.pending || [];
       this.$$state.pending.push([
@@ -378,13 +376,13 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
   });
 
   function processQueue(state) {
-    var fn, promise, pending;
+    let fn, promise, pending;
 
     pending = state.pending;
     state.processScheduled = false;
     state.pending = undefined;
     try {
-      for (var i = 0, ii = pending.length; i < ii; ++i) {
+      for (let i = 0, ii = pending.length; i < ii; ++i) {
         markQStateExceptionHandled(state);
         promise = pending[i][0];
         fn = pending[i][state.status];
@@ -415,10 +413,10 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
   function processChecks() {
     // eslint-disable-next-line no-unmodified-loop-condition
     while (!queueSize && checkQueue.length) {
-      var toCheck = checkQueue.shift();
+      let toCheck = checkQueue.shift();
       if (!isStateExceptionHandled(toCheck)) {
         markQStateExceptionHandled(toCheck);
-        var errorMessage =
+        let errorMessage =
           "Possibly unhandled rejection: " + toDebugString(toCheck.value);
         if (isError(toCheck.value)) {
           exceptionHandler(toCheck.value, errorMessage);
@@ -466,8 +464,8 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
   }
 
   function $$resolve(promise, val) {
-    var then;
-    var done = false;
+    let then;
+    let done = false;
     try {
       if (isObject(val) || isFunction(val)) then = val.then;
       if (isFunction(then)) {
@@ -509,12 +507,12 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
   }
 
   function notifyPromise(promise, progress) {
-    var callbacks = promise.$$state.pending;
+    let callbacks = promise.$$state.pending;
 
     if (promise.$$state.status <= 0 && callbacks && callbacks.length) {
       nextTick(function () {
-        var callback, result;
-        for (var i = 0, ii = callbacks.length; i < ii; i++) {
+        let callback, result;
+        for (let i = 0, ii = callbacks.length; i < ii; i++) {
           result = callbacks[i][0];
           callback = callbacks[i][3];
           try {
@@ -567,13 +565,13 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
    * @returns {Promise} Returns a promise that was already resolved as rejected with the `reason`.
    */
   function reject(reason) {
-    var result = new Promise();
+    let result = new Promise();
     rejectPromise(result, reason);
     return result;
   }
 
   function handleCallback(value, resolver, callback) {
-    var callbackOutput = null;
+    let callbackOutput = null;
     try {
       if (isFunction(callback)) callbackOutput = callback();
     } catch (e) {
@@ -606,7 +604,7 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
    */
 
   function when(value, callback, errback, progressBack) {
-    var result = new Promise();
+    let result = new Promise();
     resolvePromise(result, value);
     return result.then(callback, errback, progressBack);
   }
@@ -625,7 +623,7 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
    * @param {Function=} progressCallback
    * @returns {Promise} Returns a promise of the passed value or promise
    */
-  var resolve = when;
+  let resolve = when;
 
   /**
    * @ngdoc method
@@ -644,7 +642,7 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
    */
 
   function all(promises) {
-    var result = new Promise(),
+    let result = new Promise(),
       counter = 0,
       results = isArray(promises) ? [] : {};
 
@@ -683,7 +681,7 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
    */
 
   function race(promises) {
-    var deferred = defer();
+    let deferred = defer();
 
     forEach(promises, function (promise) {
       when(promise).then(deferred.resolve, deferred.reject);
@@ -697,7 +695,7 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
       throw $qMinErr("norslvr", "Expected resolverFn, got '{0}'", resolver);
     }
 
-    var promise = new Promise();
+    let promise = new Promise();
 
     function resolveFn(value) {
       resolvePromise(promise, value);

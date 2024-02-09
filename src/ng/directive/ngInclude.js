@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngInclude
@@ -118,8 +116,8 @@
       }
     </file>
     <file name="protractor.js" type="protractor">
-      var templateSelect = element(by.model('template'));
-      var includeElem = element(by.css('[ng-include]'));
+      let templateSelect = element(by.model('template'));
+      let includeElem = element(by.css('[ng-include]'));
 
       it('should load template1.html', function() {
         expect(includeElem.getText()).toMatch(/Content of template1.html/);
@@ -181,7 +179,7 @@
  * @param {Object} angularEvent Synthetic event object.
  * @param {String} src URL of content to load.
  */
-var ngIncludeDirective = [
+let ngIncludeDirective = [
   "$templateRequest",
   "$anchorScroll",
   "$animate",
@@ -193,17 +191,17 @@ var ngIncludeDirective = [
       transclude: "element",
       controller: angular.noop,
       compile: function (element, attr) {
-        var srcExp = attr.ngInclude || attr.src,
+        let srcExp = attr.ngInclude || attr.src,
           onloadExp = attr.onload || "",
           autoScrollExp = attr.autoscroll;
 
         return function (scope, $element, $attr, ctrl, $transclude) {
-          var changeCounter = 0,
+          let changeCounter = 0,
             currentScope,
             previousElement,
             currentElement;
 
-          var cleanupLastIncludeContent = function () {
+          let cleanupLastIncludeContent = function () {
             if (previousElement) {
               previousElement.remove();
               previousElement = null;
@@ -222,7 +220,7 @@ var ngIncludeDirective = [
           };
 
           scope.$watch(srcExp, function ngIncludeWatchAction(src) {
-            var afterAnimation = function (response) {
+            let afterAnimation = function (response) {
               if (
                 response !== false &&
                 isDefined(autoScrollExp) &&
@@ -231,7 +229,7 @@ var ngIncludeDirective = [
                 $anchorScroll();
               }
             };
-            var thisChangeId = ++changeCounter;
+            let thisChangeId = ++changeCounter;
 
             if (src) {
               //set the 2nd param to true to ignore the template request error so that the inner
@@ -241,7 +239,7 @@ var ngIncludeDirective = [
                   if (scope.$$destroyed) return;
 
                   if (thisChangeId !== changeCounter) return;
-                  var newScope = scope.$new();
+                  let newScope = scope.$new();
                   ctrl.template = response;
 
                   // Note: This will also link all children of ng-include that were contained in the original
@@ -250,7 +248,7 @@ var ngIncludeDirective = [
                   // Note: We can't remove them in the cloneAttchFn of $transclude as that
                   // function is called before linking the content, which would apply child
                   // directives to non existing elements.
-                  var clone = $transclude(newScope, function (clone) {
+                  let clone = $transclude(newScope, function (clone) {
                     cleanupLastIncludeContent();
                     $animate.enter(clone, null, $element).done(afterAnimation);
                   });
@@ -287,7 +285,7 @@ var ngIncludeDirective = [
 // We need this directive so that the element content is already filled when
 // the link function of another directive on the same element as ngInclude
 // is called.
-var ngIncludeFillContentDirective = [
+let ngIncludeFillContentDirective = [
   "$compile",
   function ($compile) {
     return {

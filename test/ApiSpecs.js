@@ -1,19 +1,19 @@
-'use strict';
+
 
 describe('api', function() {
   describe('hashKey()', function() {
     it('should use an existing `$$hashKey`', function() {
-      var obj = {$$hashKey: 'foo'};
+      let obj = {$$hashKey: 'foo'};
       expect(hashKey(obj)).toBe('foo');
     });
 
     it('should support a function as `$$hashKey` (and call it)', function() {
-      var obj = {$$hashKey: valueFn('foo')};
+      let obj = {$$hashKey: valueFn('foo')};
       expect(hashKey(obj)).toBe('foo');
     });
 
     it('should create a new `$$hashKey` if none exists (and return it)', function() {
-      var obj = {};
+      let obj = {};
       expect(hashKey(obj)).toBe(obj.$$hashKey);
       expect(obj.$$hashKey).toBeDefined();
     });
@@ -33,10 +33,10 @@ describe('api', function() {
     });
 
     it('should create appropriate `$$hashKey`s for non-primitive values', function() {
-      var fn = function() {};
-      var arr = [];
-      var obj = {};
-      var date = new Date();
+      let fn = function() {};
+      let arr = [];
+      let obj = {};
+      let date = new Date();
 
       expect(hashKey(fn)).toBe(hashKey(fn));
       expect(hashKey(fn)).not.toBe(hashKey(function() {}));
@@ -49,12 +49,12 @@ describe('api', function() {
     });
 
     it('should support a custom `nextUidFn`', function() {
-      var nextUidFn = jasmine.createSpy('nextUidFn').and.returnValues('foo', 'bar', 'baz', 'qux');
+      let nextUidFn = jasmine.createSpy('nextUidFn').and.returnValues('foo', 'bar', 'baz', 'qux');
 
-      var fn = function() {};
-      var arr = [];
-      var obj = {};
-      var date = new Date();
+      let fn = function() {};
+      let arr = [];
+      let obj = {};
+      let date = new Date();
 
       hashKey(fn, nextUidFn);
       hashKey(arr, nextUidFn);
@@ -70,9 +70,9 @@ describe('api', function() {
 
   describe('NgMapShim', function() {
     it('should do basic crud', function() {
-      var map = new NgMapShim();
-      var keys = [{}, {}, {}];
-      var values = [{}, {}, {}];
+      let map = new NgMapShim();
+      let keys = [{}, {}, {}];
+      let values = [{}, {}, {}];
 
       map.set(keys[0], values[1]);
       map.set(keys[0], values[0]);
@@ -90,8 +90,8 @@ describe('api', function() {
     });
 
     it('should return if a key exists or not', function() {
-      var map = new NgMapShim();
-      var keys = ['foo', {}];
+      let map = new NgMapShim();
+      let keys = ['foo', {}];
 
       expect(map.has(keys[0])).toBe(false);
       expect(map.has(keys[1])).toBe(false);
@@ -118,7 +118,7 @@ describe('api', function() {
     });
 
     it('should be able to deal with `NaN` keys', function() {
-      var map = new NgMapShim();
+      let map = new NgMapShim();
 
       map.set('NaN', 'foo');
       map.set(NaN, 'bar');

@@ -1,4 +1,4 @@
-'use strict';
+
 
 angular.module('repeatAnimateBenchmark', [])
   .run(function($rootScope) {

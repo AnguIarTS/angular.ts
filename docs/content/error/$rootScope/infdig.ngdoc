@@ -31,7 +31,7 @@ cycle, resulting in the error.  The solution is to return the same array object 
 not changed:
 
 ```
-var users = [ { name: 'Hank' }, { name: 'Francisco' } ];
+let users = [ { name: 'Hank' }, { name: 'Francisco' } ];
 
 $scope.getUsers = function() {
   return users;

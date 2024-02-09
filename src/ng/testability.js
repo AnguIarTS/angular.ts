@@ -1,5 +1,3 @@
-"use strict";
-
 /** @this */
 function $$TestabilityProvider() {
   this.$get = [
@@ -14,7 +12,7 @@ function $$TestabilityProvider() {
        * The private $$testability service provides a collection of methods for use when debugging
        * or by automated test and debugging tools.
        */
-      var testability = {};
+      let testability = {};
 
       /**
        * @name $$testability#findBindings
@@ -33,14 +31,14 @@ function $$TestabilityProvider() {
         expression,
         opt_exactMatch,
       ) {
-        var bindings = element.getElementsByClassName("ng-binding");
-        var matches = [];
+        let bindings = element.getElementsByClassName("ng-binding");
+        let matches = [];
         forEach(bindings, function (binding) {
-          var dataBinding = angular.element(binding).data("$binding");
+          let dataBinding = angular.element(binding).data("$binding");
           if (dataBinding) {
             forEach(dataBinding, function (bindingName) {
               if (opt_exactMatch) {
-                var matcher = new RegExp(
+                let matcher = new RegExp(
                   "(^|\\s)" + escapeForRegexp(expression) + "(\\s|\\||$)",
                 );
                 if (matcher.test(bindingName)) {
@@ -70,10 +68,10 @@ function $$TestabilityProvider() {
        *     for the expression.
        */
       testability.findModels = function (element, expression, opt_exactMatch) {
-        var prefixes = ["ng-", "data-ng-", "ng\\:"];
-        for (var p = 0; p < prefixes.length; ++p) {
-          var attributeEquals = opt_exactMatch ? "=" : "*=";
-          var selector =
+        let prefixes = ["ng-", "data-ng-", "ng\\:"];
+        for (let p = 0; p < prefixes.length; ++p) {
+          let attributeEquals = opt_exactMatch ? "=" : "*=";
+          let selector =
             "[" +
             prefixes[p] +
             "model" +
@@ -81,7 +79,7 @@ function $$TestabilityProvider() {
             '"' +
             expression +
             '"]';
-          var elements = element.querySelectorAll(selector);
+          let elements = element.querySelectorAll(selector);
           if (elements.length) {
             return elements;
           }

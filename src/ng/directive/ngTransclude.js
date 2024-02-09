@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngTransclude
@@ -52,10 +50,10 @@
  *   </file>
  *   <file name="protractor.js" type="protractor">
  *      it('should have transcluded', function() {
- *        var titleElement = element(by.model('title'));
+ *        let titleElement = element(by.model('title'));
  *        titleElement.clear();
  *        titleElement.sendKeys('TITLE');
- *        var textElement = element(by.model('text'));
+ *        let textElement = element(by.model('text'));
  *        textElement.clear();
  *        textElement.sendKeys('TEXT');
  *        expect(element(by.binding('title')).getText()).toEqual('TITLE');
@@ -145,10 +143,10 @@
  *   </file>
  *   <file name="protractor.js" type="protractor">
  *      it('should have transcluded the title and the body', function() {
- *        var titleElement = element(by.model('title'));
+ *        let titleElement = element(by.model('title'));
  *        titleElement.clear();
  *        titleElement.sendKeys('TITLE');
- *        var textElement = element(by.model('text'));
+ *        let textElement = element(by.model('text'));
  *        textElement.clear();
  *        textElement.sendKeys('TEXT');
  *        expect(element(by.css('.title')).getText()).toEqual('TITLE');
@@ -158,15 +156,15 @@
  *   </file>
  * </example>
  */
-var ngTranscludeMinErr = minErr("ngTransclude");
-var ngTranscludeDirective = [
+let ngTranscludeMinErr = minErr("ngTransclude");
+let ngTranscludeDirective = [
   "$compile",
   function ($compile) {
     return {
       restrict: "EAC",
       compile: function ngTranscludeCompile(tElement) {
         // Remove and cache any original content to act as a fallback
-        var fallbackLinkFn = $compile(tElement.contents());
+        let fallbackLinkFn = $compile(tElement.contents());
         tElement.empty();
 
         return function ngTranscludePostLink(
@@ -190,7 +188,7 @@ var ngTranscludeDirective = [
           if ($attrs.ngTransclude === $attrs.$attr.ngTransclude) {
             $attrs.ngTransclude = "";
           }
-          var slotName = $attrs.ngTransclude || $attrs.ngTranscludeSlot;
+          let slotName = $attrs.ngTransclude || $attrs.ngTranscludeSlot;
 
           // If the slot is required and no transclusion content is provided then this call will throw an error
           $transclude(ngTranscludeCloneAttachFn, null, slotName);
@@ -220,8 +218,8 @@ var ngTranscludeDirective = [
           }
 
           function notWhitespace(nodes) {
-            for (var i = 0, ii = nodes.length; i < ii; i++) {
-              var node = nodes[i];
+            for (let i = 0, ii = nodes.length; i < ii; i++) {
+              let node = nodes[i];
               if (node.nodeType !== NODE_TYPE_TEXT || node.nodeValue.trim()) {
                 return true;
               }

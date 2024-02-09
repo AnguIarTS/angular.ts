@@ -12,7 +12,7 @@ Also you can make a transclusion slot optional with a `?` prefix.
 // In this example the <my-component> must have an <important-component> inside to transclude it.
 // If not, a reqslot error will be generated.
 
-var componentConfig = {
+let componentConfig = {
   template: 'path/to/template.html',
   transclude: {
     importantSlot: 'importantComponent', // mandatory transclusion

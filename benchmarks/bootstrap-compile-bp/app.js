@@ -1,9 +1,9 @@
-'use strict';
 
-var app = angular.module('boostrapCompileBenchmark', []);
 
-var commentDirectivesEnabled;
-var cssClassDirectivesEnabled;
+let app = angular.module('boostrapCompileBenchmark', []);
+
+let commentDirectivesEnabled;
+let cssClassDirectivesEnabled;
 
 app.config(function($compileProvider) {
   $compileProvider.debugInfoEnabled(false);
@@ -40,12 +40,12 @@ app.config(function($compileProvider) {
   this.loadTemplate();
 
 
-  var linkers = [];
+  let linkers = [];
   benchmarkSteps.push({
     name: 'create',
     fn: function() {
-      for (var i = 0; i < this.repeats; i++) {
-        var linker = $compile(this.html);
+      for (let i = 0; i < this.repeats; i++) {
+        let linker = $compile(this.html);
         linkers.push(linker);
       }
     }.bind(this)

@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngAnimateChildren
@@ -78,12 +76,12 @@
     </file>
   </example>
  */
-var $$AnimateChildrenDirective = [
+let $$AnimateChildrenDirective = [
   "$interpolate",
   function ($interpolate) {
     return {
       link: function (scope, element, attrs) {
-        var val = attrs.ngAnimateChildren;
+        let val = attrs.ngAnimateChildren;
         if (isString(val) && val.length === 0) {
           //empty attribute
           element.data(NG_ANIMATE_CHILDREN_DATA, true);

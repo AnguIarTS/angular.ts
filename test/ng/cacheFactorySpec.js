@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('$cacheFactory', function() {
 
@@ -8,8 +8,8 @@ describe('$cacheFactory', function() {
 
 
   it('should return a new cache whenever called', inject(function($cacheFactory) {
-    var cache1 = $cacheFactory('cache1');
-    var cache2 = $cacheFactory('cache2');
+    let cache1 = $cacheFactory('cache1');
+    let cache2 = $cacheFactory('cache2');
     expect(cache1).not.toEqual(cache2);
   }));
 
@@ -26,7 +26,7 @@ describe('$cacheFactory', function() {
     it('should provide info about all created caches', inject(function($cacheFactory) {
       expect($cacheFactory.info()).toEqual({});
 
-      var cache1 = $cacheFactory('cache1');
+      let cache1 = $cacheFactory('cache1');
       expect($cacheFactory.info()).toEqual({cache1: {id: 'cache1', size: 0}});
 
       cache1.put('foo', 'bar');
@@ -38,7 +38,7 @@ describe('$cacheFactory', function() {
   describe('get', function() {
 
     it('should return a cache if looked up by id', inject(function($cacheFactory) {
-      var cache1 = $cacheFactory('cache1'),
+      let cache1 = $cacheFactory('cache1'),
           cache2 = $cacheFactory('cache2');
 
       expect(cache1).not.toBe(cache2);
@@ -48,7 +48,7 @@ describe('$cacheFactory', function() {
   });
 
   describe('cache', function() {
-    var cache;
+    let cache;
 
     beforeEach(inject(function($cacheFactory) {
       cache = $cacheFactory('test');
@@ -109,7 +109,7 @@ describe('$cacheFactory', function() {
 
 
       it('should return value from put', inject(function($cacheFactory) {
-        var obj = {};
+        let obj = {};
         expect(cache.put('k1', obj)).toBe(obj);
       }));
     });
@@ -191,10 +191,10 @@ describe('$cacheFactory', function() {
   describe('LRU cache', function() {
 
     it('should create cache with defined capacity', inject(function($cacheFactory) {
-      var cache = $cacheFactory('cache1', {capacity: 5});
+      let cache = $cacheFactory('cache1', {capacity: 5});
       expect(cache.info().size).toBe(0);
 
-      for (var i = 0; i < 5; i++) {
+      for (let i = 0; i < 5; i++) {
         cache.put('id' + i, i);
       }
 
@@ -208,7 +208,7 @@ describe('$cacheFactory', function() {
 
 
     describe('eviction', function() {
-      var cache;
+      let cache;
 
       beforeEach(inject(function($cacheFactory) {
         cache = $cacheFactory('cache1', {capacity: 2});

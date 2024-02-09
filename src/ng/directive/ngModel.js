@@ -1,5 +1,3 @@
-"use strict";
-
 /* global VALID_CLASS: true,
   INVALID_CLASS: true,
   PRISTINE_CLASS: true,
@@ -12,7 +10,7 @@
   defaultModelOptions: false
 */
 
-var VALID_CLASS = "ng-valid",
+let VALID_CLASS = "ng-valid",
   INVALID_CLASS = "ng-invalid",
   PRISTINE_CLASS = "ng-pristine",
   DIRTY_CLASS = "ng-dirty",
@@ -21,7 +19,7 @@ var VALID_CLASS = "ng-valid",
   EMPTY_CLASS = "ng-empty",
   NOT_EMPTY_CLASS = "ng-not-empty";
 
-var ngModelMinErr = minErr("ngModel");
+let ngModelMinErr = minErr("ngModel");
 
 /**
  * @ngdoc type
@@ -90,7 +88,7 @@ var ngModelMinErr = minErr("ngModel");
  *
  * ```js
  * ngModel.$validators.validCharacters = function(modelValue, viewValue) {
- *   var value = modelValue || viewValue;
+ *   let value = modelValue || viewValue;
  *   return /[0-9]+/.test(value) &&
  *          /[a-z]+/.test(value) &&
  *          /[A-Z]+/.test(value) &&
@@ -112,7 +110,7 @@ var ngModelMinErr = minErr("ngModel");
  *
  * ```js
  * ngModel.$asyncValidators.uniqueUsername = function(modelValue, viewValue) {
- *   var value = modelValue || viewValue;
+ *   let value = modelValue || viewValue;
  *
  *   // Lookup user by username
  *   return $http.get('/api/users/' + value).
@@ -204,7 +202,7 @@ var ngModelMinErr = minErr("ngModel");
 
               // Write data to the model
               function read() {
-                var html = element.html();
+                let html = element.html();
                 // When we clear the content editable the browser leaves a <br> behind
                 // If strip-br attribute is provided then we strip this out
                 if (attrs.stripBr && html === '<br>') {
@@ -234,8 +232,8 @@ var ngModelMinErr = minErr("ngModel");
         // and Firefox driver can't clear contenteditables very well
         return;
       }
-      var contentEditable = element(by.css('[contenteditable]'));
-      var content = 'Change me!';
+      let contentEditable = element(by.css('[contenteditable]'));
+      let content = 'Change me!';
 
       expect(contentEditable.getText()).toEqual(content);
 
@@ -322,11 +320,11 @@ function NgModelController(
 NgModelController.prototype = {
   $$initGetterSetters: function () {
     if (this.$options.getOption("getterSetter")) {
-      var invokeModelGetter = this.$$parse(this.$$attr.ngModel + "()"),
+      let invokeModelGetter = this.$$parse(this.$$attr.ngModel + "()"),
         invokeModelSetter = this.$$parse(this.$$attr.ngModel + "($$$p)");
 
       this.$$ngModelGet = function ($scope) {
-        var modelValue = this.$$parsedNgModel($scope);
+        let modelValue = this.$$parsedNgModel($scope);
         if (isFunction(modelValue)) {
           modelValue = invokeModelGetter($scope);
         }
@@ -591,19 +589,19 @@ NgModelController.prototype = {
       return;
     }
 
-    var viewValue = this.$$lastCommittedViewValue;
+    let viewValue = this.$$lastCommittedViewValue;
     // Note: we use the $$rawModelValue as $modelValue might have been
     // set to undefined during a view -> model update that found validation
     // errors. We can't parse the view here, since that could change
     // the model although neither viewValue nor the model on the scope changed
-    var modelValue = this.$$rawModelValue;
+    let modelValue = this.$$rawModelValue;
 
-    var prevValid = this.$valid;
-    var prevModelValue = this.$modelValue;
+    let prevValid = this.$valid;
+    let prevModelValue = this.$modelValue;
 
-    var allowInvalid = this.$options.getOption("allowInvalid");
+    let allowInvalid = this.$options.getOption("allowInvalid");
 
-    var that = this;
+    let that = this;
     this.$$runValidators(modelValue, viewValue, function (allValid) {
       // If there was no change in validity, don't update the model
       // This prevents changing an invalid modelValue to undefined
@@ -623,8 +621,8 @@ NgModelController.prototype = {
 
   $$runValidators: function (modelValue, viewValue, doneCallback) {
     this.$$currentValidationRunId++;
-    var localValidationRunId = this.$$currentValidationRunId;
-    var that = this;
+    let localValidationRunId = this.$$currentValidationRunId;
+    let that = this;
 
     // check parser error
     if (!processParseErrors()) {
@@ -638,7 +636,7 @@ NgModelController.prototype = {
     processAsyncValidators();
 
     function processParseErrors() {
-      var errorKey = that.$$parserName;
+      let errorKey = that.$$parserName;
 
       if (isUndefined(that.$$parserValid)) {
         setValidity(errorKey, null);
@@ -660,9 +658,9 @@ NgModelController.prototype = {
     }
 
     function processSyncValidators() {
-      var syncValidatorsValid = true;
+      let syncValidatorsValid = true;
       forEach(that.$validators, function (validator, name) {
-        var result = Boolean(validator(modelValue, viewValue));
+        let result = Boolean(validator(modelValue, viewValue));
         syncValidatorsValid = syncValidatorsValid && result;
         setValidity(name, result);
       });
@@ -676,10 +674,10 @@ NgModelController.prototype = {
     }
 
     function processAsyncValidators() {
-      var validatorPromises = [];
-      var allValid = true;
+      let validatorPromises = [];
+      let allValid = true;
       forEach(that.$asyncValidators, function (validator, name) {
-        var promise = validator(modelValue, viewValue);
+        let promise = validator(modelValue, viewValue);
         if (!isPromiseLike(promise)) {
           throw ngModelMinErr(
             "nopromise",
@@ -734,7 +732,7 @@ NgModelController.prototype = {
    * usually handles calling this in response to input events.
    */
   $commitViewValue: function () {
-    var viewValue = this.$viewValue;
+    let viewValue = this.$viewValue;
 
     this.$$timeout.cancel(this.$$pendingDebounce);
 
@@ -758,9 +756,9 @@ NgModelController.prototype = {
   },
 
   $$parseAndValidate: function () {
-    var viewValue = this.$$lastCommittedViewValue;
-    var modelValue = viewValue;
-    var that = this;
+    let viewValue = this.$$lastCommittedViewValue;
+    let modelValue = viewValue;
+    let that = this;
 
     this.$$parserValid = isUndefined(modelValue) ? undefined : true;
 
@@ -769,7 +767,7 @@ NgModelController.prototype = {
     this.$$parserName = "parse";
 
     if (this.$$parserValid) {
-      for (var i = 0; i < this.$parsers.length; i++) {
+      for (let i = 0; i < this.$parsers.length; i++) {
         modelValue = this.$parsers[i](modelValue);
         if (isUndefined(modelValue)) {
           this.$$parserValid = false;
@@ -781,8 +779,8 @@ NgModelController.prototype = {
       // this.$modelValue has not been touched yet...
       this.$modelValue = this.$$ngModelGet(this.$$scope);
     }
-    var prevModelValue = this.$modelValue;
-    var allowInvalid = this.$options.getOption("allowInvalid");
+    let prevModelValue = this.$modelValue;
+    let allowInvalid = this.$options.getOption("allowInvalid");
     this.$$rawModelValue = modelValue;
 
     if (allowInvalid) {
@@ -889,7 +887,7 @@ NgModelController.prototype = {
   },
 
   $$debounceViewValueCommit: function (trigger) {
-    var debounceDelay = this.$options.getOption("debounce");
+    let debounceDelay = this.$options.getOption("debounce");
 
     if (isNumber(debounceDelay[trigger])) {
       debounceDelay = debounceDelay[trigger];
@@ -903,7 +901,7 @@ NgModelController.prototype = {
     }
 
     this.$$timeout.cancel(this.$$pendingDebounce);
-    var that = this;
+    let that = this;
     if (debounceDelay > 0) {
       // this fails if debounceDelay is an object
       this.$$pendingDebounce = this.$$timeout(function () {
@@ -1019,8 +1017,8 @@ NgModelController.prototype = {
           },
           templateUrl: 'autocomplete.html',
           controller: function($element, $scope) {
-            var that = this;
-            var ngModel;
+            let that = this;
+            let ngModel;
 
             that.$postLink = function() {
               ngModel = $element.find('input').controller('ngModel');
@@ -1030,8 +1028,8 @@ NgModelController.prototype = {
               });
 
               ngModel.$parsers.push(function(value) {
-                var match = value;
-                for (var i = 0; i < that.items.length; i++) {
+                let match = value;
+                for (let i = 0; i < that.items.length; i++) {
                   if (that.items[i].name === value) {
                     match = that.items[i];
                     break;
@@ -1064,7 +1062,7 @@ NgModelController.prototype = {
    *
    */
   $processModelValue: function () {
-    var viewValue = this.$$format();
+    let viewValue = this.$$format();
 
     if (this.$viewValue !== viewValue) {
       this.$$updateEmptyClasses(viewValue);
@@ -1079,10 +1077,10 @@ NgModelController.prototype = {
    * This method is called internally to run the $formatters on the $modelValue
    */
   $$format: function () {
-    var formatters = this.$formatters,
+    let formatters = this.$formatters,
       idx = formatters.length;
 
-    var viewValue = this.$modelValue;
+    let viewValue = this.$modelValue;
     while (idx--) {
       viewValue = formatters[idx](viewValue);
     }
@@ -1125,7 +1123,7 @@ function setupModelWatcher(ctrl) {
   //       ng-change executes in apply phase
   // 4. view should be changed back to 'a'
   ctrl.$$scope.$watch(function ngModelWatch(scope) {
-    var modelValue = ctrl.$$ngModelGet(scope);
+    let modelValue = ctrl.$$ngModelGet(scope);
 
     // if scope model value and ngModel value are out of sync
     // This cannot be moved to the action function, because it would not catch the
@@ -1349,7 +1347,7 @@ addSetValidityMethod({
      <file name="app.js">
        angular.module('getterSetterExample', [])
          .controller('ExampleController', ['$scope', function($scope) {
-           var _name = 'Brian';
+           let _name = 'Brian';
            $scope.user = {
              name: function(newName) {
               // Note that newName can be undefined for two reasons:
@@ -1363,7 +1361,7 @@ addSetValidityMethod({
      </file>
  * </example>
  */
-var ngModelDirective = [
+let ngModelDirective = [
   "$rootScope",
   function ($rootScope) {
     return {
@@ -1383,7 +1381,7 @@ var ngModelDirective = [
 
         return {
           pre: function ngModelPreLink(scope, element, attr, ctrls) {
-            var modelCtrl = ctrls[0],
+            let modelCtrl = ctrls[0],
               formCtrl = ctrls[1] || modelCtrl.$$parentForm,
               optionsCtrl = ctrls[2];
 
@@ -1407,7 +1405,7 @@ var ngModelDirective = [
             });
           },
           post: function ngModelPostLink(scope, element, attr, ctrls) {
-            var modelCtrl = ctrls[0];
+            let modelCtrl = ctrls[0];
             modelCtrl.$$setUpdateOnEvents();
 
             function setTouched() {

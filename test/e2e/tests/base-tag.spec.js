@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('SCE URL policy when base tags are present', function() {
   beforeEach(function() {
@@ -32,7 +32,7 @@ describe('SCE URL policy when base tags are present', function() {
 
   // Helpers
   function expectToBeTrusted(url, isTrusted) {
-    var urlIsTrusted = browser.executeScript('return isTrustedUrl(arguments[0])', url);
+    let urlIsTrusted = browser.executeScript('return isTrustedUrl(arguments[0])', url);
     expect(urlIsTrusted).toBe(isTrusted);
   }
 });

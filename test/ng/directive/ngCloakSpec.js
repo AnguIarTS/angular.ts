@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('ngCloak', function() {
-  var element;
+  let element;
 
 
   afterEach(function() {

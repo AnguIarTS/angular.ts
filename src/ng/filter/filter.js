@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc filter
  * @name filter
@@ -100,7 +98,7 @@
        </table>
      </file>
      <file name="protractor.js" type="protractor">
-       var expectFriendNames = function(expectedNames, key) {
+       let expectFriendNames = function(expectedNames, key) {
          element.all(by.repeater(key + ' in friends').column(key + '.name')).then(function(arr) {
            arr.forEach(function(wd, i) {
              expect(wd.getText()).toMatch(expectedNames[i]);
@@ -109,7 +107,7 @@
        };
 
        it('should search across all fields when filtering with a string', function() {
-         var searchText = element(by.model('searchText'));
+         let searchText = element(by.model('searchText'));
          searchText.clear();
          searchText.sendKeys('m');
          expectFriendNames(['Mary', 'Mike', 'Adam'], 'friend');
@@ -120,14 +118,14 @@
        });
 
        it('should search in specific fields when filtering with a predicate object', function() {
-         var searchAny = element(by.model('search.$'));
+         let searchAny = element(by.model('search.$'));
          searchAny.clear();
          searchAny.sendKeys('i');
          expectFriendNames(['Mary', 'Mike', 'Julie', 'Juliette'], 'friendObj');
        });
        it('should use a equal comparison when comparator is true', function() {
-         var searchName = element(by.model('search.name'));
-         var strict = element(by.model('strict'));
+         let searchName = element(by.model('search.name'));
+         let strict = element(by.model('strict'));
          searchName.clear();
          searchName.sendKeys('Julie');
          strict.click();
@@ -152,9 +150,9 @@ function filterFilter() {
     }
 
     anyPropertyKey = anyPropertyKey || "$";
-    var expressionType = getTypeForFilter(expression);
-    var predicateFn;
-    var matchAgainstAnyProp;
+    let expressionType = getTypeForFilter(expression);
+    let predicateFn;
+    let matchAgainstAnyProp;
 
     switch (expressionType) {
       case "function":
@@ -189,9 +187,9 @@ function createPredicateFn(
   anyPropertyKey,
   matchAgainstAnyProp,
 ) {
-  var shouldMatchPrimitives =
+  let shouldMatchPrimitives =
     isObject(expression) && anyPropertyKey in expression;
-  var predicateFn;
+  let predicateFn;
 
   if (comparator === true) {
     comparator = equals;
@@ -249,8 +247,8 @@ function deepCompare(
   matchAgainstAnyProp,
   dontMatchWholeObject,
 ) {
-  var actualType = getTypeForFilter(actual);
-  var expectedType = getTypeForFilter(expected);
+  let actualType = getTypeForFilter(actual);
+  let expectedType = getTypeForFilter(expected);
 
   if (expectedType === "string" && expected.charAt(0) === "!") {
     return !deepCompare(
@@ -276,7 +274,7 @@ function deepCompare(
 
   switch (actualType) {
     case "object":
-      var key;
+      let key;
       if (matchAgainstAnyProp) {
         for (key in actual) {
           // Under certain, rare, circumstances, key may not be a string and `charAt` will be undefined
@@ -294,13 +292,13 @@ function deepCompare(
           : deepCompare(actual, expected, comparator, anyPropertyKey, false);
       } else if (expectedType === "object") {
         for (key in expected) {
-          var expectedVal = expected[key];
+          let expectedVal = expected[key];
           if (isFunction(expectedVal) || isUndefined(expectedVal)) {
             continue;
           }
 
-          var matchAnyProperty = key === anyPropertyKey;
-          var actualVal = matchAnyProperty ? actual : actual[key];
+          let matchAnyProperty = key === anyPropertyKey;
+          let actualVal = matchAnyProperty ? actual : actual[key];
           if (
             !deepCompare(
               actualVal,

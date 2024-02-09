@@ -1,8 +1,6 @@
-"use strict";
-
 /* global -nullFormCtrl, -PENDING_CLASS, -SUBMITTED_CLASS
  */
-var nullFormCtrl = {
+let nullFormCtrl = {
     $addControl: noop,
     $getControls: valueFn([]),
     $$renameControl: nullFormRenameControl,
@@ -192,7 +190,7 @@ FormController.prototype = {
 
   // Private API: rename a form control
   $$renameControl: function (control, newName) {
-    var oldName = control.$name;
+    let oldName = control.$name;
 
     if (this[oldName] === control) {
       delete this[oldName];
@@ -326,7 +324,7 @@ FormController.prototype = {
    * parent forms of the form.
    */
   $setSubmitted: function () {
-    var rootForm = this;
+    let rootForm = this;
     while (rootForm.$$parentForm && rootForm.$$parentForm !== nullFormCtrl) {
       rootForm = rootForm.$$parentForm;
     }
@@ -371,18 +369,18 @@ FormController.prototype = {
 addSetValidityMethod({
   clazz: FormController,
   set: function (object, property, controller) {
-    var list = object[property];
+    let list = object[property];
     if (!list) {
       object[property] = [controller];
     } else {
-      var index = list.indexOf(controller);
+      let index = list.indexOf(controller);
       if (index === -1) {
         list.push(controller);
       }
     }
   },
   unset: function (object, property, controller) {
-    var list = object[property];
+    let list = object[property];
     if (!list) {
       return;
     }
@@ -534,17 +532,17 @@ addSetValidityMethod({
       </file>
       <file name="protractor.js" type="protractor">
         it('should initialize to model', function() {
-          var userType = element(by.binding('userType'));
-          var valid = element(by.binding('myForm.input.$valid'));
+          let userType = element(by.binding('userType'));
+          let valid = element(by.binding('myForm.input.$valid'));
 
           expect(userType.getText()).toContain('guest');
           expect(valid.getText()).toContain('true');
         });
 
         it('should be invalid if empty', function() {
-          var userType = element(by.binding('userType'));
-          var valid = element(by.binding('myForm.input.$valid'));
-          var userInput = element(by.model('userType'));
+          let userType = element(by.binding('userType'));
+          let valid = element(by.binding('myForm.input.$valid'));
+          let userInput = element(by.model('userType'));
 
           userInput.clear();
           userInput.sendKeys('');
@@ -558,12 +556,12 @@ addSetValidityMethod({
  * @param {string=} name Name of the form. If specified, the form controller will be published into
  *                       related scope, under this name.
  */
-var formDirectiveFactory = function (isNgForm) {
+let formDirectiveFactory = function (isNgForm) {
   return [
     "$timeout",
     "$parse",
     function ($timeout, $parse) {
-      var formDirective = {
+      let formDirective = {
         name: "form",
         restrict: isNgForm ? "EAC" : "E",
         require: ["form", "^^?form"], //first is the form's own ctrl, second is an optional parent form
@@ -572,7 +570,7 @@ var formDirectiveFactory = function (isNgForm) {
           // Setup initial state of the control
           formElement.addClass(PRISTINE_CLASS).addClass(VALID_CLASS);
 
-          var nameAttr = attr.name
+          let nameAttr = attr.name
             ? "name"
             : isNgForm && attr.ngForm
               ? "ngForm"
@@ -580,7 +578,7 @@ var formDirectiveFactory = function (isNgForm) {
 
           return {
             pre: function ngFormPreLink(scope, formElement, attr, ctrls) {
-              var controller = ctrls[0];
+              let controller = ctrls[0];
 
               // if `action` attr is not present on the form, prevent the default action (submission)
               if (!("action" in attr)) {
@@ -590,7 +588,7 @@ var formDirectiveFactory = function (isNgForm) {
                 // IE 9 is not affected because it doesn't fire a submit event and try to do a full
                 // page reload if the form was destroyed by submission of the form via a click handler
                 // on a button in the form. Looks like an IE9 specific bug.
-                var handleFormSubmission = function (event) {
+                let handleFormSubmission = function (event) {
                   scope.$apply(function () {
                     controller.$commitViewValue();
                     controller.$setSubmitted();
@@ -617,10 +615,10 @@ var formDirectiveFactory = function (isNgForm) {
                 });
               }
 
-              var parentFormCtrl = ctrls[1] || controller.$$parentForm;
+              let parentFormCtrl = ctrls[1] || controller.$$parentForm;
               parentFormCtrl.$addControl(controller);
 
-              var setter = nameAttr ? getSetter(controller.$name) : noop;
+              let setter = nameAttr ? getSetter(controller.$name) : noop;
 
               if (nameAttr) {
                 setter(scope, controller);
@@ -655,8 +653,8 @@ var formDirectiveFactory = function (isNgForm) {
   ];
 };
 
-var formDirective = formDirectiveFactory();
-var ngFormDirective = formDirectiveFactory(true);
+let formDirective = formDirectiveFactory();
+let ngFormDirective = formDirectiveFactory(true);
 
 // helper methods
 function setupValidity(instance) {
@@ -665,7 +663,7 @@ function setupValidity(instance) {
     instance.$$element.hasClass(VALID_CLASS));
 }
 function addSetValidityMethod(context) {
-  var clazz = context.clazz,
+  let clazz = context.clazz,
     set = context.set,
     unset = context.unset;
 
@@ -706,7 +704,7 @@ function addSetValidityMethod(context) {
     // combined state in this.$error[validationError] (used for forms),
     // where setting/unsetting only increments/decrements the value,
     // and does not replace it.
-    var combinedState;
+    let combinedState;
     if (this.$pending && this.$pending[validationErrorKey]) {
       combinedState = undefined;
     } else if (this.$error[validationErrorKey]) {
@@ -763,7 +761,7 @@ function addSetValidityMethod(context) {
 
 function isObjectEmpty(obj) {
   if (obj) {
-    for (var prop in obj) {
+    for (let prop in obj) {
       if (obj.hasOwnProperty(prop)) {
         return false;
       }

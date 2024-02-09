@@ -1,5 +1,3 @@
-"use strict";
-
 // NOTE: ADVANCED_OPTIMIZATIONS mode.
 //
 // This file is compiled with Closure compiler's ADVANCED_OPTIMIZATIONS flag! Be wary of using
@@ -14,7 +12,7 @@
  * @private
  */
 function MessageSelectorBase(expressionFn, choices) {
-  var self = this;
+  let self = this;
   this.expressionFn = expressionFn;
   this.choices = choices;
   if (choices["other"] === undefined) {
@@ -47,7 +45,7 @@ MessageSelectorBase.prototype.watchDelegate = function watchDelegate(
   listener,
   objectEquality,
 ) {
-  var watchers = new MessageSelectorWatchers(
+  let watchers = new MessageSelectorWatchers(
     this,
     scope,
     listener,
@@ -63,14 +61,14 @@ MessageSelectorBase.prototype.watchDelegate = function watchDelegate(
  * @private
  */
 function MessageSelectorWatchers(msgSelector, scope, listener, objectEquality) {
-  var self = this;
+  let self = this;
   this.scope = scope;
   this.msgSelector = msgSelector;
   this.listener = listener;
   this.objectEquality = objectEquality;
   this.lastMessage = undefined;
   this.messageFnWatcher = noop;
-  var expressionFnListener = function (newValue, oldValue) {
+  let expressionFnListener = function (newValue, oldValue) {
     return self.expressionFnListener(newValue, oldValue);
   };
   this.expressionFnWatcher = scope["$watch"](
@@ -82,12 +80,12 @@ function MessageSelectorWatchers(msgSelector, scope, listener, objectEquality) {
 
 MessageSelectorWatchers.prototype.expressionFnListener =
   function expressionFnListener(newValue, oldValue) {
-    var self = this;
+    let self = this;
     this.messageFnWatcher();
-    var messageFnListener = function (newMessage, oldMessage) {
+    let messageFnListener = function (newMessage, oldMessage) {
       return self.messageFnListener(newMessage, oldMessage);
     };
-    var messageFn = this.msgSelector.getMessageFn(newValue);
+    let messageFn = this.msgSelector.getMessageFn(newValue);
     this.messageFnWatcher = this.scope["$watch"](
       messageFn,
       messageFnListener,
@@ -153,7 +151,7 @@ PluralMessage.prototype.categorizeValue = function categorizePluralValue(
   } else if (this.choices[value] !== undefined) {
     return value;
   } else {
-    var category = this.pluralCat(value - this.offset);
+    let category = this.pluralCat(value - this.offset);
     return this.choices[category] !== undefined ? category : "other";
   }
 };

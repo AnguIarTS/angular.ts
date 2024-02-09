@@ -1,6 +1,6 @@
-'use strict';
 
-var exclusionRegex = /^index|examples\/|ptore2e\//;
+
+let exclusionRegex = /^index|examples\/|ptore2e\//;
 
 module.exports = function createSitemap() {
   return {

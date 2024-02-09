@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngIf
@@ -78,7 +76,7 @@
     </file>
   </example>
  */
-var ngIfDirective = [
+let ngIfDirective = [
   "$animate",
   "$compile",
   function ($animate, $compile) {
@@ -90,7 +88,7 @@ var ngIfDirective = [
       restrict: "A",
       $$tlb: true,
       link: function ($scope, $element, $attr, ctrl, $transclude) {
-        var block, childScope, previousElements;
+        let block, childScope, previousElements;
         $scope.$watch($attr.ngIf, function ngIfWatchAction(value) {
           if (value) {
             if (!childScope) {

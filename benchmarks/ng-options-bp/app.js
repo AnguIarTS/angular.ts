@@ -1,8 +1,8 @@
-'use strict';
+
 
 /* globals angular, benchmarkSteps */
 
-var app = angular.module('ngOptionsBenchmark', []);
+let app = angular.module('ngOptionsBenchmark', []);
 
 app.config(function($compileProvider) {
   if ($compileProvider.debugInfoEnabled) {
@@ -18,7 +18,7 @@ app.controller('DataController', function($scope, $element) {
 
   function changeOptions() {
     $scope.items = [];
-    for (var i = 0; i < $scope.count; ++i) {
+    for (let i = 0; i < $scope.count; ++i) {
       $scope.items.push({
         id: i,
         label: 'item-' + i,
@@ -27,7 +27,7 @@ app.controller('DataController', function($scope, $element) {
     }
   }
 
-  var selectElement = $element.find('select');
+  let selectElement = $element.find('select');
   console.log(selectElement);
 
 

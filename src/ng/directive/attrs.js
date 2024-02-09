@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngHref
@@ -343,7 +341,7 @@
  *     then special attribute "open" will be set on the element
  */
 
-var ngAttributeAliasDirectives = {};
+let ngAttributeAliasDirectives = {};
 
 // boolean attrs are evaluated
 forEach(BOOLEAN_ATTR, function (propName, attrName) {
@@ -356,8 +354,8 @@ forEach(BOOLEAN_ATTR, function (propName, attrName) {
     });
   }
 
-  var normalized = directiveNormalize("ng-" + attrName);
-  var linkFn = defaultLinkFn;
+  let normalized = directiveNormalize("ng-" + attrName);
+  let linkFn = defaultLinkFn;
 
   if (propName === "checked") {
     linkFn = function (scope, element, attr) {
@@ -386,7 +384,7 @@ forEach(ALIASED_ATTR, function (htmlAttr, ngAttr) {
         //special case ngPattern when a literal regular expression value
         //is used as the expression (this way we don't have to watch anything).
         if (ngAttr === "ngPattern" && attr.ngPattern.charAt(0) === "/") {
-          var match = attr.ngPattern.match(REGEX_STRING_REGEXP);
+          let match = attr.ngPattern.match(REGEX_STRING_REGEXP);
           if (match) {
             attr.$set("ngPattern", new RegExp(match[1], match[2]));
             return;
@@ -403,14 +401,14 @@ forEach(ALIASED_ATTR, function (htmlAttr, ngAttr) {
 
 // ng-src, ng-srcset, ng-href are interpolated
 forEach(["src", "srcset", "href"], function (attrName) {
-  var normalized = directiveNormalize("ng-" + attrName);
+  let normalized = directiveNormalize("ng-" + attrName);
   ngAttributeAliasDirectives[normalized] = [
     "$sce",
     function ($sce) {
       return {
         priority: 99, // it needs to run after the attributes are interpolated
         link: function (scope, element, attr) {
-          var propName = attrName,
+          let propName = attrName,
             name = attrName;
 
           if (
@@ -435,13 +433,6 @@ forEach(["src", "srcset", "href"], function (attrName) {
             }
 
             attr.$set(name, value);
-
-            // Support: IE 9-11 only
-            // On IE, if "ng:src" directive declaration is used and "src" attribute doesn't exist
-            // then calling element.setAttribute('src', 'foo') doesn't do anything, so we need
-            // to set the property as well to achieve the desired effect.
-            // We use attr[attrName] value since $set might have sanitized the url.
-            if (msie && propName) element.prop(propName, attr[name]);
           });
         },
       };

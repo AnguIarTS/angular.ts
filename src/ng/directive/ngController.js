@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngController
@@ -98,7 +96,7 @@
  *    };
  *
  *    SettingsController1.prototype.removeContact = function(contactToRemove) {
- *     var index = this.contacts.indexOf(contactToRemove);
+ *     let index = this.contacts.indexOf(contactToRemove);
  *      this.contacts.splice(index, 1);
  *    };
  *
@@ -109,13 +107,13 @@
  *   </file>
  *   <file name="protractor.js" type="protractor">
  *     it('should check controller as', function() {
- *       var container = element(by.id('ctrl-as-exmpl'));
+ *       let container = element(by.id('ctrl-as-exmpl'));
  *         expect(container.element(by.model('settings.name'))
  *           .getAttribute('value')).toBe('John Smith');
  *
- *       var firstRepeat =
+ *       let firstRepeat =
  *           container.element(by.repeater('contact in settings.contacts').row(0));
- *       var secondRepeat =
+ *       let secondRepeat =
  *           container.element(by.repeater('contact in settings.contacts').row(1));
  *
  *       expect(firstRepeat.element(by.model('contact.value')).getAttribute('value'))
@@ -181,7 +179,7 @@
  *     };
  *
  *     $scope.removeContact = function(contactToRemove) {
- *       var index = $scope.contacts.indexOf(contactToRemove);
+ *       let index = $scope.contacts.indexOf(contactToRemove);
  *       $scope.contacts.splice(index, 1);
  *     };
  *
@@ -193,14 +191,14 @@
  *  </file>
  *  <file name="protractor.js" type="protractor">
  *    it('should check controller', function() {
- *      var container = element(by.id('ctrl-exmpl'));
+ *      let container = element(by.id('ctrl-exmpl'));
  *
  *      expect(container.element(by.model('name'))
  *          .getAttribute('value')).toBe('John Smith');
  *
- *      var firstRepeat =
+ *      let firstRepeat =
  *          container.element(by.repeater('contact in contacts').row(0));
- *      var secondRepeat =
+ *      let secondRepeat =
  *          container.element(by.repeater('contact in contacts').row(1));
  *
  *      expect(firstRepeat.element(by.model('contact.value')).getAttribute('value'))
@@ -224,7 +222,7 @@
  *</example>
 
  */
-var ngControllerDirective = [
+let ngControllerDirective = [
   function () {
     return {
       restrict: "A",

@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('linky', function() {
-  var linky;
+  let linky;
 
   beforeEach(module('ngSanitize'));
 
@@ -117,14 +117,14 @@ describe('linky', function() {
 
 
     it('should pass url as parameter to custom attribute function', function() {
-      var linkParameters = jasmine.createSpy('linkParameters').and.returnValue({'class': 'blue'});
+      let linkParameters = jasmine.createSpy('linkParameters').and.returnValue({'class': 'blue'});
       linky('http://example.com', '_self', linkParameters);
       expect(linkParameters).toHaveBeenCalledWith('http://example.com');
     });
 
 
     it('should call the attribute function for all links in the input', function() {
-      var attributeFn = jasmine.createSpy('attributeFn').and.returnValue({});
+      let attributeFn = jasmine.createSpy('attributeFn').and.returnValue({});
       linky('http://example.com and http://google.com', '_self', attributeFn);
       expect(attributeFn.calls.allArgs()).toEqual([['http://example.com'], ['http://google.com']]);
     });

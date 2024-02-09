@@ -1,4 +1,4 @@
-'use strict';
+
 
 angular.module('search', [])
 
@@ -10,11 +10,11 @@ angular.module('search', [])
   }
 
   $scope.search = function(q) {
-    var MIN_SEARCH_LENGTH = 2;
+    let MIN_SEARCH_LENGTH = 2;
     if (q.length >= MIN_SEARCH_LENGTH) {
       docsSearch(q).then(function(hits) {
         // Make sure the areas are always in the same order
-        var results = {
+        let results = {
           api: [],
           guide: [],
           tutorial: [],
@@ -23,16 +23,16 @@ angular.module('search', [])
         };
 
         angular.forEach(hits, function(hit) {
-          var area = hit.area;
+          let area = hit.area;
 
-          var limit = (area === 'api') ? 40 : 14;
+          let limit = (area === 'api') ? 40 : 14;
           results[area] = results[area] || [];
           if (results[area].length < limit) {
             results[area].push(hit);
           }
         });
 
-        var totalAreas = Object.keys(results).length;
+        let totalAreas = Object.keys(results).length;
         if (totalAreas > 0) {
           $scope.colClassName = 'cols-' + totalAreas;
         }
@@ -46,11 +46,11 @@ angular.module('search', [])
   };
 
   $scope.submit = function() {
-    var result;
+    let result;
     if ($scope.results.api) {
       result = $scope.results.api[0];
     } else {
-      for (var i in $scope.results) {
+      for (let i in $scope.results) {
         result = $scope.results[i][0];
         if (result) {
           break;
@@ -81,7 +81,7 @@ angular.module('search', [])
   docsSearch($location.path().split(/[/.:]/).pop()).then(function(results) {
     $scope.results = {};
     angular.forEach(results, function(result) {
-      var area = $scope.results[result.area] || [];
+      let area = $scope.results[result.area] || [];
       area.push(result);
       $scope.results[result.area] = area;
     });
@@ -101,7 +101,7 @@ angular.module('search', [])
     }
 
     // Create the lunr index
-    var index = lunr(/** @this */ function() {
+    let index = lunr(/** @this */ function() {
       this.ref('path');
       this.field('titleWords', {boost: 50});
       this.field('members', { boost: 40});
@@ -109,8 +109,8 @@ angular.module('search', [])
     });
 
     // Delay building the index by loading the data asynchronously
-    var indexReadyPromise = $http.get('js/search-data.json').then(function(response) {
-      var searchData = response.data;
+    let indexReadyPromise = $http.get('js/search-data.json').then(function(response) {
+      let searchData = response.data;
       // Delay building the index for 500ms to allow the page to render
       return $timeout(function() {
         // load the page data into the index
@@ -126,8 +126,8 @@ angular.module('search', [])
     // inherently an async process)
     return function(q) {
       return indexReadyPromise.then(function() {
-        var hits = index.search(q);
-        var results = [];
+        let hits = index.search(q);
+        let results = [];
         angular.forEach(hits, function(hit) {
           results.push(NG_PAGES[hit.ref]);
         });
@@ -146,10 +146,10 @@ angular.module('search', [])
       window.console.log('Using WebWorker Search Index');
     }
 
-    var searchIndex = $q.defer();
-    var results;
+    let searchIndex = $q.defer();
+    let results;
 
-    var worker = new window.Worker('js/search-worker.js');
+    let worker = new window.Worker('js/search-worker.js');
 
     // The worker will send us a message in two situations:
     // - when the index has been built, ready to run a query
@@ -162,7 +162,7 @@ angular.module('search', [])
             searchIndex.resolve();
             break;
           case 'query-ready':
-            var pages = oEvent.data.d.map(function(path) {
+            let pages = oEvent.data.d.map(function(path) {
               return NG_PAGES[path];
             });
             results.resolve(pages);
@@ -210,10 +210,10 @@ angular.module('search', [])
 
 .directive('docsSearchInput', ['$document', function($document) {
   return function(scope, element, attrs) {
-    var ESCAPE_KEY_KEYCODE = 27,
+    let ESCAPE_KEY_KEYCODE = 27,
         FORWARD_SLASH_KEYCODE = 191;
     angular.element($document[0].body).on('keydown', function(event) {
-      var input = element[0];
+      let input = element[0];
       if (event.keyCode === FORWARD_SLASH_KEYCODE && $document[0].activeElement !== input) {
         event.stopPropagation();
         event.preventDefault();

@@ -1,7 +1,5 @@
-"use strict";
-
-var NG_HIDE_CLASS = "ng-hide";
-var NG_HIDE_IN_PROGRESS_CLASS = "ng-hide-animate";
+let NG_HIDE_CLASS = "ng-hide";
+let NG_HIDE_IN_PROGRESS_CLASS = "ng-hide-animate";
 /**
  * @ngdoc directive
  * @name ngShow
@@ -118,8 +116,8 @@ var NG_HIDE_IN_PROGRESS_CLASS = "ng-hide-animate";
     </file>
     <file name="protractor.js" type="protractor">
       it('should check ngShow', function() {
-        var checkbox = element(by.model('checked'));
-        var checkElem = element(by.css('.check-element'));
+        let checkbox = element(by.model('checked'));
+        let checkElem = element(by.css('.check-element'));
 
         expect(checkElem.isDisplayed()).toBe(false);
         checkbox.click();
@@ -173,8 +171,8 @@ var NG_HIDE_IN_PROGRESS_CLASS = "ng-hide-animate";
     </file>
     <file name="protractor.js" type="protractor">
       it('should check ngShow', function() {
-        var checkbox = element(by.model('checked'));
-        var checkElem = element(by.css('.check-element'));
+        let checkbox = element(by.model('checked'));
+        let checkElem = element(by.css('.check-element'));
 
         expect(checkElem.isDisplayed()).toBe(false);
         checkbox.click();
@@ -202,7 +200,7 @@ var NG_HIDE_IN_PROGRESS_CLASS = "ng-hide-animate";
  * - Use `ng-class="{'ng-hide': expression}` instead of instead of {@link ngShow} / {@link ngHide}.
  * - Define an animation on the affected elements.
  */
-var ngShowDirective = [
+let ngShowDirective = [
   "$animate",
   function ($animate) {
     return {
@@ -339,8 +337,8 @@ var ngShowDirective = [
     </file>
     <file name="protractor.js" type="protractor">
       it('should check ngHide', function() {
-        var checkbox = element(by.model('checked'));
-        var checkElem = element(by.css('.check-element'));
+        let checkbox = element(by.model('checked'));
+        let checkElem = element(by.css('.check-element'));
 
         expect(checkElem.isDisplayed()).toBe(true);
         checkbox.click();
@@ -394,8 +392,8 @@ var ngShowDirective = [
     </file>
     <file name="protractor.js" type="protractor">
       it('should check ngHide', function() {
-        var checkbox = element(by.model('checked'));
-        var checkElem = element(by.css('.check-element'));
+        let checkbox = element(by.model('checked'));
+        let checkElem = element(by.css('.check-element'));
 
         expect(checkElem.isDisplayed()).toBe(true);
         checkbox.click();
@@ -423,7 +421,7 @@ var ngShowDirective = [
  * - Use `ng-class="{'ng-hide': expression}` instead of instead of {@link ngShow} / {@link ngHide}.
  * - Define an animation on the affected elements.
  */
-var ngHideDirective = [
+let ngHideDirective = [
   "$animate",
   function ($animate) {
     return {

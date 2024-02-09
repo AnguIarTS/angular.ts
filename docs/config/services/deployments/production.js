@@ -1,11 +1,11 @@
-'use strict';
 
-var versionInfo = require('../../../../lib/versions/version-info');
 
-var googleCdnUrl = '//ajax.googleapis.com/ajax/libs/angularjs/';
-var angularCodeUrl = '//code.angularjs.org/';
+let versionInfo = require('../../../../lib/versions/version-info');
 
-var cdnUrl = googleCdnUrl + versionInfo.cdnVersion;
+let googleCdnUrl = '//ajax.googleapis.com/ajax/libs/angularjs/';
+let angularCodeUrl = '//code.angularjs.org/';
+
+let cdnUrl = googleCdnUrl + versionInfo.cdnVersion;
 
 // The "examplesDependencyPath" here applies to the examples when they are opened in plnkr.co.
 // The embedded examples instead always include the files from the *default* deployment,
@@ -13,10 +13,10 @@ var cdnUrl = googleCdnUrl + versionInfo.cdnVersion;
 // The plnkr examples must always use the code.angularjs.org source files.
 // We cannot rely on the CDN files here, because they are not deployed by the time
 // docs.angularjs.org and code.angularjs.org need them.
-var versionPath = versionInfo.currentVersion.isSnapshot ?
+let versionPath = versionInfo.currentVersion.isSnapshot ?
   'snapshot' :
   versionInfo.currentVersion.version;
-var examplesDependencyPath = angularCodeUrl + versionPath + '/';
+let examplesDependencyPath = angularCodeUrl + versionPath + '/';
 
 module.exports = function productionDeployment(getVersion) {
   return {

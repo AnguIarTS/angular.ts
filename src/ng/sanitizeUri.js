@@ -1,12 +1,10 @@
-"use strict";
-
 /**
  * @this
  * @description
  * Private service to sanitize uris for links and images. Used by $compile and $sanitize.
  */
 function $$SanitizeUriProvider() {
-  var aHrefSanitizationTrustedUrlList = /^\s*(https?|s?ftp|mailto|tel|file):/,
+  let aHrefSanitizationTrustedUrlList = /^\s*(https?|s?ftp|mailto|tel|file):/,
     imgSrcSanitizationTrustedUrlList =
       /^\s*((https?|ftp|file|blob):|data:image\/)/;
 
@@ -71,10 +69,10 @@ function $$SanitizeUriProvider() {
   this.$get = function () {
     return function sanitizeUri(uri, isMediaUrl) {
       // if (!uri) return uri;
-      var regex = isMediaUrl
+      let regex = isMediaUrl
         ? imgSrcSanitizationTrustedUrlList
         : aHrefSanitizationTrustedUrlList;
-      var normalizedVal = urlResolve(uri && uri.trim()).href;
+      let normalizedVal = urlResolve(uri && uri.trim()).href;
       if (normalizedVal !== "" && !normalizedVal.match(regex)) {
         return "unsafe:" + normalizedVal;
       }

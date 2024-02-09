@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc module
  * @name ngCookies
@@ -58,7 +56,7 @@ angular
        *   }]);
        * ```
        **/
-      var defaults = (this.defaults = {});
+      let defaults = (this.defaults = {});
 
       function calcOptions(options) {
         return options ? angular.extend({}, defaults, options) : defaults;
@@ -85,7 +83,7 @@ angular
        * angular.module('cookiesExample', ['ngCookies'])
        *   .controller('ExampleController', ['$cookies', function($cookies) {
        *     // Retrieving a cookie
-       *     var favoriteCookie = $cookies.get('myFavorite');
+       *     let favoriteCookie = $cookies.get('myFavorite');
        *     // Setting a cookie
        *     $cookies.put('myFavorite', 'oatmeal');
        *   }]);
@@ -121,7 +119,7 @@ angular
              * @returns {Object} Deserialized cookie value.
              */
             getObject: function (key) {
-              var value = this.get(key);
+              let value = this.get(key);
               return value ? angular.fromJson(value) : value;
             },
 

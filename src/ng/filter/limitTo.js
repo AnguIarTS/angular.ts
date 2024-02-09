@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc filter
  * @name limitTo
@@ -56,12 +54,12 @@
        </div>
      </file>
      <file name="protractor.js" type="protractor">
-       var numLimitInput = element(by.model('numLimit'));
-       var letterLimitInput = element(by.model('letterLimit'));
-       var longNumberLimitInput = element(by.model('longNumberLimit'));
-       var limitedNumbers = element(by.binding('numbers | limitTo:numLimit'));
-       var limitedLetters = element(by.binding('letters | limitTo:letterLimit'));
-       var limitedLongNumber = element(by.binding('longNumber | limitTo:longNumberLimit'));
+       let numLimitInput = element(by.model('numLimit'));
+       let letterLimitInput = element(by.model('letterLimit'));
+       let longNumberLimitInput = element(by.model('longNumberLimit'));
+       let limitedNumbers = element(by.binding('numbers | limitTo:numLimit'));
+       let limitedLetters = element(by.binding('letters | limitTo:letterLimit'));
+       let limitedLongNumber = element(by.binding('longNumber | limitTo:longNumberLimit'));
 
        it('should limit the number array to first three items', function() {
          expect(numLimitInput.getAttribute('value')).toBe('3');

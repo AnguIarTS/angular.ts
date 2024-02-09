@@ -1,6 +1,6 @@
-'use strict';
 
-var converter = require('./converter.js');
+
+let converter = require('./converter.js');
 
 exports.extractNumberSymbols = extractNumberSymbols;
 exports.extractCurrencySymbols = extractCurrencySymbols;
@@ -11,7 +11,7 @@ exports.correctedLocaleId = correctedLocaleId;
 exports.findLocaleId = findLocaleId;
 exports.serializeContent = serializeContent;
 
-var goog = { provide: function() {},
+let goog = { provide: function() {},
   require: function() {},
   i18n: {currency: {}, pluralRules: {}} };
 
@@ -38,10 +38,10 @@ function extractNumberSymbols(content, localeInfo, currencySymbols) {
   //eval script in the current context so that we get access to all the symbols
   // eslint-disable-next-line no-eval
   eval(content.toString());
-  for (var propName in goog.i18n) {
-    var localeID = findLocaleId(propName, 'num');
+  for (let propName in goog.i18n) {
+    let localeID = findLocaleId(propName, 'num');
     if (localeID) {
-      var info = getInfoForLocale(localeInfo, localeID);
+      let info = getInfoForLocale(localeInfo, localeID);
       info.NUMBER_FORMATS =
           converter.convertNumberData(goog.i18n[propName], currencySymbols);
     }
@@ -52,7 +52,7 @@ function extractCurrencySymbols(content) {
   //eval script in the current context so that we get access to all the symbols
   // eslint-disable-next-line no-eval
   eval(content.toString());
-  // var currencySymbols = goog.i18n.currency.CurrencyInfo;
+  // let currencySymbols = goog.i18n.currency.CurrencyInfo;
   // currencySymbols.__proto__ = goog.i18n.currency.CurrencyInfoTier2;
 
   return Object.assign({}, goog.i18n.currency.CurrencyInfoTier2, goog.i18n.currency.CurrencyInfo);
@@ -62,10 +62,10 @@ function extractDateTimeSymbols(content, localeInfo) {
   //eval script in the current context so that we get access to all the symbols
   // eslint-disable-next-line no-eval
   eval(content.toString());
-  for (var propName in goog.i18n) {
-    var localeID = findLocaleId(propName, 'datetime');
+  for (let propName in goog.i18n) {
+    let localeID = findLocaleId(propName, 'datetime');
     if (localeID) {
-      var info = getInfoForLocale(localeInfo, localeID);
+      let info = getInfoForLocale(localeInfo, localeID);
       info.DATETIME_FORMATS =
           converter.convertDatetimeData(goog.i18n[propName]);
     }
@@ -73,9 +73,9 @@ function extractDateTimeSymbols(content, localeInfo) {
 }
 
 function pluralExtractor(content, localeInfo) {
-  var contentText = content.toString();
-  var localeIds = Object.keys(localeInfo);
-  for (var i = 0; i < localeIds.length; i++) {
+  let contentText = content.toString();
+  let localeIds = Object.keys(localeInfo);
+  for (let i = 0; i < localeIds.length; i++) {
     //We don't need to care about country ID because the plural rules in more specific id are
     //always the same as those in its language ID.
     // e.g. plural rules for en_SG is the same as those for en.
@@ -90,7 +90,7 @@ function pluralExtractor(content, localeInfo) {
       console.log('No select for lang [' + goog.LOCALE + ']');
       continue;
     }
-    var temp = goog.i18n.pluralRules.select.toString().
+    let temp = goog.i18n.pluralRules.select.toString().
         replace(/function\s+\(/g, 'function(').
         replace(/goog\.i18n\.pluralRules\.Keyword/g, 'PLURAL_CATEGORY').
         replace(/goog\.i18n\.pluralRules\.get_vf_/g, 'getVF').
@@ -128,7 +128,7 @@ function canonicalizeForJsonStringify(unused_key, object) {
   if (typeof object !== 'object' || Object.prototype.toString.apply(object) === '[object Array]') {
     return object;
   }
-  var result = {};
+  let result = {};
   Object.keys(object).sort().forEach(function(key) {
     result[key] = object[key];
   });
@@ -142,7 +142,7 @@ function serializeContent(localeObj) {
 }
 
 function outputLocale(localeInfo, localeID) {
-  var fallBackID = localeID.match(/[A-Za-z]+/)[0],
+  let fallBackID = localeID.match(/[A-Za-z]+/)[0],
       localeObj = localeInfo[localeID],
       fallBackObj = localeInfo[fallBackID];
 
@@ -168,27 +168,27 @@ function outputLocale(localeInfo, localeID) {
   localeObj.localeID = localeID;
   localeObj.id = correctedLocaleId(localeID);
 
-  var getDecimals = [
+  let getDecimals = [
     'function getDecimals(n) {',
     '  n = n + \'\';',
-    '  var i = n.indexOf(\'.\');',
+    '  let i = n.indexOf(\'.\');',
     '  return (i == -1) ? 0 : n.length - i - 1;',
     '}', '', ''
   ].join('\n');
 
-  var getVF = [
+  let getVF = [
     'function getVF(n, opt_precision) {',
-    '  var v = opt_precision;', '',
+    '  let v = opt_precision;', '',
     '  if (undefined === v) {',
     '    v = Math.min(getDecimals(n), 3);',
     '  }', '',
-    '  var base = Math.pow(10, v);',
-    '  var f = ((n * base) | 0) % base;',
+    '  let base = Math.pow(10, v);',
+    '  let f = ((n * base) | 0) % base;',
     '  return {v: v, f: f};',
     '}', '', ''
   ].join('\n');
 
-  var getWT =
+  let getWT =
   [
     'function getWT(v, f) {',
     '  if (f === 0) {',
@@ -210,7 +210,7 @@ function outputLocale(localeInfo, localeID) {
     localeID: localeID
   };
 
-  var content = serializeContent(localeObj);
+  let content = serializeContent(localeObj);
   if (content.indexOf('getVF(') < 0) {
     getVF = '';
   }
@@ -221,16 +221,16 @@ function outputLocale(localeInfo, localeID) {
     getDecimals = '';
   }
 
-  var prefix =
+  let prefix =
       '\'use strict\';\n' +
       'angular.module("ngLocale", [], ["$provide", function($provide) {\n' +
-          'var PLURAL_CATEGORY = {' +
+          'let PLURAL_CATEGORY = {' +
           'ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"' +
           '};\n' +
           getDecimals + getVF + getWT +
           '$provide.value("$locale", ';
 
-  var suffix = ');\n}]);\n';
+  let suffix = ');\n}]);\n';
 
   return prefix + content + suffix;
 }

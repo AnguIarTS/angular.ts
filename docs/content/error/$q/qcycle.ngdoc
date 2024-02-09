@@ -8,7 +8,7 @@ function passed to `then`. The A+ 1.1 spec mandates that this behavior throw a T
 https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
 
 ```
-var promise = $q.defer().promise;
+let promise = $q.defer().promise;
 
 //bad
 promise.then(function (val) {

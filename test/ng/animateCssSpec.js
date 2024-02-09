@@ -1,14 +1,14 @@
-'use strict';
+
 
 describe('$animateCss', function() {
 
-  var triggerRAF, element;
+  let triggerRAF, element;
   beforeEach(inject(function($$rAF, $rootElement, $document) {
     triggerRAF = function() {
       $$rAF.flush();
     };
 
-    var body = jqLite($document[0].body);
+    let body = jqLite($document[0].body);
     element = jqLite('<div></div>');
     $rootElement.append(element);
     body.append($rootElement);
@@ -17,14 +17,14 @@ describe('$animateCss', function() {
   describe('without animation', function() {
 
     it('should not alter the provided options input in any way', inject(function($animateCss) {
-      var initialOptions = {
+      let initialOptions = {
         from: { height: '50px' },
         to: { width: '50px' },
         addClass: 'one',
         removeClass: 'two'
       };
 
-      var copiedOptions = copy(initialOptions);
+      let copiedOptions = copy(initialOptions);
 
       expect(copiedOptions).toEqual(initialOptions);
       $animateCss(element, copiedOptions).start();
@@ -34,7 +34,7 @@ describe('$animateCss', function() {
     it('should not create a copy of the provided options if they have already been prepared earlier',
       inject(function($animateCss, $$rAF) {
 
-      var options = {
+      let options = {
         from: { height: '50px' },
         to: { width: '50px' },
         addClass: 'one',
@@ -42,7 +42,7 @@ describe('$animateCss', function() {
       };
 
       options.$$prepared = true;
-      var runner = $animateCss(element, options).start();
+      let runner = $animateCss(element, options).start();
       runner.end();
 
       $$rAF.flush();
@@ -81,20 +81,20 @@ describe('$animateCss', function() {
     }));
 
     it('should return an animator with a start method which returns a promise', inject(function($animateCss) {
-      var promise = $animateCss(element, { addClass: 'cool' }).start();
+      let promise = $animateCss(element, { addClass: 'cool' }).start();
       expect(isPromiseLike(promise)).toBe(true);
     }));
 
     it('should return an animator with an end method which returns a promise', inject(function($animateCss) {
-      var promise = $animateCss(element, { addClass: 'cool' }).end();
+      let promise = $animateCss(element, { addClass: 'cool' }).end();
       expect(isPromiseLike(promise)).toBe(true);
     }));
 
     it('should only resolve the promise once both a digest and RAF have passed after start',
       inject(function($animateCss, $rootScope) {
 
-      var doneSpy = jasmine.createSpy();
-      var runner = $animateCss(element, { addClass: 'cool' }).start();
+      let doneSpy = jasmine.createSpy();
+      let runner = $animateCss(element, { addClass: 'cool' }).start();
 
       runner.then(doneSpy);
       expect(doneSpy).not.toHaveBeenCalled();
@@ -109,8 +109,8 @@ describe('$animateCss', function() {
     it('should resolve immediately if runner.end() is called',
       inject(function($animateCss, $rootScope) {
 
-      var doneSpy = jasmine.createSpy();
-      var runner = $animateCss(element, { addClass: 'cool' }).start();
+      let doneSpy = jasmine.createSpy();
+      let runner = $animateCss(element, { addClass: 'cool' }).start();
 
       runner.then(doneSpy);
       runner.end();
@@ -123,8 +123,8 @@ describe('$animateCss', function() {
     it('should reject immediately if runner.end() is called',
       inject(function($animateCss, $rootScope) {
 
-      var cancelSpy = jasmine.createSpy();
-      var runner = $animateCss(element, { addClass: 'cool' }).start();
+      let cancelSpy = jasmine.createSpy();
+      let runner = $animateCss(element, { addClass: 'cool' }).start();
 
       runner.catch(cancelSpy);
       runner.cancel();
@@ -137,9 +137,9 @@ describe('$animateCss', function() {
     it('should not resolve after the next frame if the runner has already been cancelled',
       inject(function($animateCss, $rootScope) {
 
-      var doneSpy = jasmine.createSpy();
-      var cancelSpy = jasmine.createSpy();
-      var runner = $animateCss(element, { addClass: 'cool' }).start();
+      let doneSpy = jasmine.createSpy();
+      let cancelSpy = jasmine.createSpy();
+      let runner = $animateCss(element, { addClass: 'cool' }).start();
 
       runner.then(doneSpy, cancelSpy);
       runner.cancel();
@@ -156,7 +156,7 @@ describe('$animateCss', function() {
     it('should not bother applying the provided [from] and [to] styles to the element if [cleanupStyles] is present',
       inject(function($animateCss, $rootScope) {
 
-      var animator = $animateCss(element, {
+      let animator = $animateCss(element, {
         cleanupStyles: true,
         from: { width: '100px' },
         to: { width: '900px', height: '1000px' }
@@ -165,7 +165,7 @@ describe('$animateCss', function() {
       assertStyleIsEmpty(element, 'width');
       assertStyleIsEmpty(element, 'height');
 
-      var runner = animator.start();
+      let runner = animator.start();
 
       assertStyleIsEmpty(element, 'width');
       assertStyleIsEmpty(element, 'height');

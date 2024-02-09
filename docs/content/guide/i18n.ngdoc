@@ -30,67 +30,6 @@ There are a few examples that showcase how to use AngularJS filters with various
 [`i18n/e2e` directory](https://github.com/angular/angular.js/tree/master/i18n/e2e) of the AngularJS
 source code.
 
-
-## What is a locale ID?
-
-A locale is a specific geographical, political, or cultural region. The most commonly used locale
-ID consists of two parts: language code and country code. For example, `en-US`, `en-AU`, and
-`zh-CN` are all valid locale IDs that have both language codes and country codes. Because
-specifying a country code in locale ID is optional, locale IDs such as `en`, `zh`, and `sk` are
-also valid. See the [ICU](http://userguide.icu-project.org/locale) website for more information
-about using locale IDs.
-
-
-## Supported locales in AngularJS
-
-AngularJS separates number and datetime format rule sets into different files, each file for a
-particular locale. You can find a list of currently supported locales
-[here](https://github.com/angular/angular.js/tree/master/src/ngLocale)
-
-
-## Providing locale rules to AngularJS
-
-There are two approaches to providing locale rules to AngularJS:
-
-### 1. Pre-bundled rule sets
-
-You can pre-bundle the desired locale file with AngularJS by concatenating the content of the
-locale-specific file to the end of `angular.js` or `angular.min.js` file.
-
-For example on *nix, to create an angular.js file that contains localization rules for german
-locale, you can do the following:
-
-`cat angular.js i18n/angular-locale_de-de.js > angular_de-de.js`
-
-When the application containing `angular_de-de.js` script instead of the generic angular.js script
-starts, AngularJS is automatically pre-configured with localization rules for the german locale.
-
-### 2. Including a locale script in `index.html`
-
-You can also include the locale specific js file in the index.html page. For example, if one client
-requires German locale, you would serve index_de-de.html which will look something like this:
-
-```html
-<html ng-app>
- <head>
-….
-   <script src="angular.js"></script>
-   <script src="i18n/angular-locale_de-de.js"></script>
-….
- </head>
-</html>
-```
-
-### Comparison of the two approaches
-
-Both approaches described above require you to prepare different `index.html` pages or JavaScript
-files for each locale that your app may use. You also need to configure your server to serve
-the correct file that corresponds to the desired locale.
-
-The second approach (including the locale JavaScript file in `index.html`) may be slower because
-an extra script needs to be loaded.
-
-
 ## Caveats
 
 Although AngularJS makes i18n convenient, there are several things you need to be conscious of as you
@@ -226,7 +165,7 @@ You may find it helpful to play with the following example as you read the expla
 
     angular.module('messageFormatExample', ['ngMessageFormat'])
       .controller('ckCtrl', function($scope, $injector, $parse) {
-        var people = [new Person('Alice', 'female'),
+        let people = [new Person('Alice', 'female'),
                       new Person('Bob', 'male'),
                       new Person('Charlie', 'male')];
 

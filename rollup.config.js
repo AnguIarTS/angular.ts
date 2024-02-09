@@ -5,9 +5,9 @@ import pkg from './package.json' assert { type: 'json' };
 export default [
   // browser-friendly UMD build
   {
-    input: 'src/Angular.js',
+    input: 'src/index.js',
     output: {
-      name: 'angular.ts',
+      name: 'angular',
       file: pkg.browser,
       format: 'umd',
     },
@@ -21,7 +21,7 @@ export default [
   // an array for the `output` option, where we can specify
   // `file` and `format` for each target)
   {
-    input: 'src/Angular.js',
+    input: 'src/index.js',
     external: ['ms'],
     output: [
       { file: pkg.main, format: 'cjs' },

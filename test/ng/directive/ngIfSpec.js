@@ -1,9 +1,9 @@
-'use strict';
+
 
 describe('ngIf', function() {
 
   describe('basic', function() {
-    var $scope, $compile, element, $compileProvider;
+    let $scope, $compile, element, $compileProvider;
 
     beforeEach(module(function(_$compileProvider_) {
       $compileProvider = _$compileProvider_;
@@ -85,8 +85,8 @@ describe('ngIf', function() {
       )($scope));
       $scope.$apply();
 
-      var childScope = element.children().scope();
-      var destroyed = false;
+      let childScope = element.children().scope();
+      let destroyed = false;
 
       childScope.$on('$destroy', function() {
         destroyed = true;
@@ -187,7 +187,7 @@ describe('ngIf', function() {
     }));
 
     it('should not trigger a digest when the element is removed', inject(function($$rAF, $rootScope, $timeout) {
-      var spy = spyOn($rootScope, '$digest').and.callThrough();
+      let spy = spyOn($rootScope, '$digest').and.callThrough();
 
       $scope.hello = true;
       makeIf('hello');
@@ -206,9 +206,9 @@ describe('ngIf', function() {
 
   describe('and transcludes', function() {
     it('should allow access to directive controller from children when used in a replace template', function() {
-      var controller;
+      let controller;
       module(function($compileProvider) {
-        var directive = $compileProvider.directive;
+        let directive = $compileProvider.directive;
         directive('template', valueFn({
           template: '<div ng-if="true"><span test></span></div>',
           replace: true,
@@ -224,7 +224,7 @@ describe('ngIf', function() {
         }));
       });
       inject(function($compile, $rootScope) {
-        var element = $compile('<div><div template></div></div>')($rootScope);
+        let element = $compile('<div><div template></div></div>')($rootScope);
         $rootScope.$apply();
         expect(controller.flag).toBe(true);
         dealoc(element);
@@ -246,7 +246,7 @@ describe('ngIf', function() {
       });
       inject(function($compile, $rootScope) {
         $rootScope.val = 'transcluded content';
-        var element = $compile('<iso><span ng-bind="val"></span></iso>')($rootScope);
+        let element = $compile('<iso><span ng-bind="val"></span></iso>')($rootScope);
         $rootScope.$digest();
         expect(trim(element.text())).toEqual('val=value in iso scope-transcluded content');
         dealoc(element);
@@ -255,7 +255,7 @@ describe('ngIf', function() {
   });
 
   describe('and animations', function() {
-    var body, element, $rootElement;
+    let body, element, $rootElement;
 
     function html(content) {
       $rootElement.html(content);
@@ -287,8 +287,8 @@ describe('ngIf', function() {
 
     it('should fire off the enter animation',
       inject(function($compile, $rootScope, $animate) {
-        var item;
-        var $scope = $rootScope.$new();
+        let item;
+        let $scope = $rootScope.$new();
         element = $compile(html(
           '<div>' +
             '<div ng-if="value"><div>Hi</div></div>' +
@@ -308,8 +308,8 @@ describe('ngIf', function() {
 
     it('should fire off the leave animation',
       inject(function($compile, $rootScope, $animate) {
-        var item;
-        var $scope = $rootScope.$new();
+        let item;
+        let $scope = $rootScope.$new();
         element = $compile(html(
           '<div>' +
             '<div ng-if="value"><div>Hi</div></div>' +
@@ -335,7 +335,7 @@ describe('ngIf', function() {
     it('should destroy the previous leave animation if a new one takes place', function() {
       module(function($provide) {
         $provide.decorator('$animate', function($delegate, $$q) {
-          var emptyPromise = $$q.defer().promise;
+          let emptyPromise = $$q.defer().promise;
           emptyPromise.done = noop;
 
           $delegate.leave = function() {
@@ -345,8 +345,8 @@ describe('ngIf', function() {
         });
       });
       inject(function($compile, $rootScope, $animate) {
-        var item;
-        var $scope = $rootScope.$new();
+        let item;
+        let $scope = $rootScope.$new();
         element = $compile(html(
           '<div>' +
             '<div ng-if="value">Yo</div>' +
@@ -355,7 +355,7 @@ describe('ngIf', function() {
 
         $scope.$apply('value = true');
 
-        var destroyed, inner = element.children(0);
+        let destroyed, inner = element.children(0);
         inner.on('$destroy', function() {
           destroyed = true;
         });
@@ -385,7 +385,7 @@ describe('ngIf', function() {
         $rootScope.flag = true;
         $rootScope.$apply();
 
-        var circle = element.find('circle');
+        let circle = element.find('circle');
         expect(circle[0].toString()).toMatch(/SVG/);
       });
     });

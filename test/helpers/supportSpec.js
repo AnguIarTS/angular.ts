@@ -1,8 +1,8 @@
-'use strict';
+
 
 describe('support test results', function() {
-  var expected, version, testName;
-  var userAgent = window.navigator.userAgent;
+  let expected, version, testName;
+  let userAgent = window.navigator.userAgent;
 
   // Support: iOS 8 only
   if (/iPhone OS 10_1\d(?:_\d+)? /.test(userAgent)) {

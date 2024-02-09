@@ -3446,7 +3446,7 @@ $route
             <SpBefore>0</SpBefore>
             <HorzAlign>0</HorzAlign>
           </Para>
-          <Text><cp IX="0"/><pp IX="0"/>var phonecat = angular.module(&apos;phonecat&apos;, []);</Text>
+          <Text><cp IX="0"/><pp IX="0"/>let phonecat = angular.module(&apos;phonecat&apos;, []);</Text>
         </Shape>
         <Shape ID="44" Type="Shape" Name="Circle Fill:Mild Ice.44">
           <XForm>

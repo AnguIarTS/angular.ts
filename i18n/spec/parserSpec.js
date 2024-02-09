@@ -1,8 +1,8 @@
-'use strict';
 
-var parser = require('../src/parser');
-var ensureDecimalSep = parser.ensureDecimalSep;
-var parsePattern = parser.parsePattern;
+
+let parser = require('../src/parser');
+let ensureDecimalSep = parser.ensureDecimalSep;
+let parsePattern = parser.parsePattern;
 
 describe('ensureDecimalSep', function() {
   it('should leave patterns with DECIMAL_SEP untouched', function() {
@@ -21,7 +21,7 @@ describe('ensureDecimalSep', function() {
   });
 
   it('should add a DECIMAL_SEP in patterns that don\'t have one (after the last ZERO)', function() {
-    var patterns = {
+    let patterns = {
       '#,##000': '#,##000.',
       '$#,#0#00': '$#,#0#00.',
       '#,##000$': '#,##000.$',
@@ -33,7 +33,7 @@ describe('ensureDecimalSep', function() {
     };
 
     Object.keys(patterns).forEach(function(input) {
-      var output = patterns[input];
+      let output = patterns[input];
       expect(ensureDecimalSep(input)).toBe(output);
     });
   });
@@ -41,7 +41,7 @@ describe('ensureDecimalSep', function() {
 
 describe('parsePattern', function() {
   function parseAndExpect(pattern, pp, np, ps, ns, mii, mif, maf, g, lg) {
-    var p = parsePattern(pattern);
+    let p = parsePattern(pattern);
 
     expect(p.minInt).toEqual(mii);
     expect(p.minFrac).toEqual(mif);

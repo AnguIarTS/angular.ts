@@ -1,21 +1,21 @@
-'use strict';
 
-var serveFavicon = require('serve-favicon');
-var serveStatic = require('serve-static');
-var serveIndex = require('serve-index');
-var files = require('./angularFiles').files;
-var mergeFilesFor = require('./angularFiles').mergeFilesFor;
-var util = require('./lib/grunt/utils.js');
-var versionInfo = require('./lib/versions/version-info');
-var path = require('path');
-var e2e = require('./test/e2e/tools');
 
-var semver = require('semver');
-var exec = require('shelljs').exec;
-var pkg = require(__dirname + '/package.json');
+let serveFavicon = require('serve-favicon');
+let serveStatic = require('serve-static');
+let serveIndex = require('serve-index');
+let files = require('./angularFiles').files;
+let mergeFilesFor = require('./angularFiles').mergeFilesFor;
+let util = require('./lib/grunt/utils.js');
+let versionInfo = require('./lib/versions/version-info');
+let path = require('path');
+let e2e = require('./test/e2e/tools');
 
-var codeScriptFolder = util.codeScriptFolder;
-var docsScriptFolder = util.docsScriptFolder;
+let semver = require('semver');
+let exec = require('shelljs').exec;
+let pkg = require(__dirname + '/package.json');
+
+let codeScriptFolder = util.codeScriptFolder;
+let docsScriptFolder = util.docsScriptFolder;
 
 // Node.js version checks
 if (!semver.satisfies(process.version, pkg.engines.node)) {
@@ -24,9 +24,9 @@ if (!semver.satisfies(process.version, pkg.engines.node)) {
 }
 
 // Grunt CLI version checks
-var expectedGruntVersion = pkg.engines['grunt-cli'];
-var currentGruntVersions = exec('grunt --version', {silent: true}).stdout;
-var match = /^grunt-cli v(.+)$/m.exec(currentGruntVersions);
+let expectedGruntVersion = pkg.engines['grunt-cli'];
+let currentGruntVersions = exec('grunt --version', {silent: true}).stdout;
+let match = /^grunt-cli v(.+)$/m.exec(currentGruntVersions);
 if (!match) {
   reportOrFail('Unable to compute the current grunt-cli version. We found:\n' +
                currentGruntVersions);
@@ -39,7 +39,7 @@ if (!match) {
 
 // Ensure Node.js dependencies have been installed
 if (!process.env.CI) {
-  var npmOutput = exec('npm install');
+  let npmOutput = exec('npm install');
   if (npmOutput.code !== 0) {
     throw new Error('Npm install failed: ' + npmOutput.stderr);
   }
@@ -55,11 +55,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('angular-benchpress');
 
   // compute version related info for this build
-  var NG_VERSION = versionInfo.currentVersion;
+  let NG_VERSION = versionInfo.currentVersion;
   NG_VERSION.cdn = versionInfo.cdnVersion || pkg.branchVersion;
-  var dist = 'angular-' + NG_VERSION.full;
+  let dist = 'angular-' + NG_VERSION.full;
 
-  var deployVersion = NG_VERSION.full;
+  let deployVersion = NG_VERSION.full;
 
   if (NG_VERSION.isSnapshot) {
     deployVersion = NG_VERSION.distTag === 'latest' ? 'snapshot-stable' : 'snapshot';
@@ -88,7 +88,7 @@ module.exports = function(grunt) {
           base: '.',
           keepalive: true,
           middleware: function(connect, options) {
-            var base = Array.isArray(options.base) ? options.base[options.base.length - 1] : options.base;
+            let base = Array.isArray(options.base) ? options.base[options.base.length - 1] : options.base;
             return [
               util.conditionalCsp(),
               util.rewrite(),
@@ -106,7 +106,7 @@ module.exports = function(grunt) {
           port: 8000,
           hostname: '0.0.0.0',
           middleware: function(connect, options) {
-            var base = Array.isArray(options.base) ? options.base[options.base.length - 1] : options.base;
+            let base = Array.isArray(options.base) ? options.base[options.base.length - 1] : options.base;
             return [
               function(req, resp, next) {
                 // cache GET requests to speed up tests
@@ -346,16 +346,6 @@ module.exports = function(grunt) {
     },
 
     copy: {
-      i18n: {
-        files: [
-          {
-            src: 'src/ngLocale/**',
-            dest: 'build/i18n/',
-            expand: true,
-            flatten: true
-          }
-        ]
-      },
       deployFirebaseCode: {
         files: [
           {

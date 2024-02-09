@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('$http', function() {
   beforeEach(function() {

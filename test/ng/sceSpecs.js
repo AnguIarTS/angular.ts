@@ -1,4 +1,4 @@
-'use strict';
+
 
 /* eslint-disable no-script-url */
 
@@ -16,80 +16,16 @@ describe('SCE', function() {
     }));
 
     it('should not wrap/unwrap any value or throw exception on non-string values', inject(function($sce) {
-      var originalValue = { foo: 'bar' };
+      let originalValue = { foo: 'bar' };
       expect($sce.trustAs($sce.JS, originalValue)).toBe(originalValue);
       expect($sce.getTrusted($sce.JS, originalValue)).toBe(originalValue);
     }));
   });
 
-  describe('IE<11 quirks mode', function() {
-    /* global msie: true */
-    var msieBackup;
-
-    beforeEach(function() {
-      msieBackup = msie;
-    });
-
-    afterEach(function() {
-      msie = msieBackup;
-    });
-
-    function runTest(enabled, documentMode, expectException) {
-      msie = documentMode;
-      module(function($provide) {
-        $provide.value('$sceDelegate', {trustAs: null, valueOf: null, getTrusted: null});
-      });
-
-      inject(function($window, $injector) {
-        function constructSce() {
-          /* global $SceProvider: false */
-          var sceProvider = new $SceProvider();
-          sceProvider.enabled(enabled);
-          return $injector.invoke(sceProvider.$get, sceProvider);
-        }
-
-        if (expectException) {
-          expect(constructSce).toThrowMinErr(
-            '$sce', 'iequirks', 'Strict Contextual Escaping does not support Internet Explorer ' +
-              'version < 11 in quirks mode.  You can fix this by adding the text <!doctype html> to ' +
-              'the top of your HTML document.  See http://docs.angularjs.org/api/ng.$sce for more ' +
-              'information.');
-        } else {
-          // no exception.
-          constructSce();
-        }
-      });
-    }
-
-    it('should throw an exception when sce is enabled in quirks mode', function() {
-      runTest(true, 7, true);
-    });
-
-    it('should NOT throw an exception when sce is enabled and in standards mode', function() {
-      runTest(true, 8, false);
-    });
-
-    it('should NOT throw an exception when sce is enabled and documentMode is undefined', function() {
-      runTest(true, undefined, false);
-    });
-
-    it('should NOT throw an exception when sce is disabled even when in quirks mode', function() {
-      runTest(false, 7, false);
-    });
-
-    it('should NOT throw an exception when sce is disabled and in standards mode', function() {
-      runTest(false, 8, false);
-    });
-
-    it('should NOT throw an exception when sce is disabled and documentMode is undefined', function() {
-      runTest(false, undefined, false);
-    });
-  });
-
   describe('when enabled', function() {
     it('should wrap string values with TrustedValueHolder', inject(function($sce) {
-      var originalValue = 'original_value';
-      var wrappedValue = $sce.trustAs($sce.HTML, originalValue);
+      let originalValue = 'original_value';
+      let wrappedValue = $sce.trustAs($sce.HTML, originalValue);
       expect(typeof wrappedValue).toBe('object');
       expect($sce.getTrusted($sce.HTML, wrappedValue)).toBe('original_value');
       expect(function() { $sce.getTrusted($sce.CSS, wrappedValue); }).toThrowMinErr(
@@ -148,14 +84,14 @@ describe('SCE', function() {
     }));
 
     it('should unwrap values and return the original', inject(function($sce) {
-      var originalValue = 'originalValue';
-      var wrappedValue = $sce.trustAs($sce.HTML, originalValue);
+      let originalValue = 'originalValue';
+      let wrappedValue = $sce.trustAs($sce.HTML, originalValue);
       expect($sce.getTrusted($sce.HTML, wrappedValue)).toBe(originalValue);
     }));
 
     it('should NOT unwrap values when the type is different', inject(function($sce) {
-      var originalValue = 'originalValue';
-      var wrappedValue = $sce.trustAs($sce.HTML, originalValue);
+      let originalValue = 'originalValue';
+      let wrappedValue = $sce.trustAs($sce.HTML, originalValue);
       expect(function() { $sce.getTrusted($sce.CSS, wrappedValue); }).toThrowMinErr(
           '$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
     }));
@@ -166,13 +102,13 @@ describe('SCE', function() {
           return trustedValue;
         };
       }
-      var wrappedValue = new TrustedValueHolder('originalValue');
+      let wrappedValue = new TrustedValueHolder('originalValue');
       expect(function() { return $sce.getTrusted($sce.HTML, wrappedValue); }).toThrowMinErr(
           '$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
     }));
 
     it('should implement toString on trusted values', inject(function($sce) {
-      var originalValue = '123',
+      let originalValue = '123',
           wrappedValue = $sce.trustAsHtml(originalValue);
       expect($sce.getTrustedHtml(wrappedValue)).toBe(originalValue);
       expect(wrappedValue.toString()).toBe(originalValue.toString());
@@ -266,12 +202,12 @@ describe('SCE', function() {
     it('should NOT parse constant non-literals', inject(function($sce) {
       // Until there's a real world use case for this, we're disallowing
       // constant non-literals.  See $SceParseProvider.
-      var exprFn = $sce.parseAsJs('1+1');
+      let exprFn = $sce.parseAsJs('1+1');
       expect(exprFn).toThrow();
     }));
 
     it('should NOT return untrusted values from expression function', inject(function($sce) {
-      var exprFn = $sce.parseAs($sce.HTML, 'foo');
+      let exprFn = $sce.parseAs($sce.HTML, 'foo');
       expect(function() {
         return exprFn({}, {'foo': true});
       }).toThrowMinErr(
@@ -279,7 +215,7 @@ describe('SCE', function() {
     }));
 
     it('should NOT return trusted values of the wrong type from expression function', inject(function($sce) {
-      var exprFn = $sce.parseAs($sce.HTML, 'foo');
+      let exprFn = $sce.parseAs($sce.HTML, 'foo');
       expect(function() {
         return exprFn({}, {'foo': $sce.trustAs($sce.JS, '123')});
       }).toThrowMinErr(
@@ -287,7 +223,7 @@ describe('SCE', function() {
     }));
 
     it('should return trusted values from expression function', inject(function($sce) {
-      var exprFn = $sce.parseAs($sce.HTML, 'foo');
+      let exprFn = $sce.parseAs($sce.HTML, 'foo');
       expect(exprFn({}, {'foo': $sce.trustAs($sce.HTML, 'trustedValue')})).toBe('trustedValue');
     }));
 
@@ -493,8 +429,8 @@ describe('SCE', function() {
       ));
 
       describe('when the document base URL has changed', function() {
-        var baseElem;
-        var cfg = {trustedUrls: ['self'], bannedUrls: []};
+        let baseElem;
+        let cfg = {trustedUrls: ['self'], bannedUrls: []};
 
         beforeEach(function() {
           baseElem = window.document.createElement('BASE');
@@ -574,7 +510,7 @@ describe('SCE', function() {
     }));
 
     it('should use the $$sanitizeUri', function() {
-      var $$sanitizeUri = jasmine.createSpy('$$sanitizeUri').and.returnValue('someSanitizedUrl');
+      let $$sanitizeUri = jasmine.createSpy('$$sanitizeUri').and.returnValue('someSanitizedUrl');
       module(function($provide) {
         $provide.value('$$sanitizeUri', $$sanitizeUri);
       });
@@ -605,18 +541,6 @@ describe('SCE', function() {
         expect($sce.getTrustedHtml('a<xxx><B>b</B></xxx>c')).toBe('a<b>b</b>c');
       }));
 
-      // Note: that test only passes if HTML is added to the concatenable contexts list.
-      // See isConcatenableSecureContext in interpolate.js for that.
-      //
-      // if (!msie || msie >= 11) {
-      //   it('can set dynamic srcdocs with concatenations and sanitize the result',
-      //       inject(function($compile, $rootScope) {
-      //     var element = $compile('<iframe srcdoc="&lt;b&gt;&lt;script&gt;{{html}}"></iframe>')($rootScope);
-      //     $rootScope.html = 'no</script>yes</b>';
-      //     $rootScope.$digest();
-      //     expect(angular.lowercase(element.attr('srcdoc'))).toEqual('<b>yes</b>');
-      //   }));
-      // }
     });
   });
 });

@@ -214,7 +214,7 @@ You can see the complete application running below.
 
 
     function HeroService($q) {
-      var heroesPromise = $q.resolve([
+      let heroesPromise = $q.resolve([
         { id: 11, name: 'Mr. Nice' },
         { id: 12, name: 'Narco' },
         { id: 13, name: 'Bombasto' },
@@ -229,7 +229,7 @@ You can see the complete application running below.
 
       this.getHero = function(id) {
         return heroesPromise.then(function(heroes) {
-          for (var i = 0; i < heroes.length; i++) {
+          for (let i = 0; i < heroes.length; i++) {
             if (heroes[i].id === id) return heroes[i];
           }
         });
@@ -237,8 +237,8 @@ You can see the complete application running below.
     }
 
     function HeroListComponent(heroService) {
-      var selectedId = null;
-      var $ctrl = this;
+      let selectedId = null;
+      let $ctrl = this;
 
       this.$routerOnActivate = function(next) {
         // Load up the heroes for this view
@@ -254,18 +254,18 @@ You can see the complete application running below.
     }
 
     function HeroDetailComponent(heroService) {
-      var $ctrl = this;
+      let $ctrl = this;
 
       this.$routerOnActivate = function(next) {
         // Get the hero identified by the route parameter
-        var id = next.params.id;
+        let id = next.params.id;
         heroService.getHero(id).then(function(hero) {
           $ctrl.hero = hero;
         });
       };
 
       this.gotoHeroes = function() {
-        var heroId = this.hero && this.hero.id;
+        let heroId = this.hero && this.hero.id;
         this.$router.navigate(['HeroList', {id: heroId}]);
       };
     }
@@ -307,7 +307,7 @@ You can see the complete application running below.
 
 
     function CrisisService($q) {
-      var crisesPromise = $q.resolve([
+      let crisesPromise = $q.resolve([
         {id: 1, name: 'Princess Held Captive'},
         {id: 2, name: 'Dragon Burning Cities'},
         {id: 3, name: 'Giant Asteroid Heading For Earth'},
@@ -320,7 +320,7 @@ You can see the complete application running below.
 
       this.getCrisis = function(id) {
         return crisesPromise.then(function(crises) {
-          for (var i = 0; i < crises.length; i++) {
+          for (let i = 0; i < crises.length; i++) {
             if (crises[i].id === id) return crises[i];
           }
         });
@@ -328,8 +328,8 @@ You can see the complete application running below.
     }
 
     function CrisisListComponent(crisisService) {
-      var selectedId = null;
-      var ctrl = this;
+      let selectedId = null;
+      let ctrl = this;
 
       this.$routerOnActivate = function(next) {
         console.log('$routerOnActivate', this, arguments);
@@ -350,10 +350,10 @@ You can see the complete application running below.
     }
 
     function CrisisDetailComponent(crisisService, dialogService) {
-      var ctrl = this;
+      let ctrl = this;
       this.$routerOnActivate = function(next) {
         // Get the crisis identified by the route parameter
-        var id = next.params.id;
+        let id = next.params.id;
         crisisService.getCrisis(id).then(function(crisis) {
           if (crisis) {
             ctrl.editName = crisis.name;
@@ -385,7 +385,7 @@ You can see the complete application running below.
       };
 
       this.gotoCrises = function() {
-        var crisisId = ctrl.crisis && ctrl.crisis.id;
+        let crisisId = ctrl.crisis && ctrl.crisis.id;
         // Pass along the hero id if available
         // so that the CrisisListComponent can select that hero.
         this.$router.navigate(['CrisisList', {id: crisisId}]);
@@ -712,7 +712,7 @@ making an actual server request, perhaps over HTTP.
 
 ```js
 function HeroService($q) {
-  var heroesPromise = $q.resolve([
+  let heroesPromise = $q.resolve([
     { id: 11, name: 'Mr. Nice' },
     ...
   ]);
@@ -723,7 +723,7 @@ function HeroService($q) {
 
   this.getHero = function(id) {
     return heroesPromise.then(function(heroes) {
-      for (var i = 0; i < heroes.length; i++) {
+      for (let i = 0; i < heroes.length; i++) {
         if (heroes[i].id === id) return heroes[i];
       }
     });
@@ -764,7 +764,7 @@ So we implement the `$routerOnActivate()` instance method.
 
 ```js
 function HeroListComponent(heroService) {
-  var $ctrl = this;
+  let $ctrl = this;
   this.$routerOnActivate = function() {
     return heroService.getHeroes().then(function(heroes) {
       $ctrl.heroes = heroes;
@@ -792,11 +792,11 @@ The **Router** parses the id from the URL when it recognizes the **Route Definit
 
 ```js
 function HeroDetailComponent(heroService) {
-  var $ctrl = this;
+  let $ctrl = this;
 
   this.$routerOnActivate = function(next, previous) {
     // Get the hero identified by the route parameter
-    var id = next.params.id;
+    let id = next.params.id;
     return heroService.getHero(id).then(function(hero) {
       $ctrl.hero = hero;
     });
@@ -877,7 +877,7 @@ Other options for generating this navigation are:
   couples the code of your component to the router URLs.
 * generate an Instruction for a route and navigate directly with this instruction.
   ```js
-  var instruction = this.$router.generate(['HeroList']);
+  let instruction = this.$router.generate(['HeroList']);
   this.$router.navigateByInstruction(instruction);
   ```
   this form gives you the possibility of caching the instruction, but is more verbose.
@@ -902,7 +902,7 @@ HeroDetailComponent back to the HeroListComponent we can use it to highlight the
 
 ```js
   this.gotoHeroes = function() {
-    var heroId = this.hero && this.hero.id;
+    let heroId = this.hero && this.hero.id;
     this.$router.navigate(['HeroList', {id: heroId}]);
   };
 ```
@@ -911,8 +911,8 @@ Then in the HeroList component we can extract this `id` in the `$routerOnActivat
 
 ```js
 function HeroListComponent(heroService) {
-  var selectedId = null;
-  var $ctrl = this;
+  let selectedId = null;
+  let $ctrl = this;
 
   this.$routerOnActivate = function(next) {
     heroService.getHeroes().then(function(heroes) {
@@ -1013,7 +1013,7 @@ original value so that we can determine whether the name has changed.
 ```js
   this.$routerOnActivate = function(next) {
     // Get the crisis identified by the route parameter
-    var id = next.params.id;
+    let id = next.params.id;
     crisisService.getCrisis(id).then(function(crisis) {
       if (crisis) {
         ctrl.editName = crisis.name;  // Make a copy of the crisis name for editing

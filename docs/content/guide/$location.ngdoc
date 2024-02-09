@@ -447,7 +447,7 @@ In these examples we use `<base href="/base/index.html" />`. The inputs represen
      $scope.$location = {};
      angular.forEach('protocol host port path search hash'.split(' '), function(method) {
       $scope.$location[method] = function() {
-        var result = $location[method]();
+        let result = $location[method]();
         return angular.isObject(result) ? angular.toJson(result) : result;
       };
      });
@@ -495,7 +495,7 @@ In these examples we use `<base href="/base/index.html" />`. The inputs represen
       return {
         template: 'Address: <input id="addressBar" type="text" style="width: 400px" >',
         link: function(scope, element, attrs) {
-          var input = element.children('input'), delay;
+          let input = element.children('input'), delay;
 
           input.on('keypress keyup keydown', function(event) {
                   delay = (!delay ? $timeout(fireUrlChange, 250) : null);
@@ -518,7 +518,7 @@ In these examples we use `<base href="/base/index.html" />`. The inputs represen
 
   <file name="protractor.js" type="protractor">
 
-    var addressBar = element(by.css("#addressBar")),
+    let addressBar = element(by.css("#addressBar")),
         url = 'http://www.example.com/base/path?a=b#h';
 
 
@@ -535,7 +535,7 @@ In these examples we use `<base href="/base/index.html" />`. The inputs represen
     });
 
     it("should change $location accordingly", function() {
-      var navigation = element.all(by.css("#navigation a"));
+      let navigation = element.all(by.css("#navigation a"));
 
       navigation.get(0).click();
 
@@ -601,7 +601,7 @@ In these examples we use `<base href="/base/index.html" />`. The inputs represen
       $scope.$location = {};
       angular.forEach('protocol host port path search hash'.split(' '), function(method) {
         $scope.$location[method] = function() {
-          var result = $location[method]();
+          let result = $location[method]();
           return angular.isObject(result) ? angular.toJson(result) : result;
         };
       });
@@ -649,7 +649,7 @@ In these examples we use `<base href="/base/index.html" />`. The inputs represen
       return {
         template: 'Address: <input id="addressBar" type="text" style="width: 400px" >',
         link: function(scope, element, attrs) {
-          var input = element.children('input'), delay;
+          let input = element.children('input'), delay;
 
           input.on('keypress keyup keydown', function(event) {
                   delay = (!delay ? $timeout(fireUrlChange, 250) : null);
@@ -672,7 +672,7 @@ In these examples we use `<base href="/base/index.html" />`. The inputs represen
 
   <file name="protractor.js" type="protractor">
 
-    var addressBar = element(by.css("#addressBar")),
+    let addressBar = element(by.css("#addressBar")),
          url = 'http://www.example.com/base/index.html#!/path?a=b#h';
 
     it("should show fake browser info on load", function() {
@@ -688,7 +688,7 @@ In these examples we use `<base href="/base/index.html" />`. The inputs represen
     });
 
     it("should change $location accordingly", function() {
-      var navigation = element.all(by.css("#navigation a"));
+      let navigation = element.all(by.css("#navigation a"));
 
       navigation.get(0).click();
 

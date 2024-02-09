@@ -1,6 +1,6 @@
-'use strict';
 
-var app = angular.module('selectBenchmark', []);
+
+let app = angular.module('selectBenchmark', []);
 
 app.config(function($compileProvider) {
   if ($compileProvider.debugInfoEnabled) {
@@ -16,8 +16,8 @@ app.controller('DataController', function($scope, $element) {
 
   function changeOptions() {
     $scope.groups = [];
-    var i = 0;
-    var group;
+    let i = 0;
+    let group;
     while (i < $scope.count) {
       if (i % 100 === 0) {
         group = {
@@ -34,7 +34,7 @@ app.controller('DataController', function($scope, $element) {
     }
   }
 
-  var selectElement = $element.find('select');
+  let selectElement = $element.find('select');
   console.log(selectElement);
 
 

@@ -128,7 +128,7 @@ Before:
 
 ```js
 it('should update the model', inject(function($compile, $rootScope) {
-  var inputElm = $compile('<input type="checkbox" ng-model="checkbox" />')($rootScope);
+  let inputElm = $compile('<input type="checkbox" ng-model="checkbox" />')($rootScope);
 
   inputElm[0].click(); // Or different trigger mechanisms, such as jQuery.trigger()
   expect($rootScope.checkbox).toBe(true);
@@ -143,7 +143,7 @@ After:
 
 ```js
 it('should update the model', inject(function($compile, $rootScope, $rootElement, $document) {
-  var inputElm = $compile('<input type="checkbox" ng-model="checkbox" />')($rootScope);
+  let inputElm = $compile('<input type="checkbox" ng-model="checkbox" />')($rootScope);
 
   $rootElement.append(inputElm);
   $document.append($rootElement);
@@ -170,7 +170,7 @@ custom directive, as seen in the following example directive definition object:
   restrict: 'A',
   require: 'ngModel',
   link: function(scope, element, attrs, ctrl) {
-    var maxValidator = ctrl.$validators.max;
+    let maxValidator = ctrl.$validators.max;
 
     ctrl.$validators.max = function(modelValue, viewValue) {
       return maxValidator(modelValue, modelValue);
@@ -404,20 +404,20 @@ Where now the `oldValue` will always equal the previous `newValue`:
 
 Before:
 ```js
-var promise = $interval(doSomething, 1000, 5).then(doSomethingElse);
+let promise = $interval(doSomething, 1000, 5).then(doSomethingElse);
 $interval.cancel(promise);  // No error; interval NOT canceled.
 ```
 
 After:
 ```js
-var promise = $interval(doSomething, 1000, 5).then(doSomethingElse);
+let promise = $interval(doSomething, 1000, 5).then(doSomethingElse);
 $interval.cancel(promise);  // Throws error.
 ```
 
 Correct usage:
 ```js
-var promise = $interval(doSomething, 1000, 5);
-var newPromise = promise.then(doSomethingElse);
+let promise = $interval(doSomething, 1000, 5);
+let newPromise = promise.then(doSomethingElse);
 $interval.cancel(promise);  // Interval canceled.
 ```
 
@@ -430,20 +430,20 @@ $interval.cancel(promise);  // Interval canceled.
 
 Before:
 ```js
-var promise = $timeout(doSomething, 1000).then(doSomethingElse);
+let promise = $timeout(doSomething, 1000).then(doSomethingElse);
 $timeout.cancel(promise);  // No error; timeout NOT canceled.
 ```
 
 After:
 ```js
-var promise = $timeout(doSomething, 1000).then(doSomethingElse);
+let promise = $timeout(doSomething, 1000).then(doSomethingElse);
 $timeout.cancel(promise);  // Throws error.
 ```
 
 Correct usage:
 ```js
-var promise = $timeout(doSomething, 1000);
-var newPromise = promise.then(doSomethingElse);
+let promise = $timeout(doSomething, 1000);
+let newPromise = promise.then(doSomethingElse);
 $timeout.cancel(promise);  // Timeout canceled.
 ```
 
@@ -495,7 +495,7 @@ Previously, it would resolve the promise as if the animation had ended successfu
 Example:
 
 ```js
-var runner = $animate.addClass('red');
+let runner = $animate.addClass('red');
 runner.then(function() { console.log('success')});
 runner.catch(function() { console.log('cancelled')});
 
@@ -713,7 +713,7 @@ interceptor and the `success` callback was synchronously called after
 the `response` interceptor. E.g.:
 
 ```js
-var User = $resource('/api/users/:id', {id: '@id'}, {
+let User = $resource('/api/users/:id', {id: '@id'}, {
   get: {
     method: 'get',
     interceptor: {
@@ -734,8 +734,8 @@ var User = $resource('/api/users/:id', {id: '@id'}, {
     }
   }
 });
-var onSuccess = function(value) { console.log('successCallback', value); };
-var onError = function(error) { console.log('errorCallback', error); };
+let onSuccess = function(value) { console.log('successCallback', value); };
+let onError = function(error) { console.log('errorCallback', error); };
 
 // Assuming the following call is successful...
 User.get({id: 1}, onSuccess, onError);
@@ -780,7 +780,7 @@ Before:
 ```js
 it('...', function() {
   $httpBackend.expectGET('/api/things').respond(...);
-  var Things = $resource('/api/things');
+  let Things = $resource('/api/things');
   Things.query();
 
   expect($http).toHaveBeenCalledWith(...);
@@ -791,7 +791,7 @@ After:
 ```js
 it('...', function() {
   $httpBackend.expectGET('/api/things').respond(...);
-  var Things = $resource('/api/things');
+  let Things = $resource('/api/things');
   Things.query();
   $rootScope.$digest();
 
@@ -1154,13 +1154,13 @@ to change your code as follows:
 Before:
 
 ```js
-var myOption = ngModelController.$options && ngModelController.$options['my-option'];
+let myOption = ngModelController.$options && ngModelController.$options['my-option'];
 ```
 
 After:
 
 ```js
-var myOption = ngModelController.$options.getOption('my-option');
+let myOption = ngModelController.$options.getOption('my-option');
 ```
 
 
@@ -1402,7 +1402,7 @@ trust a URL:
    You can pass a trusted object instead of a string as a URL to the `$http` service:
 
     ```js
-    var promise = $http.jsonp($sce.trustAsResourceUrl(url));
+    let promise = $http.jsonp($sce.trustAsResourceUrl(url));
     ```
 
 <hr />
@@ -1446,19 +1446,19 @@ After:
 $http(...).
   then(function onSuccess(response) {
     // Handle success
-    var data = response.data;
-    var status = response.status;
-    var statusText = response.statusText;
-    var headers = response.headers;
-    var config = response.config;
+    let data = response.data;
+    let status = response.status;
+    let statusText = response.statusText;
+    let headers = response.headers;
+    let config = response.config;
     ...
   }, function onError(response) {
     // Handle error
-    var data = response.data;
-    var status = response.status;
-    var statusText = response.statusText;
-    var headers = response.headers;
-    var config = response.config;
+    let data = response.data;
+    let status = response.status;
+    let statusText = response.statusText;
+    let headers = response.headers;
+    let config = response.config;
     ...
   });
 
@@ -1467,20 +1467,20 @@ $http(...).
 $http(...).
   then(function onSuccess(response) {
     // Handle success
-    var data = response.data;
-    var status = response.status;
-    var statusText = response.statusText;
-    var headers = response.headers;
-    var config = response.config;
+    let data = response.data;
+    let status = response.status;
+    let statusText = response.statusText;
+    let headers = response.headers;
+    let config = response.config;
     ...
   }).
   catch(function onError(response) {
     // Handle error
-    var data = response.data;
-    var status = response.status;
-    var statusText = response.statusText;
-    var headers = response.headers;
-    var config = response.config;
+    let data = response.data;
+    let status = response.status;
+    let statusText = response.statusText;
+    let headers = response.headers;
+    let config = response.config;
     ...
   });
 ```
@@ -1655,11 +1655,11 @@ elem.css('background--color', 'blue');
 elem.css('backgroundColor', 'blue');
 
 // All five versions used to be equivalent.
-var bgColor = elem.css('background_color');
-var bgColor = elem.css('background:color');
-var bgColor = elem.css('background-color');
-var bgColor = elem.css('background--color');
-var bgColor = elem.css('backgroundColor');
+let bgColor = elem.css('background_color');
+let bgColor = elem.css('background:color');
+let bgColor = elem.css('background-color');
+let bgColor = elem.css('background--color');
+let bgColor = elem.css('backgroundColor');
 ```
 
 After:
@@ -1679,8 +1679,8 @@ elem.css('background-color', 'blue');
 elem.css('backgroundColor', 'blue');
 
 // Only these two versions are still equivalent to the five shown above.
-var bgColor = elem.css('background-color');
-var bgColor = elem.css('backgroundColor');
+let bgColor = elem.css('background-color');
+let bgColor = elem.css('backgroundColor');
 ```
 
 <hr />
@@ -1756,7 +1756,7 @@ Before:
 <select multiple>...</select>
 ```
 ```js
-var value = $element.val();
+let value = $element.val();
 if (value) { /* do something */ }
 ```
 
@@ -1766,7 +1766,7 @@ After:
 <select multiple>...</select>
 ```
 ```js
-var value = $element.val();
+let value = $element.val();
 if (value.length > 0) { /* do something */ }
 ```
 
@@ -1874,9 +1874,9 @@ and `''` as "empty".
 Before:
 
 ```js
-var template = '<my-checkbox role="checkbox" ng-model="value"></my-checkbox>';
-var customCheckbox = $compile(template)(scope);
-var ctrl = customCheckbox.controller('ngModel');
+let template = '<my-checkbox role="checkbox" ng-model="value"></my-checkbox>';
+let customCheckbox = $compile(template)(scope);
+let ctrl = customCheckbox.controller('ngModel');
 
 scope.$apply('value = false');
 console.log(ctrl.$isEmpty());   //--> true
@@ -1891,9 +1891,9 @@ console.log(ctrl.$isEmpty());   //--> false
 After:
 
 ```js
-var template = '<my-checkbox role="checkbox" ng-model="value"></my-checkbox>';
-var customCheckbox = $compile(template)(scope);
-var ctrl = customCheckbox.controller('ngModel');
+let template = '<my-checkbox role="checkbox" ng-model="value"></my-checkbox>';
+let customCheckbox = $compile(template)(scope);
+let ctrl = customCheckbox.controller('ngModel');
 
 scope.$apply('value = false');
 console.log(ctrl.$isEmpty());   //--> false
@@ -1975,7 +1975,7 @@ omitted if `Object.prototype` had a property with the same name. E.g.:
 Before:
 
 ```js
-var Foo = $resource('/foo/:id');
+let Foo = $resource('/foo/:id');
 Foo.get({id: 42, bar: 'baz', toString: 'hmm'});
     // URL: /foo/42?bar=baz
     // Note that `toString` is _not_ included in the query,
@@ -1985,7 +1985,7 @@ Foo.get({id: 42, bar: 'baz', toString: 'hmm'});
 After:
 
 ```js
-var Foo = $resource('/foo/:id');
+let Foo = $resource('/foo/:id');
 Foo.get({id: 42, bar: 'baz', toString: 'hmm'});
     // URL: /foo/42?bar=baz&toString=hmm
     // Note that `toString` _is_ included in the query, as expected :)
@@ -2299,7 +2299,7 @@ ngModule.animation('.slide-animation', ['$animateCss', function($animateCss) {
   return {
     enter: function(element, doneFn) {
       // this will trigger a `.ng-enter` and `.ng-enter-active` CSS animation
-      var animation = $animateCss(element, {
+      let animation = $animateCss(element, {
         event: 'enter'
         // any other CSS-related properties
         //   addClass: 'some-class',
@@ -2514,7 +2514,7 @@ the built-in pattern validator:
     require: '?ngModel',
     priority: 1,
     compile: function() {
-      var regexp, patternExp;
+      let regexp, patternExp;
 
       return {
         pre: function(scope, elm, attr, ctrl) {
@@ -2583,8 +2583,8 @@ angular.module('myApp').directive('form', function() {
     restrict: 'E',
     priority: 1000,
     compile: function(element, attrs) {
-      var unsupportedCharacter = ':'; // change accordingly
-      var originalName = attrs.name;
+      let unsupportedCharacter = ':'; // change accordingly
+      let originalName = attrs.name;
       if (attrs.name && attrs.name.indexOf(unsupportedCharacter) > 0) {
         attrs.$set('name', 'this["' + originalName + '"]');
       }
@@ -2650,7 +2650,7 @@ URL list in the `config()` function:
 After:
 
 ```js
-var templateCache = {};
+let templateCache = {};
 $scope.findTemplate = function(templateName) {
   if (!templateCache[templateName]) {
     templateCache[templateName] = $sce.trustAsResourceUrl(templateName);
@@ -2950,7 +2950,7 @@ Before:
     directive('directiveName', function() {
       return {
         link: function(scope, elm, attr) {
-          var observer = attr.$observe('someAttr', function(value) {
+          let observer = attr.$observe('someAttr', function(value) {
             console.log(value);
           });
         }
@@ -2962,7 +2962,7 @@ After:
     directive('directiveName', function() {
       return {
         link: function(scope, elm, attr) {
-          var observer = function(value) {
+          let observer = function(value) {
             console.log(value);
           };
 
@@ -3281,11 +3281,11 @@ Previously, these were optional.
 
 Before:
 
-    var el = element(by.binding('{{foo}}'));
+    let el = element(by.binding('{{foo}}'));
 
 After:
 
-    var el = element(by.binding('foo'));
+    let el = element(by.binding('foo'));
 
 Prefixes `ng_` and `x-ng-` are no longer allowed for models. Use `ng-model`.
 
@@ -3296,7 +3296,7 @@ the row. For example, if your template is
 
 Before:
 
-    var el = element(by.repeater('foo in foos').row(2).column('foo.name'))
+    let el = element(by.repeater('foo in foos').row(2).column('foo.name'))
 
 After:
 
@@ -3306,7 +3306,7 @@ You may either enclose `{{foo.name}}` in a child element
 
 or simply use:
 
-    var el = element(by.repeater('foo in foos').row(2))
+    let el = element(by.repeater('foo in foos').row(2))
 
 
 ### Internet Explorer 8
@@ -3375,7 +3375,7 @@ Before:
 ```
 
 ```javascript
-var myApp = angular.module('myApp', ['someOtherModule']);
+let myApp = angular.module('myApp', ['someOtherModule']);
 ```
 
 After:
@@ -3386,7 +3386,7 @@ After:
 ```
 
 ```javascript
-var myApp = angular.module('myApp', ['ngRoute', 'someOtherModule']);
+let myApp = angular.module('myApp', ['ngRoute', 'someOtherModule']);
 ```
 
 See [5599b55b](https://github.com/angular/angular.js/commit/5599b55b04788c2e327d7551a4a699d75516dd21).
@@ -3501,11 +3501,11 @@ scope.b = 2;
 After:
 
 ```javascript
-var baseUrl = "page";
+let baseUrl = "page";
 scope.getIframeSrc = function() {
 
   // One should think about their particular case and sanitize accordingly
-  var qs = ["a", "b"].map(function(value, name) {
+  let qs = ["a", "b"].map(function(value, name) {
       return encodeURIComponent(name) + "=" +
              encodeURIComponent(value);
     }).join("&");
@@ -3654,7 +3654,7 @@ Resource.query().$then(function(response) {...});
 After:
 
 ```javascript
-var Resource = $resource('/url', {}, {
+let Resource = $resource('/url', {}, {
   get: {
     method: 'get',
     interceptor: {

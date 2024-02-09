@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
  * after obtaining data from closure files, use converter to massage the data into the formats
@@ -8,11 +8,11 @@ exports.convertDatetimeData = convertDatetimeData;
 exports.convertNumberData = convertNumberData;
 
 
-var parsePattern = require('./parser').parsePattern;
+let parsePattern = require('./parser').parsePattern;
 
 
 function convertNumberData(dataObj, currencySymbols) {
-  var numberFormats = {
+  let numberFormats = {
     DECIMAL_SEP: dataObj.DECIMAL_SEP,
     GROUP_SEP: dataObj.GROUP_SEP,
     PATTERNS: [parsePattern(dataObj.DECIMAL_PATTERN),
@@ -26,7 +26,7 @@ function convertNumberData(dataObj, currencySymbols) {
       numberFormats.CURRENCY_SYM = '₤'; //for some reason this is missing in closure
     } else {
       // if there is no corresponding currency symbol, just use currency code.
-      var code = numberFormats.CURRENCY_SYM = dataObj.DEF_CURRENCY_CODE;
+      let code = numberFormats.CURRENCY_SYM = dataObj.DEF_CURRENCY_CODE;
       console.log(code + ' has no currency symbol in closure, used ' + code + ' instead!');
     }
   }
@@ -35,7 +35,7 @@ function convertNumberData(dataObj, currencySymbols) {
 
 
 function convertDatetimeData(dataObj) {
-  var datetimeFormats = {};
+  let datetimeFormats = {};
 
   datetimeFormats.MONTH = dataObj.MONTHS;
   datetimeFormats.SHORTMONTH = dataObj.SHORTMONTHS;

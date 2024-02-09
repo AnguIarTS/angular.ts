@@ -1,8 +1,8 @@
-'use strict';
+
 
 describe('errors', function() {
-  var originalObjectMaxDepthInErrorMessage = minErrConfig.objectMaxDepth;
-  var originalUrlErrorParamsEnabled =  minErrConfig.urlErrorParamsEnabled;
+  let originalObjectMaxDepthInErrorMessage = minErrConfig.objectMaxDepth;
+  let originalUrlErrorParamsEnabled =  minErrConfig.urlErrorParamsEnabled;
 
   afterEach(function() {
     minErrConfig.objectMaxDepth = originalObjectMaxDepthInErrorMessage;
@@ -57,20 +57,20 @@ describe('errors', function() {
 
   describe('minErr', function() {
 
-    var supportStackTraces = function() {
-      var e = new Error();
+    let supportStackTraces = function() {
+      let e = new Error();
       return isDefined(e.stack);
     };
-    var emptyTestError = minErr(),
+    let emptyTestError = minErr(),
       testError = minErr('test');
 
     it('should return an Error factory', function() {
-      var myError = testError('test', 'Oops');
+      let myError = testError('test', 'Oops');
       expect(myError instanceof Error).toBe(true);
     });
 
     it('should generate stack trace at the frame where the minErr instance was called', function() {
-      var myError;
+      let myError;
 
       function someFn() {
         function nestedFn() {
@@ -88,12 +88,12 @@ describe('errors', function() {
     });
 
     it('should interpolate string arguments without quotes', function() {
-      var myError = testError('1', 'This {0} is "{1}"', 'foo', 'bar');
+      let myError = testError('1', 'This {0} is "{1}"', 'foo', 'bar');
       expect(myError.message).toMatch(/^\[test:1] This foo is "bar"/);
     });
 
     it('should interpolate non-string arguments', function() {
-      var arr = [1, 2, 3],
+      let arr = [1, 2, 3],
           obj = {a: 123, b: 'baar'},
           anonFn = function(something) { return something; },
           namedFn = function foo(something) { return something; },
@@ -110,24 +110,24 @@ describe('errors', function() {
     });
 
     it('should not suppress falsy objects', function() {
-      var myError = testError('26', 'false: {0}; zero: {1}; null: {2}; undefined: {3}; emptyStr: {4}',
+      let myError = testError('26', 'false: {0}; zero: {1}; null: {2}; undefined: {3}; emptyStr: {4}',
                                     false,      0,         null,      undefined,      '');
       expect(myError.message).
           toMatch(/^\[test:26] false: false; zero: 0; null: null; undefined: undefined; emptyStr: /);
     });
 
     it('should handle arguments that are objects with cyclic references', function() {
-      var a = { b: { } };
+      let a = { b: { } };
       a.b.a = a;
 
-      var myError = testError('26', 'a is {0}', a);
+      let myError = testError('26', 'a is {0}', a);
       expect(myError.message).toMatch(/a is {"b":{"a":"..."}}/);
     });
 
     it('should handle arguments that are objects with max depth', function() {
-      var a = {b: {c: {d: {e: {f: {g: 1}}}}}};
+      let a = {b: {c: {d: {e: {f: {g: 1}}}}}};
 
-      var myError = testError('26', 'a when objectMaxDepth is default=5 is {0}', a);
+      let myError = testError('26', 'a when objectMaxDepth is default=5 is {0}', a);
       expect(myError.message).toMatch(/a when objectMaxDepth is default=5 is {"b":{"c":{"d":{"e":{"f":"..."}}}}}/);
 
       errorHandlingConfig({objectMaxDepth: 1});
@@ -145,10 +145,10 @@ describe('errors', function() {
 
     they('should handle arguments that are objects and ignore max depth when objectMaxDepth = $prop',
       [NaN, null, true, false, -1, 0], function(maxDepth) {
-        var a = {b: {c: {d: {e: {f: {g: 1}}}}}};
+        let a = {b: {c: {d: {e: {f: {g: 1}}}}}};
 
         errorHandlingConfig({objectMaxDepth: maxDepth});
-        var myError = testError('26', 'a is {0}', a);
+        let myError = testError('26', 'a is {0}', a);
         expect(myError.message).toMatch(/a is {"b":{"c":{"d":{"e":{"f":{"g":1}}}}}}/);
       }
     );
@@ -156,7 +156,7 @@ describe('errors', function() {
     it('should preserve interpolation markers when fewer arguments than needed are provided', function() {
       // this way we can easily see if we are passing fewer args than needed
 
-      var foo = 'Fooooo',
+      let foo = 'Fooooo',
           myError = testError('26', 'This {0} is {1} on {2}', foo);
 
       expect(myError.message).toMatch(/^\[test:26] This Fooooo is \{1\} on \{2\}/);
@@ -164,22 +164,22 @@ describe('errors', function() {
 
 
     it('should pass through the message if no interpolation is needed', function() {
-      var myError = testError('26', 'Something horrible happened!');
+      let myError = testError('26', 'Something horrible happened!');
       expect(myError.message).toMatch(/^\[test:26] Something horrible happened!/);
     });
 
     it('should include a namespace in the message only if it is namespaced', function() {
-      var myError = emptyTestError('26', 'This is a {0}', 'Foo');
-      var myNamespacedError = testError('26', 'That is a {0}', 'Bar');
+      let myError = emptyTestError('26', 'This is a {0}', 'Foo');
+      let myNamespacedError = testError('26', 'That is a {0}', 'Bar');
       expect(myError.message).toMatch(/^\[26] This is a Foo/);
       expect(myNamespacedError.message).toMatch(/^\[test:26] That is a Bar/);
     });
 
 
     it('should accept an optional 2nd argument to construct custom errors', function() {
-      var normalMinErr = minErr('normal');
+      let normalMinErr = minErr('normal');
       expect(normalMinErr('acode', 'aproblem') instanceof TypeError).toBe(false);
-      var typeMinErr = minErr('type', TypeError);
+      let typeMinErr = minErr('type', TypeError);
       expect(typeMinErr('acode', 'aproblem') instanceof TypeError).toBe(true);
     });
 
@@ -191,9 +191,9 @@ describe('errors', function() {
     });
 
     it('should strip error reference urls from the error message parameters', function() {
-      var firstError = testError('firstcode', 'longer string and so on');
+      let firstError = testError('firstcode', 'longer string and so on');
 
-      var error = testError('secondcode', 'description {0}, and {1}', 'a', firstError.message);
+      let error = testError('secondcode', 'description {0}, and {1}', 'a', firstError.message);
 
       expect(error.message).toBe('[test:secondcode] description a, and [test:firstcode] longer ' +
         'string and so on\n\nhttps://errors.angularjs.org/"NG_VERSION_FULL"/test/' +

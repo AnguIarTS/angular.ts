@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('$exceptionHandler', function() {
   /* global $ExceptionHandlerProvider:false */

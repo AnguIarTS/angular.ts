@@ -1,10 +1,10 @@
-'use strict';
+
 
 /* globals generateInputCompilerHelper: false */
 
 describe('ngList', function() {
 
-  var helper = {}, $rootScope;
+  let helper = {}, $rootScope;
 
   generateInputCompilerHelper(helper);
 
@@ -13,7 +13,7 @@ describe('ngList', function() {
   }));
 
   it('should parse text into an array', function() {
-    var inputElm = helper.compileInput('<input type="text" ng-model="list" ng-list />');
+    let inputElm = helper.compileInput('<input type="text" ng-model="list" ng-list />');
 
     // model -> view
     $rootScope.$apply('list = [\'x\', \'y\', \'z\']');
@@ -29,7 +29,7 @@ describe('ngList', function() {
     // When the user types 'a,b' the 'a,' stage parses to ['a'] but if the
     // $parseModel function runs it will change to 'a', in essence preventing
     // the user from ever typing ','.
-    var inputElm = helper.compileInput('<input type="text" ng-model="list" ng-list />');
+    let inputElm = helper.compileInput('<input type="text" ng-model="list" ng-list />');
 
     helper.changeInputValueTo('a ');
     expect(inputElm.val()).toEqual('a ');
@@ -58,7 +58,7 @@ describe('ngList', function() {
 
 
   it('should be invalid if required and empty', function() {
-    var inputElm = helper.compileInput('<input type="text" ng-list ng-model="list" required>');
+    let inputElm = helper.compileInput('<input type="text" ng-list ng-model="list" required>');
     helper.changeInputValueTo('');
     expect($rootScope.list).toBeUndefined();
     expect(inputElm).toBeInvalid();
@@ -80,7 +80,7 @@ describe('ngList', function() {
 
 
     it('should join the list back together with the custom separator', function() {
-      var inputElm = helper.compileInput('<input type="text" ng-model="list" ng-list=" : " />');
+      let inputElm = helper.compileInput('<input type="text" ng-model="list" ng-list=" : " />');
 
       $rootScope.$apply(function() {
         $rootScope.list = ['x', 'y', 'z'];

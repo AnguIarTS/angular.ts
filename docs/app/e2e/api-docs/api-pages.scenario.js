@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('API pages', function() {
 
@@ -13,10 +13,10 @@ describe('API pages', function() {
   it('should change the page content when clicking a link to a service', function() {
     browser.get('build/docs/index.html');
 
-    var ngBindLink = element(by.css('.definition-table td a[href="api/ng/directive/ngClick"]'));
+    let ngBindLink = element(by.css('.definition-table td a[href="api/ng/directive/ngClick"]'));
     ngBindLink.click();
 
-    var mainHeader = element(by.css('.main-body h1 '));
+    let mainHeader = element(by.css('.main-body h1 '));
     expect(mainHeader.getText()).toEqual('ngClick');
   });
 
@@ -29,19 +29,19 @@ describe('API pages', function() {
 
     browser.switchTo().frame('example-input-directive');
 
-    var nameInput = element(by.model('user.name'));
+    let nameInput = element(by.model('user.name'));
     nameInput.sendKeys('!!!');
 
-    var code = element.all(by.css('tt')).first();
+    let code = element.all(by.css('tt')).first();
     expect(code.getText()).toContain('guest!!!');
   });
 
   it('should trim indentation from code blocks', function() {
     browser.get('build/docs/index.html#!/api/ng/type/$rootScope.Scope');
 
-    var codeBlocks = element.all(by.css('pre > code.lang-js'));
+    let codeBlocks = element.all(by.css('pre > code.lang-js'));
     codeBlocks.each(function(codeBlock) {
-      var firstSpan = codeBlock.all(by.css('span')).first();
+      let firstSpan = codeBlock.all(by.css('span')).first();
       expect(firstSpan.getText()).not.toMatch(/^\W+$/);
     });
   });

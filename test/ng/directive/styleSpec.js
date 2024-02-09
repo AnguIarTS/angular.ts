@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('style', function() {
-  var element;
+  let element;
 
 
   afterEach(function() {

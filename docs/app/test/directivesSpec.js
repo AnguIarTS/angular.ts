@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('directives', function() {
-  var compile, scope;
+  let compile, scope;
 
 
   beforeEach(module('directives'));
@@ -16,8 +16,8 @@ describe('directives', function() {
   }));
 
   describe('code', function() {
-    var prettyPrintOne, oldPP;
-    var any = jasmine.any;
+    let prettyPrintOne, oldPP;
+    let any = jasmine.any;
 
     beforeEach(function() {
       // Provide stub for pretty print function
@@ -31,8 +31,8 @@ describe('directives', function() {
 
 
     it('should pretty print innerHTML', function() {
-      compile('<code>var x;</code>')(scope);
-      expect(prettyPrintOne).toHaveBeenCalledWith('var x;', null, false);
+      compile('<code>let x;</code>')(scope);
+      expect(prettyPrintOne).toHaveBeenCalledWith('let x;', null, false);
     });
 
     it('should allow language declaration', function() {

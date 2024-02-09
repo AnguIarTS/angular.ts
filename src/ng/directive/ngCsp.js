@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngCsp
@@ -124,12 +122,12 @@
           });
     </file>
     <file name="protractor.js" type="protractor">
-      var util, webdriver;
+      let util, webdriver;
 
-      var incBtn = element(by.id('inc'));
-      var counter = element(by.id('counter'));
-      var evilBtn = element(by.id('evil'));
-      var evilError = element(by.id('evilError'));
+      let incBtn = element(by.id('inc'));
+      let counter = element(by.id('counter'));
+      let evilBtn = element(by.id('evil'));
+      let evilError = element(by.id('evilError'));
 
       function getAndClearSevereErrors() {
         return browser.manage().logs().get('browser').then(function(browserLog) {
@@ -154,7 +152,7 @@
 
       function expectError(regex) {
         getAndClearSevereErrors().then(function(filteredLog) {
-          var found = false;
+          let found = false;
           filteredLog.forEach(function(log) {
             if (log.message.match(regex)) {
               found = true;

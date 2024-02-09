@@ -1,4 +1,4 @@
-'use strict';
+
 
 /* globals
     generateInputCompilerHelper: false,
@@ -21,7 +21,7 @@ describe('ngModelOptions', function() {
 
     describe('basic usage', function() {
 
-      var helper = {}, $rootScope, $compile, $timeout, $q;
+      let helper = {}, $rootScope, $compile, $timeout, $q;
 
       generateInputCompilerHelper(helper);
 
@@ -35,10 +35,10 @@ describe('ngModelOptions', function() {
 
       describe('should fall back to `defaultModelOptions`', function() {
         it('if there is no `ngModelOptions` directive', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" />');
 
-          var inputOptions = $rootScope.form.alias.$options;
+          let inputOptions = $rootScope.form.alias.$options;
           expect(inputOptions.getOption('updateOn')).toEqual(defaultModelOptions.getOption('updateOn'));
           expect(inputOptions.getOption('updateOnDefault')).toEqual(defaultModelOptions.getOption('updateOnDefault'));
           expect(inputOptions.getOption('debounce')).toEqual(defaultModelOptions.getOption('debounce'));
@@ -49,10 +49,10 @@ describe('ngModelOptions', function() {
 
 
         it('if `ngModelOptions` on the same element does not specify the option', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ng-model-options="{ updateOn: \'blur\' }"/>');
 
-          var inputOptions = $rootScope.form.alias.$options;
+          let inputOptions = $rootScope.form.alias.$options;
           expect(inputOptions.getOption('debounce')).toEqual(defaultModelOptions.getOption('debounce'));
           expect(inputOptions.getOption('updateOnDefault')).toBe(false);
           expect(inputOptions.getOption('updateOnDefault')).not.toEqual(defaultModelOptions.getOption('updateOnDefault'));
@@ -60,10 +60,10 @@ describe('ngModelOptions', function() {
 
 
         it('if the first `ngModelOptions` ancestor does not specify the option', function() {
-          var form = $compile('<form name="form" ng-model-options="{ updateOn: \'blur\' }">' +
+          let form = $compile('<form name="form" ng-model-options="{ updateOn: \'blur\' }">' +
                                     '<input name="alias" ng-model="x">' +
                                   '</form>')($rootScope);
-          var inputOptions = $rootScope.form.alias.$options;
+          let inputOptions = $rootScope.form.alias.$options;
 
           expect(inputOptions.getOption('debounce')).toEqual(defaultModelOptions.getOption('debounce'));
           expect(inputOptions.getOption('updateOnDefault')).toBe(false);
@@ -76,19 +76,19 @@ describe('ngModelOptions', function() {
       describe('sharing and inheritance', function() {
 
         it('should not inherit options from ancestor `ngModelOptions` directives by default', function() {
-          var container = $compile(
+          let container = $compile(
                     '<div ng-model-options="{ allowInvalid: true }">' +
                       '<form ng-model-options="{ updateOn: \'blur\' }">' +
                         '<input ng-model-options="{ updateOn: \'default\' }">' +
                       '</form>' +
                     '</div>')($rootScope);
 
-          var form = container.find('form');
-          var input = container.find('input');
+          let form = container.find('form');
+          let input = container.find('input');
 
-          var containerOptions = container.controller('ngModelOptions').$options;
-          var formOptions = form.controller('ngModelOptions').$options;
-          var inputOptions = input.controller('ngModelOptions').$options;
+          let containerOptions = container.controller('ngModelOptions').$options;
+          let formOptions = form.controller('ngModelOptions').$options;
+          let inputOptions = input.controller('ngModelOptions').$options;
 
           expect(containerOptions.getOption('allowInvalid')).toEqual(true);
           expect(formOptions.getOption('allowInvalid')).toEqual(false);
@@ -105,19 +105,19 @@ describe('ngModelOptions', function() {
         });
 
         it('should inherit options that are marked with "$inherit" from the nearest ancestor `ngModelOptions` directive', function() {
-          var container = $compile(
+          let container = $compile(
                     '<div ng-model-options="{ allowInvalid: true }">' +
                       '<form ng-model-options="{ updateOn: \'blur\', allowInvalid: \'$inherit\' }">' +
                         '<input ng-model-options="{ updateOn: \'default\' }">' +
                       '</form>' +
                     '</div>')($rootScope);
 
-          var form = container.find('form');
-          var input = container.find('input');
+          let form = container.find('form');
+          let input = container.find('input');
 
-          var containerOptions = container.controller('ngModelOptions').$options;
-          var formOptions = form.controller('ngModelOptions').$options;
-          var inputOptions = input.controller('ngModelOptions').$options;
+          let containerOptions = container.controller('ngModelOptions').$options;
+          let formOptions = form.controller('ngModelOptions').$options;
+          let inputOptions = input.controller('ngModelOptions').$options;
 
           expect(containerOptions.getOption('allowInvalid')).toEqual(true);
           expect(formOptions.getOption('allowInvalid')).toEqual(true);
@@ -134,19 +134,19 @@ describe('ngModelOptions', function() {
         });
 
         it('should inherit all unspecified options if the options object contains a `"*"` property with value "$inherit"', function() {
-          var container = $compile(
+          let container = $compile(
                     '<div ng-model-options="{ allowInvalid: true, debounce: 100, updateOn: \'keyup\' }">' +
                       '<form ng-model-options="{ updateOn: \'blur\', \'*\': \'$inherit\' }">' +
                         '<input ng-model-options="{ updateOn: \'default\' }">' +
                       '</form>' +
                     '</div>')($rootScope);
 
-          var form = container.find('form');
-          var input = container.find('input');
+          let form = container.find('form');
+          let input = container.find('input');
 
-          var containerOptions = container.controller('ngModelOptions').$options;
-          var formOptions = form.controller('ngModelOptions').$options;
-          var inputOptions = input.controller('ngModelOptions').$options;
+          let containerOptions = container.controller('ngModelOptions').$options;
+          let formOptions = form.controller('ngModelOptions').$options;
+          let inputOptions = input.controller('ngModelOptions').$options;
 
           expect(containerOptions.getOption('allowInvalid')).toEqual(true);
           expect(formOptions.getOption('allowInvalid')).toEqual(true);
@@ -167,13 +167,13 @@ describe('ngModelOptions', function() {
         });
 
         it('should correctly inherit default and another specified event for `updateOn`', function() {
-          var container = $compile(
+          let container = $compile(
                     '<div ng-model-options="{updateOn: \'default blur\'}">' +
                       '<input ng-model-options="{\'*\': \'$inherit\'}">' +
                     '</div>')($rootScope);
 
-          var input = container.find('input');
-          var inputOptions = input.controller('ngModelOptions').$options;
+          let input = container.find('input');
+          let inputOptions = input.controller('ngModelOptions').$options;
 
           expect(inputOptions.getOption('updateOn')).toEqual('blur');
           expect(inputOptions.getOption('updateOnDefault')).toEqual(true);
@@ -183,7 +183,7 @@ describe('ngModelOptions', function() {
 
 
         it('should `updateOnDefault` as well if we have `updateOn: "$inherit"`', function() {
-          var container = $compile(
+          let container = $compile(
                     '<div ng-model-options="{updateOn: \'keyup\'}">' +
                       '<input ng-model-options="{updateOn: \'$inherit\'}">' +
                       '<div ng-model-options="{updateOn: \'default blur\'}">' +
@@ -191,14 +191,14 @@ describe('ngModelOptions', function() {
                       '</div>' +
                     '</div>')($rootScope);
 
-          var input1 = container.find('input').eq(0);
-          var inputOptions1 = input1.controller('ngModelOptions').$options;
+          let input1 = container.find('input').eq(0);
+          let inputOptions1 = input1.controller('ngModelOptions').$options;
 
           expect(inputOptions1.getOption('updateOn')).toEqual('keyup');
           expect(inputOptions1.getOption('updateOnDefault')).toEqual(false);
 
-          var input2 = container.find('input').eq(1);
-          var inputOptions2 = input2.controller('ngModelOptions').$options;
+          let input2 = container.find('input').eq(1);
+          let inputOptions2 = input2.controller('ngModelOptions').$options;
 
           expect(inputOptions2.getOption('updateOn')).toEqual('blur');
           expect(inputOptions2.getOption('updateOnDefault')).toEqual(true);
@@ -209,7 +209,7 @@ describe('ngModelOptions', function() {
 
         it('should make a copy of the options object', function() {
           $rootScope.options = {updateOn: 'default'};
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ' +
                 'ng-model-options="options"' +
               '/>');
@@ -218,14 +218,14 @@ describe('ngModelOptions', function() {
         });
 
         it('should be retrieved from an ancestor element containing an `ngModelOptions` directive', function() {
-          var doc = $compile(
+          let doc = $compile(
               '<form name="test" ' +
                   'ng-model-options="{ debounce: 10000, updateOn: \'blur\' }" >' +
                 '<input type="text" ng-model="name" name="alias" />' +
               '</form>')($rootScope);
           $rootScope.$digest();
 
-          var inputElm = doc.find('input');
+          let inputElm = doc.find('input');
           helper.changeGivenInputTo(inputElm, 'a');
           expect($rootScope.name).toEqual(undefined);
           browserTrigger(inputElm, 'blur');
@@ -239,7 +239,7 @@ describe('ngModelOptions', function() {
 
         it('should allow sharing options between multiple inputs', function() {
           $rootScope.options = {updateOn: 'default'};
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name1" name="alias1" ' +
                 'ng-model-options="options"' +
               '/>' +
@@ -257,7 +257,7 @@ describe('ngModelOptions', function() {
 
       describe('updateOn', function() {
         it('should allow overriding the model update trigger event on text inputs', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ' +
                 'ng-model-options="{ updateOn: \'blur\' }"' +
               '/>');
@@ -270,7 +270,7 @@ describe('ngModelOptions', function() {
 
 
         it('should not dirty the input if nothing was changed before updateOn trigger', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ' +
                 'ng-model-options="{ updateOn: \'blur\' }"' +
               '/>');
@@ -281,7 +281,7 @@ describe('ngModelOptions', function() {
 
 
         it('should allow overriding the model update trigger event on text areas', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<textarea ng-model="name" name="alias" ' +
                 'ng-model-options="{ updateOn: \'blur\' }"' +
               '/>');
@@ -294,7 +294,7 @@ describe('ngModelOptions', function() {
 
 
         it('should bind the element to a list of events', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ' +
                 'ng-model-options="{ updateOn: \'blur mousemove\' }"' +
               '/>');
@@ -312,7 +312,7 @@ describe('ngModelOptions', function() {
 
 
         it('should allow keeping the default update behavior on text inputs', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ' +
                 'ng-model-options="{ updateOn: \'default\' }"' +
               '/>');
@@ -323,7 +323,7 @@ describe('ngModelOptions', function() {
 
 
         it('should allow overriding the model update trigger event on checkboxes', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="checkbox" ng-model="checkbox" ' +
                 'ng-model-options="{ updateOn: \'blur\' }"' +
               '/>');
@@ -340,7 +340,7 @@ describe('ngModelOptions', function() {
 
 
         it('should allow keeping the default update behavior on checkboxes', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="checkbox" ng-model="checkbox" ' +
                 'ng-model-options="{ updateOn: \'blur default\' }"' +
               '/>');
@@ -354,7 +354,7 @@ describe('ngModelOptions', function() {
 
 
         it('should allow overriding the model update trigger event on radio buttons', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="radio" ng-model="color" value="white" ' +
                 'ng-model-options="{ updateOn: \'blur\'}"' +
               '/>' +
@@ -376,7 +376,7 @@ describe('ngModelOptions', function() {
 
 
         it('should allow keeping the default update behavior on radio buttons', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="radio" ng-model="color" value="white" ' +
                 'ng-model-options="{ updateOn: \'blur default\' }"' +
               '/>' +
@@ -393,12 +393,12 @@ describe('ngModelOptions', function() {
         });
 
         it('should re-set the trigger events when overridden with $overrideModelOptions', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ' +
                 'ng-model-options="{ updateOn: \'blur click\' }"' +
               '/>');
 
-          var ctrl = inputElm.controller('ngModel');
+          let ctrl = inputElm.controller('ngModel');
 
           helper.changeInputValueTo('a');
           expect($rootScope.name).toBeUndefined();
@@ -433,7 +433,7 @@ describe('ngModelOptions', function() {
 
       describe('debounce', function() {
         it('should trigger only after timeout in text inputs', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ' +
                 'ng-model-options="{ debounce: 10000 }"' +
               '/>');
@@ -450,7 +450,7 @@ describe('ngModelOptions', function() {
 
 
         it('should trigger only after timeout in checkboxes', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="checkbox" ng-model="checkbox" ' +
                 'ng-model-options="{ debounce: 10000 }"' +
               '/>');
@@ -465,7 +465,7 @@ describe('ngModelOptions', function() {
 
 
         it('should trigger only after timeout in radio buttons', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="radio" ng-model="color" value="white" />' +
               '<input type="radio" ng-model="color" value="red" ' +
                 'ng-model-options="{ debounce: 20000 }"' +
@@ -487,12 +487,12 @@ describe('ngModelOptions', function() {
 
 
         it('should not trigger digest while debouncing', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ' +
                 'ng-model-options="{ debounce: 10000 }"' +
               '/>');
 
-          var watchSpy = jasmine.createSpy('watchSpy');
+          let watchSpy = jasmine.createSpy('watchSpy');
           $rootScope.$watch(watchSpy);
 
           helper.changeInputValueTo('a');
@@ -511,7 +511,7 @@ describe('ngModelOptions', function() {
 
         it('should allow selecting different debounce timeouts for each event',
           function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ' +
                 'ng-model-options="{' +
                   'updateOn: \'default blur mouseup\', ' +
@@ -542,7 +542,7 @@ describe('ngModelOptions', function() {
 
         it('should use the value of * to debounce all unspecified events',
           function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ' +
                 'ng-model-options="{' +
                   'updateOn: \'default blur mouseup\', ' +
@@ -576,7 +576,7 @@ describe('ngModelOptions', function() {
 
         it('should trigger immediately for the event if not listed in the debounce list',
           function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
               '<input type="text" ng-model="name" name="alias" ' +
                 'ng-model-options="{' +
                   'updateOn: \'default blur foo\', ' +
@@ -593,7 +593,7 @@ describe('ngModelOptions', function() {
         });
 
         it('should allow selecting different debounce timeouts for each event on checkboxes', function() {
-          var inputElm = helper.compileInput('<input type="checkbox" ng-model="checkbox" ' +
+          let inputElm = helper.compileInput('<input type="checkbox" ng-model="checkbox" ' +
             'ng-model-options="{ ' +
               'updateOn: \'default blur\', debounce: { default: 10000, blur: 5000 } }"' +
             '/>');
@@ -616,7 +616,7 @@ describe('ngModelOptions', function() {
 
 
         it('should allow selecting 0 for non-default debounce timeouts for each event on checkboxes', function() {
-          var inputElm = helper.compileInput('<input type="checkbox" ng-model="checkbox" ' +
+          let inputElm = helper.compileInput('<input type="checkbox" ng-model="checkbox" ' +
             'ng-model-options="{ ' +
               'updateOn: \'default blur\', debounce: { default: 10000, blur: 0 } }"' +
             '/>');
@@ -637,7 +637,7 @@ describe('ngModelOptions', function() {
 
 
         it('should flush debounced events when calling $commitViewValue directly', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="name" name="alias" ' +
               'ng-model-options="{ debounce: 1000 }" />');
 
@@ -648,7 +648,7 @@ describe('ngModelOptions', function() {
         });
 
         it('should cancel debounced events when calling $commitViewValue', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="name" name="alias" ' +
               'ng-model-options="{ debounce: 1000 }"/>');
 
@@ -663,7 +663,7 @@ describe('ngModelOptions', function() {
 
 
         it('should reset input val if rollbackViewValue called during pending update', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="name" name="alias" ' +
               'ng-model-options="{ updateOn: \'blur\' }" />');
 
@@ -677,7 +677,7 @@ describe('ngModelOptions', function() {
 
 
         it('should allow canceling pending updates', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="name" name="alias" ' +
               'ng-model-options="{ updateOn: \'blur\' }" />');
 
@@ -691,7 +691,7 @@ describe('ngModelOptions', function() {
 
 
         it('should allow canceling debounced updates', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="name" name="alias" ' +
               'ng-model-options="{ debounce: 10000 }" />');
 
@@ -706,7 +706,7 @@ describe('ngModelOptions', function() {
 
 
         it('should handle model updates correctly even if rollbackViewValue is not invoked', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="name" name="alias" ' +
               'ng-model-options="{ updateOn: \'blur\' }" />');
 
@@ -718,7 +718,7 @@ describe('ngModelOptions', function() {
 
 
         it('should reset input val if rollbackViewValue called during debounce', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="name" name="alias" ' +
               'ng-model-options="{ debounce: 2000 }" />');
 
@@ -734,11 +734,11 @@ describe('ngModelOptions', function() {
 
       describe('getterSetter', function() {
         it('should not try to invoke a model if getterSetter is false', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="name" ' +
               'ng-model-options="{ getterSetter: false }" />');
 
-          var spy = $rootScope.name = jasmine.createSpy('setterSpy');
+          let spy = $rootScope.name = jasmine.createSpy('setterSpy');
           helper.changeInputValueTo('a');
           expect(spy).not.toHaveBeenCalled();
           expect(inputElm.val()).toBe('a');
@@ -746,9 +746,9 @@ describe('ngModelOptions', function() {
 
 
         it('should not try to invoke a model if getterSetter is not set', function() {
-          var inputElm = helper.compileInput('<input type="text" ng-model="name" />');
+          let inputElm = helper.compileInput('<input type="text" ng-model="name" />');
 
-          var spy = $rootScope.name = jasmine.createSpy('setterSpy');
+          let spy = $rootScope.name = jasmine.createSpy('setterSpy');
           helper.changeInputValueTo('a');
           expect(spy).not.toHaveBeenCalled();
           expect(inputElm.val()).toBe('a');
@@ -756,11 +756,11 @@ describe('ngModelOptions', function() {
 
 
         it('should try to invoke a function model if getterSetter is true', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="name" ' +
               'ng-model-options="{ getterSetter: true }" />');
 
-          var spy = $rootScope.name = jasmine.createSpy('setterSpy').and.callFake(function() {
+          let spy = $rootScope.name = jasmine.createSpy('setterSpy').and.callFake(function() {
             return 'b';
           });
           $rootScope.$apply();
@@ -774,7 +774,7 @@ describe('ngModelOptions', function() {
 
 
         it('should assign to non-function models if getterSetter is true', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="name" ' +
               'ng-model-options="{ getterSetter: true }" />');
 
@@ -787,20 +787,20 @@ describe('ngModelOptions', function() {
 
         it('should fail on non-assignable model binding if getterSetter is false', function() {
           expect(function() {
-            var inputElm = helper.compileInput('<input type="text" ng-model="accessor(user, \'name\')" />');
+            let inputElm = helper.compileInput('<input type="text" ng-model="accessor(user, \'name\')" />');
           }).toThrowMinErr('ngModel', 'nonassign', 'Expression \'accessor(user, \'name\')\' is non-assignable.');
         });
 
 
         it('should not fail on non-assignable model binding if getterSetter is true', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="accessor(user, \'name\')" ' +
               'ng-model-options="{ getterSetter: true }" />');
         });
 
 
         it('should invoke a model in the correct context if getterSetter is true', function() {
-          var inputElm = helper.compileInput(
+          let inputElm = helper.compileInput(
             '<input type="text" ng-model="someService.getterSetter" ' +
               'ng-model-options="{ getterSetter: true }" />');
 
@@ -832,7 +832,7 @@ describe('ngModelOptions', function() {
 
       describe('allowInvalid', function() {
         it('should assign invalid values to the scope if allowInvalid is true', function() {
-          var inputElm = helper.compileInput('<input type="text" name="input" ng-model="value" maxlength="1" ' +
+          let inputElm = helper.compileInput('<input type="text" name="input" ng-model="value" maxlength="1" ' +
                       'ng-model-options="{allowInvalid: true}" />');
           helper.changeInputValueTo('12345');
 
@@ -842,7 +842,7 @@ describe('ngModelOptions', function() {
 
 
         it('should not assign not parsable values to the scope if allowInvalid is true', function() {
-          var inputElm = helper.compileInput('<input type="number" name="input" ng-model="value" ' +
+          let inputElm = helper.compileInput('<input type="number" name="input" ng-model="value" ' +
                       'ng-model-options="{allowInvalid: true}" />', {
             valid: false,
             badInput: true
@@ -855,9 +855,9 @@ describe('ngModelOptions', function() {
 
 
         it('should update the scope before async validators execute if allowInvalid is true', function() {
-          var inputElm = helper.compileInput('<input type="text" name="input" ng-model="value" ' +
+          let inputElm = helper.compileInput('<input type="text" name="input" ng-model="value" ' +
                       'ng-model-options="{allowInvalid: true}" />');
-          var defer;
+          let defer;
           $rootScope.form.input.$asyncValidators.promiseValidator = function(value) {
             defer = $q.defer();
             return defer.promise;
@@ -874,9 +874,9 @@ describe('ngModelOptions', function() {
 
 
         it('should update the view before async validators execute if allowInvalid is true', function() {
-          var inputElm = helper.compileInput('<input type="text" name="input" ng-model="value" ' +
+          let inputElm = helper.compileInput('<input type="text" name="input" ng-model="value" ' +
                       'ng-model-options="{allowInvalid: true}" />');
-          var defer;
+          let defer;
           $rootScope.form.input.$asyncValidators.promiseValidator = function(value) {
             defer = $q.defer();
             return defer.promise;
@@ -893,7 +893,7 @@ describe('ngModelOptions', function() {
 
 
         it('should not call ng-change listeners twice if the model did not change with allowInvalid', function() {
-          var inputElm = helper.compileInput('<input type="text" name="input" ng-model="value" ' +
+          let inputElm = helper.compileInput('<input type="text" name="input" ng-model="value" ' +
                       'ng-model-options="{allowInvalid: true}" ng-change="changed()" />');
           $rootScope.changed = jasmine.createSpy('changed');
           $rootScope.form.input.$parsers.push(function(value) {
@@ -914,7 +914,7 @@ describe('ngModelOptions', function() {
 
     describe('on directives with `replace: true`', function() {
 
-      var $rootScope, $compile;
+      let $rootScope, $compile;
 
       beforeEach(module(function($compileProvider) {
         $compileProvider.directive('foo', valueFn({
@@ -930,8 +930,8 @@ describe('ngModelOptions', function() {
 
 
       it('should get initialized in time for `ngModel` on the original element', function() {
-        var inputElm = $compile('<foo ng-model="value"></foo>')($rootScope);
-        var ngModelCtrl = inputElm.controller('ngModel');
+        let inputElm = $compile('<foo ng-model="value"></foo>')($rootScope);
+        let ngModelCtrl = inputElm.controller('ngModel');
 
         expect(ngModelCtrl.$options.getOption('debounce')).toBe(1000);
       });

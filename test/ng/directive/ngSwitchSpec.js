@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('ngSwitch', function() {
-  var element;
+  let element;
 
 
   afterEach(function() {
@@ -217,13 +217,13 @@ describe('ngSwitch', function() {
       '</ng:switch>')($rootScope);
     $rootScope.$apply();
 
-    var getChildScope = function() { return element.find('div').scope(); };
+    let getChildScope = function() { return element.find('div').scope(); };
 
     expect(getChildScope()).toBeUndefined();
 
     $rootScope.url = 'a';
     $rootScope.$apply();
-    var child1 = getChildScope();
+    let child1 = getChildScope();
     expect(child1).toBeDefined();
     spyOn(child1, '$destroy');
 
@@ -234,7 +234,7 @@ describe('ngSwitch', function() {
 
     $rootScope.url = 'a';
     $rootScope.$apply();
-    var child2 = getChildScope();
+    let child2 = getChildScope();
     expect(child2).toBeDefined();
     expect(child2).not.toBe(child1);
   }));
@@ -304,7 +304,7 @@ describe('ngSwitch', function() {
 
 
   it('should not trigger a digest after an element is removed', inject(function($$rAF, $compile, $rootScope, $timeout) {
-    var spy = spyOn($rootScope, '$digest').and.callThrough();
+    let spy = spyOn($rootScope, '$digest').and.callThrough();
 
     $rootScope.select = 1;
     element = $compile(
@@ -333,7 +333,7 @@ describe('ngSwitch', function() {
 
   it('should handle changes to the switch value in a digest loop with multiple value matches',
     inject(function($compile, $rootScope) {
-      var scope = $rootScope.$new();
+      let scope = $rootScope.$new();
       scope.value = 'foo';
 
       scope.$watch('value', function() {
@@ -480,7 +480,7 @@ describe('ngSwitch', function() {
 });
 
 describe('ngSwitch animation', function() {
-  var body, element, $rootElement;
+  let body, element, $rootElement;
 
   function html(content) {
     $rootElement.html(content);
@@ -515,8 +515,8 @@ describe('ngSwitch animation', function() {
         });
       });
       inject(function($compile, $rootScope, $animate, $templateCache) {
-        var item;
-        var $scope = $rootScope.$new();
+        let item;
+        let $scope = $rootScope.$new();
         element = $compile(html(
           '<div ng-switch="inc">' +
             '<div ng-switch-when="one">one</div>' +
@@ -526,7 +526,7 @@ describe('ngSwitch animation', function() {
 
         $scope.$apply('inc = "one"');
 
-        var destroyed, inner = element.children(0);
+        let destroyed, inner = element.children(0);
         inner.on('$destroy', function() {
           destroyed = true;
         });
@@ -545,8 +545,8 @@ describe('ngSwitch animation', function() {
 
     it('should fire off the enter animation',
       inject(function($compile, $rootScope, $animate) {
-        var item;
-        var $scope = $rootScope.$new();
+        let item;
+        let $scope = $rootScope.$new();
         element = $compile(html(
           '<div ng-switch on="val">' +
             '<div ng-switch-when="one">one</div>' +
@@ -568,8 +568,8 @@ describe('ngSwitch animation', function() {
 
     it('should fire off the leave animation',
       inject(function($compile, $rootScope, $animate) {
-        var item;
-        var $scope = $rootScope.$new();
+        let item;
+        let $scope = $rootScope.$new();
         element = $compile(html(
           '<div ng-switch on="val">' +
             '<div ng-switch-when="one">one</div>' +
@@ -615,7 +615,7 @@ describe('ngSwitch animation', function() {
         $rootScope.inc = 'one';
         $rootScope.$apply();
 
-        var circle = element.find('circle');
+        let circle = element.find('circle');
         expect(circle[0].toString()).toMatch(/SVG/);
       });
     });

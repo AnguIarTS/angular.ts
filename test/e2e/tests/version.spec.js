@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('angular.version', function() {
-  var version;
+  let version;
 
   beforeEach(function() {
     loadFixture('version');

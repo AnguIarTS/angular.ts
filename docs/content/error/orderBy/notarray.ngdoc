@@ -17,7 +17,7 @@ To use `orderBy` to order the properties of an object, you can create your own a
 ```js
 angular.module('aModule', [])
   .controller('aController', function($scope) {
-    var myObj = {
+    let myObj = {
       one: {id: 1, name: 'Some thing'},
       two: {id: 2, name: 'Another thing'},
       three: {id: 3, name: 'A third thing'}

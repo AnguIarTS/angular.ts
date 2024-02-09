@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc filter
  * @name linky
@@ -130,15 +128,15 @@
 angular.module("ngSanitize").filter("linky", [
   "$sanitize",
   function ($sanitize) {
-    var LINKY_URL_REGEXP =
+    let LINKY_URL_REGEXP =
         /((s?ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"\u201d\u2019]/i,
       MAILTO_REGEXP = /^mailto:/i;
 
-    var linkyMinErr = angular.$$minErr("linky");
-    var isDefined = angular.isDefined;
-    var isFunction = angular.isFunction;
-    var isObject = angular.isObject;
-    var isString = angular.isString;
+    let linkyMinErr = angular.$$minErr("linky");
+    let isDefined = angular.isDefined;
+    let isFunction = angular.isFunction;
+    let isObject = angular.isObject;
+    let isString = angular.isString;
 
     return function (text, target, attributes) {
       if (text == null || text === "") return text;
@@ -149,7 +147,7 @@ angular.module("ngSanitize").filter("linky", [
           text,
         );
 
-      var attributesFn = isFunction(attributes)
+      let attributesFn = isFunction(attributes)
         ? attributes
         : isObject(attributes)
           ? function getAttributesObject() {
@@ -159,11 +157,11 @@ angular.module("ngSanitize").filter("linky", [
               return {};
             };
 
-      var match;
-      var raw = text;
-      var html = [];
-      var url;
-      var i;
+      let match;
+      let raw = text;
+      let html = [];
+      let url;
+      let i;
       while ((match = raw.match(LINKY_URL_REGEXP))) {
         // We can not end in these as they are sometimes found at the end of the sentence
         url = match[0];
@@ -187,7 +185,7 @@ angular.module("ngSanitize").filter("linky", [
       }
 
       function addLink(url, text) {
-        var key,
+        let key,
           linkAttributes = attributesFn(url);
         html.push("<a ");
 

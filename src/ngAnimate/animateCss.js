@@ -1,8 +1,6 @@
-"use strict";
-
 /* exported $AnimateCssProvider */
 
-var ANIMATE_TIMER_KEY = "$$animateCss";
+let ANIMATE_TIMER_KEY = "$$animateCss";
 
 /**
  * @ngdoc service
@@ -42,7 +40,7 @@ var ANIMATE_TIMER_KEY = "$$animateCss";
  * ngModule.animation('.fold-animation', ['$animateCss', function($animateCss) {
  *   return {
  *     enter: function(element, doneFn) {
- *       var height = element[0].offsetHeight;
+ *       let height = element[0].offsetHeight;
  *       return $animateCss(element, {
  *         from: { height:'0px' },
  *         to: { height:height + 'px' },
@@ -69,7 +67,7 @@ var ANIMATE_TIMER_KEY = "$$animateCss";
  * ngModule.animation('.fold-animation', ['$animateCss', function($animateCss) {
  *   return {
  *     enter: function(element, doneFn) {
- *       var height = element[0].offsetHeight;
+ *       let height = element[0].offsetHeight;
  *       return $animateCss(element, {
  *         addClass: 'red large-text pulse-twice',
  *         easing: 'ease-out',
@@ -116,7 +114,7 @@ var ANIMATE_TIMER_KEY = "$$animateCss";
  * styles using the `from` and `to` properties.
  *
  * ```js
- * var animator = $animateCss(element, {
+ * let animator = $animateCss(element, {
  *   from: { background:'red' },
  *   to: { background:'blue' }
  * });
@@ -153,7 +151,7 @@ var ANIMATE_TIMER_KEY = "$$animateCss";
  * added and removed on the element). Once `$animateCss` is called it will return an object with the following properties:
  *
  * ```js
- * var animator = $animateCss(element, { ... });
+ * let animator = $animateCss(element, { ... });
  * ```
  *
  * Now what do the contents of our `animator` variable look like:
@@ -218,12 +216,12 @@ var ANIMATE_TIMER_KEY = "$$animateCss";
  * * `start` - The method to start the animation. This will return a `Promise` when called.
  * * `end` - This method will cancel the animation and remove all applied CSS classes and styles.
  */
-var ONE_SECOND = 1000;
+let ONE_SECOND = 1000;
 
-var ELAPSED_TIME_MAX_DECIMAL_PLACES = 3;
-var CLOSING_TIME_BUFFER = 1.5;
+let ELAPSED_TIME_MAX_DECIMAL_PLACES = 3;
+let CLOSING_TIME_BUFFER = 1.5;
 
-var DETECT_CSS_PROPERTIES = {
+let DETECT_CSS_PROPERTIES = {
   transitionDuration: TRANSITION_DURATION_PROP,
   transitionDelay: TRANSITION_DELAY_PROP,
   transitionProperty: TRANSITION_PROP + PROPERTY_KEY,
@@ -232,7 +230,7 @@ var DETECT_CSS_PROPERTIES = {
   animationIterationCount: ANIMATION_PROP + ANIMATION_ITERATION_COUNT_KEY,
 };
 
-var DETECT_STAGGER_CSS_PROPERTIES = {
+let DETECT_STAGGER_CSS_PROPERTIES = {
   transitionDuration: TRANSITION_DURATION_PROP,
   transitionDelay: TRANSITION_DELAY_PROP,
   animationDuration: ANIMATION_DURATION_PROP,
@@ -244,17 +242,17 @@ function getCssKeyframeDurationStyle(duration) {
 }
 
 function getCssDelayStyle(delay, isKeyframeAnimation) {
-  var prop = isKeyframeAnimation ? ANIMATION_DELAY_PROP : TRANSITION_DELAY_PROP;
+  let prop = isKeyframeAnimation ? ANIMATION_DELAY_PROP : TRANSITION_DELAY_PROP;
   return [prop, delay + "s"];
 }
 
 function computeCssStyles($window, element, properties) {
-  var styles = Object.create(null);
-  var detectedStyles = $window.getComputedStyle(element) || {};
+  let styles = Object.create(null);
+  let detectedStyles = $window.getComputedStyle(element) || {};
   forEach(properties, function (formalStyleName, actualStyleName) {
-    var val = detectedStyles[formalStyleName];
+    let val = detectedStyles[formalStyleName];
     if (val) {
-      var c = val.charAt(0);
+      let c = val.charAt(0);
 
       // only numerical-based values have a negative sign or digit as the first value
       if (c === "-" || c === "+" || c >= 0) {
@@ -275,8 +273,8 @@ function computeCssStyles($window, element, properties) {
 }
 
 function parseMaxTime(str) {
-  var maxValue = 0;
-  var values = str.split(/\s*,\s*/);
+  let maxValue = 0;
+  let values = str.split(/\s*,\s*/);
   forEach(values, function (value) {
     // it's always safe to consider only second values and omit `ms` values since
     // getComputedStyle will always handle the conversion for us
@@ -294,8 +292,8 @@ function truthyTimingValue(val) {
 }
 
 function getCssTransitionDurationStyle(duration, applyOnlyDuration) {
-  var style = TRANSITION_PROP;
-  var value = duration + "s";
+  let style = TRANSITION_PROP;
+  let value = duration + "s";
   if (applyOnlyDuration) {
     style += DURATION_KEY;
   } else {
@@ -321,7 +319,7 @@ function registerRestorableStyles(backup, node, properties) {
   });
 }
 
-var $AnimateCssProvider = [
+let $AnimateCssProvider = [
   "$animateProvider",
   /** @this */ function ($animateProvider) {
     this.$get = [
@@ -345,7 +343,7 @@ var $AnimateCssProvider = [
         $$rAFScheduler,
         $$animateQueue,
       ) {
-        var applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
+        let applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
 
         function computeCachedCssStyles(
           node,
@@ -354,7 +352,7 @@ var $AnimateCssProvider = [
           allowNoDuration,
           properties,
         ) {
-          var timings = $$animateCache.get(cacheKey);
+          let timings = $$animateCache.get(cacheKey);
 
           if (!timings) {
             timings = computeCssStyles($window, node, properties);
@@ -365,7 +363,7 @@ var $AnimateCssProvider = [
 
           // if a css animation has no duration we
           // should mark that so that repeated addClass/removeClass calls are skipped
-          var hasDuration =
+          let hasDuration =
             allowNoDuration ||
             timings.transitionDuration > 0 ||
             timings.animationDuration > 0;
@@ -383,8 +381,8 @@ var $AnimateCssProvider = [
           cacheKey,
           properties,
         ) {
-          var stagger;
-          var staggerCacheKey = "stagger-" + cacheKey;
+          let stagger;
+          let staggerCacheKey = "stagger-" + cacheKey;
 
           // if we have one or more existing matches of matching elements
           // containing the same parent + CSS styles (which is how cacheKey works)
@@ -393,7 +391,7 @@ var $AnimateCssProvider = [
             stagger = $$animateCache.get(staggerCacheKey);
 
             if (!stagger) {
-              var staggerClassName = pendClasses(className, "-stagger");
+              let staggerClassName = pendClasses(className, "-stagger");
 
               $$jqLite.addClass(node, staggerClassName);
 
@@ -418,7 +416,7 @@ var $AnimateCssProvider = [
           return stagger || {};
         }
 
-        var rafWaitQueue = [];
+        let rafWaitQueue = [];
         function waitUntilQuiet(callback) {
           rafWaitQueue.push(callback);
           $$rAFScheduler.waitUntilQuiet(function () {
@@ -426,11 +424,11 @@ var $AnimateCssProvider = [
 
             // DO NOT REMOVE THIS LINE OR REFACTOR OUT THE `pageWidth` variable.
             // PLEASE EXAMINE THE `$$forceReflow` service to understand why.
-            var pageWidth = $$forceReflow();
+            let pageWidth = $$forceReflow();
 
             // we use a for loop to ensure that if the queue is changed
             // during this looping then it will consider new requests
-            for (var i = 0; i < rafWaitQueue.length; i++) {
+            for (let i = 0; i < rafWaitQueue.length; i++) {
               rafWaitQueue[i](pageWidth);
             }
             rafWaitQueue.length = 0;
@@ -438,15 +436,15 @@ var $AnimateCssProvider = [
         }
 
         function computeTimings(node, className, cacheKey, allowNoDuration) {
-          var timings = computeCachedCssStyles(
+          let timings = computeCachedCssStyles(
             node,
             className,
             cacheKey,
             allowNoDuration,
             DETECT_CSS_PROPERTIES,
           );
-          var aD = timings.animationDelay;
-          var tD = timings.transitionDelay;
+          let aD = timings.animationDelay;
+          let tD = timings.transitionDelay;
           timings.maxDelay = aD && tD ? Math.max(aD, tD) : aD || tD;
           timings.maxDuration = Math.max(
             timings.animationDuration * timings.animationIterationCount,
@@ -461,31 +459,31 @@ var $AnimateCssProvider = [
           // a copy of the options data, however, if a
           // parent service has already created a copy then
           // we should stick to using that
-          var options = initialOptions || {};
+          let options = initialOptions || {};
           if (!options.$$prepared) {
             options = prepareAnimationOptions(copy(options));
           }
 
-          var restoreStyles = {};
-          var node = getDomNode(element);
+          let restoreStyles = {};
+          let node = getDomNode(element);
           if (!node || !node.parentNode || !$$animateQueue.enabled()) {
             return closeAndReturnNoopAnimator();
           }
 
-          var temporaryStyles = [];
-          var classes = element.attr("class");
-          var styles = packageStyles(options);
-          var animationClosed;
-          var animationPaused;
-          var animationCompleted;
-          var runner;
-          var runnerHost;
-          var maxDelay;
-          var maxDelayTime;
-          var maxDuration;
-          var maxDurationTime;
-          var startTime;
-          var events = [];
+          let temporaryStyles = [];
+          let classes = element.attr("class");
+          let styles = packageStyles(options);
+          let animationClosed;
+          let animationPaused;
+          let animationCompleted;
+          let runner;
+          let runnerHost;
+          let maxDelay;
+          let maxDelayTime;
+          let maxDuration;
+          let maxDurationTime;
+          let startTime;
+          let events = [];
 
           if (
             options.duration === 0 ||
@@ -494,14 +492,14 @@ var $AnimateCssProvider = [
             return closeAndReturnNoopAnimator();
           }
 
-          var method =
+          let method =
             options.event && isArray(options.event)
               ? options.event.join(" ")
               : options.event;
 
-          var isStructural = method && options.structural;
-          var structuralClassName = "";
-          var addRemoveClassName = "";
+          let isStructural = method && options.structural;
+          let structuralClassName = "";
+          let addRemoveClassName = "";
 
           if (isStructural) {
             structuralClassName = pendClasses(method, EVENT_CLASS_PREFIX, true);
@@ -536,12 +534,12 @@ var $AnimateCssProvider = [
             applyAnimationClasses(element, options);
           }
 
-          var preparationClasses = [structuralClassName, addRemoveClassName]
+          let preparationClasses = [structuralClassName, addRemoveClassName]
             .join(" ")
             .trim();
-          var fullClassName = classes + " " + preparationClasses;
-          var hasToStyles = styles.to && Object.keys(styles.to).length > 0;
-          var containsKeyframeAnimation =
+          let fullClassName = classes + " " + preparationClasses;
+          let hasToStyles = styles.to && Object.keys(styles.to).length > 0;
+          let containsKeyframeAnimation =
             (options.keyframeStyle || "").length > 0;
 
           // there is no way we can trigger an animation if no styles and
@@ -555,7 +553,7 @@ var $AnimateCssProvider = [
             return closeAndReturnNoopAnimator();
           }
 
-          var stagger,
+          let stagger,
             cacheKey = $$animateCache.cacheKey(
               node,
               method,
@@ -568,7 +566,7 @@ var $AnimateCssProvider = [
           }
 
           if (options.stagger > 0) {
-            var staggerVal = parseFloat(options.stagger);
+            let staggerVal = parseFloat(options.stagger);
             stagger = {
               transitionDelay: staggerVal,
               animationDelay: staggerVal,
@@ -588,17 +586,17 @@ var $AnimateCssProvider = [
             $$jqLite.addClass(element, preparationClasses);
           }
 
-          var applyOnlyDuration;
+          let applyOnlyDuration;
 
           if (options.transitionStyle) {
-            var transitionStyle = [TRANSITION_PROP, options.transitionStyle];
+            let transitionStyle = [TRANSITION_PROP, options.transitionStyle];
             applyInlineStyle(node, transitionStyle);
             temporaryStyles.push(transitionStyle);
           }
 
           if (options.duration >= 0) {
             applyOnlyDuration = node.style[TRANSITION_PROP].length > 0;
-            var durationStyle = getCssTransitionDurationStyle(
+            let durationStyle = getCssTransitionDurationStyle(
               options.duration,
               applyOnlyDuration,
             );
@@ -609,18 +607,18 @@ var $AnimateCssProvider = [
           }
 
           if (options.keyframeStyle) {
-            var keyframeStyle = [ANIMATION_PROP, options.keyframeStyle];
+            let keyframeStyle = [ANIMATION_PROP, options.keyframeStyle];
             applyInlineStyle(node, keyframeStyle);
             temporaryStyles.push(keyframeStyle);
           }
 
-          var itemIndex = stagger
+          let itemIndex = stagger
             ? options.staggerIndex >= 0
               ? options.staggerIndex
               : $$animateCache.count(cacheKey)
             : 0;
 
-          var isFirst = itemIndex === 0;
+          let isFirst = itemIndex === 0;
 
           // this is a pre-emptive way of forcing the setup classes to be added and applied INSTANTLY
           // without causing any combination of transitions to kick in. By adding a negative delay value
@@ -632,17 +630,17 @@ var $AnimateCssProvider = [
             helpers.blockTransitions(node, SAFE_FAST_FORWARD_DURATION_VALUE);
           }
 
-          var timings = computeTimings(
+          let timings = computeTimings(
             node,
             fullClassName,
             cacheKey,
             !isStructural,
           );
-          var relativeDelay = timings.maxDelay;
+          let relativeDelay = timings.maxDelay;
           maxDelay = Math.max(relativeDelay, 0);
           maxDuration = timings.maxDuration;
 
-          var flags = {};
+          let flags = {};
           flags.hasTransitions = timings.transitionDuration > 0;
           flags.hasAnimations = timings.animationDuration > 0;
           flags.hasTransitionAll =
@@ -686,13 +684,13 @@ var $AnimateCssProvider = [
             return closeAndReturnNoopAnimator();
           }
 
-          var activeClasses = pendClasses(
+          let activeClasses = pendClasses(
             preparationClasses,
             ACTIVE_CLASS_SUFFIX,
           );
 
           if (options.delay != null) {
-            var delayStyle;
+            let delayStyle;
             if (typeof options.delay !== "boolean") {
               delayStyle = parseFloat(options.delay);
               // number in options.delay means we have to recalculate the delay for the closing timeout
@@ -831,7 +829,7 @@ var $AnimateCssProvider = [
             }
 
             //Cancel the fallback closing timeout and remove the timer data
-            var animationTimerData = element.data(ANIMATE_TIMER_KEY);
+            let animationTimerData = element.data(ANIMATE_TIMER_KEY);
             if (animationTimerData) {
               $timeout.cancel(animationTimerData[0].timer);
               element.removeData(ANIMATE_TIMER_KEY);
@@ -874,7 +872,7 @@ var $AnimateCssProvider = [
 
           function onAnimationProgress(event) {
             event.stopPropagation();
-            var ev = event.originalEvent || event;
+            let ev = event.originalEvent || event;
 
             if (ev.target !== node) {
               // Since TransitionEvent / AnimationEvent bubble up,
@@ -884,11 +882,11 @@ var $AnimateCssProvider = [
 
             // we now always use `Date.now()` due to the recent changes with
             // event.timeStamp in Firefox, Webkit and Chrome (see #13494 for more info)
-            var timeStamp = ev.$manualTimeStamp || Date.now();
+            let timeStamp = ev.$manualTimeStamp || Date.now();
 
             /* Firefox (or possibly just Gecko) likes to not round values up
              * when a ms measurement is used for the animation */
-            var elapsedTime = parseFloat(
+            let elapsedTime = parseFloat(
               ev.elapsedTime.toFixed(ELAPSED_TIME_MAX_DECIMAL_PLACES),
             );
 
@@ -921,11 +919,11 @@ var $AnimateCssProvider = [
             // will still happen when transitions are used. Only the transition will
             // not be paused since that is not possible. If the animation ends when
             // paused then it will not complete until unpaused or cancelled.
-            var playPause = function (playAnimation) {
+            let playPause = function (playAnimation) {
               if (!animationCompleted) {
                 animationPaused = !playAnimation;
                 if (timings.animationDuration) {
-                  var value = blockKeyframeAnimations(node, animationPaused);
+                  let value = blockKeyframeAnimations(node, animationPaused);
                   if (animationPaused) {
                     temporaryStyles.push(value);
                   } else {
@@ -941,7 +939,7 @@ var $AnimateCssProvider = [
             // checking the stagger duration prevents an accidentally cascade of the CSS delay style
             // being inherited from the parent. If the transition duration is zero then we can safely
             // rely that the delay value is an intentional stagger delay style.
-            var maxStagger =
+            let maxStagger =
               itemIndex > 0 &&
               ((timings.transitionDuration &&
                 stagger.transitionDuration === 0) ||
@@ -975,8 +973,8 @@ var $AnimateCssProvider = [
               applyBlocking(false);
 
               forEach(temporaryStyles, function (entry) {
-                var key = entry[0];
-                var value = entry[1];
+                let key = entry[0];
+                let value = entry[1];
                 node.style[key] = value;
               });
 
@@ -1025,7 +1023,7 @@ var $AnimateCssProvider = [
               maxDurationTime = maxDuration * ONE_SECOND;
 
               if (options.easing) {
-                var easeProp,
+                let easeProp,
                   easeVal = options.easing;
                 if (flags.hasTransitions) {
                   easeProp = TRANSITION_PROP + TIMING_KEY;
@@ -1048,14 +1046,14 @@ var $AnimateCssProvider = [
               }
 
               startTime = Date.now();
-              var timerTime =
+              let timerTime =
                 maxDelayTime + CLOSING_TIME_BUFFER * maxDurationTime;
-              var endTime = startTime + timerTime;
+              let endTime = startTime + timerTime;
 
-              var animationsData = element.data(ANIMATE_TIMER_KEY) || [];
-              var setupFallbackTimer = true;
+              let animationsData = element.data(ANIMATE_TIMER_KEY) || [];
+              let setupFallbackTimer = true;
               if (animationsData.length) {
-                var currentTimerData = animationsData[0];
+                let currentTimerData = animationsData[0];
                 setupFallbackTimer = endTime > currentTimerData.expectedEndTime;
                 if (setupFallbackTimer) {
                   $timeout.cancel(currentTimerData.timer);
@@ -1065,7 +1063,7 @@ var $AnimateCssProvider = [
               }
 
               if (setupFallbackTimer) {
-                var timer = $timeout(onAnimationExpired, timerTime, false);
+                let timer = $timeout(onAnimationExpired, timerTime, false);
                 animationsData[0] = {
                   timer: timer,
                   expectedEndTime: endTime,
@@ -1091,13 +1089,13 @@ var $AnimateCssProvider = [
             }
 
             function onAnimationExpired() {
-              var animationsData = element.data(ANIMATE_TIMER_KEY);
+              let animationsData = element.data(ANIMATE_TIMER_KEY);
 
               // this will be false in the event that the element was
               // removed from the DOM (via a leave animation or something
               // similar)
               if (animationsData) {
-                for (var i = 1; i < animationsData.length; i++) {
+                for (let i = 1; i < animationsData.length; i++) {
                   animationsData[i]();
                 }
                 element.removeData(ANIMATE_TIMER_KEY);

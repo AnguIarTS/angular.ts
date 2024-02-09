@@ -1,4 +1,4 @@
-'use strict';
+
 /* global console */
 
 angular.module('versions', ['currentVersionData', 'allVersionsData'])
@@ -12,7 +12,7 @@ angular.module('versions', ['currentVersionData', 'allVersionsData'])
             /** @this VersionPickerController */
             function VersionPickerController($location, $window, CURRENT_NG_VERSION, ALL_NG_VERSIONS) {
 
-      var versionStr = CURRENT_NG_VERSION.version;
+      let versionStr = CURRENT_NG_VERSION.version;
 
       if (CURRENT_NG_VERSION.isSnapshot) {
         versionStr = CURRENT_NG_VERSION.distTag === 'latest' ? 'snapshot-stable' : 'snapshot';
@@ -24,7 +24,7 @@ angular.module('versions', ['currentVersionData', 'allVersionsData'])
       });
 
       this.jumpToDocsVersion = function(value) {
-        var currentPagePath = $location.path().replace(/\/$/, '');
+        let currentPagePath = $location.path().replace(/\/$/, '');
         $window.location = value.docsUrl + currentPagePath;
       };
     }],
@@ -39,7 +39,7 @@ angular.module('versions', ['currentVersionData', 'allVersionsData'])
   };
 
   function find(collection, matcherFn) {
-    for (var i = 0, ii = collection.length; i < ii; ++i) {
+    for (let i = 0, ii = collection.length; i < ii; ++i) {
       if (matcherFn(collection[i])) {
         return collection[i];
       }

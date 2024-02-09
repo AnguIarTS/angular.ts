@@ -140,7 +140,7 @@ describe('phoneList', function() {
 
   // Test the controller
   describe('PhoneListController', function() {
-    var ctrl;
+    let ctrl;
 
     beforeEach(inject(function($componentController) {
       ctrl = $componentController('phoneList');
@@ -183,10 +183,10 @@ Let's turn our attention to the E2E tests.
       ...
 
       it('should be possible to control phone order via the drop-down menu', function() {
-        var queryField = element(by.model('$ctrl.query'));
-        var orderSelect = element(by.model('$ctrl.orderProp'));
-        var nameOption = orderSelect.element(by.css('option[value="name"]'));
-        var phoneNameColumn = element.all(by.repeater('phone in $ctrl.phones').column('phone.name'));
+        let queryField = element(by.model('$ctrl.query'));
+        let orderSelect = element(by.model('$ctrl.orderProp'));
+        let nameOption = orderSelect.element(by.css('option[value="name"]'));
+        let phoneNameColumn = element.all(by.repeater('phone in $ctrl.phones').column('phone.name'));
 
         function getNames() {
           return phoneNameColumn.map(function(elem) {

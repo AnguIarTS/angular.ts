@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('errors', function() {
   // Mock `ngSanitize` module
@@ -10,8 +10,8 @@ describe('errors', function() {
 
 
   describe('errorDisplay', function() {
-    var $sanitize;
-    var errorLinkFilter;
+    let $sanitize;
+    let errorLinkFilter;
 
     beforeEach(inject(function(_$sanitize_, _errorLinkFilter_) {
       $sanitize = _$sanitize_;
@@ -20,8 +20,8 @@ describe('errors', function() {
 
 
     it('should return empty input unchanged', function() {
-      var inputs = [undefined, null, false, 0, ''];
-      var remaining = inputs.length;
+      let inputs = [undefined, null, false, 0, ''];
+      let remaining = inputs.length;
 
       inputs.forEach(function(falsyValue) {
         expect(errorLinkFilter(falsyValue)).toBe(falsyValue);
@@ -33,23 +33,23 @@ describe('errors', function() {
 
 
     it('should recognize URLs and convert them to `<a>`', function() {
-      var urls = [
+      let urls = [
         ['ftp://foo/bar?baz#qux'],
         ['http://foo/bar?baz#qux'],
         ['https://foo/bar?baz#qux'],
         ['mailto:foo_bar@baz.qux', null, 'foo_bar@baz.qux'],
         ['foo_bar@baz.qux', 'mailto:foo_bar@baz.qux', 'foo_bar@baz.qux']
       ];
-      var remaining = urls.length;
+      let remaining = urls.length;
 
       urls.forEach(function(values) {
-        var actualUrl = values[0];
-        var expectedUrl = values[1] || actualUrl;
-        var expectedText = values[2] || expectedUrl;
-        var anchor = '<a href="' + expectedUrl + '">' + expectedText + '</a>';
+        let actualUrl = values[0];
+        let expectedUrl = values[1] || actualUrl;
+        let expectedText = values[2] || expectedUrl;
+        let anchor = '<a href="' + expectedUrl + '">' + expectedText + '</a>';
 
-        var input = 'start ' + actualUrl + ' end';
-        var output = 'start ' + anchor + ' end';
+        let input = 'start ' + actualUrl + ' end';
+        let output = 'start ' + anchor + ' end';
 
         expect(errorLinkFilter(input)).toBe(output);
         remaining--;
@@ -60,17 +60,17 @@ describe('errors', function() {
 
 
     it('should not recognize stack-traces as URLs', function() {
-      var urls = [
+      let urls = [
         'ftp://foo/bar?baz#qux:4:2',
         'http://foo/bar?baz#qux:4:2',
         'https://foo/bar?baz#qux:4:2',
         'mailto:foo_bar@baz.qux:4:2',
         'foo_bar@baz.qux:4:2'
       ];
-      var remaining = urls.length;
+      let remaining = urls.length;
 
       urls.forEach(function(url) {
-        var input = 'start ' + url + ' end';
+        let input = 'start ' + url + ' end';
 
         expect(errorLinkFilter(input)).toBe(input);
         remaining--;
@@ -81,10 +81,10 @@ describe('errors', function() {
 
 
     it('should should set `[target]` if specified', function() {
-      var url = 'https://foo/bar?baz#qux';
-      var target = '_blank';
-      var outputWithoutTarget = '<a href="' + url + '">' + url + '</a>';
-      var outputWithTarget = '<a target="' + target + '" href="' + url + '">' + url + '</a>';
+      let url = 'https://foo/bar?baz#qux';
+      let target = '_blank';
+      let outputWithoutTarget = '<a href="' + url + '">' + url + '</a>';
+      let outputWithTarget = '<a target="' + target + '" href="' + url + '">' + url + '</a>';
 
       expect(errorLinkFilter(url)).toBe(outputWithoutTarget);
       expect(errorLinkFilter(url, target)).toBe(outputWithTarget);
@@ -92,9 +92,9 @@ describe('errors', function() {
 
 
     it('should truncate the contents of the generated `<a>` to 60 characters', function() {
-      var looongUrl = 'https://foooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo';
-      var truncatedUrl = 'https://foooooooooooooooooooooooooooooooooooooooooooooooo...';
-      var output = '<a href="' + looongUrl + '">' + truncatedUrl + '</a>';
+      let looongUrl = 'https://foooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo';
+      let truncatedUrl = 'https://foooooooooooooooooooooooooooooooooooooooooooooooo...';
+      let output = '<a href="' + looongUrl + '">' + truncatedUrl + '</a>';
 
       expect(looongUrl.length).toBeGreaterThan(60);
       expect(truncatedUrl.length).toBe(60);
@@ -105,8 +105,8 @@ describe('errors', function() {
     it('should pass the final string through `$sanitize`', function() {
       $sanitize.calls.reset();
 
-      var input = 'start https://foo/bar?baz#qux end';
-      var output = errorLinkFilter(input);
+      let input = 'start https://foo/bar?baz#qux end';
+      let output = errorLinkFilter(input);
 
       expect($sanitize).toHaveBeenCalledTimes(1);
       expect($sanitize).toHaveBeenCalledWith(output);
@@ -115,10 +115,10 @@ describe('errors', function() {
 
 
   describe('errorDisplay', function() {
-    var $compile;
-    var $location;
-    var $rootScope;
-    var errorLinkFilter;
+    let $compile;
+    let $location;
+    let $rootScope;
+    let errorLinkFilter;
 
     beforeEach(module(function($provide) {
       $provide.decorator('errorLinkFilter', function() {
@@ -136,7 +136,7 @@ describe('errors', function() {
 
 
     it('should set the element\'s HTML', function() {
-      var elem = $compile('<span error-display="bar">foo</span>')($rootScope);
+      let elem = $compile('<span error-display="bar">foo</span>')($rootScope);
       expect(elem.html()).toBe('bar');
     });
 
@@ -144,7 +144,7 @@ describe('errors', function() {
     it('should interpolate the contents against `$location.search()`', function() {
       spyOn($location, 'search').and.returnValue({p0: 'foo', p1: 'bar'});
 
-      var elem = $compile('<span error-display="foo = {0}, bar = {1}"></span>')($rootScope);
+      let elem = $compile('<span error-display="foo = {0}, bar = {1}"></span>')($rootScope);
       expect(elem.html()).toBe('foo = foo, bar = bar');
     });
 
@@ -159,7 +159,7 @@ describe('errors', function() {
 
 
     it('should encode `<` and `>`', function() {
-      var elem = $compile('<span error-display="&lt;xyz&gt;"></span>')($rootScope);
+      let elem = $compile('<span error-display="&lt;xyz&gt;"></span>')($rootScope);
       expect(elem.text()).toBe('<xyz>');
     });
   });

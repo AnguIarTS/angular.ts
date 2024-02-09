@@ -2,7 +2,7 @@
  *         Generated file, do not modify              *
  *                                                    *
  *****************************************************/
-"use strict";
+
 function IDS_Y(cp) {
   if (0x0041 <= cp && cp <= 0x005a) return true;
   if (0x0061 <= cp && cp <= 0x007a) return true;

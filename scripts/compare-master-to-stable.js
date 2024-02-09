@@ -1,55 +1,55 @@
 #!/usr/bin/env node
 
-'use strict';
 
-var util = require('util');
-var cp = require('child_process');
 
-var Q = require('q');
-var _ = require('lodash');
-var semver = require('semver');
+let util = require('util');
+let cp = require('child_process');
 
-var exec = function(cmd) {
+let Q = require('q');
+let _ = require('lodash');
+let semver = require('semver');
+
+let exec = function(cmd) {
   return function() {
-    var args = Array.prototype.slice.call(arguments, 0);
+    let args = Array.prototype.slice.call(arguments, 0);
     args.unshift(cmd);
-    var fullCmd = util.format.apply(util, args);
+    let fullCmd = util.format.apply(util, args);
     return Q.nfcall(cp.exec, fullCmd).then(function(out) {
       return out[0].split('\n');
     });
   };
 };
 
-var andThen = function(fn, after) {
+let andThen = function(fn, after) {
   return /** @this */ function() {
     return fn.apply(this, arguments).then(after);
   };
 };
 
-var oneArg = function(fn) {
+let oneArg = function(fn) {
   return function(arg) {
     return fn(arg);
   };
 };
 
-var oneLine = function(lines) {
+let oneLine = function(lines) {
   return lines[0].trim();
 };
 
-var noArgs = function(fn) {
+let noArgs = function(fn) {
   return function() {
     return fn();
   };
 };
 
-var identity = function(i) { return i; };
+let identity = function(i) { return i; };
 
 // like Q.all, but runs the commands in series
 // useful for ensuring env state (like which branch is checked out)
-var allInSeries = function(fn) {
+let allInSeries = function(fn) {
   return function(args) {
-    var results = [];
-    var def;
+    let results = [];
+    let def;
     while (args.length > 0) {
       (function(arg) {
         if (def) {
@@ -70,7 +70,7 @@ var allInSeries = function(fn) {
   };
 };
 
-var compareBranches = function(left, right) {
+let compareBranches = function(left, right) {
   console.log('# These commits are in ' + left.name + ' but not in ' + right.name + '\n');
   console.log(_(left.log).
     difference(right.log).
@@ -81,14 +81,14 @@ var compareBranches = function(left, right) {
     join('\n'));
 };
 
-var checkout = oneArg(exec('git checkout %s'));
+let checkout = oneArg(exec('git checkout %s'));
 
-var getCurrentBranch = andThen(noArgs(exec('git rev-parse --abbrev-ref HEAD')), oneLine);
-var getTags = noArgs(exec('git tag'));
-var getTheLog = oneArg(exec('git log --pretty=oneline %s..HEAD | cat'));
+let getCurrentBranch = andThen(noArgs(exec('git rev-parse --abbrev-ref HEAD')), oneLine);
+let getTags = noArgs(exec('git tag'));
+let getTheLog = oneArg(exec('git log --pretty=oneline %s..HEAD | cat'));
 
 // remember this so we can restore state
-var currentBranch;
+let currentBranch;
 
 getCurrentBranch().
 then(function(branch) {
@@ -102,7 +102,7 @@ then(function(tags) {
     sort(semver.rcompare);
 }).
 then(function(tags) {
-  var major = semver(tags[0]).major;
+  let major = semver(tags[0]).major;
   return tags.
     filter(function(ver) {
       return semver(ver).major === major;
@@ -122,8 +122,8 @@ then(function(tags) {
     value();
 }).
 then(function(tags) {
-  var master = tags.pop();
-  var stable = tags.pop();
+  let master = tags.pop();
+  let stable = tags.pop();
 
   return [
     { name: stable.replace(/\d+$/, 'x'), tag: stable },
@@ -142,8 +142,8 @@ then(allInSeries(function(branch) {
     then(function(log) {
       branch.full = log.map(function(line) {
         line = line.split(' ');
-        var sha = line.shift();
-        var msg = line.join(' ');
+        let sha = line.shift();
+        let msg = line.join(' ');
         return sha + ((/fix\([^)]+\):/i.test(msg))  ? ' * ' : '   ') + msg;
       });
       branch.log = log.map(function(line) {

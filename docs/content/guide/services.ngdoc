@@ -49,7 +49,7 @@ subsystem takes care of the rest.
         };
       }]).
      factory('notify', ['$window', function(win) {
-        var msgs = [];
+        let msgs = [];
         return function(msg) {
           msgs.push(msg);
           if (msgs.length === 3) {
@@ -85,9 +85,9 @@ Services are registered to modules via the {@link angular.Module Module API}.
 Typically you use the {@link angular.Module#factory Module factory} API to register a service:
 
 ```js
-var myModule = angular.module('myModule', []);
+let myModule = angular.module('myModule', []);
 myModule.factory('serviceId', function() {
-  var shinyNewServiceInstance;
+  let shinyNewServiceInstance;
   // factory function body that constructs shinyNewServiceInstance
   return shinyNewServiceInstance;
 });
@@ -106,7 +106,7 @@ For more on dependencies, see the {@link guide/di dependency injection} docs.
 The example module below has two services, each with various dependencies:
 
 ```js
-var batchModule = angular.module('batchModule', []);
+let batchModule = angular.module('batchModule', []);
 
 /**
  * The `batchLog` service allows for messages to be queued in memory and flushed
@@ -115,7 +115,7 @@ var batchModule = angular.module('batchModule', []);
  * @param {*} message Message to be logged.
  */
 batchModule.factory('batchLog', ['$interval', '$log', function($interval, $log) {
-  var messageQueue = [];
+  let messageQueue = [];
 
   function log() {
     if (messageQueue.length) {
@@ -167,7 +167,7 @@ module's `config` function:
 ```js
 angular.module('myModule', []).config(['$provide', function($provide) {
   $provide.factory('serviceId', function() {
-    var shinyNewServiceInstance;
+    let shinyNewServiceInstance;
     // factory function body that constructs shinyNewServiceInstance
     return shinyNewServiceInstance;
   });
@@ -184,7 +184,7 @@ Creating AngularJS Services} example above. The unit test example uses a Jasmine
 of a real browser alert.
 
 ```js
-var mock, notify;
+let mock, notify;
 beforeEach(module('myServiceModule'));
 beforeEach(function() {
   mock = {alert: jasmine.createSpy()};

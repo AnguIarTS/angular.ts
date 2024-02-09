@@ -1,8 +1,8 @@
-'use strict';
+
 
 
 describe('ngNonBindable', function() {
-  var element;
+  let element;
 
 
   afterEach(function() {
@@ -26,13 +26,13 @@ describe('ngNonBindable', function() {
     $rootScope.b = 'two';
     $rootScope.$digest();
     // Bindings not contained by ng-non-bindable should resolve.
-    var spans = element.find('span');
+    let spans = element.find('span');
     expect(spans.eq(0).text()).toEqual('one');
     expect(spans.eq(1).text()).toEqual('two');
     expect(spans.eq(3).text()).toEqual('one');
     expect(spans.eq(4).text()).toEqual('two');
     // Bindings contained by ng-non-bindable should be left alone.
-    var nonBindableDiv = element.find('div');
+    let nonBindableDiv = element.find('div');
     expect(nonBindableDiv.attr('foo')).toEqual('{{a}}');
     expect(trim(nonBindableDiv.text())).toEqual('{{b}}');
   }));

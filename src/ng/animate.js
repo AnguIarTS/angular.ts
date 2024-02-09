@@ -1,8 +1,6 @@
-"use strict";
-
-var $animateMinErr = minErr("$animate");
-var ELEMENT_NODE = 1;
-var NG_ANIMATE_CLASSNAME = "ng-animate";
+let $animateMinErr = minErr("$animate");
+let ELEMENT_NODE = 1;
+let NG_ANIMATE_CLASSNAME = "ng-animate";
 
 function mergeClasses(a, b) {
   if (!a && !b) return "";
@@ -14,8 +12,8 @@ function mergeClasses(a, b) {
 }
 
 function extractElementNode(element) {
-  for (var i = 0; i < element.length; i++) {
-    var elm = element[i];
+  for (let i = 0; i < element.length; i++) {
+    let elm = element[i];
     if (elm.nodeType === ELEMENT_NODE) {
       return elm;
     }
@@ -29,7 +27,7 @@ function splitClasses(classes) {
 
   // Use createMap() to prevent class assumptions involving property names in
   // Object.prototype
-  var obj = createMap();
+  let obj = createMap();
   forEach(classes, function (klass) {
     // sometimes the split leaves empty string values
     // incase extra spaces were applied to the options
@@ -51,15 +49,15 @@ function prepareAnimateOptions(options) {
   return isObject(options) ? options : {};
 }
 
-var $$CoreAnimateJsProvider = /** @this */ function () {
+let $$CoreAnimateJsProvider = /** @this */ function () {
   this.$get = noop;
 };
 
 // this is prefixed with Core since it conflicts with
 // the animateQueueProvider defined in ngAnimate/animateQueue.js
-var $$CoreAnimateQueueProvider = /** @this */ function () {
-  var postDigestQueue = new NgMap();
-  var postDigestElements = [];
+let $$CoreAnimateQueueProvider = /** @this */ function () {
+  let postDigestQueue = new NgMap();
+  let postDigestElements = [];
 
   this.$get = [
     "$$AnimateRunner",
@@ -92,7 +90,7 @@ var $$CoreAnimateQueueProvider = /** @this */ function () {
             );
           }
 
-          var runner = new $$AnimateRunner();
+          let runner = new $$AnimateRunner();
 
           // since there are no animations to run the runner needs to be
           // notified that the animation call is complete.
@@ -102,7 +100,7 @@ var $$CoreAnimateQueueProvider = /** @this */ function () {
       };
 
       function updateData(data, classes, value) {
-        var changed = false;
+        let changed = false;
         if (classes) {
           classes = isString(classes)
             ? classes.split(" ")
@@ -121,13 +119,13 @@ var $$CoreAnimateQueueProvider = /** @this */ function () {
 
       function handleCSSClassChanges() {
         forEach(postDigestElements, function (element) {
-          var data = postDigestQueue.get(element);
+          let data = postDigestQueue.get(element);
           if (data) {
-            var existing = splitClasses(element.attr("class"));
-            var toAdd = "";
-            var toRemove = "";
+            let existing = splitClasses(element.attr("class"));
+            let toAdd = "";
+            let toRemove = "";
             forEach(data, function (status, className) {
-              var hasClass = !!existing[className];
+              let hasClass = !!existing[className];
               if (status !== hasClass) {
                 if (status) {
                   toAdd += (toAdd.length ? " " : "") + className;
@@ -152,10 +150,10 @@ var $$CoreAnimateQueueProvider = /** @this */ function () {
       }
 
       function addRemoveClassesPostDigest(element, add, remove) {
-        var data = postDigestQueue.get(element) || {};
+        let data = postDigestQueue.get(element) || {};
 
-        var classesAdded = updateData(data, add, true);
-        var classesRemoved = updateData(data, remove, false);
+        let classesAdded = updateData(data, add, true);
+        let classesRemoved = updateData(data, remove, false);
 
         if (classesAdded || classesRemoved) {
           postDigestQueue.set(element, data);
@@ -182,12 +180,12 @@ var $$CoreAnimateQueueProvider = /** @this */ function () {
  *
  * To see the functional implementation check out `src/ngAnimate/animate.js`.
  */
-var $AnimateProvider = [
+let $AnimateProvider = [
   "$provide",
   /** @this */ function ($provide) {
-    var provider = this;
-    var classNameFilter = null;
-    var customFilter = null;
+    let provider = this;
+    let classNameFilter = null;
+    let customFilter = null;
 
     this.$$registeredAnimations = Object.create(null);
 
@@ -239,7 +237,7 @@ var $AnimateProvider = [
         );
       }
 
-      var key = name + "-animation";
+      let key = name + "-animation";
       provider.$$registeredAnimations[name.substr(1)] = key;
       $provide.factory(key, factory);
     };
@@ -312,7 +310,7 @@ var $AnimateProvider = [
       if (arguments.length === 1) {
         classNameFilter = expression instanceof RegExp ? expression : null;
         if (classNameFilter) {
-          var reservedRegex = new RegExp(
+          let reservedRegex = new RegExp(
             "[(\\s|\\/)]" + NG_ANIMATE_CLASSNAME + "[(\\s|\\/)]",
           );
           if (reservedRegex.test(classNameFilter.toString())) {
@@ -336,7 +334,7 @@ var $AnimateProvider = [
           // from the dom sometime before this code runs then let's
           // just stick to using the parent element as the anchor
           if (afterElement) {
-            var afterNode = extractElementNode(afterElement);
+            let afterNode = extractElementNode(afterElement);
             if (
               afterNode &&
               !afterNode.parentNode &&
@@ -528,7 +526,7 @@ var $AnimateProvider = [
 
                 this.addClass = function() {
                   this.runner = $animate.addClass($element.find('div'), 'red');
-                  var ctrl = this;
+                  let ctrl = this;
                   this.runner.finally(function() {
                     ctrl.runner = null;
                   });
@@ -536,7 +534,7 @@ var $AnimateProvider = [
 
                 this.removeClass = function() {
                   this.runner = $animate.removeClass($element.find('div'), 'red');
-                  var ctrl = this;
+                  let ctrl = this;
                   this.runner.finally(function() {
                     ctrl.runner = null;
                   });

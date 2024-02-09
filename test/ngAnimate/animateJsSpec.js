@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('ngAnimate $$animateJs', function() {
 
@@ -6,14 +6,14 @@ describe('ngAnimate $$animateJs', function() {
   beforeEach(module('ngAnimateMock'));
 
   function getDoneFunction(args) {
-    for (var i = 1; i < args.length; i++) {
-      var a = args[i];
+    for (let i = 1; i < args.length; i++) {
+      let a = args[i];
       if (isFunction(a)) return a;
     }
   }
 
   it('should return nothing if no animations are registered at all', inject(function($$animateJs) {
-    var element = jqLite('<div></div>');
+    let element = jqLite('<div></div>');
     expect($$animateJs(element, 'enter')).toBeFalsy();
   }));
 
@@ -24,7 +24,7 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
     inject(function($$animateJs) {
-      var element = jqLite('<div class="bar"></div>');
+      let element = jqLite('<div class="bar"></div>');
       expect($$animateJs(element, 'enter')).toBeFalsy();
     });
   });
@@ -36,7 +36,7 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
     inject(function($$animateJs) {
-      var element = jqLite('<div class="foo"></div>');
+      let element = jqLite('<div class="foo"></div>');
       expect($$animateJs(element, 'leave')).toBeFalsy();
     });
   });
@@ -48,7 +48,7 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
     inject(function($$animateJs) {
-      var element = jqLite('<div class="foo"></div>');
+      let element = jqLite('<div class="foo"></div>');
       expect($$animateJs(element, 'enter')).toBeTruthy();
     });
   });
@@ -63,7 +63,7 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
     inject(function($$animateJs) {
-      var element = jqLite('<div class="batman"></div>');
+      let element = jqLite('<div class="batman"></div>');
       expect($$animateJs(element, 'enter', 'superman')).toBeTruthy();
       expect($$animateJs(element, 'leave', 'legoman batman')).toBeTruthy();
       expect($$animateJs(element, 'enter', 'legoman')).toBeFalsy();
@@ -72,10 +72,10 @@ describe('ngAnimate $$animateJs', function() {
   });
 
   it('should run multiple animations in parallel', function() {
-    var doneCallbacks = [];
+    let doneCallbacks = [];
     function makeAnimation(event) {
       return function() {
-        var data = {};
+        let data = {};
         data[event] = function(element, done) {
           doneCallbacks.push(done);
         };
@@ -88,9 +88,9 @@ describe('ngAnimate $$animateJs', function() {
       $animateProvider.register('.three', makeAnimation('enter'));
     });
     inject(function($$animateJs, $animate) {
-      var element = jqLite('<div class="one two three"></div>');
-      var animator = $$animateJs(element, 'enter');
-      var complete = false;
+      let element = jqLite('<div class="one two three"></div>');
+      let animator = $$animateJs(element, 'enter');
+      let complete = false;
       animator.start().done(function() {
         complete = true;
       });
@@ -104,8 +104,8 @@ describe('ngAnimate $$animateJs', function() {
   });
 
   they('should $prop the animation when runner.$prop() is called', ['end', 'cancel'], function(method) {
-    var ended = false;
-    var status;
+    let ended = false;
+    let status;
     module(function($animateProvider) {
       $animateProvider.register('.the-end', function() {
         return {
@@ -119,9 +119,9 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
     inject(function($$animateJs) {
-      var element = jqLite('<div class="the-end"></div>');
-      var animator = $$animateJs(element, 'enter');
-      var runner = animator.start();
+      let element = jqLite('<div class="the-end"></div>');
+      let animator = $$animateJs(element, 'enter');
+      let runner = animator.start();
 
       expect(isFunction(runner[method])).toBe(true);
 
@@ -135,7 +135,7 @@ describe('ngAnimate $$animateJs', function() {
   they('should $prop all of the running the animations when runner.$prop() is called',
     ['end', 'cancel'], function(method) {
 
-    var lookup = {};
+    let lookup = {};
     module(function($animateProvider) {
       forEach(['one','two','three'], function(klass) {
         $animateProvider.register('.' + klass, function() {
@@ -150,9 +150,9 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
     inject(function($$animateJs) {
-      var element = jqLite('<div class="one two three"></div>');
-      var animator = $$animateJs(element, 'enter');
-      var runner = animator.start();
+      let element = jqLite('<div class="one two three"></div>');
+      let animator = $$animateJs(element, 'enter');
+      let runner = animator.start();
 
       runner[method]();
       expect(lookup.one).toBe(method);
@@ -162,8 +162,8 @@ describe('ngAnimate $$animateJs', function() {
   });
 
   they('should only run the $prop operation once', ['end', 'cancel'], function(method) {
-    var ended = false;
-    var count = 0;
+    let ended = false;
+    let count = 0;
     module(function($animateProvider) {
       $animateProvider.register('.the-end', function() {
         return {
@@ -177,9 +177,9 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
     inject(function($$animateJs) {
-      var element = jqLite('<div class="the-end"></div>');
-      var animator = $$animateJs(element, 'enter');
-      var runner = animator.start();
+      let element = jqLite('<div class="the-end"></div>');
+      let animator = $$animateJs(element, 'enter');
+      let runner = animator.start();
 
       expect(isFunction(runner[method])).toBe(true);
 
@@ -194,7 +194,7 @@ describe('ngAnimate $$animateJs', function() {
   });
 
   it('should always run the provided animation in atleast one RAF frame if defined', function() {
-    var before, after, endCalled;
+    let before, after, endCalled;
     module(function($animateProvider) {
       $animateProvider.register('.the-end', function() {
         return {
@@ -208,12 +208,12 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
     inject(function($$animateJs, $animate) {
-      var element = jqLite('<div class="the-end"></div>');
-      var animator = $$animateJs(element, 'addClass', {
+      let element = jqLite('<div class="the-end"></div>');
+      let animator = $$animateJs(element, 'addClass', {
         addClass: 'red'
       });
 
-      var runner = animator.start();
+      let runner = animator.start();
       runner.done(function() {
         endCalled = true;
       });
@@ -233,19 +233,19 @@ describe('ngAnimate $$animateJs', function() {
   });
 
   they('should still run the associated DOM event when the $prop function is run but no more animations', ['cancel', 'end'], function(method) {
-    var log = [];
+    let log = [];
     module(function($animateProvider) {
       $animateProvider.register('.the-end', function() {
         return {
           beforeAddClass: function() {
             return function(cancelled) {
-              var status = cancelled ? 'cancel' : 'end';
+              let status = cancelled ? 'cancel' : 'end';
               log.push('before addClass ' + status);
             };
           },
           addClass: function() {
             return function(cancelled) {
-              var status = cancelled ? 'cancel' : 'end';
+              let status = cancelled ? 'cancel' : 'end';
               log.push('after addClass' + status);
             };
           }
@@ -253,13 +253,13 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
     inject(function($$animateJs, $animate) {
-      var element = jqLite('<div class="the-end"></div>');
-      var animator = $$animateJs(element, 'addClass', {
+      let element = jqLite('<div class="the-end"></div>');
+      let animator = $$animateJs(element, 'addClass', {
         domOperation: function() {
           log.push('dom addClass');
         }
       });
-      var runner = animator.start();
+      let runner = animator.start();
       runner.done(function() {
         log.push('addClass complete');
       });
@@ -280,11 +280,11 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
     inject(function($$animateJs, $animate, $rootScope) {
-      var element = jqLite('<div class="the-end"></div>');
-      var animator = $$animateJs(element, 'addClass');
-      var runner = animator.start();
-      var done = false;
-      var cancelled = false;
+      let element = jqLite('<div class="the-end"></div>');
+      let animator = $$animateJs(element, 'addClass');
+      let runner = animator.start();
+      let done = false;
+      let cancelled = false;
       runner.then(function() {
           done = true;
         }, function() {
@@ -306,11 +306,11 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
     inject(function($$animateJs, $animate, $rootScope) {
-      var element = jqLite('<div class="the-end"></div>');
-      var animator = $$animateJs(element, 'addClass');
-      var runner = animator.start();
-      var done = false;
-      var cancelled = false;
+      let element = jqLite('<div class="the-end"></div>');
+      let animator = $$animateJs(element, 'addClass');
+      let runner = animator.start();
+      let done = false;
+      let cancelled = false;
       runner.then(function() {
         done = true;
       }, function() {
@@ -326,7 +326,7 @@ describe('ngAnimate $$animateJs', function() {
   });
 
   describe('events', function() {
-    var animations, runAnimation, element, log;
+    let animations, runAnimation, element, log;
     beforeEach(module(function($animateProvider) {
       element = jqLite('<div class="test-animation"></div>');
       animations = {};
@@ -344,7 +344,7 @@ describe('ngAnimate $$animateJs', function() {
             }
           });
 
-          var driver = $$animateJs(element, method, 'test-animation', options);
+          let driver = $$animateJs(element, method, 'test-animation', options);
           driver.start().done(function(status) {
             ((status ? done : error) || noop)();
           });
@@ -355,8 +355,8 @@ describe('ngAnimate $$animateJs', function() {
     they('$prop should have the function signature of (element, done, options) for the after animation',
       ['enter', 'move', 'leave'], function(event) {
       inject(function() {
-        var args;
-        var animationOptions = {};
+        let args;
+        let animationOptions = {};
         animationOptions.foo = 'bar';
         animations[event] = function() {
           args = arguments;
@@ -372,9 +372,9 @@ describe('ngAnimate $$animateJs', function() {
 
     they('$prop should not execute a before function', enterMoveEvents, function(event) {
       inject(function() {
-        var args;
-        var beforeMethod = 'before' + event.charAt(0).toUpperCase() + event.substr(1);
-        var animationOptions = {};
+        let args;
+        let beforeMethod = 'before' + event.charAt(0).toUpperCase() + event.substr(1);
+        let animationOptions = {};
         animations[beforeMethod] = function() {
           args = arguments;
         };
@@ -387,14 +387,14 @@ describe('ngAnimate $$animateJs', function() {
     they('$prop should have the function signature of (element, className, done, options) for the before animation',
       ['addClass', 'removeClass'], function(event) {
       inject(function() {
-        var beforeMethod = 'before' + event.charAt(0).toUpperCase() + event.substr(1);
-        var args;
-        var className = 'matias';
+        let beforeMethod = 'before' + event.charAt(0).toUpperCase() + event.substr(1);
+        let args;
+        let className = 'matias';
         animations[beforeMethod] = function() {
           args = arguments;
         };
 
-        var animationOptions = {};
+        let animationOptions = {};
         animationOptions.foo = 'bar';
         animationOptions[event] = className;
         runAnimation(event, noop, noop, animationOptions);
@@ -410,13 +410,13 @@ describe('ngAnimate $$animateJs', function() {
     they('$prop should have the function signature of (element, className, done, options) for the after animation',
       ['addClass', 'removeClass'], function(event) {
       inject(function() {
-        var args;
-        var className = 'fatias';
+        let args;
+        let className = 'fatias';
         animations[event] = function() {
           args = arguments;
         };
 
-        var animationOptions = {};
+        let animationOptions = {};
         animationOptions.foo = 'bar';
         animationOptions[event] = className;
         runAnimation(event, noop, noop, animationOptions);
@@ -431,15 +431,15 @@ describe('ngAnimate $$animateJs', function() {
 
     they('setClass should have the function signature of (element, addClass, removeClass, done, options) for the $prop animation', ['before', 'after'], function(event) {
       inject(function() {
-        var args;
-        var method = event === 'before' ? 'beforeSetClass' : 'setClass';
+        let args;
+        let method = event === 'before' ? 'beforeSetClass' : 'setClass';
         animations[method] = function() {
           args = arguments;
         };
 
-        var addClass = 'on';
-        var removeClass = 'on';
-        var animationOptions = {
+        let addClass = 'on';
+        let removeClass = 'on';
+        let animationOptions = {
           foo: 'bar',
           addClass: addClass,
           removeClass: removeClass
@@ -457,15 +457,15 @@ describe('ngAnimate $$animateJs', function() {
 
     they('animate should have the function signature of (element, from, to, done, options) for the $prop animation', ['before', 'after'], function(event) {
       inject(function() {
-        var args;
-        var method = event === 'before' ? 'beforeAnimate' : 'animate';
+        let args;
+        let method = event === 'before' ? 'beforeAnimate' : 'animate';
         animations[method] = function() {
           args = arguments;
         };
 
-        var to = { color: 'red' };
-        var from = { color: 'blue' };
-        var animationOptions = {
+        let to = { color: 'red' };
+        let from = { color: 'blue' };
+        let animationOptions = {
           foo: 'bar',
           to: to,
           from: from
@@ -483,13 +483,13 @@ describe('ngAnimate $$animateJs', function() {
 
     they('custom events should have the function signature of (element, done, options) for the $prop animation', ['before', 'after'], function(event) {
       inject(function() {
-        var args;
-        var method = event === 'before' ? 'beforeCustom' : 'custom';
+        let args;
+        let method = event === 'before' ? 'beforeCustom' : 'custom';
         animations[method] = function() {
           args = arguments;
         };
 
-        var animationOptions = {};
+        let animationOptions = {};
         animationOptions.foo = 'bar';
         runAnimation('custom', noop, noop, animationOptions);
 
@@ -500,16 +500,16 @@ describe('ngAnimate $$animateJs', function() {
       });
     });
 
-    var enterMoveEvents = ['enter', 'move'];
-    var otherEvents = ['addClass', 'removeClass', 'setClass'];
-    var allEvents = ['leave'].concat(otherEvents).concat(enterMoveEvents);
+    let enterMoveEvents = ['enter', 'move'];
+    let otherEvents = ['addClass', 'removeClass', 'setClass'];
+    let allEvents = ['leave'].concat(otherEvents).concat(enterMoveEvents);
 
     they('$prop should asynchronously render the before$prop animation', otherEvents, function(event) {
       inject(function($animate) {
-        var beforeMethod = 'before' + event.charAt(0).toUpperCase() + event.substr(1);
+        let beforeMethod = 'before' + event.charAt(0).toUpperCase() + event.substr(1);
         animations[beforeMethod] = function(element, a, b, c) {
           log.push('before ' + event);
-          var done = getDoneFunction(arguments);
+          let done = getDoneFunction(arguments);
           done();
         };
 
@@ -525,7 +525,7 @@ describe('ngAnimate $$animateJs', function() {
       inject(function($animate) {
         animations[event] = function(element, a, b, c) {
           log.push('after ' + event);
-          var done = getDoneFunction(arguments);
+          let done = getDoneFunction(arguments);
           done();
         };
 
@@ -549,7 +549,7 @@ describe('ngAnimate $$animateJs', function() {
       allEvents, function(event) {
 
       inject(function($animate, $$AnimateRunner) {
-        var runner;
+        let runner;
         animations[event] = function(element, a, b, c) {
           return {
             start: function() {
@@ -582,7 +582,7 @@ describe('ngAnimate $$animateJs', function() {
       allEvents, function(event) {
 
       inject(function($animate, $$AnimateRunner) {
-        var runner;
+        let runner;
         animations[event] = function(element, a, b, c) {
           log.push('start ' + event);
           runner = new $$AnimateRunner();
@@ -609,16 +609,16 @@ describe('ngAnimate $$animateJs', function() {
 
     they('$prop should asynchronously reject the before animation if the callback function is called with false', otherEvents, function(event) {
       inject(function($animate, $rootScope) {
-        var beforeMethod = 'before' + event.charAt(0).toUpperCase() + event.substr(1);
+        let beforeMethod = 'before' + event.charAt(0).toUpperCase() + event.substr(1);
         animations[beforeMethod] = function(element, a, b, c) {
           log.push('before ' + event);
-          var done = getDoneFunction(arguments);
+          let done = getDoneFunction(arguments);
           done(false);
         };
 
         animations[event] = function(element, a, b, c) {
           log.push('after ' + event);
-          var done = getDoneFunction(arguments);
+          let done = getDoneFunction(arguments);
           done();
         };
 
@@ -636,7 +636,7 @@ describe('ngAnimate $$animateJs', function() {
       inject(function($animate, $rootScope) {
         animations[event] = function(element, a, b, c) {
           log.push('after ' + event);
-          var done = getDoneFunction(arguments);
+          let done = getDoneFunction(arguments);
           done(false);
         };
 
@@ -644,7 +644,7 @@ describe('ngAnimate $$animateJs', function() {
           function() { log.push('pass'); },
           function() { log.push('fail'); });
 
-        var expectations = [];
+        let expectations = [];
         if (event === 'leave') {
           expect(log).toEqual(['after leave']);
           $animate.flush();

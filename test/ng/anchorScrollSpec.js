@@ -1,15 +1,15 @@
-'use strict';
+
 
 describe('$anchorScroll', function() {
 
-  var elmSpy;
+  let elmSpy;
 
   function createMockWindow() {
     return function() {
       module(function($provide) {
         elmSpy = {};
 
-        var mockedWin = {
+        let mockedWin = {
           scrollTo: jasmine.createSpy('$window.scrollTo'),
           scrollBy: jasmine.createSpy('$window.scrollBy'),
           document: window.document,
@@ -24,11 +24,11 @@ describe('$anchorScroll', function() {
   }
 
   function addElements() {
-    var elements = sliceArgs(arguments);
+    let elements = sliceArgs(arguments);
 
     return function($window) {
       forEach(elements, function(identifier) {
-        var match = identifier.match(/(?:(\w*) )?(\w*)=(\w*)/),
+        let match = identifier.match(/(?:(\w*) )?(\w*)=(\w*)/),
             nodeName = match[1] || 'a',
             tmpl = '<' + nodeName + ' ' + match[2] + '="' + match[3] + '">' +
                       match[3] +   // add some content or else Firefox and IE place the element
@@ -74,7 +74,7 @@ describe('$anchorScroll', function() {
   }
 
   function expectScrollingTo(identifierCountMap) {
-    var map = {};
+    let map = {};
     if (isString(identifierCountMap)) {
       map[identifierCountMap] = 1;
     } else if (isArray(identifierCountMap)) {
@@ -122,7 +122,7 @@ describe('$anchorScroll', function() {
 
   function fireWindowLoadEvent() {
     return function($browser) {
-      var callback = window.jqLiteDocumentLoaded.calls.mostRecent().args[0];
+      let callback = window.jqLiteDocumentLoaded.calls.mostRecent().args[0];
       callback();
       $browser.defer.flush();
     };
@@ -389,14 +389,14 @@ describe('$anchorScroll', function() {
     afterEach(unspyOnJQLiteDocumentLoaded);
 
     function expectScrollingWithOffset(identifierCountMap, offsetList) {
-      var list = isArray(offsetList) ? offsetList : [offsetList];
+      let list = isArray(offsetList) ? offsetList : [offsetList];
 
       return function($rootScope, $window) {
         inject(expectScrollingTo(identifierCountMap));
         expect($window.scrollBy).toHaveBeenCalledTimes(list.length);
         forEach(list, function(offset, idx) {
           // Due to sub-pixel rendering, there is a +/-1 error margin in the actual offset
-          var args = $window.scrollBy.calls.argsFor(idx);
+          let args = $window.scrollBy.calls.argsFor(idx);
           expect(args[0]).toBe(0);
           expect(Math.abs(offset + args[1])).toBeLessThan(1);
         });
@@ -409,11 +409,11 @@ describe('$anchorScroll', function() {
 
     function mockBoundingClientRect(childValuesMap) {
       return function($window) {
-        var children = $window.document.body.children;
+        let children = $window.document.body.children;
         forEach(childValuesMap, function(valuesList, childIdx) {
-          var elem = children[childIdx];
+          let elem = children[childIdx];
           elem.getBoundingClientRect = function() {
-            var val = valuesList.shift();
+            let val = valuesList.shift();
             return {
               top: val,
               bottom: val
@@ -436,7 +436,7 @@ describe('$anchorScroll', function() {
 
       describe('when set as a fixed number', function() {
 
-        var yOffsetNumber = 50;
+        let yOffsetNumber = 50;
 
         beforeEach(inject(setYOffset(yOffsetNumber)));
 
@@ -460,7 +460,7 @@ describe('$anchorScroll', function() {
 
         it('should adjust the vertical offset for elements near the end of the page', function() {
 
-          var targetAdjustedOffset = 20;
+          let targetAdjustedOffset = 20;
 
           inject(
             addElements('id=some1', 'id=some2'),
@@ -475,8 +475,8 @@ describe('$anchorScroll', function() {
 
         it('should scroll with vertical offset', function() {
 
-          var val = 0;
-          var increment = 10;
+          let val = 0;
+          let increment = 10;
 
           function yOffsetFunction() {
             val += increment;
@@ -509,10 +509,10 @@ describe('$anchorScroll', function() {
 
       describe('when set as a jqLite element', function() {
 
-        var elemBottom = 50;
+        let elemBottom = 50;
 
         function createAndSetYOffsetElement(position) {
-          var jqElem = jqLite('<div></div>');
+          let jqElem = jqLite('<div></div>');
           jqElem[0].style.position = position;
 
           return function($anchorScroll, $window) {
@@ -539,11 +539,11 @@ describe('$anchorScroll', function() {
 
     describe('and body with border/margin/padding', function() {
 
-      var borderWidth = 4;
-      var marginWidth = 8;
-      var paddingWidth = 16;
-      var yOffsetNumber = 50;
-      var necessaryYOffset = yOffsetNumber - borderWidth - marginWidth - paddingWidth;
+      let borderWidth = 4;
+      let marginWidth = 8;
+      let paddingWidth = 16;
+      let yOffsetNumber = 50;
+      let necessaryYOffset = yOffsetNumber - borderWidth - marginWidth - paddingWidth;
 
       beforeEach(inject(setYOffset(yOffsetNumber)));
 
@@ -569,7 +569,7 @@ describe('$anchorScroll', function() {
 
       it('should adjust the vertical offset for elements near the end of the page', function() {
 
-        var targetAdjustedOffset = 20;
+        let targetAdjustedOffset = 20;
 
         inject(
           addElements('id=some1', 'id=some2'),
@@ -582,11 +582,11 @@ describe('$anchorScroll', function() {
 
     describe('and body with border/margin/padding and boxSizing', function() {
 
-      var borderWidth = 4;
-      var marginWidth = 8;
-      var paddingWidth = 16;
-      var yOffsetNumber = 50;
-      var necessaryYOffset = yOffsetNumber - borderWidth - marginWidth - paddingWidth;
+      let borderWidth = 4;
+      let marginWidth = 8;
+      let paddingWidth = 16;
+      let yOffsetNumber = 50;
+      let necessaryYOffset = yOffsetNumber - borderWidth - marginWidth - paddingWidth;
 
       beforeEach(inject(setYOffset(yOffsetNumber)));
 
@@ -612,7 +612,7 @@ describe('$anchorScroll', function() {
 
       it('should adjust the vertical offset for elements near the end of the page', function() {
 
-        var targetAdjustedOffset = 20;
+        let targetAdjustedOffset = 20;
 
         inject(
           addElements('id=some1', 'id=some2'),

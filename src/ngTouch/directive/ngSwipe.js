@@ -1,5 +1,3 @@
-"use strict";
-
 /* global ngTouch: false */
 
 /**
@@ -87,16 +85,16 @@ function makeSwipeDirective(directiveName, direction, eventName) {
     "$swipe",
     function ($parse, $swipe) {
       // The maximum vertical delta for a swipe should be less than 75px.
-      var MAX_VERTICAL_DISTANCE = 75;
+      let MAX_VERTICAL_DISTANCE = 75;
       // Vertical distance should not be more than a fraction of the horizontal distance.
-      var MAX_VERTICAL_RATIO = 0.3;
+      let MAX_VERTICAL_RATIO = 0.3;
       // At least a 30px lateral motion is necessary for a swipe.
-      var MIN_HORIZONTAL_DISTANCE = 30;
+      let MIN_HORIZONTAL_DISTANCE = 30;
 
       return function (scope, element, attr) {
-        var swipeHandler = $parse(attr[directiveName]);
+        let swipeHandler = $parse(attr[directiveName]);
 
-        var startCoords, valid;
+        let startCoords, valid;
 
         function validSwipe(coords) {
           // Check that it's within the coordinates.
@@ -108,8 +106,8 @@ function makeSwipeDirective(directiveName, direction, eventName) {
           // illegal ones a negative delta.
           // Therefore this delta must be positive, and larger than the minimum.
           if (!startCoords) return false;
-          var deltaY = Math.abs(coords.y - startCoords.y);
-          var deltaX = (coords.x - startCoords.x) * direction;
+          let deltaY = Math.abs(coords.y - startCoords.y);
+          let deltaX = (coords.x - startCoords.x) * direction;
           return (
             valid && // Short circuit for already-invalidated swipes.
             deltaY < MAX_VERTICAL_DISTANCE &&
@@ -119,7 +117,7 @@ function makeSwipeDirective(directiveName, direction, eventName) {
           );
         }
 
-        var pointerTypes = ["touch"];
+        let pointerTypes = ["touch"];
         if (!angular.isDefined(attr["ngSwipeDisableMouse"])) {
           pointerTypes.push("mouse");
         }

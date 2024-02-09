@@ -1,15 +1,15 @@
-'use strict';
+
 
 describe('HTML', function() {
-  var ua = window.navigator.userAgent;
-  var isChrome = /Chrome/.test(ua) && !/Edge/.test(ua);
+  let ua = window.navigator.userAgent;
+  let isChrome = /Chrome/.test(ua) && !/Edge/.test(ua);
 
-  var expectHTML;
+  let expectHTML;
 
   beforeEach(module('ngSanitize'));
   beforeEach(function() {
     expectHTML = function(html) {
-      var sanitize;
+      let sanitize;
       inject(function($sanitize) {
         sanitize = $sanitize;
       });
@@ -20,7 +20,7 @@ describe('HTML', function() {
   describe('htmlParser', function() {
     /* global htmlParser */
 
-    var handler, start, text, comment;
+    let handler, start, text, comment;
     beforeEach(function() {
       text = '';
       start = null;
@@ -32,10 +32,10 @@ describe('HTML', function() {
           };
           // Since different browsers handle newlines differently we trim
           // so that it is easier to write tests.
-          for (var i = 0, ii = attrs.length; i < ii; i++) {
-            var keyValue = attrs[i];
-            var key = keyValue.key;
-            var value = keyValue.value;
+          for (let i = 0, ii = attrs.length; i < ii; i++) {
+            let keyValue = attrs[i];
+            let key = keyValue.key;
+            let value = keyValue.value;
             attrs[key] = value.replace(/^\s*/, '').replace(/\s*$/, '');
           }
         },
@@ -134,10 +134,10 @@ describe('HTML', function() {
 
   it('should handle large datasets', function() {
     // Large is non-trivial to quantify, but handling ~100,000 should be sufficient for most purposes.
-    var largeNumber = 17; // 2^17 = 131,072
-    var result = '<div>b</div>';
+    let largeNumber = 17; // 2^17 = 131,072
+    let result = '<div>b</div>';
     // Ideally we would use repeat, but that isn't supported in IE.
-    for (var i = 0; i < largeNumber; i++) {
+    for (let i = 0; i < largeNumber; i++) {
       result += result;
     }
     expectHTML('a' + result + 'c').toEqual('a' + result + 'c');
@@ -177,7 +177,7 @@ describe('HTML', function() {
   });
 
   it('should handle entities', function() {
-    var everything = '<div rel="!@#$%^&amp;*()_+-={}[]:&#34;;\'&lt;&gt;?,./`~ &#295;">' +
+    let everything = '<div rel="!@#$%^&amp;*()_+-={}[]:&#34;;\'&lt;&gt;?,./`~ &#295;">' +
     '!@#$%^&amp;*()_+-={}[]:&#34;;\'&lt;&gt;?,./`~ &#295;</div>';
     expectHTML(everything).toEqual(everything);
   });
@@ -289,13 +289,13 @@ describe('HTML', function() {
 
   // See https://github.com/cure53/DOMPurify/releases/tag/0.6.7
   it('should not allow JavaScript hidden in badly formed HTML to get through sanitization (Firefox bug)', inject(function($sanitize) {
-    var doc = $sanitize('<svg><p><style><img src="</style><img src=x onerror=alert(1)//">');
+    let doc = $sanitize('<svg><p><style><img src="</style><img src=x onerror=alert(1)//">');
     expect(doc).toEqual('<p><img src="x"></p>');
   }));
 
   describe('Custom white-list support', function() {
 
-    var $sanitizeProvider;
+    let $sanitizeProvider;
     beforeEach(module(function(_$sanitizeProvider_) {
       $sanitizeProvider = _$sanitizeProvider_;
 
@@ -424,7 +424,7 @@ describe('HTML', function() {
   describe('htmlSanitizerWriter', function() {
     /* global htmlSanitizeWriter: false */
 
-    var writer, html, uriValidator;
+    let writer, html, uriValidator;
     beforeEach(function() {
       html = '';
       uriValidator = jasmine.createSpy('uriValidator');
@@ -533,11 +533,11 @@ describe('HTML', function() {
         toBeValidUrl: function() {
           return {
             compare: function(actual) {
-              var sanitize;
+              let sanitize;
               inject(function($sanitize) {
                 sanitize = $sanitize;
               });
-              var input = '<a href="' + actual + '"></a>';
+              let input = '<a href="' + actual + '"></a>';
               return { pass: sanitize(input) === input };
             }
           };
@@ -546,7 +546,7 @@ describe('HTML', function() {
     });
 
     it('should use $$sanitizeUri for a[href] links', function() {
-      var $$sanitizeUri = jasmine.createSpy('$$sanitizeUri');
+      let $$sanitizeUri = jasmine.createSpy('$$sanitizeUri');
       module(function($provide) {
         $provide.value('$$sanitizeUri', $$sanitizeUri);
       });
@@ -562,7 +562,7 @@ describe('HTML', function() {
     });
 
     it('should use $$sanitizeUri for img[src] links', function() {
-      var $$sanitizeUri = jasmine.createSpy('$$sanitizeUri');
+      let $$sanitizeUri = jasmine.createSpy('$$sanitizeUri');
       module(function($provide) {
         $provide.value('$$sanitizeUri', $$sanitizeUri);
       });
@@ -644,7 +644,7 @@ describe('HTML', function() {
 });
 
 describe('decodeEntities', function() {
-  var handler, text;
+  let handler, text;
 
   beforeEach(function() {
     text = '';

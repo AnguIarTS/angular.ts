@@ -1,5 +1,3 @@
-"use strict";
-
 /* global currencyFilter: true,
  dateFilter: true,
  filterFilter: true,
@@ -108,7 +106,7 @@
 $FilterProvider.$inject = ["$provide"];
 /** @this */
 function $FilterProvider($provide) {
-  var suffix = "Filter";
+  let suffix = "Filter";
 
   /**
    * @ngdoc method
@@ -128,7 +126,7 @@ function $FilterProvider($provide) {
    */
   function register(name, factory) {
     if (isObject(name)) {
-      var filters = {};
+      let filters = {};
       forEach(name, function (filter, key) {
         filters[key] = register(key, filter);
       });

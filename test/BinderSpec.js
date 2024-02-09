@@ -1,8 +1,8 @@
-'use strict';
+
 
 describe('Binder', function() {
 
-  var element;
+  let element;
 
   function childNode(element, index) {
     return jqLite(element[0].childNodes[index]);
@@ -10,7 +10,7 @@ describe('Binder', function() {
 
   beforeEach(function() {
     this.compileToHtml = function(content) {
-      var html;
+      let html;
       inject(function($rootScope, $compile) {
         content = jqLite(content);
         $compile(content)($rootScope);
@@ -50,7 +50,7 @@ describe('Binder', function() {
   }));
 
   it('InputTypeButtonActionExecutesInScope', inject(function($rootScope, $compile) {
-    var savedCalled = false;
+    let savedCalled = false;
     element = $compile(
       '<input type="button" ng-click="person.save()" value="Apply">')($rootScope);
     $rootScope.person = {};
@@ -62,7 +62,7 @@ describe('Binder', function() {
   }));
 
   it('InputTypeButtonActionExecutesInScope2', inject(function($rootScope, $compile) {
-    var log = '';
+    let log = '';
     element = $compile('<input type="image" ng-click="action()">')($rootScope);
     $rootScope.action = function() {
       log += 'click;';
@@ -73,7 +73,7 @@ describe('Binder', function() {
   }));
 
   it('ButtonElementActionExecutesInScope', inject(function($rootScope, $compile) {
-    var savedCalled = false;
+    let savedCalled = false;
     element = $compile('<button ng-click="person.save()">Apply</button>')($rootScope);
     $rootScope.person = {};
     $rootScope.person.save = function() {
@@ -84,11 +84,11 @@ describe('Binder', function() {
   }));
 
   it('RepeaterUpdateBindings', inject(function($rootScope, $compile) {
-    var form = $compile(
+    let form = $compile(
       '<ul>' +
         '<LI ng-repeat="item in model.items" ng-bind="item.a"></LI>' +
       '</ul>')($rootScope);
-    var items = [{a: 'A'}, {a: 'B'}];
+    let items = [{a: 'A'}, {a: 'B'}];
     $rootScope.model = {items: items};
 
     $rootScope.$apply();
@@ -146,13 +146,13 @@ describe('Binder', function() {
   }));
 
   it('DoNotOverwriteCustomAction', function() {
-    var html = this.compileToHtml('<input type="submit" value="Save" action="foo();">');
+    let html = this.compileToHtml('<input type="submit" value="Save" action="foo();">');
     expect(html.indexOf('action="foo();"')).toBeGreaterThan(0);
   });
 
   it('ItShouldRemoveExtraChildrenWhenIteratingOverHash', inject(function($rootScope, $compile) {
     element = $compile('<div><div ng-repeat="i in items">{{i}}</div></div>')($rootScope);
-    var items = {};
+    let items = {};
     $rootScope.items = items;
 
     $rootScope.$apply();
@@ -173,8 +173,8 @@ describe('Binder', function() {
     });
     inject(function($rootScope, $exceptionHandler, $compile) {
       $compile('<div attr="before {{error.throw()}} after"></div>', null, true)($rootScope);
-      var errorLogs = $exceptionHandler.errors;
-      var count = 0;
+      let errorLogs = $exceptionHandler.errors;
+      let count = 0;
 
       $rootScope.error = {
         'throw': function() {throw new Error('ErrorMsg' + (++count));}
@@ -317,8 +317,8 @@ describe('Binder', function() {
       '</div>')($rootScope);
     $rootScope.$apply();
 
-    var d1 = jqLite(element[0].childNodes[1]);
-    var d2 = jqLite(element[0].childNodes[3]);
+    let d1 = jqLite(element[0].childNodes[1]);
+    let d2 = jqLite(element[0].childNodes[3]);
     expect(d1.hasClass('o')).toBeTruthy();
     expect(d2.hasClass('e')).toBeTruthy();
     expect(sortedHtml(element)).toBe(
@@ -348,7 +348,7 @@ describe('Binder', function() {
       $exceptionHandlerProvider.mode('log');
     });
     inject(function($rootScope, $exceptionHandler, $compile) {
-      var input = $compile('<a ng-click="action()">Add Phone</a>')($rootScope);
+      let input = $compile('<a ng-click="action()">Add Phone</a>')($rootScope);
       $rootScope.action = function() {
         throw new Error('MyError');
       };
@@ -387,9 +387,9 @@ describe('Binder', function() {
     $rootScope.a = 'A';
     $rootScope.b = 'B';
     $rootScope.$apply();
-    var optionA = childNode(element, 0);
-    var optionB = childNode(element, 1);
-    var optionC = childNode(element, 2);
+    let optionA = childNode(element, 0);
+    let optionB = childNode(element, 1);
+    let optionC = childNode(element, 2);
 
     expect(optionA.attr('value')).toEqual('A');
     expect(optionA.text()).toEqual('A');
@@ -412,8 +412,8 @@ describe('Binder', function() {
     // Support: Chrome, Safari 8, 9
     jqLite($document[0].body).append($rootElement.append(element));
 
-    var female = jqLite(element[0].childNodes[0]);
-    var male = jqLite(element[0].childNodes[1]);
+    let female = jqLite(element[0].childNodes[0]);
+    let male = jqLite(element[0].childNodes[1]);
 
     browserTrigger(female);
     expect($rootScope.sex).toBe('female');

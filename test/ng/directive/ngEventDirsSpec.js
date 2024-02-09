@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('event directives', function() {
-  var element;
+  let element;
 
 
   afterEach(function() {
@@ -102,7 +102,7 @@ describe('event directives', function() {
 
   describe('DOM event object', function() {
     it('should allow access to the $event object', inject(function($rootScope, $compile) {
-      var scope = $rootScope.$new();
+      let scope = $rootScope.$new();
       element = $compile('<button ng-click="e = $event">BTN</button>')(scope);
       element.triggerHandler('click');
       expect(scope.e.target).toBe(element[0]);
@@ -153,7 +153,7 @@ describe('event directives', function() {
 
   it('should call the listener synchronously if the event is triggered inside of a digest',
       inject(function($rootScope, $compile) {
-    var watchedVal;
+    let watchedVal;
 
     element = $compile('<button type="button" ng-click="click()">Button</button>')($rootScope);
     $rootScope.$watch('value', function(newValue) {
@@ -174,7 +174,7 @@ describe('event directives', function() {
 
   it('should call the listener synchronously if the event is triggered outside of a digest',
       inject(function($rootScope, $compile) {
-    var watchedVal;
+    let watchedVal;
 
     element = $compile('<button type="button" ng-click="click()">Button</button>')($rootScope);
     $rootScope.$watch('value', function(newValue) {

@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc type
  * @name angular.Module
@@ -10,21 +8,21 @@
  */
 
 function setupModuleLoader(window) {
-  var $injectorMinErr = minErr("$injector");
-  var ngMinErr = minErr("ng");
+  let $injectorMinErr = minErr("$injector");
+  let ngMinErr = minErr("ng");
 
   function ensure(obj, name, factory) {
     return obj[name] || (obj[name] = factory());
   }
 
-  var angular = ensure(window, "angular", Object);
+  let angular = ensure(window, "angular", Object);
 
   // We need to expose `angular.$$minErr` to modules such as `ngResource` that reference it during bootstrap
   angular.$$minErr = angular.$$minErr || minErr;
 
   return ensure(angular, "module", function () {
     /** @type {Object.<string, angular.Module>} */
-    var modules = {};
+    let modules = {};
 
     /**
      * @ngdoc function
@@ -48,7 +46,7 @@ function setupModuleLoader(window) {
      *
      * ```js
      * // Create a new module
-     * var myModule = angular.module('myModule', []);
+     * let myModule = angular.module('myModule', []);
      *
      * // register a new service
      * myModule.value('appName', 'MyCoolApp');
@@ -63,7 +61,7 @@ function setupModuleLoader(window) {
      * Then you can create an injector and load your modules like this:
      *
      * ```js
-     * var injector = angular.injector(['ng', 'myModule'])
+     * let injector = angular.injector(['ng', 'myModule'])
      * ```
      *
      * However it's more likely that you'll just use
@@ -78,9 +76,9 @@ function setupModuleLoader(window) {
      * @returns {angular.Module} new module with the {@link angular.Module} api.
      */
     return function module(name, requires, configFn) {
-      var info = {};
+      let info = {};
 
-      var assertNotHasOwnProperty = function (name, context) {
+      let assertNotHasOwnProperty = function (name, context) {
         if (name === "hasOwnProperty") {
           throw ngMinErr(
             "badname",
@@ -106,18 +104,18 @@ function setupModuleLoader(window) {
         }
 
         /** @type {!Array.<Array.<*>>} */
-        var invokeQueue = [];
+        let invokeQueue = [];
 
         /** @type {!Array.<Function>} */
-        var configBlocks = [];
+        let configBlocks = [];
 
         /** @type {!Array.<Function>} */
-        var runBlocks = [];
+        let runBlocks = [];
 
-        var config = invokeLater("$injector", "invoke", "push", configBlocks);
+        let config = invokeLater("$injector", "invoke", "push", configBlocks);
 
         /** @type {angular.Module} */
-        var moduleInstance = {
+        let moduleInstance = {
           // Private state
           _invokeQueue: invokeQueue,
           _configBlocks: configBlocks,
@@ -143,14 +141,14 @@ function setupModuleLoader(window) {
            * The version could then be read back out by accessing the module elsewhere:
            *
            * ```
-           * var version = angular.module('myModule').info().version;
+           * let version = angular.module('myModule').info().version;
            * ```
            *
            * You can also retrieve this information during runtime via the
            * {@link $injector#modules `$injector.modules`} property:
            *
            * ```js
-           * var version = $injector.modules['myModule'].info().version;
+           * let version = $injector.modules['myModule'].info().version;
            * ```
            */
           info: function (value) {

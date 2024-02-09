@@ -1,5 +1,3 @@
-"use strict";
-
 /* global routeToRegExp: true */
 
 /**
@@ -15,13 +13,13 @@
  * Originally inspired by `pathRexp` in `visionmedia/express/lib/utils.js`.
  */
 function routeToRegExp(path, opts) {
-  var keys = [];
+  let keys = [];
 
-  var pattern = path
+  let pattern = path
     .replace(/([().])/g, "\\$1")
     .replace(/(\/)?:(\w+)(\*\?|[?*])?/g, function (_, slash, key, option) {
-      var optional = option === "?" || option === "*?";
-      var star = option === "*" || option === "*?";
+      let optional = option === "?" || option === "*?";
+      let star = option === "*" || option === "*?";
       keys.push({ name: key, optional: optional });
       slash = slash || "";
       return (

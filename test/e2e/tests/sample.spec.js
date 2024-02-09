@@ -1,4 +1,4 @@
-'use strict';
+
 
 // Sample E2E test:
 describe('Sample', function() {
@@ -12,7 +12,7 @@ describe('Sample', function() {
 
   it('should insert the ng-cloak styles', function() {
     browser.executeScript(`
-      var span = document.createElement('span');
+      let span = document.createElement('span');
       span.className = 'ng-cloak foo';
       document.body.appendChild(span);
     `);

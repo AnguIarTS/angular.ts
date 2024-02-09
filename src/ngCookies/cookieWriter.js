@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @name $$cookieWriter
  * @requires $document
@@ -12,11 +10,11 @@
  * @param {Object=} options Object with options that need to be stored for the cookie.
  */
 function $$CookieWriter($document, $log, $browser) {
-  var cookiePath = $browser.baseHref();
-  var rawDocument = $document[0];
+  let cookiePath = $browser.baseHref();
+  let rawDocument = $document[0];
 
   function buildCookieString(name, value, options) {
-    var path, expires;
+    let path, expires;
     options = options || {};
     expires = options.expires;
     path = angular.isDefined(options.path) ? options.path : cookiePath;
@@ -28,7 +26,7 @@ function $$CookieWriter($document, $log, $browser) {
       expires = new Date(expires);
     }
 
-    var str = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+    let str = encodeURIComponent(name) + "=" + encodeURIComponent(value);
     str += path ? ";path=" + path : "";
     str += options.domain ? ";domain=" + options.domain : "";
     str += expires ? ";expires=" + expires.toUTCString() : "";
@@ -39,7 +37,7 @@ function $$CookieWriter($document, $log, $browser) {
     // - 300 cookies
     // - 20 cookies per unique domain
     // - 4096 bytes per cookie
-    var cookieLength = str.length + 1;
+    let cookieLength = str.length + 1;
     if (cookieLength > 4096) {
       $log.warn(
         "Cookie '" +

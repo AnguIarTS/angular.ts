@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc module
  * @name ngTouch
@@ -22,7 +20,7 @@
 
 // define ngTouch module
 /* global ngTouch */
-var ngTouch = angular.module("ngTouch", []);
+let ngTouch = angular.module("ngTouch", []);
 
 ngTouch.info({ angularVersion: '"NG_VERSION_FULL"' });
 

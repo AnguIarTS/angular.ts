@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('localized filters', function() {
   describe('es locale', function() {

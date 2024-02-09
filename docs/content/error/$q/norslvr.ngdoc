@@ -8,10 +8,10 @@ required `resolver` function.
 
 ```
 //bad
-var promise = $q().then(doSomething);
+let promise = $q().then(doSomething);
 
 //good
-var promise = $q(function(resolve, reject) {
+let promise = $q(function(resolve, reject) {
   waitForSomethingAsync.then(resolve);
 }).then(doSomething);
 ```

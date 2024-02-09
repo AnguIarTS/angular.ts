@@ -1,6 +1,6 @@
-'use strict';
 
-var directivesModule = angular.module('directives', []);
+
+let directivesModule = angular.module('directives', []);
 
 directivesModule
 /**
@@ -24,10 +24,10 @@ directivesModule
     restrict: 'E',
     terminal: true,
     compile: function(element) {
-      var linenums = element.hasClass('linenum');// || element.parent()[0].nodeName === 'PRE';
-      var match = /lang-(\S+)/.exec(element[0].className);
-      var lang = match && match[1];
-      var html = element.html();
+      let linenums = element.hasClass('linenum');// || element.parent()[0].nodeName === 'PRE';
+      let match = /lang-(\S+)/.exec(element[0].className);
+      let lang = match && match[1];
+      let html = element.html();
       element.html(window.prettyPrintOne(html, lang, linenums));
     }
   };
@@ -54,7 +54,7 @@ directivesModule
   return {
     controller: ['$element', function($element) {
       /* eslint-disable no-invalid-this */
-      var ctrl = this;
+      let ctrl = this;
 
       $rootScope.$on('$includeContentRequested', function() {
         ctrl.hs = [];
@@ -66,9 +66,9 @@ directivesModule
       this.element = $element;
 
       this.register = function(h) {
-        var previousLevel;
+        let previousLevel;
 
-        for (var i = ctrl.hs.length - 1; i >= 0; i--) {
+        for (let i = ctrl.hs.length - 1; i >= 0; i--) {
           if (ctrl.hs[i].level === (h.level - 1)) {
             previousLevel = ctrl.hs[i];
             break;
@@ -144,8 +144,8 @@ directivesModule
     link: function(scope, element, attrs, ctrls) {
       if (!ctrls.tocCollector) return;
 
-      var tocContainer = angular.element('<toc-container></toc-container>');
-      var containerElement = ctrls.header ? ctrls.header.element : element;
+      let tocContainer = angular.element('<toc-container></toc-container>');
+      let containerElement = ctrls.header ? ctrls.header.element : element;
 
       containerElement.after(tocContainer);
       $compile(tocContainer)(scope);
@@ -153,7 +153,7 @@ directivesModule
   };
 }]);
 
-for (var i = 2; i <= 5; i++) {
+for (let i = 2; i <= 5; i++) {
   registerHDirective(i);
 }
 
@@ -165,7 +165,7 @@ function registerHDirective(i) {
         'tocCollector': '^^?'
       },
       link: function(scope, element, attrs, ctrls) {
-        var toc = ctrls.tocCollector;
+        let toc = ctrls.tocCollector;
 
         if (!toc || !attrs.id) return;
 

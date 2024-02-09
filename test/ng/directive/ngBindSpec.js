@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('ngBind*', function() {
-  var element;
+  let element;
 
 
   afterEach(function() {
@@ -263,7 +263,7 @@ describe('ngBind*', function() {
           // Previous code used toString for change detection, which fails for custom objects
           // that don't override toString.
           element = $compile('<div ng-bind-html="getHtml()"></div>')($rootScope);
-          var html = 'hello';
+          let html = 'hello';
           $rootScope.getHtml = function() { return $sce.trustAsHtml(html); };
           $rootScope.$digest();
           expect(lowercase(element.html())).toEqual('hello');

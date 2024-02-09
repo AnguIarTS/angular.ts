@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc module
  * @name ngAnimate
@@ -202,7 +200,7 @@
  * The following code will issue the **ng-leave-stagger** event on the element provided:
  *
  * ```js
- * var kids = parent.children();
+ * let kids = parent.children();
  *
  * $animate.leave(kids[0]); //stagger index=0
  * $animate.leave(kids[1]); //stagger index=1
@@ -592,8 +590,8 @@
         }])
         .controller('ProfileController', ['$rootScope', '$routeParams',
             function ProfileController($rootScope, $routeParams) {
-          var index = parseInt($routeParams.id, 10);
-          var record = $rootScope.records[index - 1];
+          let index = parseInt($routeParams.id, 10);
+          let record = $rootScope.records[index - 1];
 
           this.title = record.title;
           this.id = record.id;
@@ -740,18 +738,18 @@
  * (Note that you will need to trigger a digest within the callback to get AngularJS to notice any scope-related changes.)
  */
 
-var copy;
-var extend;
-var forEach;
-var isArray;
-var isDefined;
-var isElement;
-var isFunction;
-var isObject;
-var isString;
-var isUndefined;
-var jqLite;
-var noop;
+let copy;
+let extend;
+let forEach;
+let isArray;
+let isDefined;
+let isElement;
+let isFunction;
+let isObject;
+let isString;
+let isUndefined;
+let jqLite;
+let noop;
 
 /**
  * @ngdoc service

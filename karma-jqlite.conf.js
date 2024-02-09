@@ -1,7 +1,7 @@
-'use strict';
 
-var angularFiles = require('./angularFiles');
-var sharedConfig = require('./karma-shared.conf');
+
+let angularFiles = require('./angularFiles');
+let sharedConfig = require('./karma-shared.conf');
 
 module.exports = function(config) {
   sharedConfig(config, {testName: 'AngularJS: jqLite', logFile: 'karma-jqlite.log'});

@@ -1,17 +1,17 @@
-'use strict';
+
 
 describe('$$cookieWriter', function() {
-  var $$cookieWriter, document;
+  let $$cookieWriter, document;
 
   function deleteAllCookies() {
-    var cookies = document.cookie.split(';');
-    var path = window.location.pathname;
+    let cookies = document.cookie.split(';');
+    let path = window.location.pathname;
 
-    for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i];
-      var eqPos = cookie.indexOf('=');
-      var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-      var parts = path.split('/');
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i];
+      let eqPos = cookie.indexOf('=');
+      let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      let parts = path.split('/');
       while (parts.length) {
         document.cookie = name + '=;path=' + (parts.join('/') || '/') + ';expires=Thu, 01 Jan 1970 00:00:00 GMT';
         parts.pop();
@@ -66,7 +66,7 @@ describe('$$cookieWriter', function() {
     it('should overwrite an existing unsynced cookie', function() {
       document.cookie = 'cookie=new;path=/';
 
-      var oldVal = $$cookieWriter('cookie', 'newer');
+      let oldVal = $$cookieWriter('cookie', 'newer');
 
       expect(document.cookie).toEqual('cookie=newer');
       expect(oldVal).not.toBeDefined();
@@ -76,14 +76,14 @@ describe('$$cookieWriter', function() {
       $$cookieWriter('cookie1=', 'val;ue');
       $$cookieWriter('cookie2=bar;baz', 'val=ue');
 
-      var rawCookies = document.cookie.split('; '); //order is not guaranteed, so we need to parse
+      let rawCookies = document.cookie.split('; '); //order is not guaranteed, so we need to parse
       expect(rawCookies.length).toEqual(2);
       expect(rawCookies).toContain('cookie1%3D=val%3Bue');
       expect(rawCookies).toContain('cookie2%3Dbar%3Bbaz=val%3Due');
     });
 
     it('should log warnings when 4kb per cookie storage limit is reached', inject(function($log) {
-      var i, longVal = '', cookieStr;
+      let i, longVal = '', cookieStr;
 
       for (i = 0; i < 4083; i++) {
         longVal += 'x';
@@ -131,14 +131,14 @@ describe('$$cookieWriter', function() {
 });
 
 describe('cookie options', function() {
-  var fakeDocument, $$cookieWriter;
-  var isUndefined = angular.isUndefined;
+  let fakeDocument, $$cookieWriter;
+  let isUndefined = angular.isUndefined;
 
   function getLastCookieAssignment(key) {
     return fakeDocument[0].cookie
               .split(';')
               .reduce(function(prev, value) {
-                var pair = value.split('=', 2);
+                let pair = value.split('=', 2);
                 if (pair[0] === key) {
                   if (isUndefined(prev)) {
                     return isUndefined(pair[1]) ? true : pair[1];

@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngList
@@ -48,10 +46,10 @@
  *     </form>
  *   </file>
  *   <file name="protractor.js" type="protractor">
- *     var listInput = element(by.model('names'));
- *     var names = element(by.exactBinding('names'));
- *     var valid = element(by.binding('myForm.namesInput.$valid'));
- *     var error = element(by.css('span.error'));
+ *     let listInput = element(by.model('names'));
+ *     let names = element(by.exactBinding('names'));
+ *     let valid = element(by.binding('myForm.namesInput.$valid'));
+ *     let error = element(by.css('span.error'));
  *
  *     it('should initialize to model', function() {
  *       expect(names.getText()).toContain('["morpheus","neo","trinity"]');
@@ -80,8 +78,8 @@
  *   </file>
  *   <file name="protractor.js" type="protractor">
  *     it("should split the text by newlines", function() {
- *       var listInput = element(by.model('list'));
- *       var output = element(by.binding('list | json'));
+ *       let listInput = element(by.model('list'));
+ *       let output = element(by.binding('list | json'));
  *       listInput.sendKeys('abc\ndef\nghi');
  *       expect(output.getText()).toContain('[\n  "abc",\n  "def",\n  "ghi"\n]');
  *     });
@@ -89,21 +87,21 @@
  * </example>
  *
  */
-var ngListDirective = function () {
+let ngListDirective = function () {
   return {
     restrict: "A",
     priority: 100,
     require: "ngModel",
     link: function (scope, element, attr, ctrl) {
-      var ngList = attr.ngList || ", ";
-      var trimValues = attr.ngTrim !== "false";
-      var separator = trimValues ? trim(ngList) : ngList;
+      let ngList = attr.ngList || ", ";
+      let trimValues = attr.ngTrim !== "false";
+      let separator = trimValues ? trim(ngList) : ngList;
 
-      var parse = function (viewValue) {
+      let parse = function (viewValue) {
         // If the viewValue is invalid (say required but empty) it will be `undefined`
         if (isUndefined(viewValue)) return;
 
-        var list = [];
+        let list = [];
 
         if (viewValue) {
           forEach(viewValue.split(separator), function (value) {

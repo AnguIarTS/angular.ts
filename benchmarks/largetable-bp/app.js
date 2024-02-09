@@ -1,6 +1,6 @@
-'use strict';
 
-var app = angular.module('largetableBenchmark', []);
+
+let app = angular.module('largetableBenchmark', []);
 
 app.config(function($compileProvider) {
   if ($compileProvider.debugInfoEnabled) {
@@ -15,10 +15,10 @@ app.filter('noop', function() {
 });
 
 app.controller('DataController', function DataController($scope, $rootScope) {
-  var totalRows = 1000;
-  var totalColumns = 20;
+  let totalRows = 1000;
+  let totalColumns = 20;
 
-  var data = $scope.data = [];
+  let data = $scope.data = [];
   $scope.digestDuration = '?';
   $scope.numberOfBindings = totalRows * totalColumns * 2 + totalRows + 1;
   $scope.numberOfWatches = '?';
@@ -28,9 +28,9 @@ app.controller('DataController', function DataController($scope, $rootScope) {
   /** @this */
   function jGetter() { return this.j; }
 
-  for (var i = 0; i < totalRows; i++) {
+  for (let i = 0; i < totalRows; i++) {
     data[i] = [];
-    for (var j = 0; j < totalColumns; j++) {
+    for (let j = 0; j < totalColumns; j++) {
       data[i][j] = {
         i: i, j: j,
         iFn: iGetter,
@@ -39,7 +39,7 @@ app.controller('DataController', function DataController($scope, $rootScope) {
     }
   }
 
-  var previousType;
+  let previousType;
 
   benchmarkSteps.push({
     name: 'destroy',
@@ -73,9 +73,9 @@ app.directive('baselineBindingTable', function() {
   return {
     restrict: 'E',
     link: function($scope, $element) {
-      var i, j, row, cell, comment;
-      var document = window.document;
-      var template = document.createElement('span');
+      let i, j, row, cell, comment;
+      let document = window.document;
+      let template = document.createElement('span');
       template.setAttribute('ng-repeat', 'foo in foos');
       template.classList.add('ng-scope');
       template.appendChild(document.createElement('span'));
@@ -108,9 +108,9 @@ app.directive('baselineInterpolationTable', function() {
   return {
     restrict: 'E',
     link: function($scope, $element) {
-      var i, j, row, cell, comment;
-      var document = window.document;
-      var template = document.createElement('span');
+      let i, j, row, cell, comment;
+      let document = window.document;
+      let template = document.createElement('span');
       template.setAttribute('ng-repeat', 'foo in foos');
       template.classList.add('ng-scope');
 
@@ -142,7 +142,7 @@ the fastest
 
 app.directive('baselineTable', function() {
   return function($scope, $element) {
-    var i, j, row, cell;
+    let i, j, row, cell;
 
     for (i = 0; i < 1000; i++) {
       row = document.createElement('div');
@@ -164,7 +164,7 @@ with comments and expando
 
 app.directive('baselineTable', function() {
   return function($scope, $element) {
-    var i, j, row, cell, comment;
+    let i, j, row, cell, comment;
 
     for (i = 0; i < 1000; i++) {
       row = document.createElement('div');

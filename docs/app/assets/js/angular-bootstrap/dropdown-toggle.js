@@ -31,7 +31,7 @@ angular.module('ui.bootstrap.dropdown', [])
 })
 
 .service('dropdownService', ['$document', function($document) {
-  var self = this, openScope = null;
+  let self = this, openScope = null;
 
   this.open = function( dropdownScope ) {
     if ( !openScope ) {
@@ -54,7 +54,7 @@ angular.module('ui.bootstrap.dropdown', [])
     }
   };
 
-  var closeDropdown = function(evt) {
+  let closeDropdown = function(evt) {
     if (evt && evt.which === 3) return;
 
     openScope.$apply(function() {
@@ -62,7 +62,7 @@ angular.module('ui.bootstrap.dropdown', [])
     });
   };
 
-  var escapeKeyBind = function( evt ) {
+  let escapeKeyBind = function( evt ) {
     if ( evt.which === 27 ) {
       closeDropdown();
     }
@@ -70,7 +70,7 @@ angular.module('ui.bootstrap.dropdown', [])
 }])
 
 .controller('DropdownController', ['$scope', '$attrs', 'dropdownConfig', 'dropdownService', '$animate', function($scope, $attrs, dropdownConfig, dropdownService, $animate) {
-  var self = this, openClass = dropdownConfig.openClass;
+  let self = this, openClass = dropdownConfig.openClass;
 
   this.init = function( element ) {
     self.$element = element;

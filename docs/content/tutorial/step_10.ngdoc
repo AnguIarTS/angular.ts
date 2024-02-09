@@ -67,7 +67,7 @@ appropriate JSON files. This works the same way as the `phoneList` component's c
       templateUrl: 'phone-detail/phone-detail.template.html',
       controller: ['$http', '$routeParams',
         function PhoneDetailController($http, $routeParams) {
-          var self = this;
+          let self = this;
 
           $http.get('phones/' + $routeParams.phoneId + '.json').then(function(response) {
             self.phone = response.data;
@@ -138,7 +138,7 @@ describe('phoneDetail', function() {
 
   // Test the controller
   describe('PhoneDetailController', function() {
-    var $httpBackend, ctrl;
+    let $httpBackend, ctrl;
 
     beforeEach(inject(function($componentController, _$httpBackend_, $routeParams) {
       $httpBackend = _$httpBackend_;

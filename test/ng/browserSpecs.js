@@ -1,22 +1,22 @@
-'use strict';
+
 
 /* global getHash:true, stripHash:true */
 
-var historyEntriesLength;
-var sniffer = {};
+let historyEntriesLength;
+let sniffer = {};
 
 function MockWindow(options) {
   if (typeof options !== 'object') {
     options = {};
   }
-  var events = {};
-  var timeouts = this.timeouts = [];
-  var locationHref = window.document.createElement('a');
-  var committedHref = window.document.createElement('a');
+  let events = {};
+  let timeouts = this.timeouts = [];
+  let locationHref = window.document.createElement('a');
+  let committedHref = window.document.createElement('a');
   locationHref.href = committedHref.href = 'http://server/';
-  var mockWindow = this;
-  var msie = options.msie;
-  var ieState;
+  let mockWindow = this;
+  let msie = options.msie;
+  let ieState;
 
   historyEntriesLength = 1;
 
@@ -121,7 +121,7 @@ function MockWindow(options) {
 }
 
 function MockDocument() {
-  var self = this;
+  let self = this;
 
   this[0] = window.document;
   this.basePath = '/';
@@ -145,7 +145,7 @@ function MockDocument() {
 
 describe('browser', function() {
   /* global Browser: false, TaskTracker: false */
-  var browser, fakeWindow, fakeDocument, fakeLog, logs, taskTrackerFactory;
+  let browser, fakeWindow, fakeDocument, fakeLog, logs, taskTrackerFactory;
 
   beforeEach(function() {
     sniffer = {history: true};
@@ -199,7 +199,7 @@ describe('browser', function() {
     function runTests(options) {
       return function() {
         it('should return the same state object on every read', function() {
-          var msie = options.msie;
+          let msie = options.msie;
 
           fakeWindow = new MockWindow({msie: msie});
           fakeWindow.location.state = {prop: 'val'};
@@ -220,7 +220,7 @@ describe('browser', function() {
 
   describe('notifyWhenNoOutstandingRequests', function() {
     it('should invoke callbacks immediately if there are no pending tasks', function() {
-      var callback = jasmine.createSpy('callback');
+      let callback = jasmine.createSpy('callback');
       browser.notifyWhenNoOutstandingRequests(callback);
       expect(callback).toHaveBeenCalled();
     });
@@ -228,8 +228,8 @@ describe('browser', function() {
 
     it('should invoke callbacks immediately if there are no pending tasks (for specific task-type)',
       function() {
-        var callbackAll = jasmine.createSpy('callbackAll');
-        var callbackFoo = jasmine.createSpy('callbackFoo');
+        let callbackAll = jasmine.createSpy('callbackAll');
+        let callbackFoo = jasmine.createSpy('callbackFoo');
 
         browser.$$incOutstandingRequestCount();
         browser.notifyWhenNoOutstandingRequests(callbackAll);
@@ -242,7 +242,7 @@ describe('browser', function() {
 
 
     it('should invoke callbacks as soon as there are no pending tasks', function() {
-      var callback = jasmine.createSpy('callback');
+      let callback = jasmine.createSpy('callback');
 
       browser.$$incOutstandingRequestCount();
       browser.notifyWhenNoOutstandingRequests(callback);
@@ -255,8 +255,8 @@ describe('browser', function() {
 
     it('should invoke callbacks as soon as there are no pending tasks (for specific task-type)',
       function() {
-        var callbackAll = jasmine.createSpy('callbackAll');
-        var callbackFoo = jasmine.createSpy('callbackFoo');
+        let callbackAll = jasmine.createSpy('callbackAll');
+        let callbackFoo = jasmine.createSpy('callbackFoo');
 
         browser.$$incOutstandingRequestCount();
         browser.$$incOutstandingRequestCount('foo');
@@ -282,7 +282,7 @@ describe('browser', function() {
 
   describe('defer', function() {
     it('should execute fn asynchronously via setTimeout', function() {
-      var callback = jasmine.createSpy('deferred');
+      let callback = jasmine.createSpy('deferred');
 
       browser.defer(callback);
       expect(callback).not.toHaveBeenCalled();
@@ -293,7 +293,7 @@ describe('browser', function() {
 
 
     it('should update outstandingRequests counter', function() {
-      var noPendingTasksSpy = jasmine.createSpy('noPendingTasks');
+      let noPendingTasksSpy = jasmine.createSpy('noPendingTasks');
 
       browser.defer(noop);
       browser.notifyWhenNoOutstandingRequests(noPendingTasksSpy);
@@ -305,8 +305,8 @@ describe('browser', function() {
 
 
     it('should update outstandingRequests counter (for specific task-type)', function() {
-      var noPendingFooTasksSpy = jasmine.createSpy('noPendingFooTasks');
-      var noPendingTasksSpy = jasmine.createSpy('noPendingTasks');
+      let noPendingFooTasksSpy = jasmine.createSpy('noPendingFooTasks');
+      let noPendingTasksSpy = jasmine.createSpy('noPendingTasks');
 
       browser.defer(noop, 0, 'foo');
       browser.defer(noop, 0, 'bar');
@@ -327,7 +327,7 @@ describe('browser', function() {
 
 
     it('should return unique deferId', function() {
-      var deferId1 = browser.defer(noop),
+      let deferId1 = browser.defer(noop),
           deferId2 = browser.defer(noop);
 
       expect(deferId1).toBeDefined();
@@ -338,7 +338,7 @@ describe('browser', function() {
 
     describe('cancel', function() {
       it('should allow tasks to be canceled with returned deferId', function() {
-        var log = [],
+        let log = [],
             deferId1 = browser.defer(function() { log.push('cancel me'); }),
             deferId2 = browser.defer(function() { log.push('ok'); }),
             deferId3 = browser.defer(function() { log.push('cancel me, now!'); });
@@ -353,8 +353,8 @@ describe('browser', function() {
 
 
       it('should update outstandingRequests counter', function() {
-        var noPendingTasksSpy = jasmine.createSpy('noPendingTasks');
-        var deferId = browser.defer(noop);
+        let noPendingTasksSpy = jasmine.createSpy('noPendingTasks');
+        let deferId = browser.defer(noop);
 
         browser.notifyWhenNoOutstandingRequests(noPendingTasksSpy);
         expect(noPendingTasksSpy).not.toHaveBeenCalled();
@@ -365,11 +365,11 @@ describe('browser', function() {
 
 
       it('should update outstandingRequests counter (for specific task-type)', function() {
-        var noPendingFooTasksSpy = jasmine.createSpy('noPendingFooTasks');
-        var noPendingTasksSpy = jasmine.createSpy('noPendingTasks');
+        let noPendingFooTasksSpy = jasmine.createSpy('noPendingFooTasks');
+        let noPendingTasksSpy = jasmine.createSpy('noPendingTasks');
 
-        var deferId1 = browser.defer(noop, 0, 'foo');
-        var deferId2 = browser.defer(noop, 0, 'bar');
+        let deferId1 = browser.defer(noop, 0, 'foo');
+        let deferId2 = browser.defer(noop, 0, 'bar');
 
         browser.notifyWhenNoOutstandingRequests(noPendingFooTasksSpy, 'foo');
         browser.notifyWhenNoOutstandingRequests(noPendingTasksSpy);
@@ -389,7 +389,7 @@ describe('browser', function() {
 
 
   describe('url', function() {
-    var pushState, replaceState, locationReplace;
+    let pushState, replaceState, locationReplace;
 
     beforeEach(function() {
       pushState = spyOn(fakeWindow.history, 'pushState');
@@ -500,13 +500,13 @@ describe('browser', function() {
 
     it('should return $browser to allow chaining even if the previous and current URLs and states match', function() {
       expect(browser.url('http://any.com').url('http://any.com')).toBe(browser);
-      var state = { any: 'foo' };
+      let state = { any: 'foo' };
       expect(browser.url('http://any.com', false, state).url('http://any.com', false, state)).toBe(browser);
       expect(browser.url('http://any.com', true, state).url('http://any.com', true, state)).toBe(browser);
     });
 
     it('should not set URL when the URL is already set', function() {
-      var current = fakeWindow.location.href;
+      let current = fakeWindow.location.href;
       sniffer.history = false;
       fakeWindow.location.href = 'http://dontchange/';
       browser.url(current);
@@ -531,11 +531,11 @@ describe('browser', function() {
       // hash in all possible ways and checks
       // - whether the change to the hash can be read out in sync
       // - whether the change to the hash can be read out in the hashchange event
-      var realWin = window,
+      let realWin = window,
           $realWin = jqLite(realWin),
           hashInHashChangeEvent = [];
 
-      var job = createAsync(done);
+      let job = createAsync(done);
       job.runs(function() {
         $realWin.on('hashchange', hashListener);
 
@@ -573,7 +573,7 @@ describe('browser', function() {
       // are not callThrough
 
       sniffer.history = true;
-      var originalReplace = fakeWindow.location.replace;
+      let originalReplace = fakeWindow.location.replace;
       fakeWindow.location.replace = function(url) {
         url = url.replace('&not', '¬');
         // I really don't know why IE 11 (sometimes) does this, but I am not the only one to notice:
@@ -582,17 +582,17 @@ describe('browser', function() {
       };
 
       // the initial URL contains a lengthy oauth token in the hash
-      var initialUrl = 'http://test.com/oauthcallback#state=xxx%3D&not-before-policy=0';
+      let initialUrl = 'http://test.com/oauthcallback#state=xxx%3D&not-before-policy=0';
       fakeWindow.location.href = initialUrl;
       browser = new Browser(fakeWindow, fakeDocument, fakeLog, sniffer, taskTrackerFactory);
 
       // somehow, $location gets a version of this url where the = is no longer escaped, and tells the browser:
-      var initialUrlFixedByLocation = initialUrl.replace('%3D', '=');
+      let initialUrlFixedByLocation = initialUrl.replace('%3D', '=');
       browser.url(initialUrlFixedByLocation, true, null);
       expect(browser.url()).toEqual(initialUrlFixedByLocation);
 
       // a little later (but in the same digest cycle) the view asks $location to replace the url, which tells $browser
-      var secondUrl = 'http://test.com/otherView';
+      let secondUrl = 'http://test.com/otherView';
       browser.url(secondUrl, true, null);
       expect(browser.url()).toEqual(secondUrl);
     });
@@ -600,7 +600,7 @@ describe('browser', function() {
   });
 
   describe('url (when state passed)', function() {
-    var currentHref, pushState, replaceState, locationReplace;
+    let currentHref, pushState, replaceState, locationReplace;
 
     beforeEach(function() {
     });
@@ -761,7 +761,7 @@ describe('browser', function() {
   });
 
   describe('state', function() {
-    var currentHref;
+    let currentHref;
 
     beforeEach(function() {
       sniffer = {history: true};
@@ -773,11 +773,11 @@ describe('browser', function() {
       // is not allowed and logs an error in the console. We should not try to access
       // `history.state` in contexts where `$sniffer.history` is false.
 
-      var historyStateAccessed = false;
-      var mockSniffer = {history: false};
-      var mockWindow = new MockWindow();
+      let historyStateAccessed = false;
+      let mockSniffer = {history: false};
+      let mockWindow = new MockWindow();
 
-      var _state = mockWindow.history.state;
+      let _state = mockWindow.history.state;
       Object.defineProperty(mockWindow.history, 'state', {
         get: function() {
           historyStateAccessed = true;
@@ -785,7 +785,7 @@ describe('browser', function() {
         }
       });
 
-      var browser = new Browser(mockWindow, fakeDocument, fakeLog, mockSniffer, taskTrackerFactory);
+      let browser = new Browser(mockWindow, fakeDocument, fakeLog, mockSniffer, taskTrackerFactory);
 
       expect(historyStateAccessed).toBe(false);
     });
@@ -824,7 +824,7 @@ describe('browser', function() {
   });
 
   describe('urlChange', function() {
-    var callback;
+    let callback;
 
     beforeEach(function() {
       callback = jasmine.createSpy('onUrlChange');
@@ -887,7 +887,7 @@ describe('browser', function() {
     });
 
     describe('state handling', function() {
-      var currentHref;
+      let currentHref;
 
       beforeEach(function() {
         sniffer = {history: true};
@@ -936,7 +936,7 @@ describe('browser', function() {
 
 
   describe('baseHref', function() {
-    var jqDocHead;
+    let jqDocHead;
 
     beforeEach(function() {
       jqDocHead = jqLite(window.document).find('head');
@@ -1076,8 +1076,8 @@ describe('browser', function() {
         html5Mode: true
       });
       fakeWindow.location.href = 'http://server/some/deep/path';
-      var changeUrlCount = 0;
-      var _url = browser.url;
+      let changeUrlCount = 0;
+      let _url = browser.url;
       browser.url = function(newUrl, replace, state) {
         if (newUrl) {
           changeUrlCount++;
@@ -1134,7 +1134,7 @@ describe('browser', function() {
       inject(function($flushPendingTasks, $location, $rootScope) {
         $rootScope.$digest();
 
-        var spy = jasmine.createSpy('$locationChangeStart');
+        let spy = jasmine.createSpy('$locationChangeStart');
         $rootScope.$on('$locationChangeStart', spy);
 
         $rootScope.$evalAsync(function() {
@@ -1159,8 +1159,8 @@ describe('browser', function() {
 
     it('should not interfere with legacy browser url replace behavior', function() {
       inject(function($rootScope) {
-        var current = fakeWindow.location.href;
-        var newUrl = 'http://notyet/';
+        let current = fakeWindow.location.href;
+        let newUrl = 'http://notyet/';
         sniffer.history = false;
         expect(historyEntriesLength).toBe(1);
         browser.url(newUrl, true);

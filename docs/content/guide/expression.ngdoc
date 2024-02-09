@@ -86,7 +86,7 @@ You can try evaluating different expressions here:
   <file name="script.js">
     angular.module('expressionExample', [])
       .controller('ExampleController', ['$scope', function($scope) {
-        var exprs = $scope.exprs = [];
+        let exprs = $scope.exprs = [];
         $scope.expr = '3*10|currency';
         $scope.addExp = function(expr) {
           exprs.push(expr);
@@ -101,7 +101,7 @@ You can try evaluating different expressions here:
   <file name="protractor.js" type="protractor">
     it('should allow user expression testing', function() {
       element(by.css('.expressions button')).click();
-      var lis = element(by.css('.expressions ul')).all(by.repeater('expr in exprs'));
+      let lis = element(by.css('.expressions ul')).all(by.repeater('expr in exprs'));
       expect(lis.count()).toBe(1);
       expect(lis.get(0).getText()).toEqual('[ X ] 3*10|currency => $30.00');
     });
@@ -154,7 +154,7 @@ identifier `$locals`.
       // We need to give the browser time to display the alert
       browser.wait(protractor.ExpectedConditions.alertIsPresent(), 1000);
 
-      var alertDialog = browser.switchTo().alert();
+      let alertDialog = browser.switchTo().alert();
 
       expect(alertDialog.getText()).toEqual('Hello World');
 
@@ -253,8 +253,8 @@ result is a non-undefined value (see value stabilization algorithm below).
   <file name="script.js">
     angular.module('oneTimeBindingExampleApp', []).
       controller('EventController', ['$scope', function($scope) {
-        var counter = 0;
-        var names = ['Igor', 'Misko', 'Chirayu', 'Lucas'];
+        let counter = 0;
+        let names = ['Igor', 'Misko', 'Chirayu', 'Lucas'];
         /*
          * expose the event object to the scope
          */
@@ -266,8 +266,8 @@ result is a non-undefined value (see value stabilization algorithm below).
   </file>
   <file name="protractor.js" type="protractor">
     it('should freeze binding after its value has stabilized', function() {
-      var oneTimeBinding = element(by.id('one-time-binding-example'));
-      var normalBinding = element(by.id('normal-binding-example'));
+      let oneTimeBinding = element(by.id('one-time-binding-example'));
+      let normalBinding = element(by.id('normal-binding-example'));
 
       expect(oneTimeBinding.getText()).toEqual('One time binding:');
       expect(normalBinding.getText()).toEqual('Normal binding:');

@@ -1,6 +1,4 @@
-"use strict";
-
-var $$ForceReflowProvider = /** @this */ function () {
+let $$ForceReflowProvider = /** @this */ function () {
   this.$get = [
     "$document",
     function ($document) {

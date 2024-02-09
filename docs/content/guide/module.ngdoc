@@ -40,7 +40,7 @@ I'm in a hurry. How do I get a Hello World module working?
 
   <file name="script.js">
     // declare a module
-    var myAppModule = angular.module('myApp', []);
+    let myAppModule = angular.module('myApp', []);
 
     // configure the module.
     // in this example we will create a greeting filter
@@ -218,17 +218,17 @@ Beware that using `angular.module('myModule', [])` will create the module `myMod
 existing module named `myModule`. Use `angular.module('myModule')` to retrieve an existing module.
 
 ```js
-var myModule = angular.module('myModule', []);
+let myModule = angular.module('myModule', []);
 
 // add some directives and services
 myModule.service('myService', ...);
 myModule.directive('myDirective', ...);
 
 // overwrites both myService and myDirective by creating a new module
-var myModule = angular.module('myModule', []);
+let myModule = angular.module('myModule', []);
 
 // throws an error because myOtherModule has yet to be defined
-var myModule = angular.module('myOtherModule');
+let myModule = angular.module('myOtherModule');
 ```
 
 ## Unit Testing
@@ -286,7 +286,7 @@ describe('myApp', function() {
   // this is another way of overriding configuration in the
   // tests using inline `module` and `inject` methods.
   it('should alert using the alert service', function() {
-    var alertSpy = jasmine.createSpy('alert');
+    let alertSpy = jasmine.createSpy('alert');
     module(function($provide) {
       $provide.value('alert', alertSpy);
     });

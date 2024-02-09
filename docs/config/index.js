@@ -1,9 +1,9 @@
-'use strict';
 
-var path = require('canonical-path');
-var packagePath = __dirname;
 
-var Package = require('dgeni').Package;
+let path = require('canonical-path');
+let packagePath = __dirname;
+
+let Package = require('dgeni').Package;
 
 // Create and export a new Dgeni package called angularjs. This package depends upon
 // the ngdoc, nunjucks, and examples packages defined in the dgeni-packages node module.
@@ -95,7 +95,7 @@ module.exports = new Package('angularjs', [
   computePathsProcessor.pathTemplates.push({
     docTypes: ['overview', 'tutorial'],
     getPath: function(doc) {
-      var docPath = path.dirname(doc.fileInfo.relativePath);
+      let docPath = path.dirname(doc.fileInfo.relativePath);
       if (doc.fileInfo.baseName !== 'index') {
         docPath = path.join(docPath, doc.fileInfo.baseName);
       }

@@ -1,6 +1,6 @@
-'use strict';
 
-var path = require('canonical-path');
+
+let path = require('canonical-path');
 
 /**
  * @dgService minErrInfo
@@ -9,7 +9,7 @@ var path = require('canonical-path');
  */
 module.exports = function getMinerrInfo(readFilesProcessor) {
   return function() {
-    var minerrInfoPath = path.resolve(readFilesProcessor.basePath, 'build/errors.json');
+    let minerrInfoPath = path.resolve(readFilesProcessor.basePath, 'build/errors.json');
     return require(minerrInfoPath);
   };
 };

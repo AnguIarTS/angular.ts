@@ -1,9 +1,7 @@
-"use strict";
-
-var forEach;
-var isArray;
-var isString;
-var jqLite;
+let forEach;
+let isArray;
+let isString;
+let jqLite;
 
 /**
  * @ngdoc module
@@ -370,8 +368,8 @@ angular
   .directive("ngMessages", [
     "$animate",
     function ($animate) {
-      var ACTIVE_CLASS = "ng-active";
-      var INACTIVE_CLASS = "ng-inactive";
+      let ACTIVE_CLASS = "ng-active";
+      let INACTIVE_CLASS = "ng-inactive";
 
       return {
         require: "ngMessages",
@@ -381,16 +379,16 @@ angular
           "$scope",
           "$attrs",
           function NgMessagesCtrl($element, $scope, $attrs) {
-            var ctrl = this;
-            var latestKey = 0;
-            var nextAttachId = 0;
+            let ctrl = this;
+            let latestKey = 0;
+            let nextAttachId = 0;
 
             this.getAttachId = function getAttachId() {
               return nextAttachId++;
             };
 
-            var messages = (this.messages = {});
-            var renderLater, cachedCollection;
+            let messages = (this.messages = {});
+            let renderLater, cachedCollection;
 
             this.render = function (collection) {
               collection = collection || {};
@@ -399,23 +397,23 @@ angular
               cachedCollection = collection;
 
               // this is true if the attribute is empty or if the attribute value is truthy
-              var multiple =
+              let multiple =
                 isAttrTruthy($scope, $attrs.ngMessagesMultiple) ||
                 isAttrTruthy($scope, $attrs.multiple);
 
-              var unmatchedMessages = [];
-              var matchedKeys = {};
-              var truthyKeys = 0;
-              var messageItem = ctrl.head;
-              var messageFound = false;
-              var totalMessages = 0;
+              let unmatchedMessages = [];
+              let matchedKeys = {};
+              let truthyKeys = 0;
+              let messageItem = ctrl.head;
+              let messageFound = false;
+              let totalMessages = 0;
 
               // we use != instead of !== to allow for both undefined and null values
               while (messageItem != null) {
                 totalMessages++;
-                var messageCtrl = messageItem.message;
+                let messageCtrl = messageItem.message;
 
-                var messageUsed = false;
+                let messageUsed = false;
                 if (!messageFound) {
                   forEach(collection, function (value, key) {
                     if (truthy(value) && !messageUsed) {
@@ -448,8 +446,8 @@ angular
                 messageCtrl.detach();
               });
 
-              var messageMatched = unmatchedMessages.length !== totalMessages;
-              var attachDefault =
+              let messageMatched = unmatchedMessages.length !== totalMessages;
+              let attachDefault =
                 ctrl.default && !messageMatched && truthyKeys > 0;
 
               if (attachDefault) {
@@ -485,7 +483,7 @@ angular
               if (isDefault) {
                 ctrl.default = messageCtrl;
               } else {
-                var nextKey = latestKey.toString();
+                let nextKey = latestKey.toString();
                 messages[nextKey] = {
                   message: messageCtrl,
                 };
@@ -501,7 +499,7 @@ angular
               if (isDefault) {
                 delete ctrl.default;
               } else {
-                var key = comment.$$ngMessageNode;
+                let key = comment.$$ngMessageNode;
                 delete comment.$$ngMessageNode;
                 removeMessageNode($element[0], comment, key);
                 delete messages[key];
@@ -510,11 +508,11 @@ angular
             };
 
             function findPreviousMessage(parent, comment) {
-              var prevNode = comment;
-              var parentLookup = [];
+              let prevNode = comment;
+              let parentLookup = [];
 
               while (prevNode && prevNode !== parent) {
-                var prevKey = prevNode.$$ngMessageNode;
+                let prevKey = prevNode.$$ngMessageNode;
                 if (prevKey && prevKey.length) {
                   return messages[prevKey];
                 }
@@ -538,11 +536,11 @@ angular
             }
 
             function insertMessageNode(parent, comment, key) {
-              var messageNode = messages[key];
+              let messageNode = messages[key];
               if (!ctrl.head) {
                 ctrl.head = messageNode;
               } else {
-                var match = findPreviousMessage(parent, comment);
+                let match = findPreviousMessage(parent, comment);
                 if (match) {
                   messageNode.next = match.next;
                   match.next = messageNode;
@@ -554,12 +552,12 @@ angular
             }
 
             function removeMessageNode(parent, comment, key) {
-              var messageNode = messages[key];
+              let messageNode = messages[key];
 
               // This message node may have already been removed by a call to deregister()
               if (!messageNode) return;
 
-              var match = findPreviousMessage(parent, comment);
+              let match = findPreviousMessage(parent, comment);
               if (match) {
                 match.next = messageNode.next;
               } else {
@@ -622,7 +620,7 @@ angular
         restrict: "AE",
         require: "^^ngMessages", // we only require this for validation sake
         link: function ($scope, element, attrs) {
-          var src = attrs.ngMessagesInclude || attrs.src;
+          let src = attrs.ngMessagesInclude || attrs.src;
           $templateRequest(src).then(function (html) {
             if ($scope.$$destroyed) return;
 
@@ -643,10 +641,10 @@ angular
       // Helpers
       function replaceElementWithMarker(element, src) {
         // A comment marker is placed for debugging purposes
-        var comment = $compile.$$createComment
+        let comment = $compile.$$createComment
           ? $compile.$$createComment("ngMessagesInclude", src)
           : $document[0].createComment(" ngMessagesInclude: " + src + " ");
-        var marker = jqLite(comment);
+        let marker = jqLite(comment);
         element.after(marker);
 
         // Don't pollute the DOM anymore by keeping an empty directive element
@@ -763,14 +761,14 @@ function ngMessageDirectiveFactory(isDefault) {
         terminal: true,
         require: "^^ngMessages",
         link: function (scope, element, attrs, ngMessagesCtrl, $transclude) {
-          var commentNode, records, staticExp, dynamicExp;
+          let commentNode, records, staticExp, dynamicExp;
 
           if (!isDefault) {
             commentNode = element[0];
             staticExp = attrs.ngMessage || attrs.when;
             dynamicExp = attrs.ngMessageExp || attrs.whenExp;
 
-            var assignRecords = function (items) {
+            let assignRecords = function (items) {
               records = items
                 ? isArray(items)
                   ? items
@@ -787,7 +785,7 @@ function ngMessageDirectiveFactory(isDefault) {
             }
           }
 
-          var currentElement, messageCtrl;
+          let currentElement, messageCtrl;
           ngMessagesCtrl.register(
             commentNode,
             (messageCtrl = {
@@ -802,7 +800,7 @@ function ngMessageDirectiveFactory(isDefault) {
 
                     // Each time we attach this node to a message we get a new id that we can match
                     // when we are destroying the node later.
-                    var $$attachId = (currentElement.$$attachId =
+                    let $$attachId = (currentElement.$$attachId =
                       ngMessagesCtrl.getAttachId());
 
                     // in the event that the element or a parent element is destroyed
@@ -825,7 +823,7 @@ function ngMessageDirectiveFactory(isDefault) {
               },
               detach: function () {
                 if (currentElement) {
-                  var elm = currentElement;
+                  let elm = currentElement;
                   currentElement = null;
                   $animate.leave(elm);
                 }

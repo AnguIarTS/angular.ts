@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngPluralize
@@ -128,9 +126,9 @@
       </file>
       <file name="protractor.js" type="protractor">
         it('should show correct pluralized string', function() {
-          var withoutOffset = element.all(by.css('ng-pluralize')).get(0);
-          var withOffset = element.all(by.css('ng-pluralize')).get(1);
-          var countInput = element(by.model('personCount'));
+          let withoutOffset = element.all(by.css('ng-pluralize')).get(0);
+          let withOffset = element.all(by.css('ng-pluralize')).get(1);
+          let countInput = element(by.model('personCount'));
 
           expect(withoutOffset.getText()).toEqual('1 person is viewing.');
           expect(withOffset.getText()).toEqual('Igor is viewing.');
@@ -160,10 +158,10 @@
           expect(withOffset.getText()).toEqual('Igor, Misko and 2 other people are viewing.');
         });
         it('should show data-bound names', function() {
-          var withOffset = element.all(by.css('ng-pluralize')).get(1);
-          var personCount = element(by.model('personCount'));
-          var person1 = element(by.model('person1'));
-          var person2 = element(by.model('person2'));
+          let withOffset = element.all(by.css('ng-pluralize')).get(1);
+          let personCount = element(by.model('personCount'));
+          let person1 = element(by.model('person1'));
+          let person2 = element(by.model('person2'));
           personCount.clear();
           personCount.sendKeys('4');
           person1.clear();
@@ -175,17 +173,17 @@
       </file>
     </example>
  */
-var ngPluralizeDirective = [
+let ngPluralizeDirective = [
   "$locale",
   "$interpolate",
   "$log",
   function ($locale, $interpolate, $log) {
-    var BRACE = /{}/g,
+    let BRACE = /{}/g,
       IS_WHEN = /^when(Minus)?(.+)$/;
 
     return {
       link: function (scope, element, attr) {
-        var numberExp = attr.count,
+        let numberExp = attr.count,
           whenExp = attr.$attr.when && element.attr(attr.$attr.when), // we have {{}} in attrs
           offset = attr.offset || 0,
           whens = scope.$eval(whenExp) || {},
@@ -197,9 +195,9 @@ var ngPluralizeDirective = [
           lastCount;
 
         forEach(attr, function (expression, attributeName) {
-          var tmpMatch = IS_WHEN.exec(attributeName);
+          let tmpMatch = IS_WHEN.exec(attributeName);
           if (tmpMatch) {
-            var whenKey = (tmpMatch[1] ? "-" : "") + lowercase(tmpMatch[2]);
+            let whenKey = (tmpMatch[1] ? "-" : "") + lowercase(tmpMatch[2]);
             whens[whenKey] = element.attr(attr.$attr[attributeName]);
           }
         });
@@ -210,8 +208,8 @@ var ngPluralizeDirective = [
         });
 
         scope.$watch(numberExp, function ngPluralizeWatchAction(newVal) {
-          var count = parseFloat(newVal);
-          var countIsNaN = isNumberNaN(count);
+          let count = parseFloat(newVal);
+          let countIsNaN = isNumberNaN(count);
 
           if (!countIsNaN && !(count in whens)) {
             // If an explicit number rule such as 1, 2, 3... is defined, just use it.
@@ -223,7 +221,7 @@ var ngPluralizeDirective = [
           // In JS `NaN !== NaN`, so we have to explicitly check.
           if (count !== lastCount && !(countIsNaN && isNumberNaN(lastCount))) {
             watchRemover();
-            var whenExpFn = whensExpFns[count];
+            let whenExpFn = whensExpFns[count];
             if (isUndefined(whenExpFn)) {
               if (newVal != null) {
                 $log.debug(

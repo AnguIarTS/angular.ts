@@ -51,7 +51,7 @@ Let's say that we want to have a very simple service called "clientId" that prov
 representing an authentication id used for some remote API. You would define it like this:
 
 ```javascript
-var myApp = angular.module('myApp', []);
+let myApp = angular.module('myApp', []);
 myApp.value('clientId', 'a12345654321x');
 ```
 
@@ -116,13 +116,13 @@ based on the `clientId` value and a secret stored in the browser's local storage
 
 ```javascript
 myApp.factory('apiToken', ['clientId', function apiTokenFactory(clientId) {
-  var encrypt = function(data1, data2) {
+  let encrypt = function(data1, data2) {
     // NSA-proof encryption algorithm:
     return (data1 + ':' + data2).toUpperCase();
   };
 
-  var secret = window.localStorage.getItem('myApp.secret');
-  var apiToken = encrypt(clientId, secret);
+  let secret = window.localStorage.getItem('myApp.secret');
+  let apiToken = encrypt(clientId, secret);
 
   return apiToken;
 }]);
@@ -213,7 +213,7 @@ that need it. We can make it configurable like so:
 
 ```javascript
 myApp.provider('unicornLauncher', function UnicornLauncherProvider() {
-  var useTinfoilShielding = false;
+  let useTinfoilShielding = false;
 
   this.useTinfoilShielding = function(value) {
     useTinfoilShielding = !!value;

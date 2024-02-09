@@ -40,7 +40,7 @@ angular.module('myApp', [])
     '$delegate',
     function $logDecorator($delegate) {
 
-      var originalWarn = $delegate.warn;
+      let originalWarn = $delegate.warn;
       $delegate.warn = function decoratedWarn(msg) {
         msg = 'Decorated Warn: ' + msg;
         originalWarn.apply($delegate, arguments);
@@ -73,7 +73,7 @@ angular.module('myApp', [])
     '$delegate',
     function myServiceDecorator($delegate) {
 
-      var myDecoratedService = {
+      let myDecoratedService = {
         // new service object to replace myService
       };
       return myDecoratedService;
@@ -92,7 +92,7 @@ angular.module('myApp', [])
     '$delegate',
     function myServiceDecorator($delegate) {
 
-      var someFn = $delegate.someFn;
+      let someFn = $delegate.someFn;
 
       function aNewFn() {
         // new service function
@@ -209,7 +209,7 @@ This example shows how we can replace the $log service with our own to display l
         '$log',
         '$timeout',
         function($scope, $log, $timeout) {
-          var types = ['error', 'warn', 'log', 'info' ,'debug'], i;
+          let types = ['error', 'warn', 'log', 'info' ,'debug'], i;
 
           for (i = 0; i < types.length; i++) {
             $log[types[i]](types[i] + ': message ' + (i + 1));
@@ -245,7 +245,7 @@ This example shows how we can replace the $log service with our own to display l
             '$delegate',
             function logDecorator($delegate) {
 
-              var myLog = {
+              let myLog = {
                 warn: function(msg) {
                   log(msg, 'warn');
                 },
@@ -321,13 +321,13 @@ those conditions.
         // matchExpressions looks for interpolation markup in the directive attribute, extracts the expressions
         // from that markup (if they exist) and returns an array of those expressions
         function matchExpressions(str) {
-          var exps = str.match(/{{([^}]+)}}/g);
+          let exps = str.match(/{{([^}]+)}}/g);
 
           // if there isn't any, get out of here
           if (exps === null) return;
 
           exps = exps.map(function(exp) {
-            var prop = exp.match(/[^{}]+/);
+            let prop = exp.match(/[^{}]+/);
             return prop === null ? null : prop[0];
           });
 
@@ -342,19 +342,19 @@ those conditions.
           function($delegate, $log, $parse) {
 
             // store the original link fn
-            var originalLinkFn = $delegate[0].link;
+            let originalLinkFn = $delegate[0].link;
 
             // replace the compile fn
             $delegate[0].compile = function(tElem, tAttr) {
 
               // store the original exp in the directive attribute for our warning message
-              var originalExp = tAttr.ngHref;
+              let originalExp = tAttr.ngHref;
 
               // get the interpolated expressions
-              var exps = matchExpressions(originalExp);
+              let exps = matchExpressions(originalExp);
 
               // create and store the getters using $parse
-              var getters = exps.map(function(exp) {
+              let getters = exps.map(function(exp) {
                 return exp && $parse(exp);
               });
 
@@ -372,7 +372,7 @@ those conditions.
                     angular.forEach(getters, function(g, idx) {
 
                       // if val is truthy, then the warning won't log
-                      var val = angular.isFunction(g) ? g(scope) : true;
+                      let val = angular.isFunction(g) ? g(scope) : true;
                       if (!val) {
                         $log.warn('NgHref Warning: "' + exps[idx] + '" in the expression "' + originalExp +
                           '" is falsy!');
@@ -419,10 +419,10 @@ those conditions.
 
   <file name="protractor.js" type="protractor">
     it('should warn when an expression in the interpolated value is falsy', function() {
-      var id3 = element(by.id('id3'));
-      var id8 = element(by.id('id8'));
-      var someOther = element(by.id('someOtherId'));
-      var someOther5 = element(by.id('someOtherId5'));
+      let id3 = element(by.id('id3'));
+      let id8 = element(by.id('id8'));
+      let someOther = element(by.id('someOtherId'));
+      let someOther5 = element(by.id('someOtherId5'));
 
       expect(id3.getText()).toEqual('View Product 3');
       expect(id3.getAttribute('href')).toContain('/products/3/view');
@@ -462,7 +462,7 @@ changed (that never happens) and we need all of our default dates to be `'shortD
           function dateDecorator($delegate) {
 
             // store the original filter
-            var originalFilter = $delegate;
+            let originalFilter = $delegate;
 
             // return our filter
             return shortDateDefault;

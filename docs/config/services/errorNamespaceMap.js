@@ -1,5 +1,5 @@
-'use strict';
-var StringMap = require('stringmap');
+
+let StringMap = require('stringmap');
 
 /**
  * @dgService errorNamespaceMap

@@ -1,12 +1,12 @@
-'use strict';
+
 
 describe('ngShow / ngHide', function() {
-  var $scope, $compile, element;
+  let $scope, $compile, element;
 
   function expectVisibility(exprs, ngShowOrNgHide, shownOrHidden) {
     element = $compile('<div></div>')($scope);
     forEach(exprs, function(expr) {
-      var childElem = $compile('<div ' + ngShowOrNgHide + '="' + expr + '"></div>')($scope);
+      let childElem = $compile('<div ' + ngShowOrNgHide + '="' + expr + '"></div>')($scope);
       element.append(childElem);
       $scope.$digest();
       expect(childElem)[shownOrHidden === 'shown' ? 'toBeShown' : 'toBeHidden']();
@@ -105,7 +105,7 @@ describe('ngShow / ngHide', function() {
 });
 
 describe('ngShow / ngHide animations', function() {
-  var body, element, $rootElement;
+  let body, element, $rootElement;
 
   function html(content) {
     body.append($rootElement);
@@ -135,8 +135,8 @@ describe('ngShow / ngHide animations', function() {
 
   describe('ngShow', function() {
     it('should fire off the $animate.show and $animate.hide animation', inject(function($compile, $rootScope, $animate) {
-      var item;
-      var $scope = $rootScope.$new();
+      let item;
+      let $scope = $rootScope.$new();
       $scope.on = true;
       element = $compile(html(
         '<div ng-show="on">data</div>'
@@ -160,8 +160,8 @@ describe('ngShow / ngHide animations', function() {
     it('should apply the temporary `.ng-hide-animate` class to the element',
       inject(function($compile, $rootScope, $animate) {
 
-      var item;
-      var $scope = $rootScope.$new();
+      let item;
+      let $scope = $rootScope.$new();
       $scope.on = false;
       element = $compile(html(
         '<div class="show-hide" ng-show="on">data</div>'
@@ -182,8 +182,8 @@ describe('ngShow / ngHide animations', function() {
 
   describe('ngHide', function() {
     it('should fire off the $animate.show and $animate.hide animation', inject(function($compile, $rootScope, $animate) {
-      var item;
-      var $scope = $rootScope.$new();
+      let item;
+      let $scope = $rootScope.$new();
       $scope.off = true;
       element = $compile(html(
           '<div ng-hide="off">datum</div>'
@@ -207,8 +207,8 @@ describe('ngShow / ngHide animations', function() {
     it('should apply the temporary `.ng-hide-animate` class to the element',
       inject(function($compile, $rootScope, $animate) {
 
-      var item;
-      var $scope = $rootScope.$new();
+      let item;
+      let $scope = $rootScope.$new();
       $scope.on = false;
       element = $compile(html(
         '<div class="show-hide" ng-hide="on">data</div>'

@@ -9,7 +9,7 @@ which does not map to a specific slot defined in the transclude property of the 
 In this example the template has declared a slot missing from the transclude definition.
 This example will generate a noslot error.
 ```js
-var componentConfig = {
+let componentConfig = {
   template: '<div>' +
                 '<div ng-transclude="slotProvided"></div>' +
                 '<div ng-transclude="noSlotProvided"></div>' +
@@ -24,7 +24,7 @@ var componentConfig = {
 
 If we make the following change we will no longer get the noslot error.
 ```js
-var componentConfig = {
+let componentConfig = {
   template: '<div>' +
                 '<div ng-transclude="slotProvided"></div>' +
                 '<div ng-transclude="noSlotProvided"></div>' +

@@ -1,5 +1,3 @@
-"use strict";
-
 // NOTE: ADVANCED_OPTIMIZATIONS mode.
 //
 // This file is compiled with Closure compiler's ADVANCED_OPTIMIZATIONS flag! Be wary of using
@@ -13,9 +11,9 @@
 // Convert an index into the string into line/column for use in error messages
 // As such, this doesn't have to be efficient.
 function indexToLineAndColumn(text, index) {
-  var lines = text.split(/\n/g);
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i];
+  let lines = text.split(/\n/g);
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
     if (index >= line.length) {
       index -= line.length;
     } else {
@@ -23,10 +21,10 @@ function indexToLineAndColumn(text, index) {
     }
   }
 }
-var PARSE_CACHE_FOR_TEXT_LITERALS = Object.create(null);
+let PARSE_CACHE_FOR_TEXT_LITERALS = Object.create(null);
 
 function parseTextLiteral(text) {
-  var cachedFn = PARSE_CACHE_FOR_TEXT_LITERALS[text];
+  let cachedFn = PARSE_CACHE_FOR_TEXT_LITERALS[text];
   if (cachedFn != null) {
     return cachedFn;
   }
@@ -38,7 +36,7 @@ function parseTextLiteral(text) {
     listener,
     objectEquality,
   ) {
-    var unwatch = scope["$watch"](
+    let unwatch = scope["$watch"](
       noop,
       function textLiteralWatcher() {
         listener(text, text, scope);
@@ -64,7 +62,7 @@ function subtractOffset(expressionFn, offset) {
   function parsedFn(context) {
     return minusOffset(expressionFn(context));
   }
-  var unwatch;
+  let unwatch;
   parsedFn["$$watchDelegate"] = function watchDelegate(
     scope,
     listener,

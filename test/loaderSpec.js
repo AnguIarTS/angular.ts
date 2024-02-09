@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('module loader', function() {
-  var window;
+  let window;
 
   beforeEach(function() {
     window = {};
@@ -16,8 +16,8 @@ describe('module loader', function() {
 
 
   it('should not override existing namespace', function() {
-    var angular = window.angular;
-    var module = angular.module;
+    let angular = window.angular;
+    let module = angular.module;
 
     setupModuleLoader(window);
     expect(window.angular).toBe(angular);
@@ -26,10 +26,10 @@ describe('module loader', function() {
 
 
   it('should record calls', function() {
-    var otherModule = window.angular.module('other', []);
+    let otherModule = window.angular.module('other', []);
     otherModule.config('otherInit');
 
-    var myModule = window.angular.module('my', ['other'], 'config');
+    let myModule = window.angular.module('my', ['other'], 'config');
 
     expect(myModule.
       decorator('dk', 'dv').
@@ -78,7 +78,7 @@ describe('module loader', function() {
 
 
   it('should run decorators in order of declaration, even when mixed with provider.decorator', function() {
-    var log = '';
+    let log = '';
 
     angular.module('theModule', [])
       .factory('theProvider', function() {
@@ -108,7 +108,7 @@ describe('module loader', function() {
 
 
   it('should decorate the last declared provider if multiple have been declared', function() {
-    var log = '';
+    let log = '';
 
     angular.module('theModule', []).
       factory('theProvider', function() {
@@ -159,7 +159,7 @@ describe('module loader', function() {
 
   describe('Module', function() {
     describe('info()', function() {
-      var theModule;
+      let theModule;
 
       beforeEach(function() {
         theModule = angular.module('theModule', []);

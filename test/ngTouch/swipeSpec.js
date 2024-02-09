@@ -1,8 +1,8 @@
-'use strict';
+
 
 describe('$swipe', function() {
-  var element;
-  var events;
+  let element;
+  let events;
 
   beforeEach(function() {
     module('ngTouch');
@@ -22,11 +22,11 @@ describe('$swipe', function() {
   });
 
   describe('pointerTypes', function() {
-    var usedEvents;
-    var MOUSE_EVENTS = ['mousedown','mousemove','mouseup'].sort();
-    var TOUCH_EVENTS = ['touchcancel','touchend','touchmove','touchstart'].sort();
-    var POINTER_EVENTS = ['pointerdown', 'pointermove', 'pointerup', 'pointercancel'].sort();
-    var ALL_EVENTS = MOUSE_EVENTS.concat(TOUCH_EVENTS, POINTER_EVENTS).sort();
+    let usedEvents;
+    let MOUSE_EVENTS = ['mousedown','mousemove','mouseup'].sort();
+    let TOUCH_EVENTS = ['touchcancel','touchend','touchmove','touchstart'].sort();
+    let POINTER_EVENTS = ['pointerdown', 'pointermove', 'pointerup', 'pointercancel'].sort();
+    let ALL_EVENTS = MOUSE_EVENTS.concat(TOUCH_EVENTS, POINTER_EVENTS).sort();
 
     beforeEach(function() {
       usedEvents = [];

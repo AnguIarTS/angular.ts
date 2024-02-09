@@ -18,14 +18,14 @@ and an array of dependent modules, like so:
 ```js
 // When defining a module with no module dependencies,
 // the array of dependencies should be defined and empty.
-var myApp = angular.module('myApp', []);
+let myApp = angular.module('myApp', []);
 ```
 
 To retrieve a reference to the same module for further configuration, call
 `angular.module` without the array argument.
 
 ```js
-var myApp = angular.module('myApp');
+let myApp = angular.module('myApp');
 ```
 
 Calling `angular.module` without the array of dependencies when the module has not yet been defined

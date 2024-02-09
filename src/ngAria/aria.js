@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc module
  * @name ngAria
@@ -55,9 +53,9 @@
  * It is possible to make `ngAria` ignore a specific element, by adding the `ng-aria-disable`
  * attribute on it. Note that only the element itself (and not its child elements) will be ignored.
  */
-var ARIA_DISABLE_ATTR = "ngAriaDisable";
+let ARIA_DISABLE_ATTR = "ngAriaDisable";
 
-var ngAriaModule = angular
+let ngAriaModule = angular
   .module("ngAria", ["ng"])
   .info({ angularVersion: '"NG_VERSION_FULL"' })
   .provider("$aria", $AriaProvider);
@@ -65,7 +63,7 @@ var ngAriaModule = angular
 /**
  * Internal Utilities
  */
-var nativeAriaNodeNames = [
+let nativeAriaNodeNames = [
   "BUTTON",
   "A",
   "INPUT",
@@ -75,7 +73,7 @@ var nativeAriaNodeNames = [
   "SUMMARY",
 ];
 
-var isNodeOneOf = function (elem, nodeTypeArray) {
+let isNodeOneOf = function (elem, nodeTypeArray) {
   if (nodeTypeArray.indexOf(elem[0].nodeName) !== -1) {
     return true;
   }
@@ -103,7 +101,7 @@ var isNodeOneOf = function (elem, nodeTypeArray) {
  *
  */
 function $AriaProvider() {
-  var config = {
+  let config = {
     ariaHidden: true,
     ariaChecked: true,
     ariaReadonly: true,
@@ -149,7 +147,7 @@ function $AriaProvider() {
     return function (scope, elem, attr) {
       if (attr.hasOwnProperty(ARIA_DISABLE_ATTR)) return;
 
-      var ariaCamelName = attr.$normalize(ariaAttr);
+      let ariaCamelName = attr.$normalize(ariaAttr);
       if (
         config[ariaCamelName] &&
         !isNodeOneOf(elem, nativeAriaNodeNames) &&
@@ -303,7 +301,7 @@ ngAriaModule
       }
 
       function getShape(attr, elem) {
-        var type = attr.type,
+        let type = attr.type,
           role = attr.role;
 
         return (type || role) === "checkbox" || role === "menuitemcheckbox"
@@ -322,11 +320,11 @@ ngAriaModule
         compile: function (elem, attr) {
           if (attr.hasOwnProperty(ARIA_DISABLE_ATTR)) return;
 
-          var shape = getShape(attr, elem);
+          let shape = getShape(attr, elem);
 
           return {
             post: function (scope, elem, attr, ngModel) {
-              var needsTabIndex = shouldAttachAttr(
+              let needsTabIndex = shouldAttachAttr(
                 "tabindex",
                 "tabindex",
                 elem,
@@ -340,7 +338,7 @@ ngAriaModule
               function getRadioReaction(newVal) {
                 // Strict comparison would cause a BC
                 // eslint-disable-next-line eqeqeq
-                var boolVal = attr.value == ngModel.$viewValue;
+                let boolVal = attr.value == ngModel.$viewValue;
                 elem.attr("aria-checked", boolVal);
               }
 
@@ -376,15 +374,15 @@ ngAriaModule
                     elem.attr("role", "slider");
                   }
                   if ($aria.config("ariaValue")) {
-                    var needsAriaValuemin =
+                    let needsAriaValuemin =
                       !elem.attr("aria-valuemin") &&
                       (attr.hasOwnProperty("min") ||
                         attr.hasOwnProperty("ngMin"));
-                    var needsAriaValuemax =
+                    let needsAriaValuemax =
                       !elem.attr("aria-valuemax") &&
                       (attr.hasOwnProperty("max") ||
                         attr.hasOwnProperty("ngMax"));
-                    var needsAriaValuenow = !elem.attr("aria-valuenow");
+                    let needsAriaValuenow = !elem.attr("aria-valuenow");
 
                     if (needsAriaValuemin) {
                       attr.$observe(
@@ -477,7 +475,7 @@ ngAriaModule
         compile: function (elem, attr) {
           if (attr.hasOwnProperty(ARIA_DISABLE_ATTR)) return;
 
-          var fn = $parse(attr.ngClick);
+          let fn = $parse(attr.ngClick);
           return function (scope, elem, attr) {
             if (!isNodeOneOf(elem, nativeAriaNodeNames)) {
               if ($aria.config("bindRoleForClick") && !elem.attr("role")) {
@@ -495,7 +493,7 @@ ngAriaModule
                 !attr.ngKeyup
               ) {
                 elem.on("keydown", function (event) {
-                  var keyCode = event.which || event.keyCode;
+                  let keyCode = event.which || event.keyCode;
 
                   if (keyCode === 13 || keyCode === 32) {
                     // If the event is triggered on a non-interactive element ...

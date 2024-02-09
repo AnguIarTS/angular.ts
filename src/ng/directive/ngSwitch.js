@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngSwitch
@@ -116,8 +114,8 @@
       }
     </file>
     <file name="protractor.js" type="protractor">
-      var switchElem = element(by.css('[ng-switch]'));
-      var select = element(by.model('selection'));
+      let switchElem = element(by.css('[ng-switch]'));
+      let select = element(by.model('selection'));
 
       it('should start in settings', function() {
         expect(switchElem.getText()).toMatch(/Settings Div/);
@@ -137,7 +135,7 @@
     </file>
   </example>
  */
-var ngSwitchDirective = [
+let ngSwitchDirective = [
   "$animate",
   "$compile",
   function ($animate, $compile) {
@@ -152,20 +150,20 @@ var ngSwitchDirective = [
         },
       ],
       link: function (scope, element, attr, ngSwitchController) {
-        var watchExpr = attr.ngSwitch || attr.on,
+        let watchExpr = attr.ngSwitch || attr.on,
           selectedTranscludes = [],
           selectedElements = [],
           previousLeaveAnimations = [],
           selectedScopes = [];
 
-        var spliceFactory = function (array, index) {
+        let spliceFactory = function (array, index) {
           return function (response) {
             if (response !== false) array.splice(index, 1);
           };
         };
 
         scope.$watch(watchExpr, function ngSwitchWatchAction(value) {
-          var i, ii;
+          let i, ii;
 
           // Start with the last, in case the array is modified during the loop
           while (previousLeaveAnimations.length) {
@@ -173,9 +171,9 @@ var ngSwitchDirective = [
           }
 
           for (i = 0, ii = selectedScopes.length; i < ii; ++i) {
-            var selected = getBlockNodes(selectedElements[i].clone);
+            let selected = getBlockNodes(selectedElements[i].clone);
             selectedScopes[i].$destroy();
-            var runner = (previousLeaveAnimations[i] =
+            let runner = (previousLeaveAnimations[i] =
               $animate.leave(selected));
             runner.done(spliceFactory(previousLeaveAnimations, i));
           }
@@ -192,10 +190,10 @@ var ngSwitchDirective = [
               selectedTransclude.transclude(
                 function (caseElement, selectedScope) {
                   selectedScopes.push(selectedScope);
-                  var anchor = selectedTransclude.element;
+                  let anchor = selectedTransclude.element;
                   caseElement[caseElement.length++] =
                     $compile.$$createComment("end ngSwitchWhen");
-                  var block = { clone: caseElement };
+                  let block = { clone: caseElement };
 
                   selectedElements.push(block);
                   $animate.enter(caseElement, anchor.parent(), anchor);
@@ -209,13 +207,13 @@ var ngSwitchDirective = [
   },
 ];
 
-var ngSwitchWhenDirective = ngDirective({
+let ngSwitchWhenDirective = ngDirective({
   transclude: "element",
   priority: 1200,
   require: "^ngSwitch",
   multiElement: true,
   link: function (scope, element, attrs, ctrl, $transclude) {
-    var cases = attrs.ngSwitchWhen
+    let cases = attrs.ngSwitchWhen
       .split(attrs.ngSwitchWhenSeparator)
       .sort()
       .filter(
@@ -235,7 +233,7 @@ var ngSwitchWhenDirective = ngDirective({
   },
 });
 
-var ngSwitchDefaultDirective = ngDirective({
+let ngSwitchDefaultDirective = ngDirective({
   transclude: "element",
   priority: 1200,
   require: "^ngSwitch",

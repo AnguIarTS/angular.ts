@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('$document', function() {
 
@@ -31,9 +31,9 @@ describe('$document', function() {
 
 describe('$$isDocumentHidden', function() {
   it('should listen on the visibilitychange event', function() {
-    var doc;
+    let doc;
 
-    var spy = spyOn(window.document, 'addEventListener').and.callThrough();
+    let spy = spyOn(window.document, 'addEventListener').and.callThrough();
 
     inject(function($$isDocumentHidden, $document) {
       expect(spy.calls.mostRecent().args[0]).toBe('visibilitychange');
@@ -44,7 +44,7 @@ describe('$$isDocumentHidden', function() {
   });
 
   it('should remove the listener when the $rootScope is destroyed', function() {
-    var spy = spyOn(window.document, 'removeEventListener').and.callThrough();
+    let spy = spyOn(window.document, 'removeEventListener').and.callThrough();
 
     inject(function($$isDocumentHidden, $rootScope) {
       $rootScope.$destroy();

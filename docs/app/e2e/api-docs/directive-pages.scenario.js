@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('directives', function() {
 
@@ -34,25 +34,25 @@ describe('directives', function() {
 });
 
 function getParamNames() {
-  var argsSection = element(by.className('input-arguments'));
+  let argsSection = element(by.className('input-arguments'));
 
-  var paramNames = argsSection.all(by.css('tr td:nth-child(1)'));
+  let paramNames = argsSection.all(by.css('tr td:nth-child(1)'));
 
   return paramNames;
 }
 
 // Based on the type of directive usage, the directive name will show up in the code block
 // with a specific class
-var typeClassMap = {
+let typeClassMap = {
   element: 'tag',
   attribute: 'atn',
   'CSS class': 'atv'
 };
 
 function getUsageAs(type, directiveName) {
-  var usage = element(by.className('usage'));
+  let usage = element(by.className('usage'));
 
-  var as = usage.element(by.cssContainingText('li', 'as ' + type));
+  let as = usage.element(by.cssContainingText('li', 'as ' + type));
 
   return as.element(by.cssContainingText('span.' + typeClassMap[type], directiveName));
 }

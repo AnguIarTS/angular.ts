@@ -1,4 +1,4 @@
-'use strict';
+
 
 /**
 * A simple parser to parse a number format into a pattern object
@@ -7,7 +7,7 @@
 exports.ensureDecimalSep = ensureDecimalSep;
 exports.parsePattern = parsePattern;
 
-var PATTERN_SEP  = ';',
+let PATTERN_SEP  = ';',
     DECIMAL_SEP  = '.',
     GROUP_SEP    = ',',
     DIGIT        = '#',
@@ -30,7 +30,7 @@ function ensureDecimalSep(pattern) {
  * @param str {string} pattern to be parsed (e.g. #,##0.###).
  */
 function parsePattern(pattern) {
-  var p = {
+  let p = {
             minInt: 1,
             minFrac: 0,
             maxFrac: 0,
@@ -42,7 +42,7 @@ function parsePattern(pattern) {
             lgSize: 0
           };
 
-  var patternParts = pattern.split(PATTERN_SEP),
+  let patternParts = pattern.split(PATTERN_SEP),
       positive = patternParts[0],
       negative = patternParts[1];
 
@@ -54,26 +54,26 @@ function parsePattern(pattern) {
   // For example `#,##0$` would be converted to `#,##0.$`, which would (correctly) result in:
   // `minFrac: 0`, `maxFrac: 0`, `posSuf: '$'`
   // Note: We shouldn't modify `positive` directly, because it is used to parse the negative part.)
-  var positiveWithDecimalSep = ensureDecimalSep(positive),
+  let positiveWithDecimalSep = ensureDecimalSep(positive),
       positiveParts = positiveWithDecimalSep.split(DECIMAL_SEP),
       integer = positiveParts[0],
       fraction = positiveParts[1];
 
   p.posPre = integer.substr(0, integer.indexOf(DIGIT));
 
-  for (var i = 0; i < fraction.length; i++) {
-    var ch = fraction.charAt(i);
+  for (let i = 0; i < fraction.length; i++) {
+    let ch = fraction.charAt(i);
     if (ch === ZERO) p.minFrac = p.maxFrac = i + 1;
     else if (ch === DIGIT) p.maxFrac = i + 1;
     else p.posSuf += ch;
   }
 
-  var groups = integer.split(GROUP_SEP);
+  let groups = integer.split(GROUP_SEP);
   p.gSize = groups[1] ? groups[1].length : 0;
   p.lgSize = (groups[2] || groups[1]) ? (groups[2] || groups[1]).length : 0;
 
   if (negative) {
-    var trunkLen = positive.length - p.posPre.length - p.posSuf.length,
+    let trunkLen = positive.length - p.posPre.length - p.posSuf.length,
         pos = negative.indexOf(DIGIT);
 
     p.negPre = negative.substr(0, pos).replace(/'/g, '');

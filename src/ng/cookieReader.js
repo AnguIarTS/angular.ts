@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @name $$cookieReader
  * @requires $document
@@ -10,9 +8,9 @@
  * @return {Object} a key/value map of the current cookies
  */
 function $$CookieReader($document) {
-  var rawDocument = $document[0] || {};
-  var lastCookies = {};
-  var lastCookieString = "";
+  let rawDocument = $document[0] || {};
+  let lastCookies = {};
+  let lastCookieString = "";
 
   function safeGetCookie(rawDocument) {
     try {
@@ -31,8 +29,8 @@ function $$CookieReader($document) {
   }
 
   return function () {
-    var cookieArray, cookie, i, index, name;
-    var currentCookieString = safeGetCookie(rawDocument);
+    let cookieArray, cookie, i, index, name;
+    let currentCookieString = safeGetCookie(rawDocument);
 
     if (currentCookieString !== lastCookieString) {
       lastCookieString = currentCookieString;

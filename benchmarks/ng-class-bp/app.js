@@ -1,6 +1,6 @@
-'use strict';
 
-var app = angular.module('ngClassBenchmark', []);
+
+let app = angular.module('ngClassBenchmark', []);
 
 app.controller('DataController', function DataController($scope) {
 
@@ -20,7 +20,7 @@ app.controller('DataController', function DataController($scope) {
   };
 
   this.createTodos = function(count) {
-    var i;
+    let i;
     this.todos = [];
     for (i = 0; i < count; i++) {
       this.todos.push({
@@ -33,7 +33,7 @@ app.controller('DataController', function DataController($scope) {
   };
 
   this.setTodosValuesWithSeed = function(offset) {
-    var i, todo;
+    let i, todo;
     for (i = 0; i < this.todos.length; i++) {
       todo = this.todos[i];
       todo.completed = 0 === (i + offset) % this.completedPeriodicity;

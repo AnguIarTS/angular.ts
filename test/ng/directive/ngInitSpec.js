@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('ngInit', function() {
-  var element;
+  let element;
 
 
   afterEach(function() {

@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngRef
@@ -43,7 +41,7 @@
  *     angular.module('myApp', [])
  *     .component('myToggle', {
  *       controller: function ToggleController() {
- *         var opened = false;
+ *         let opened = false;
  *         this.isOpen = function() { return opened; };
  *         this.toggle = function() { opened = !opened; };
  *       }
@@ -51,7 +49,7 @@
  *   </file>
  *   <file name="protractor.js" type="protractor">
  *      it('should publish the toggle into the scope', function() {
- *        var toggle = element(by.buttonText('Toggle'));
+ *        let toggle = element(by.buttonText('Toggle'));
  *        expect(toggle.evaluate('myToggle.isOpen()')).toEqual(false);
  *        toggle.click();
  *        expect(toggle.evaluate('myToggle.isOpen()')).toEqual(true);
@@ -83,7 +81,7 @@
  *       template: '<strong>myToggle</strong><button ng-click="$ctrl.toggle()" ng-transclude></button>',
  *       transclude: true,
  *       controller: function ToggleController() {
- *         var opened = false;
+ *         let opened = false;
  *         this.isOpen = function() { return opened; };
  *         this.toggle = function() { opened = !opened; };
  *       }
@@ -158,7 +156,7 @@
  *     }
  *   </file>
  *   <file name="protractor.js" type="protractor">
- *      var OuterToggle = function() {
+ *      let OuterToggle = function() {
  *        this.toggle = function() {
  *          element(by.buttonText('Outer Toggle')).click();
  *        };
@@ -166,8 +164,8 @@
  *          return element.all(by.binding('outerToggle.isOpen()')).first().getText();
  *        };
  *      };
- *      var NgRepeatToggle = function(i) {
- *        var parent = element.all(by.repeater('(index, value) in [1,2,3]')).get(i - 1);
+ *      let NgRepeatToggle = function(i) {
+ *        let parent = element.all(by.repeater('(index, value) in [1,2,3]')).get(i - 1);
  *        this.toggle = function() {
  *          element(by.buttonText('ngRepeat Toggle ' + i)).click();
  *        };
@@ -178,8 +176,8 @@
  *          return parent.element(by.binding('outerToggle.isOpen() | json')).getText();
  *        };
  *      };
- *      var NgRepeatToggles = function() {
- *        var toggles = [1,2,3].map(function(i) { return new NgRepeatToggle(i); });
+ *      let NgRepeatToggles = function() {
+ *        let toggles = [1,2,3].map(function(i) { return new NgRepeatToggle(i); });
  *        this.forEach = function(fn) {
  *          toggles.forEach(fn);
  *        };
@@ -187,8 +185,8 @@
  *          return toggles[i - 1].isOuterOpen();
  *        };
  *      };
- *      var NgIfToggle = function() {
- *        var parent = element(by.css('[ng-if]'));
+ *      let NgIfToggle = function() {
+ *        let parent = element(by.css('[ng-if]'));
  *        this.toggle = function() {
  *          element(by.buttonText('ngIf Toggle')).click();
  *        };
@@ -201,16 +199,16 @@
  *      };
  *
  *      it('should toggle the outer toggle', function() {
- *        var outerToggle = new OuterToggle();
+ *        let outerToggle = new OuterToggle();
  *        expect(outerToggle.isOpen()).toEqual('outerToggle.isOpen(): false');
  *        outerToggle.toggle();
  *        expect(outerToggle.isOpen()).toEqual('outerToggle.isOpen(): true');
  *      });
  *
  *      it('should toggle all outer toggles', function() {
- *        var outerToggle = new OuterToggle();
- *        var repeatToggles = new NgRepeatToggles();
- *        var ifToggle = new NgIfToggle();
+ *        let outerToggle = new OuterToggle();
+ *        let repeatToggles = new NgRepeatToggles();
+ *        let ifToggle = new NgIfToggle();
  *        expect(outerToggle.isOpen()).toEqual('outerToggle.isOpen(): false');
  *        expect(repeatToggles.isOuterOpen(1)).toEqual('outerToggle.isOpen(): false');
  *        expect(repeatToggles.isOuterOpen(2)).toEqual('outerToggle.isOpen(): false');
@@ -225,7 +223,7 @@
  *      });
  *
  *      it('should toggle each repeat iteration separately', function() {
- *        var repeatToggles = new NgRepeatToggles();
+ *        let repeatToggles = new NgRepeatToggles();
  *
  *        repeatToggles.forEach(function(repeatToggle) {
  *          expect(repeatToggle.isOpen()).toEqual('ngRepeatToggle.isOpen(): false');
@@ -240,9 +238,9 @@
  *
  */
 
-var ngRefMinErr = minErr("ngRef");
+let ngRefMinErr = minErr("ngRef");
 
-var ngRefDirective = [
+let ngRefDirective = [
   "$parse",
   function ($parse) {
     return {
@@ -250,11 +248,11 @@ var ngRefDirective = [
       restrict: "A",
       compile: function (tElement, tAttrs) {
         // Get the expected controller name, converts <data-some-thing> into "someThing"
-        var controllerName = directiveNormalize(nodeName_(tElement));
+        let controllerName = directiveNormalize(nodeName_(tElement));
 
         // Get the expression for value binding
-        var getter = $parse(tAttrs.ngRef);
-        var setter =
+        let getter = $parse(tAttrs.ngRef);
+        let setter =
           getter.assign ||
           function () {
             throw ngRefMinErr(
@@ -265,7 +263,7 @@ var ngRefDirective = [
           };
 
         return function (scope, element, attrs) {
-          var refValue;
+          let refValue;
 
           if (attrs.hasOwnProperty("ngRefRead")) {
             if (attrs.ngRefRead === "$element") {

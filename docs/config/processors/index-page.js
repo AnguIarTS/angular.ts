@@ -1,6 +1,6 @@
-'use strict';
 
-var _ = require('lodash');
+
+let _ = require('lodash');
 
 /**
  * @dgProcessor generateIndexPagesProcessor
@@ -18,7 +18,7 @@ module.exports = function generateIndexPagesProcessor() {
     $process: function(docs) {
 
       // Collect up all the areas in the docs
-      var areas = {};
+      let areas = {};
       docs.forEach(function(doc) {
         if (doc.area) {
           areas[doc.area] = doc.area;
@@ -28,7 +28,7 @@ module.exports = function generateIndexPagesProcessor() {
 
       this.deployments.forEach(function(deployment) {
 
-        var indexDoc = _.defaults({
+        let indexDoc = _.defaults({
           docType: 'indexPage',
           areas: areas
         }, deployment);

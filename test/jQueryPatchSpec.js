@@ -1,14 +1,14 @@
 /* global $: false */
-'use strict';
+
 
 if (window.jQuery) {
 
   describe('jQuery patch', function() {
 
-    var doc = null;
-    var divSpy = null;
-    var spy1 = null;
-    var spy2 = null;
+    let doc = null;
+    let divSpy = null;
+    let spy1 = null;
+    let spy2 = null;
 
     beforeEach(function() {
       divSpy = jasmine.createSpy('div.$destroy');
@@ -58,10 +58,10 @@ if (window.jQuery) {
 
   describe('jQuery patch eagerness', function() {
 
-    var doc = null;
-    var divSpy = null;
-    var spy1 = null;
-    var spy2 = null;
+    let doc = null;
+    let divSpy = null;
+    let spy1 = null;
+    let spy2 = null;
 
     beforeEach(function() {
       divSpy = jasmine.createSpy('div.$destroy');

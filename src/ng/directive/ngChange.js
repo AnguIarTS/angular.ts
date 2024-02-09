@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngChange
@@ -47,8 +45,8 @@
  *     </div>
  *   </file>
  *   <file name="protractor.js" type="protractor">
- *     var counter = element(by.binding('counter'));
- *     var debug = element(by.binding('confirmed'));
+ *     let counter = element(by.binding('counter'));
+ *     let debug = element(by.binding('confirmed'));
  *
  *     it('should evaluate the expression if changing from view', function() {
  *       expect(counter.getText()).toContain('0');
@@ -68,7 +66,7 @@
  *   </file>
  * </example>
  */
-var ngChangeDirective = valueFn({
+let ngChangeDirective = valueFn({
   restrict: "A",
   require: "ngModel",
   link: function (scope, element, attr, ctrl) {

@@ -1,6 +1,6 @@
-'use strict';
 
-var sharedConfig = require('./karma-shared.conf');
+
+let sharedConfig = require('./karma-shared.conf');
 
 module.exports = function(config) {
   sharedConfig(config, {testName: 'AngularJS: isolated module tests', logFile: 'karma-modules-isolated.log'});

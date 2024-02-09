@@ -23,7 +23,7 @@ or
 
 ```js
 // does not match `__name__` or `__name__ as __identifier__`
-var myCtrl = $controller("mY contRoller", { $scope: newScope });
+let myCtrl = $controller("mY contRoller", { $scope: newScope });
 ```
 
 or

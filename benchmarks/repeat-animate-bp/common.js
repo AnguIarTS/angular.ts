@@ -1,7 +1,7 @@
-'use strict';
+
 
 (function() {
-  var app = angular.module('repeatAnimateBenchmark');
+  let app = angular.module('repeatAnimateBenchmark');
 
   app.config(function($compileProvider, $animateProvider) {
     if ($compileProvider.debugInfoEnabled) {
@@ -17,19 +17,19 @@
   });
 
   app.controller('DataController', function($scope, $rootScope, $animate) {
-    var totalRows = 500;
-    var totalColumns = 20;
+    let totalRows = 500;
+    let totalColumns = 20;
 
-    var data = $scope.data = [];
+    let data = $scope.data = [];
 
     function fillData() {
       if ($animate.enabled) {
         $animate.enabled($scope.benchmarkType !== 'globallyDisabled');
       }
 
-      for (var i = 0; i < totalRows; i++) {
+      for (let i = 0; i < totalRows; i++) {
         data[i] = [];
-        for (var j = 0; j < totalColumns; j++) {
+        for (let j = 0; j < totalColumns; j++) {
           data[i][j] = {
             i: i
           };
@@ -78,10 +78,10 @@
     return {
       restrict: 'E',
       link: function($scope, $element) {
-        var document = $document[0];
+        let document = $document[0];
 
-        var i, j, row, cell, comment;
-        var template = document.createElement('span');
+        let i, j, row, cell, comment;
+        let template = document.createElement('span');
         template.setAttribute('ng-repeat', 'foo in foos');
         template.classList.add('ng-scope');
         template.appendChild(document.createElement('span'));

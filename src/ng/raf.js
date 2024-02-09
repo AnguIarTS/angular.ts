@@ -1,5 +1,3 @@
-"use strict";
-
 /** @this */
 function $$RAFProvider() {
   //rAF
@@ -7,24 +5,24 @@ function $$RAFProvider() {
     "$window",
     "$timeout",
     function ($window, $timeout) {
-      var requestAnimationFrame =
+      let requestAnimationFrame =
         $window.requestAnimationFrame || $window.webkitRequestAnimationFrame;
 
-      var cancelAnimationFrame =
+      let cancelAnimationFrame =
         $window.cancelAnimationFrame ||
         $window.webkitCancelAnimationFrame ||
         $window.webkitCancelRequestAnimationFrame;
 
-      var rafSupported = !!requestAnimationFrame;
-      var raf = rafSupported
+      let rafSupported = !!requestAnimationFrame;
+      let raf = rafSupported
         ? function (fn) {
-            var id = requestAnimationFrame(fn);
+            let id = requestAnimationFrame(fn);
             return function () {
               cancelAnimationFrame(id);
             };
           }
         : function (fn) {
-            var timer = $timeout(fn, 16.66, false); // 1000 / 60 = 16.666
+            let timer = $timeout(fn, 16.66, false); // 1000 / 60 = 16.666
             return function () {
               $timeout.cancel(timer);
             };

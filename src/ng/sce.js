@@ -1,5 +1,3 @@
-"use strict";
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *     Any commits to this file should be reviewed with security in mind.  *
  *   Changes to this file can potentially create security vulnerabilities. *
@@ -13,9 +11,9 @@
 
 /* exported $SceProvider, $SceDelegateProvider */
 
-var $sceMinErr = minErr("$sce");
+let $sceMinErr = minErr("$sce");
 
-var SCE_CONTEXTS = {
+let SCE_CONTEXTS = {
   // HTML is used when there's HTML rendered (e.g. ng-bind-html, iframe srcdoc binding).
   HTML: "html",
 
@@ -41,7 +39,7 @@ var SCE_CONTEXTS = {
 
 // Helper functions follow.
 
-var UNDERSCORE_LOWERCASE_REGEXP = /_([a-z])/g;
+let UNDERSCORE_LOWERCASE_REGEXP = /_([a-z])/g;
 
 function snakeToCamel(name) {
   return name.replace(UNDERSCORE_LOWERCASE_REGEXP, fnCamelCaseReplace);
@@ -80,7 +78,7 @@ function adjustMatcher(matcher) {
 }
 
 function adjustMatchers(matchers) {
-  var adjustedMatchers = [];
+  let adjustedMatchers = [];
   if (isDefined(matchers)) {
     forEach(matchers, function (matcher) {
       adjustedMatchers.push(adjustMatcher(matcher));
@@ -184,7 +182,7 @@ function $SceDelegateProvider() {
   this.SCE_CONTEXTS = SCE_CONTEXTS;
 
   // Resource URLs can also be trusted by policy.
-  var trustedResourceUrlList = ["self"],
+  let trustedResourceUrlList = ["self"],
     bannedResourceUrlList = [];
 
   /**
@@ -294,7 +292,7 @@ function $SceDelegateProvider() {
     "$injector",
     "$$sanitizeUri",
     function ($injector, $$sanitizeUri) {
-      var htmlSanitizer = function htmlSanitizer(html) {
+      let htmlSanitizer = function htmlSanitizer(html) {
         throw $sceMinErr(
           "unsafe",
           "Attempting to use an unsafe value in a safe context.",
@@ -317,8 +315,8 @@ function $SceDelegateProvider() {
       }
 
       function isResourceUrlAllowedByPolicy(url) {
-        var parsedUrl = urlResolve(url.toString());
-        var i,
+        let parsedUrl = urlResolve(url.toString());
+        let i,
           n,
           allowed = false;
         // Ensure that at least one item from the trusted resource URL list allows this url.
@@ -341,7 +339,7 @@ function $SceDelegateProvider() {
       }
 
       function generateHolderType(Base) {
-        var holderType = function TrustedValueHolderType(trustedValue) {
+        let holderType = function TrustedValueHolderType(trustedValue) {
           this.$$unwrapTrustedValue = function () {
             return trustedValue;
           };
@@ -358,7 +356,7 @@ function $SceDelegateProvider() {
         return holderType;
       }
 
-      var trustedValueHolderBase = generateHolderType(),
+      let trustedValueHolderBase = generateHolderType(),
         byType = {};
 
       byType[SCE_CONTEXTS.HTML] = generateHolderType(trustedValueHolderBase);
@@ -399,7 +397,7 @@ function $SceDelegateProvider() {
        * @return {*} A trusted representation of value, that can be used in the given context.
        */
       function trustAs(type, trustedValue) {
-        var Constructor = byType.hasOwnProperty(type) ? byType[type] : null;
+        let Constructor = byType.hasOwnProperty(type) ? byType[type] : null;
         if (!Constructor) {
           throw $sceMinErr(
             "icontext",
@@ -494,7 +492,7 @@ function $SceDelegateProvider() {
         ) {
           return maybeTrusted;
         }
-        var constructor = byType.hasOwnProperty(type) ? byType[type] : null;
+        let constructor = byType.hasOwnProperty(type) ? byType[type] : null;
         // If maybeTrusted is a trusted class instance or subclass instance, then unwrap and return
         // as-is.
         if (constructor && maybeTrusted instanceof constructor) {
@@ -637,7 +635,7 @@ function $SceDelegateProvider() {
  * simplified):
  *
  * ```
- * var ngBindHtmlDirective = ['$sce', function($sce) {
+ * let ngBindHtmlDirective = ['$sce', function($sce) {
  *   return function(scope, element, attr) {
  *     scope.$watch($sce.parseAsHtml(attr.ngBindHtml), function(value) {
  *       element.html(value || '');
@@ -788,7 +786,7 @@ function $SceDelegateProvider() {
  *   angular.module('mySceApp', ['ngSanitize'])
  *     .controller('AppController', ['$http', '$templateCache', '$sce',
  *       function AppController($http, $templateCache, $sce) {
- *         var self = this;
+ *         let self = this;
  *         $http.get('test_data.json', {cache: $templateCache}).then(function(response) {
  *           self.userComments = response.data;
  *         });
@@ -850,7 +848,7 @@ function $SceDelegateProvider() {
  */
 
 function $SceProvider() {
-  var enabled = true;
+  let enabled = true;
 
   /**
    * @ngdoc method
@@ -920,19 +918,7 @@ function $SceProvider() {
     "$parse",
     "$sceDelegate",
     function ($parse, $sceDelegate) {
-      // Support: IE 9-11 only
-      // Prereq: Ensure that we're not running in IE<11 quirks mode.  In that mode, IE < 11 allow
-      // the "expression(javascript expression)" syntax which is insecure.
-      if (enabled && msie < 8) {
-        throw $sceMinErr(
-          "iequirks",
-          "Strict Contextual Escaping does not support Internet Explorer version < 11 in quirks " +
-            "mode.  You can fix this by adding the text <!doctype html> to the top of your HTML " +
-            "document.  See http://docs.angularjs.org/api/ng.$sce for more information.",
-        );
-      }
-
-      var sce = shallowCopy(SCE_CONTEXTS);
+      let sce = shallowCopy(SCE_CONTEXTS);
 
       /**
        * @ngdoc method
@@ -979,7 +965,7 @@ function $SceProvider() {
        *      in `context`.
        */
       sce.parseAs = function sceParseAs(type, expr) {
-        var parsed = $parse(expr);
+        let parsed = $parse(expr);
         if (parsed.literal && parsed.constant) {
           return parsed;
         } else {
@@ -1242,12 +1228,12 @@ function $SceProvider() {
        */
 
       // Shorthand delegations.
-      var parse = sce.parseAs,
+      let parse = sce.parseAs,
         getTrusted = sce.getTrusted,
         trustAs = sce.trustAs;
 
       forEach(SCE_CONTEXTS, function (enumValue, name) {
-        var lName = lowercase(name);
+        let lName = lowercase(name);
         sce[snakeToCamel("parse_as_" + lName)] = function (expr) {
           return parse(enumValue, expr);
         };

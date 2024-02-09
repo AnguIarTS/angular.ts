@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('ngAnimate $$animateCssDriver', function() {
 
@@ -10,7 +10,7 @@ describe('ngAnimate $$animateCssDriver', function() {
   }
 
   function hasAll(array, vals) {
-    for (var i = 0; i < vals.length; i++) {
+    for (let i = 0; i < vals.length; i++) {
       if (array.indexOf(vals[i]) === -1) return false;
     }
     return true;
@@ -28,8 +28,8 @@ describe('ngAnimate $$animateCssDriver', function() {
   describe('when active', function() {
     if (!browserSupportsCssAnimations()) return;
 
-    var element;
-    var ss;
+    let element;
+    let ss;
     afterEach(function() {
       dealoc(element);
       if (ss) {
@@ -37,10 +37,10 @@ describe('ngAnimate $$animateCssDriver', function() {
       }
     });
 
-    var capturedAnimation;
-    var captureLog;
-    var driver;
-    var captureFn;
+    let capturedAnimation;
+    let captureLog;
+    let driver;
+    let captureFn;
     beforeEach(module(function($provide) {
       capturedAnimation = null;
       captureLog = [];
@@ -48,7 +48,7 @@ describe('ngAnimate $$animateCssDriver', function() {
 
       $provide.factory('$animateCss', function($$AnimateRunner) {
         return function() {
-          var runner = new $$AnimateRunner();
+          let runner = new $$AnimateRunner();
 
           capturedAnimation = arguments;
           captureFn.apply(null, arguments);
@@ -96,7 +96,7 @@ describe('ngAnimate $$animateCssDriver', function() {
       }));
 
       it('should return an object with a start function', inject(function() {
-        var runner = driver({ element: element });
+        let runner = driver({ element: element });
         expect(isFunction(runner.start)).toBeTruthy();
       }));
 
@@ -118,7 +118,7 @@ describe('ngAnimate $$animateCssDriver', function() {
     });
 
     describe('anchored animations', function() {
-      var from, to, fromAnimation, toAnimation;
+      let from, to, fromAnimation, toAnimation;
 
       beforeEach(module(function() {
         return function($rootElement, $document) {
@@ -129,7 +129,7 @@ describe('ngAnimate $$animateCssDriver', function() {
           $rootElement.append(from);
           $rootElement.append(to);
 
-          var doc = $document[0];
+          let doc = $document[0];
 
           // there is one test in here that expects the rootElement
           // to supersede the body node
@@ -147,7 +147,7 @@ describe('ngAnimate $$animateCssDriver', function() {
           });
         });
         inject(function() {
-          var runner = driver({
+          let runner = driver({
             from: fromAnimation,
             to: toAnimation
           });
@@ -156,7 +156,7 @@ describe('ngAnimate $$animateCssDriver', function() {
       });
 
       it('should return a start method', inject(function() {
-        var animator = driver({
+        let animator = driver({
           from: fromAnimation,
           to: toAnimation
         });
@@ -166,7 +166,7 @@ describe('ngAnimate $$animateCssDriver', function() {
       they('should return a runner with a $prop() method which will end the animation',
         ['end', 'cancel'], function(method) {
 
-        var closeAnimation;
+        let closeAnimation;
         module(function($provide) {
           $provide.factory('$animateCss', function($q, $$AnimateRunner) {
             return function() {
@@ -185,17 +185,17 @@ describe('ngAnimate $$animateCssDriver', function() {
         });
 
         inject(function() {
-          var animator = driver({
+          let animator = driver({
             from: fromAnimation,
             to: toAnimation
           });
 
-          var animationClosed = false;
+          let animationClosed = false;
           closeAnimation = function() {
             animationClosed = true;
           };
 
-          var runner = animator.start();
+          let runner = animator.start();
 
           expect(isFunction(runner[method])).toBe(true);
           runner[method]();
@@ -204,11 +204,11 @@ describe('ngAnimate $$animateCssDriver', function() {
       });
 
       it('should end the animation for each of the from and to elements as well as all the anchors', function() {
-        var closeLog = {};
+        let closeLog = {};
         module(function($provide) {
           $provide.factory('$animateCss', function($q, $$AnimateRunner) {
             return function(element, options) {
-              var type = options.event || 'anchor';
+              let type = options.event || 'anchor';
               closeLog[type] = closeLog[type] || [];
               return {
                 $$willAnimate: true,
@@ -226,7 +226,7 @@ describe('ngAnimate $$animateCssDriver', function() {
 
         inject(function() {
           //we'll just use one animation to make the test smaller
-          var anchorAnimation = {
+          let anchorAnimation = {
             'in': jqLite('<div></div>'),
             'out': jqLite('<div></div>')
           };
@@ -236,7 +236,7 @@ describe('ngAnimate $$animateCssDriver', function() {
           toAnimation.structural = true;
           toAnimation.element.append(anchorAnimation['in']);
 
-          var animator = driver({
+          let animator = driver({
             from: fromAnimation,
             to: toAnimation,
             anchors: [
@@ -246,7 +246,7 @@ describe('ngAnimate $$animateCssDriver', function() {
             ]
           });
 
-          var runner = animator.start();
+          let runner = animator.start();
           runner.end();
 
           expect(closeLog.enter[0]).toEqual(fromAnimation.element);
@@ -263,7 +263,7 @@ describe('ngAnimate $$animateCssDriver', function() {
         fromAnimation.structural = true;
         toAnimation.structural = true;
 
-        var runner = driver({
+        let runner = driver({
           from: fromAnimation,
           to: toAnimation
         });
@@ -274,7 +274,7 @@ describe('ngAnimate $$animateCssDriver', function() {
       }));
 
       it('should start the animations on the from and to elements in parallel', function() {
-        var animationLog = [];
+        let animationLog = [];
         module(function($provide) {
           $provide.factory('$animateCss', function($$AnimateRunner) {
             return function(element, details) {
@@ -292,7 +292,7 @@ describe('ngAnimate $$animateCssDriver', function() {
           fromAnimation.structural = true;
           toAnimation.structural = true;
 
-          var runner = driver({
+          let runner = driver({
             from: fromAnimation,
             to: toAnimation
           });
@@ -307,27 +307,27 @@ describe('ngAnimate $$animateCssDriver', function() {
       });
 
       it('should start an animation for each anchor', inject(function() {
-        var o1 = jqLite('<div></div>');
+        let o1 = jqLite('<div></div>');
         from.append(o1);
-        var o2 = jqLite('<div></div>');
+        let o2 = jqLite('<div></div>');
         from.append(o2);
-        var o3 = jqLite('<div></div>');
+        let o3 = jqLite('<div></div>');
         from.append(o3);
 
-        var i1 = jqLite('<div></div>');
+        let i1 = jqLite('<div></div>');
         to.append(i1);
-        var i2 = jqLite('<div></div>');
+        let i2 = jqLite('<div></div>');
         to.append(i2);
-        var i3 = jqLite('<div></div>');
+        let i3 = jqLite('<div></div>');
         to.append(i3);
 
-        var anchors = [
+        let anchors = [
           { 'out': o1, 'in': i1, classes: 'red' },
           { 'out': o2, 'in': i2, classes: 'blue' },
           { 'out': o2, 'in': i2, classes: 'green' }
         ];
 
-        var runner = driver({
+        let runner = driver({
           from: fromAnimation,
           to: toAnimation,
           anchors: anchors
@@ -337,29 +337,29 @@ describe('ngAnimate $$animateCssDriver', function() {
       }));
 
       it('should create a clone of the starting element for each anchor animation', inject(function() {
-        var o1 = jqLite('<div class="out1"></div>');
+        let o1 = jqLite('<div class="out1"></div>');
         from.append(o1);
-        var o2 = jqLite('<div class="out2"></div>');
+        let o2 = jqLite('<div class="out2"></div>');
         from.append(o2);
 
-        var i1 = jqLite('<div class="in1"></div>');
+        let i1 = jqLite('<div class="in1"></div>');
         to.append(i1);
-        var i2 = jqLite('<div class="in2"></div>');
+        let i2 = jqLite('<div class="in2"></div>');
         to.append(i2);
 
-        var anchors = [
+        let anchors = [
           { 'out': o1, 'in': i1 },
           { 'out': o2, 'in': i2 }
         ];
 
-        var runner = driver({
+        let runner = driver({
           from: fromAnimation,
           to: toAnimation,
           anchors: anchors
         });
 
-        var a2 = captureLog.pop().element;
-        var a1 = captureLog.pop().element;
+        let a2 = captureLog.pop().element;
+        let a1 = captureLog.pop().element;
 
         expect(a1).not.toEqual(o1);
         expect(a1.attr('class')).toMatch(/\bout1\b/);
@@ -375,12 +375,12 @@ describe('ngAnimate $$animateCssDriver', function() {
         $rootElement.append(jqLite('<div></div>'));
         $rootElement.append(jqLite('<div></div>'));
 
-        var fromAnchor = jqLite('<div class="out"></div>');
+        let fromAnchor = jqLite('<div class="out"></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div class="in"></div>');
+        let toAnchor = jqLite('<div class="in"></div>');
         to.append(toAnchor);
 
-        var runner = driver({
+        let runner = driver({
           from: fromAnimation,
           to: toAnimation,
           anchors: [{
@@ -389,24 +389,24 @@ describe('ngAnimate $$animateCssDriver', function() {
           }]
         });
 
-        var anchor = captureLog.pop().element;
-        var anchorNode = anchor[0];
-        var contents = $rootElement.contents();
+        let anchor = captureLog.pop().element;
+        let anchorNode = anchor[0];
+        let contents = $rootElement.contents();
 
         expect(contents.length).toBeGreaterThan(1);
         expect(contents[contents.length - 1]).toEqual(anchorNode);
       }));
 
       it('should first do an addClass(\'ng-anchor-out\') animation on the cloned anchor', inject(function($rootElement) {
-        var fromAnchor = jqLite('<div></div>');
+        let fromAnchor = jqLite('<div></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div></div>');
+        let toAnchor = jqLite('<div></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
         $rootElement.append(toAnchor);
 
-        var runner = driver({
+        let runner = driver({
           from: fromAnimation,
           to: toAnimation,
           anchors: [{
@@ -415,7 +415,7 @@ describe('ngAnimate $$animateCssDriver', function() {
           }]
         });
 
-        var anchorDetails = captureLog.pop().args[1];
+        let anchorDetails = captureLog.pop().args[1];
         expect(anchorDetails.addClass).toBe('ng-anchor-out');
         expect(anchorDetails.event).toBeFalsy();
       }));
@@ -423,15 +423,15 @@ describe('ngAnimate $$animateCssDriver', function() {
       it('should then do an addClass(\'ng-anchor-in\') animation on the cloned anchor and remove the old class',
         inject(function($rootElement) {
 
-        var fromAnchor = jqLite('<div></div>');
+        let fromAnchor = jqLite('<div></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div></div>');
+        let toAnchor = jqLite('<div></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
         $rootElement.append(toAnchor);
 
-        var runner = driver({
+        let runner = driver({
           from: fromAnimation,
           to: toAnimation,
           anchors: [{
@@ -442,7 +442,7 @@ describe('ngAnimate $$animateCssDriver', function() {
 
         captureLog.pop().runner.end();
 
-        var anchorDetails = captureLog.pop().args[1];
+        let anchorDetails = captureLog.pop().args[1];
         expect(anchorDetails.removeClass.trim()).toBe('ng-anchor-out');
         expect(anchorDetails.addClass.trim()).toBe('ng-anchor-in');
         expect(anchorDetails.event).toBeFalsy();
@@ -451,14 +451,14 @@ describe('ngAnimate $$animateCssDriver', function() {
       they('should only fire the ng-anchor-$prop animation if only a $prop animation is defined',
         ['out', 'in'], function(direction) {
 
-        var expectedClass = 'ng-anchor-' + direction;
-        var animationStarted;
-        var runner;
+        let expectedClass = 'ng-anchor-' + direction;
+        let animationStarted;
+        let runner;
 
         module(function($provide) {
           $provide.factory('$animateCss', function($$AnimateRunner) {
             return function(element, options) {
-              var addClass = (options.addClass || '').trim();
+              let addClass = (options.addClass || '').trim();
               return {
                 $$willAnimate: addClass === expectedClass,
                 start: function() {
@@ -472,15 +472,15 @@ describe('ngAnimate $$animateCssDriver', function() {
         });
 
         inject(function($rootElement, $animate) {
-          var fromAnchor = jqLite('<div></div>');
+          let fromAnchor = jqLite('<div></div>');
           from.append(fromAnchor);
-          var toAnchor = jqLite('<div></div>');
+          let toAnchor = jqLite('<div></div>');
           to.append(toAnchor);
 
           $rootElement.append(fromAnchor);
           $rootElement.append(toAnchor);
 
-          var complete = false;
+          let complete = false;
 
           driver({
             from: fromAnimation,
@@ -504,15 +504,15 @@ describe('ngAnimate $$animateCssDriver', function() {
       it('should provide an explicit delay setting in the options provided to $animateCss for anchor animations',
         inject(function($rootElement) {
 
-        var fromAnchor = jqLite('<div></div>');
+        let fromAnchor = jqLite('<div></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div></div>');
+        let toAnchor = jqLite('<div></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
         $rootElement.append(toAnchor);
 
-        var runner = driver({
+        let runner = driver({
           from: fromAnimation,
           to: toAnimation,
           anchors: [{
@@ -529,16 +529,16 @@ describe('ngAnimate $$animateCssDriver', function() {
 
         ss.addRule('.starting-element', 'width:200px; height:100px; display:block;');
 
-        var fromAnchor = jqLite('<div class="starting-element"' +
+        let fromAnchor = jqLite('<div class="starting-element"' +
                                     ' style="margin-top:500px; margin-left:150px;"></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div></div>');
+        let toAnchor = jqLite('<div></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
         $rootElement.append(toAnchor);
 
-        var runner = driver({
+        let runner = driver({
           from: fromAnimation,
           to: toAnimation,
           anchors: [{
@@ -547,11 +547,11 @@ describe('ngAnimate $$animateCssDriver', function() {
           }]
         });
 
-        var anchorAnimation = captureLog.pop();
-        var anchorElement = anchorAnimation.element;
-        var anchorDetails = anchorAnimation.args[1];
+        let anchorAnimation = captureLog.pop();
+        let anchorElement = anchorAnimation.element;
+        let anchorDetails = anchorAnimation.args[1];
 
-        var fromStyles = anchorDetails.from;
+        let fromStyles = anchorDetails.from;
         expect(int(fromStyles.width)).toBe(200);
         expect(int(fromStyles.height)).toBe(100);
         // some browsers have their own body margin defaults
@@ -562,16 +562,16 @@ describe('ngAnimate $$animateCssDriver', function() {
       it('should append a `px` value for all seeded animation styles', inject(function($rootElement) {
         ss.addRule('.starting-element', 'width:10px; height:20px; display:inline-block;');
 
-        var fromAnchor = jqLite('<div class="starting-element"' +
+        let fromAnchor = jqLite('<div class="starting-element"' +
                                     ' style="margin-top:30px; margin-left:40px;"></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div></div>');
+        let toAnchor = jqLite('<div></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
         $rootElement.append(toAnchor);
 
-        var runner = driver({
+        let runner = driver({
           from: fromAnimation,
           to: toAnimation,
           anchors: [{
@@ -580,8 +580,8 @@ describe('ngAnimate $$animateCssDriver', function() {
           }]
         });
 
-        var anchorAnimation = captureLog.pop();
-        var anchorDetails = anchorAnimation.args[1];
+        let anchorAnimation = captureLog.pop();
+        let anchorDetails = anchorAnimation.args[1];
 
         forEach(anchorDetails.from, function(value) {
           expect(value.substr(value.length - 2)).toBe('px');
@@ -601,9 +601,9 @@ describe('ngAnimate $$animateCssDriver', function() {
       it('should then do an removeClass(\'out\') + addClass(\'in\') animation on the cloned anchor',
         inject(function($rootElement) {
 
-        var fromAnchor = jqLite('<div></div>');
+        let fromAnchor = jqLite('<div></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div></div>');
+        let toAnchor = jqLite('<div></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
@@ -621,7 +621,7 @@ describe('ngAnimate $$animateCssDriver', function() {
         // the out animation goes first
         captureLog.pop().runner.end();
 
-        var anchorDetails = captureLog.pop().args[1];
+        let anchorDetails = captureLog.pop().args[1];
         expect(anchorDetails.removeClass).toMatch(/\bout\b/);
         expect(anchorDetails.addClass).toMatch(/\bin\b/);
         expect(anchorDetails.event).toBeFalsy();
@@ -630,9 +630,9 @@ describe('ngAnimate $$animateCssDriver', function() {
       it('should add the `ng-anchor` class to the cloned anchor element',
         inject(function($rootElement) {
 
-        var fromAnchor = jqLite('<div></div>');
+        let fromAnchor = jqLite('<div></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div></div>');
+        let toAnchor = jqLite('<div></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
@@ -647,16 +647,16 @@ describe('ngAnimate $$animateCssDriver', function() {
           }]
         }).start();
 
-        var clonedAnchor = captureLog.pop().element;
+        let clonedAnchor = captureLog.pop().element;
         expect(clonedAnchor).toHaveClass('ng-anchor');
       }));
 
       it('should add and remove the `ng-animate-shim` class on the in anchor element during the animation',
         inject(function($rootElement) {
 
-        var fromAnchor = jqLite('<div></div>');
+        let fromAnchor = jqLite('<div></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div></div>');
+        let toAnchor = jqLite('<div></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
@@ -683,9 +683,9 @@ describe('ngAnimate $$animateCssDriver', function() {
       it('should add and remove the `ng-animate-shim` class on the out anchor element during the animation',
         inject(function($rootElement) {
 
-        var fromAnchor = jqLite('<div></div>');
+        let fromAnchor = jqLite('<div></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div></div>');
+        let toAnchor = jqLite('<div></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
@@ -714,9 +714,9 @@ describe('ngAnimate $$animateCssDriver', function() {
       it('should create the cloned anchor with all of the classes from the from anchor element',
         inject(function($rootElement) {
 
-        var fromAnchor = jqLite('<div class="yes no maybe"></div>');
+        let fromAnchor = jqLite('<div class="yes no maybe"></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div></div>');
+        let toAnchor = jqLite('<div></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
@@ -731,16 +731,16 @@ describe('ngAnimate $$animateCssDriver', function() {
           }]
         }).start();
 
-        var addedClasses = captureLog.pop().element.attr('class').split(' ');
+        let addedClasses = captureLog.pop().element.attr('class').split(' ');
         expect(hasAll(addedClasses, ['yes', 'no', 'maybe'])).toBe(true);
       }));
 
       it('should remove the classes of the starting anchor from the cloned anchor node during the in animation and also add the classes of the destination anchor within the same animation',
         inject(function($rootElement) {
 
-        var fromAnchor = jqLite('<div class="yes no maybe"></div>');
+        let fromAnchor = jqLite('<div class="yes no maybe"></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div class="why ok so-what"></div>');
+        let toAnchor = jqLite('<div class="why ok so-what"></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
@@ -758,9 +758,9 @@ describe('ngAnimate $$animateCssDriver', function() {
         // the out animation goes first
         captureLog.pop().runner.end();
 
-        var anchorDetails = captureLog.pop().args[1];
-        var removedClasses = anchorDetails.removeClass.split(' ');
-        var addedClasses = anchorDetails.addClass.split(' ');
+        let anchorDetails = captureLog.pop().args[1];
+        let removedClasses = anchorDetails.removeClass.split(' ');
+        let addedClasses = anchorDetails.addClass.split(' ');
 
         expect(hasAll(removedClasses, ['yes', 'no', 'maybe'])).toBe(true);
         expect(hasAll(addedClasses, ['why', 'ok', 'so-what'])).toBe(true);
@@ -769,9 +769,9 @@ describe('ngAnimate $$animateCssDriver', function() {
       it('should not attempt to add/remove any classes that contain a `ng-` prefix',
         inject(function($rootElement) {
 
-        var fromAnchor = jqLite('<div class="ng-yes ng-no sure"></div>');
+        let fromAnchor = jqLite('<div class="ng-yes ng-no sure"></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div class="ng-bar ng-foo maybe"></div>');
+        let toAnchor = jqLite('<div class="ng-bar ng-foo maybe"></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
@@ -789,11 +789,11 @@ describe('ngAnimate $$animateCssDriver', function() {
         // the out animation goes first
         captureLog.pop().runner.end();
 
-        var inAnimation = captureLog.pop();
-        var details = inAnimation.args[1];
+        let inAnimation = captureLog.pop();
+        let details = inAnimation.args[1];
 
-        var addedClasses = details.addClass.split(' ');
-        var removedClasses = details.removeClass.split(' ');
+        let addedClasses = details.addClass.split(' ');
+        let removedClasses = details.removeClass.split(' ');
 
         expect(addedClasses).not.toContain('ng-foo');
         expect(addedClasses).not.toContain('ng-bar');
@@ -805,9 +805,9 @@ describe('ngAnimate $$animateCssDriver', function() {
       it('should not remove any shared CSS classes between the starting and destination anchor element during the in animation',
         inject(function($rootElement) {
 
-        var fromAnchor = jqLite('<div class="blue green red"></div>');
+        let fromAnchor = jqLite('<div class="blue green red"></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div class="blue brown red black"></div>');
+        let toAnchor = jqLite('<div class="blue brown red black"></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
@@ -825,12 +825,12 @@ describe('ngAnimate $$animateCssDriver', function() {
         // the out animation goes first
         captureLog.pop().runner.end();
 
-        var inAnimation = captureLog.pop();
-        var clonedAnchor = inAnimation.element;
-        var details = inAnimation.args[1];
+        let inAnimation = captureLog.pop();
+        let clonedAnchor = inAnimation.element;
+        let details = inAnimation.args[1];
 
-        var addedClasses = details.addClass.split(' ');
-        var removedClasses = details.removeClass.split(' ');
+        let addedClasses = details.addClass.split(' ');
+        let removedClasses = details.removeClass.split(' ');
 
         expect(hasAll(addedClasses, ['brown', 'black'])).toBe(true);
         expect(hasAll(removedClasses, ['green'])).toBe(true);
@@ -854,10 +854,10 @@ describe('ngAnimate $$animateCssDriver', function() {
       inject(function($rootElement) {
         ss.addRule('.ending-element', 'width:9999px; height:6666px; display:inline-block;');
 
-        var fromAnchor = jqLite('<div></div>');
+        let fromAnchor = jqLite('<div></div>');
         from.append(fromAnchor);
 
-        var toAnchor = jqLite('<div class="ending-element"' +
+        let toAnchor = jqLite('<div class="ending-element"' +
                                   ' style="margin-top:300px; margin-left:20px;"></div>');
         to.append(toAnchor);
 
@@ -875,11 +875,11 @@ describe('ngAnimate $$animateCssDriver', function() {
 
         captureLog.pop().runner.end();
 
-        var anchorAnimation = captureLog.pop();
-        var anchorElement = anchorAnimation.element;
-        var anchorDetails = anchorAnimation.args[1];
+        let anchorAnimation = captureLog.pop();
+        let anchorElement = anchorAnimation.element;
+        let anchorDetails = anchorAnimation.args[1];
 
-        var toStyles = anchorDetails.to;
+        let toStyles = anchorDetails.to;
         expect(int(toStyles.width)).toBe(9999);
         expect(int(toStyles.height)).toBe(6666);
         // some browsers have their own body margin defaults
@@ -890,9 +890,9 @@ describe('ngAnimate $$animateCssDriver', function() {
       it('should remove the cloned anchor node from the DOM once the \'in\' animation is complete',
         inject(function($rootElement) {
 
-        var fromAnchor = jqLite('<div class="blue green red"></div>');
+        let fromAnchor = jqLite('<div class="blue green red"></div>');
         from.append(fromAnchor);
-        var toAnchor = jqLite('<div class="blue brown red black"></div>');
+        let toAnchor = jqLite('<div class="blue brown red black"></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
@@ -908,8 +908,8 @@ describe('ngAnimate $$animateCssDriver', function() {
         }).start();
 
         // the out animation goes first
-        var inAnimation = captureLog.pop();
-        var clonedAnchor = inAnimation.element;
+        let inAnimation = captureLog.pop();
+        let clonedAnchor = inAnimation.element;
         expect(clonedAnchor.parent().length).toBe(1);
         inAnimation.runner.end();
 
@@ -931,7 +931,7 @@ describe('ngAnimate $$animateCssDriver', function() {
         fromAnimation.event = 'leave';
         fromAnimation.options = {};
 
-        var leaveOp = function() { };
+        let leaveOp = function() { };
         fromAnimation.options.domOperation = leaveOp;
 
         driver({
@@ -939,8 +939,8 @@ describe('ngAnimate $$animateCssDriver', function() {
           to: toAnimation
         }).start();
 
-        var leaveAnimation = captureLog.shift();
-        var enterAnimation = captureLog.shift();
+        let leaveAnimation = captureLog.shift();
+        let enterAnimation = captureLog.shift();
 
         expect(leaveAnimation.args[1].onDone).toBe(leaveOp);
         expect(enterAnimation.args[1].onDone).toBeUndefined();
@@ -951,16 +951,16 @@ describe('ngAnimate $$animateCssDriver', function() {
 
         ss.addRule('.ending-element', 'width:9999px; height:6666px; display:inline-block;');
 
-        var fromAnchor = jqLite('<div></div>');
+        let fromAnchor = jqLite('<div></div>');
         from.append(fromAnchor);
 
-        var toAnchor = jqLite('<div></div>');
+        let toAnchor = jqLite('<div></div>');
         to.append(toAnchor);
 
         $rootElement.append(fromAnchor);
         $rootElement.append(toAnchor);
 
-        var completed = false;
+        let completed = false;
         driver({
           from: fromAnimation,
           to: toAnimation,
@@ -992,16 +992,16 @@ describe('ngAnimate $$animateCssDriver', function() {
         inject(function($rootElement, $rootScope, $animate, $document) {
           ss.addRule('.ending-element', 'width:9999px; height:6666px; display:inline-block;');
 
-          var fromAnchor = jqLite('<div></div>');
+          let fromAnchor = jqLite('<div></div>');
           from.append(fromAnchor);
 
-          var toAnchor = jqLite('<div></div>');
+          let toAnchor = jqLite('<div></div>');
           to.append(toAnchor);
 
           $rootElement.append(fromAnchor);
           $rootElement.append(toAnchor);
 
-          var completed = false;
+          let completed = false;
           driver({
             from: fromAnimation,
             to: toAnimation,
@@ -1011,7 +1011,7 @@ describe('ngAnimate $$animateCssDriver', function() {
             }]
           }).start();
 
-          var clone = captureLog[2].element[0];
+          let clone = captureLog[2].element[0];
           expect(clone.parentNode).toBe($document[0].body);
         });
       });

@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc service
  * @name $document
@@ -45,8 +43,8 @@ function $$IsDocumentHiddenProvider() {
     "$document",
     "$rootScope",
     function ($document, $rootScope) {
-      var doc = $document[0];
-      var hidden = doc && doc.hidden;
+      let doc = $document[0];
+      let hidden = doc && doc.hidden;
 
       $document.on("visibilitychange", changeListener);
 

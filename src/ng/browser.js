@@ -1,8 +1,7 @@
-"use strict";
 /* global getHash: true, stripHash: false */
 
 function getHash(url) {
-  var index = url.indexOf("#");
+  let index = url.indexOf("#");
   return index === -1 ? "" : url.substr(index);
 }
 
@@ -32,7 +31,7 @@ function trimEmptyHash(url) {
  * @param {object} $sniffer $sniffer service
  */
 function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
-  var self = this,
+  let self = this,
     location = window.location,
     history = window.history,
     setTimeout = window.setTimeout,
@@ -57,7 +56,7 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
   // URL API
   //////////////////////////////////////////////////////////////
 
-  var cachedState,
+  let cachedState,
     lastHistoryState,
     lastBrowserUrl = location.href,
     baseElement = document.find("base"),
@@ -65,11 +64,7 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
     getCurrentState = !$sniffer.history
       ? noop
       : function getCurrentState() {
-          try {
-            return history.state;
-          } catch (e) {
-            // MSIE can reportedly throw when there is no state (UNCONFIRMED).
-          }
+          return history.state;
         };
 
   cacheState();
@@ -109,7 +104,7 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
 
     // setter
     if (url) {
-      var sameState = lastHistoryState === state;
+      let sameState = lastHistoryState === state;
 
       // Normalize the inputted URL
       url = urlResolve(url).href;
@@ -120,7 +115,7 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
       if (lastBrowserUrl === url && (!$sniffer.history || sameState)) {
         return self;
       }
-      var sameBase =
+      let sameBase =
         lastBrowserUrl && stripHash(lastBrowserUrl) === stripHash(url);
       lastBrowserUrl = url;
       lastHistoryState = state;
@@ -173,7 +168,7 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
     return cachedState;
   };
 
-  var urlChangeListeners = [],
+  let urlChangeListeners = [],
     urlChangeInit = false;
 
   function cacheStateAndFireUrlChange() {
@@ -182,7 +177,7 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
   }
 
   // This variable should be used *only* inside the cacheState function.
-  var lastCachedState = null;
+  let lastCachedState = null;
   function cacheState() {
     // This should be the only place in $browser where `history.state` is read.
     cachedState = getCurrentState();
@@ -198,7 +193,7 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
   }
 
   function fireStateOrUrlChange() {
-    var prevLastHistoryState = lastHistoryState;
+    let prevLastHistoryState = lastHistoryState;
     cacheState();
 
     if (lastBrowserUrl === self.url() && prevLastHistoryState === cachedState) {
@@ -284,7 +279,7 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
    * @returns {string} The current base href
    */
   self.baseHref = function () {
-    var href = baseElement.attr("href");
+    let href = baseElement.attr("href");
     return href ? href.replace(/^(https?:)?\/\/[^/]*/, "") : "";
   };
 
@@ -304,7 +299,7 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
    *
    */
   self.defer = function (fn, delay, taskType) {
-    var timeoutId;
+    let timeoutId;
 
     delay = delay || 0;
     taskType = taskType || taskTracker.DEFAULT_TASK_TYPE;
@@ -331,7 +326,7 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
    */
   self.defer.cancel = function (deferId) {
     if (pendingDeferIds.hasOwnProperty(deferId)) {
-      var taskType = pendingDeferIds[deferId];
+      let taskType = pendingDeferIds[deferId];
       delete pendingDeferIds[deferId];
       clearTimeout(deferId);
       taskTracker.completeTask(noop, taskType);

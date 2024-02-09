@@ -1,6 +1,4 @@
-"use strict";
-
-var $intervalMinErr = minErr("$interval");
+let $intervalMinErr = minErr("$interval");
 
 /** @this */
 function $IntervalProvider() {
@@ -8,13 +6,13 @@ function $IntervalProvider() {
     "$$intervalFactory",
     "$window",
     function ($$intervalFactory, $window) {
-      var intervals = {};
-      var setIntervalFn = function (tick, delay, deferred) {
-        var id = $window.setInterval(tick, delay);
+      let intervals = {};
+      let setIntervalFn = function (tick, delay, deferred) {
+        let id = $window.setInterval(tick, delay);
         intervals[id] = deferred;
         return id;
       };
-      var clearIntervalFn = function (id) {
+      let clearIntervalFn = function (id) {
         $window.clearInterval(id);
         delete intervals[id];
       };
@@ -66,7 +64,7 @@ function $IntervalProvider() {
        *           $scope.blood_1 = 100;
        *           $scope.blood_2 = 120;
        *
-       *           var stop;
+       *           let stop;
        *           $scope.fight = function() {
        *             // Don't start a new fight if we are already fighting
        *             if ( angular.isDefined(stop) ) return;
@@ -104,7 +102,7 @@ function $IntervalProvider() {
        *         function($interval, dateFilter) {
        *           // return the directive link function. (compile function not needed)
        *           return function(scope, element, attrs) {
-       *             var format,  // date format
+       *             let format,  // date format
        *                 stopTime; // so that we can cancel the time updates
        *
        *             // used to update the UI
@@ -145,7 +143,7 @@ function $IntervalProvider() {
        * </file>
        * </example>
        */
-      var interval = $$intervalFactory(setIntervalFn, clearIntervalFn);
+      let interval = $$intervalFactory(setIntervalFn, clearIntervalFn);
 
       /**
        * @ngdoc method
@@ -169,8 +167,8 @@ function $IntervalProvider() {
 
         if (!intervals.hasOwnProperty(promise.$$intervalId)) return false;
 
-        var id = promise.$$intervalId;
-        var deferred = intervals[id];
+        let id = promise.$$intervalId;
+        let deferred = intervals[id];
 
         // Interval cancels should not report an unhandled promise.
         markQExceptionHandled(deferred.promise);

@@ -95,8 +95,8 @@ Finally, Jasmine provides matchers which let you make assertions:
 ```js
 describe('sorting the list of users', function() {
   it('sorts in descending order by default', function() {
-    var users = ['jack', 'igor', 'jeff'];
-    var sorted = sortUsers(users);
+    let users = ['jack', 'igor', 'jeff'];
+    let sorted = sortUsers(users);
     expect(sorted).toEqual(['jeff', 'jack', 'igor']);
   });
 });
@@ -126,7 +126,7 @@ angular.module('app', [])
   .controller('PasswordController', function PasswordController($scope) {
     $scope.password = '';
     $scope.grade = function() {
-      var size = $scope.password.length;
+      let size = $scope.password.length;
       if (size > 8) {
         $scope.strength = 'strong';
       } else if (size > 3) {
@@ -149,7 +149,7 @@ for instantiating controllers.
 describe('PasswordController', function() {
   beforeEach(module('app'));
 
-  var $controller, $rootScope;
+  let $controller, $rootScope;
 
   beforeEach(inject(function(_$controller_, _$rootScope_){
     // The injector unwraps the underscores (_) from around the parameter names when matching
@@ -159,8 +159,8 @@ describe('PasswordController', function() {
 
   describe('$scope.grade', function() {
     it('sets the strength to "strong" if the password length is >8 chars', function() {
-      var $scope = $rootScope.$new();
-      var controller = $controller('PasswordController', { $scope: $scope });
+      let $scope = $rootScope.$new();
+      let controller = $controller('PasswordController', { $scope: $scope });
       $scope.password = 'longerthaneightchars';
       $scope.grade();
       expect($scope.strength).toEqual('strong');
@@ -178,7 +178,7 @@ should see `$scope.strength` set to "weak":
 describe('PasswordController', function() {
   beforeEach(module('app'));
 
-  var $controller;
+  let $controller;
 
   beforeEach(inject(function(_$controller_){
     // The injector unwraps the underscores (_) from around the parameter names when matching
@@ -187,16 +187,16 @@ describe('PasswordController', function() {
 
   describe('$scope.grade', function() {
     it('sets the strength to "strong" if the password length is >8 chars', function() {
-      var $scope = {};
-      var controller = $controller('PasswordController', { $scope: $scope });
+      let $scope = {};
+      let controller = $controller('PasswordController', { $scope: $scope });
       $scope.password = 'longerthaneightchars';
       $scope.grade();
       expect($scope.strength).toEqual('strong');
     });
 
     it('sets the strength to "weak" if the password length <3 chars', function() {
-      var $scope = {};
-      var controller = $controller('PasswordController', { $scope: $scope });
+      let $scope = {};
+      let controller = $controller('PasswordController', { $scope: $scope });
       $scope.password = 'a';
       $scope.grade();
       expect($scope.strength).toEqual('weak');
@@ -214,7 +214,7 @@ before each individual test. Let's see how that would tidy up our tests:
 describe('PasswordController', function() {
   beforeEach(module('app'));
 
-  var $controller;
+  let $controller;
 
   beforeEach(inject(function(_$controller_){
     // The injector unwraps the underscores (_) from around the parameter names when matching
@@ -222,7 +222,7 @@ describe('PasswordController', function() {
   }));
 
   describe('$scope.grade', function() {
-    var $scope, controller;
+    let $scope, controller;
 
     beforeEach(function() {
       $scope = {};
@@ -264,19 +264,19 @@ myModule.filter('length', function() {
 
 describe('length filter', function() {
 
-  var $filter;
+  let $filter;
 
   beforeEach(inject(function(_$filter_){
     $filter = _$filter_;
   }));
 
   it('returns 0 when given null', function() {
-    var length = $filter('length');
+    let length = $filter('length');
     expect(length(null)).toEqual(0);
   });
 
   it('returns the correct value when given a string of chars', function() {
-    var length = $filter('length');
+    let length = $filter('length');
     expect(length('abc')).toEqual(3);
   });
 });
@@ -292,7 +292,7 @@ you create with directives may be used throughout your application and in many d
 Let's start with an AngularJS app with no dependencies.
 
 ```js
-var app = angular.module('myApp', []);
+let app = angular.module('myApp', []);
 ```
 
 Now we can add a directive to our app.
@@ -313,7 +313,7 @@ verify this functionality. Note that the expression `{{1 + 1}}` times will also 
 
 ```js
 describe('Unit testing great quotes', function() {
-  var $compile,
+  let $compile,
       $rootScope;
 
   // Load the myApp module, which contains the directive
@@ -329,7 +329,7 @@ describe('Unit testing great quotes', function() {
 
   it('Replaces the element with the appropriate content', function() {
     // Compile a piece of HTML containing the directive
-    var element = $compile("<a-great-eye></a-great-eye>")($rootScope);
+    let element = $compile("<a-great-eye></a-great-eye>")($rootScope);
     // fire all the watches, so the scope expression {{1 + 1}} will be evaluated
     $rootScope.$digest();
     // Check that the compiled element contains the templated content
@@ -411,7 +411,7 @@ pass to {@link $compile}, then the DOM node returned from the linking function w
 comment node and you will lose the ability to access the template and transcluded content.
 
 ```javascript
-var node = $compile('<div element-transclude></div>')($rootScope);
+let node = $compile('<div element-transclude></div>')($rootScope);
 expect(node[0].nodeType).toEqual(node.COMMENT_NODE);
 expect(node[1]).toBeUndefined();
 ```
@@ -420,8 +420,8 @@ To cope with this you simply ensure that your 'element' transclude directive is 
 element, such as a `<div>`.
 
 ```javascript
-var node = $compile('<div><div element-transclude></div></div>')($rootScope);
-var contents = node.contents();
+let node = $compile('<div><div element-transclude></div></div>')($rootScope);
+let contents = node.contents();
 expect(contents[0].nodeType).toEqual(node.COMMENT_NODE);
 expect(contents[1].nodeType).toEqual(node.ELEMENT_NODE);
 ```

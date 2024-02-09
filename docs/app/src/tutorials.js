@@ -1,9 +1,9 @@
-'use strict';
+
 
 angular.module('tutorials', [])
 
 .directive('docTutorialNav', function() {
-  var pages = [
+  let pages = [
     '',
     'step_00', 'step_01', 'step_02', 'step_03', 'step_04',
     'step_05', 'step_06', 'step_07', 'step_08', 'step_09',
@@ -18,7 +18,7 @@ angular.module('tutorials', [])
       '<a ng-href="https://github.com/angular/angular-phonecat/compare/step-{{diffLo}}...step-{{diffHi}}"><li class="btn btn-primary"><i class="glyphicon glyphicon-search"></i> Code Diff</li></a>\n' +
       '<a ng-href="tutorial/{{next}}"><li class="btn btn-primary">Next <i class="glyphicon glyphicon-step-forward"></i></li></a>',
     link: function(scope, element, attrs) {
-      var seq = 1 * attrs.docTutorialNav;
+      let seq = 1 * attrs.docTutorialNav;
       scope.seq = seq;
       scope.prev = pages[seq];
       scope.next = pages[2 + seq];

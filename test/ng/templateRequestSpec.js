@@ -1,4 +1,4 @@
-'use strict';
+
 
 describe('$templateRequest', function() {
 
@@ -8,7 +8,7 @@ describe('$templateRequest', function() {
 
       it('should default to undefined and fallback to default $http options', function() {
 
-        var defaultHeader;
+        let defaultHeader;
 
         module(function($templateRequestProvider) {
           expect($templateRequestProvider.httpOptions()).toBeUndefined();
@@ -56,7 +56,7 @@ describe('$templateRequest', function() {
 
       it('should be allow you to override the cache', function() {
 
-        var httpOptions = {};
+        let httpOptions = {};
 
         module(function($templateRequestProvider) {
           $templateRequestProvider.httpOptions(httpOptions);
@@ -65,7 +65,7 @@ describe('$templateRequest', function() {
         inject(function($templateRequest, $http, $cacheFactory) {
           spyOn($http, 'get').and.callThrough();
 
-          var customCache = $cacheFactory('customCache');
+          let customCache = $cacheFactory('customCache');
           httpOptions.cache = customCache;
 
           $templateRequest('tpl.html');
@@ -84,7 +84,7 @@ describe('$templateRequest', function() {
 
     $httpBackend.expectGET('tpl.html').respond('<div>abc</div>');
 
-    var content;
+    let content;
     $templateRequest('tpl.html').then(function(html) { content = html; });
 
     $rootScope.$digest();
@@ -98,7 +98,7 @@ describe('$templateRequest', function() {
 
     $httpBackend.expectGET('tpl.html').respond('matias');
 
-    var content = [];
+    let content = [];
     function tplRequestCb(html) {
       content.push(html);
     }
@@ -120,7 +120,7 @@ describe('$templateRequest', function() {
       $httpBackend.expectGET('tpl.html').respond('matias');
       spyOn($templateCache, 'put').and.returnValue('_matias');
 
-      var content = [];
+      let content = [];
       function tplRequestCb(html) {
         content.push(html);
       }
@@ -140,7 +140,7 @@ describe('$templateRequest', function() {
     inject(function($exceptionHandler, $httpBackend, $templateRequest) {
       $httpBackend.expectGET('tpl.html').respond(404, '', {}, 'Not Found');
 
-      var err;
+      let err;
       $templateRequest('tpl.html').catch(function(reason) { err = reason; });
       $httpBackend.flush();
 
@@ -160,7 +160,7 @@ describe('$templateRequest', function() {
       inject(function($exceptionHandler, $httpBackend, $templateRequest) {
         $httpBackend.expectGET('tpl.html').respond(404);
 
-        var err;
+        let err;
         $templateRequest('tpl.html', true).catch(function(reason) { err = reason; });
         $httpBackend.flush();
 
@@ -174,7 +174,7 @@ describe('$templateRequest', function() {
     inject(function($exceptionHandler, $httpBackend, $rootScope, $templateRequest) {
       $httpBackend.expectGET('tpl.html').respond('');
 
-      var onError = jasmine.createSpy('onError');
+      let onError = jasmine.createSpy('onError');
       $templateRequest('tpl.html').catch(onError);
       $rootScope.$digest();
       $httpBackend.flush();
@@ -247,7 +247,7 @@ describe('$templateRequest', function() {
 
   it('should not try to parse a response as JSON',
     inject(function($templateRequest, $httpBackend) {
-      var spy = jasmine.createSpy('success');
+      let spy = jasmine.createSpy('success');
       $httpBackend.expectGET('a.html').respond('{{text}}', {
         'Content-Type': 'application/json'
       });
@@ -263,7 +263,7 @@ describe('$templateRequest', function() {
       });
     });
     inject(function($templateRequest, $httpBackend) {
-      var spy = jasmine.createSpy('success');
+      let spy = jasmine.createSpy('success');
       $httpBackend.expectGET('a.html').respond('{{text}}', {
         'Content-Type': 'application/json'
       });
@@ -280,7 +280,7 @@ describe('$templateRequest', function() {
       };
     });
     inject(function($templateRequest, $httpBackend) {
-      var spy = jasmine.createSpy('success');
+      let spy = jasmine.createSpy('success');
       $httpBackend.expectGET('a.html').respond('{{text}}', {
         'Content-Type': 'application/json'
       });

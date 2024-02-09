@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc service
  * @name $jsonpCallbacks
@@ -9,13 +7,13 @@
  * Override this service if you wish to customise where the callbacks are stored and
  * how they vary compared to the requested url.
  */
-var $jsonpCallbacksProvider = /** @this */ function () {
+let $jsonpCallbacksProvider = /** @this */ function () {
   this.$get = function () {
-    var callbacks = angular.callbacks;
-    var callbackMap = {};
+    let callbacks = angular.callbacks;
+    let callbackMap = {};
 
     function createCallback(callbackId) {
-      var callback = function (data) {
+      let callback = function (data) {
         callback.data = data;
         callback.called = true;
       };
@@ -34,9 +32,9 @@ var $jsonpCallbacksProvider = /** @this */ function () {
        * to pass to the server, which will be used to call the callback with its payload in the JSONP response.
        */
       createCallback: function (url) {
-        var callbackId = "_" + (callbacks.$$counter++).toString(36);
-        var callbackPath = "angular.callbacks." + callbackId;
-        var callback = createCallback(callbackId);
+        let callbackId = "_" + (callbacks.$$counter++).toString(36);
+        let callbackPath = "angular.callbacks." + callbackId;
+        let callback = createCallback(callbackId);
         callbackMap[callbackPath] = callbacks[callbackId] = callback;
         return callbackPath;
       },
@@ -73,7 +71,7 @@ var $jsonpCallbacksProvider = /** @this */ function () {
        * completed or timed-out.
        */
       removeCallback: function (callbackPath) {
-        var callback = callbackMap[callbackPath];
+        let callback = callbackMap[callbackPath];
         delete callbacks[callback.id];
         delete callbackMap[callbackPath];
       },

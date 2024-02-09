@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name a
@@ -11,7 +9,7 @@
  *
  * For dynamically creating `href` attributes for a tags, see the {@link ng.ngHref `ngHref`} directive.
  */
-var htmlAnchorDirective = valueFn({
+let htmlAnchorDirective = valueFn({
   restrict: "E",
   compile: function (element, attr) {
     if (!attr.href && !attr.xlinkHref) {
@@ -20,7 +18,7 @@ var htmlAnchorDirective = valueFn({
         if (element[0].nodeName.toLowerCase() !== "a") return;
 
         // SVGAElement does not use the href attribute, but rather the 'xlinkHref' attribute.
-        var href =
+        let href =
           toString.call(element.prop("href")) === "[object SVGAnimatedString]"
             ? "xlink:href"
             : "href";

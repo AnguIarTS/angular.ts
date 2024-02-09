@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @ngdoc directive
  * @name ngBind
@@ -41,7 +39,7 @@
      </file>
      <file name="protractor.js" type="protractor">
        it('should check ng-bind', function() {
-         var nameInput = element(by.model('name'));
+         let nameInput = element(by.model('name'));
 
          expect(element(by.binding('name')).getText()).toBe('Whirled');
          nameInput.clear();
@@ -51,7 +49,7 @@
      </file>
    </example>
  */
-var ngBindDirective = [
+let ngBindDirective = [
   "$compile",
   function ($compile) {
     return {
@@ -105,9 +103,9 @@ var ngBindDirective = [
      </file>
      <file name="protractor.js" type="protractor">
        it('should check ng-bind', function() {
-         var salutationElem = element(by.binding('salutation'));
-         var salutationInput = element(by.model('salutation'));
-         var nameInput = element(by.model('name'));
+         let salutationElem = element(by.binding('salutation'));
+         let salutationInput = element(by.model('salutation'));
+         let nameInput = element(by.model('name'));
 
          expect(salutationElem.getText()).toBe('Hello World!');
 
@@ -121,7 +119,7 @@ var ngBindDirective = [
      </file>
    </example>
  */
-var ngBindTemplateDirective = [
+let ngBindTemplateDirective = [
   "$interpolate",
   "$compile",
   function ($interpolate, $compile) {
@@ -129,7 +127,7 @@ var ngBindTemplateDirective = [
       compile: function ngBindTemplateCompile(templateElement) {
         $compile.$$addBindingClass(templateElement);
         return function ngBindTemplateLink(scope, element, attr) {
-          var interpolateFn = $interpolate(
+          let interpolateFn = $interpolate(
             element.attr(attr.$attr.ngBindTemplate),
           );
           $compile.$$addBindingInfo(element, interpolateFn.expressions);
@@ -190,7 +188,7 @@ var ngBindTemplateDirective = [
      </file>
    </example>
  */
-var ngBindHtmlDirective = [
+let ngBindHtmlDirective = [
   "$sce",
   "$parse",
   "$compile",
@@ -198,8 +196,8 @@ var ngBindHtmlDirective = [
     return {
       restrict: "A",
       compile: function ngBindHtmlCompile(tElement, tAttrs) {
-        var ngBindHtmlGetter = $parse(tAttrs.ngBindHtml);
-        var ngBindHtmlWatch = $parse(
+        let ngBindHtmlGetter = $parse(tAttrs.ngBindHtml);
+        let ngBindHtmlWatch = $parse(
           tAttrs.ngBindHtml,
           function sceValueOf(val) {
             // Unwrap the value to compare the actual inner safe value, not the wrapper object.
@@ -213,7 +211,7 @@ var ngBindHtmlDirective = [
 
           scope.$watch(ngBindHtmlWatch, function ngBindHtmlWatchAction() {
             // The watched value is the unwrapped value. To avoid re-escaping, use the direct getter.
-            var value = ngBindHtmlGetter(scope);
+            let value = ngBindHtmlGetter(scope);
             element.html($sce.getTrustedHtml(value) || "");
           });
         };

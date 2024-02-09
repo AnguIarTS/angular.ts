@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('$routeProvider', function() {
-  var $routeProvider;
+  let $routeProvider;
 
   beforeEach(module('ngRoute'));
   beforeEach(module(function(_$routeProvider_) {
@@ -54,7 +54,7 @@ describe('$routeProvider', function() {
 
 
 describe('$route', function() {
-  var $httpBackend,
+  let $httpBackend,
       element;
 
   beforeEach(module('ngRoute'));
@@ -155,7 +155,7 @@ describe('$route', function() {
   });
 
   it('should route and fire change event', function() {
-    var log = '',
+    let log = '',
         lastRoute,
         nextRoute;
 
@@ -199,7 +199,7 @@ describe('$route', function() {
   });
 
   it('should route and fire change event when catch-all params are used', function() {
-    var log = '',
+    let log = '',
         lastRoute,
         nextRoute;
 
@@ -258,7 +258,7 @@ describe('$route', function() {
 
 
   it('should route and fire change event correctly whenever the case insensitive flag is utilized', function() {
-    var log = '',
+    let log = '',
         lastRoute,
         nextRoute;
 
@@ -452,7 +452,7 @@ describe('$route', function() {
     });
 
     inject(function($route, $location, $rootScope) {
-      var callback = jasmine.createSpy('onRouteChange');
+      let callback = jasmine.createSpy('onRouteChange');
 
       $rootScope.$on('$routeChangeStart', callback);
       $location.path('/test');
@@ -473,7 +473,7 @@ describe('$route', function() {
     });
 
     inject(function($route, $location, $rootScope) {
-      var onChangeSpy = jasmine.createSpy('onChange');
+      let onChangeSpy = jasmine.createSpy('onChange');
 
       $rootScope.$on('$routeChangeStart', onChangeSpy);
       expect($route.current).toBeUndefined();
@@ -562,7 +562,7 @@ describe('$route', function() {
       });
 
       inject(function($route, $location, $rootScope) {
-        var onChangeSpy = jasmine.createSpy('onChange');
+        let onChangeSpy = jasmine.createSpy('onChange');
 
         $rootScope.$on('$routeChangeStart', onChangeSpy);
         expect($route.current).toBeUndefined();
@@ -593,7 +593,7 @@ describe('$route', function() {
       });
 
       inject(function($route, $location, $rootScope) {
-        var currentRoute, nextRoute,
+        let currentRoute, nextRoute,
             onChangeSpy = jasmine.createSpy('onChange').and.callFake(function(e, next) {
           currentRoute = $route.current;
           nextRoute = next;
@@ -658,7 +658,7 @@ describe('$route', function() {
 
   describe('events', function() {
     it('should not fire $routeChangeStart/Success during bootstrap (if no route)', function() {
-      var routeChangeSpy = jasmine.createSpy('route change');
+      let routeChangeSpy = jasmine.createSpy('route change');
 
       module(function($routeProvider) {
         $routeProvider.when('/one', {}); // no otherwise defined
@@ -682,7 +682,7 @@ describe('$route', function() {
     });
 
     it('should fire $routeChangeStart and resolve promises', function() {
-      var deferA,
+      let deferA,
           deferB;
 
       module(function($provide, $routeProvider) {
@@ -700,7 +700,7 @@ describe('$route', function() {
       });
 
       inject(function($location, $route, $rootScope, $httpBackend) {
-        var log = '';
+        let log = '';
 
         $httpBackend.expectGET('foo.html').respond('FOO');
 
@@ -720,7 +720,7 @@ describe('$route', function() {
 
 
     it('should fire $routeChangeError event on resolution error', function() {
-      var deferA;
+      let deferA;
 
       module(function($provide, $routeProvider) {
         $routeProvider.when('/path', { template: 'foo', resolve: {
@@ -732,7 +732,7 @@ describe('$route', function() {
       });
 
       inject(function($location, $route, $rootScope) {
-        var log = '';
+        let log = '';
 
         $rootScope.$on('$routeChangeStart', function() { log += 'before();'; });
         $rootScope.$on('$routeChangeError', function(e, n, l, reason) { log += 'failed(' + reason + ');'; });
@@ -756,7 +756,7 @@ describe('$route', function() {
       });
 
       inject(function($route, $httpBackend, $location, $rootScope) {
-        var log = '';
+        let log = '';
         $rootScope.$on('$routeChangeStart', function(e, next) { log += '$before(' + next.templateUrl + ');'; });
         $rootScope.$on('$routeChangeSuccess', function(e, next) { log += '$after(' + next.templateUrl + ');'; });
 
@@ -783,8 +783,8 @@ describe('$route', function() {
       });
 
       inject(function($route, $location, $rootScope) {
-        var onError = jasmine.createSpy('onError');
-        var onSuccess = jasmine.createSpy('onSuccess');
+        let onError = jasmine.createSpy('onError');
+        let onSuccess = jasmine.createSpy('onSuccess');
 
         $rootScope.$on('$routeChangeError', onError);
         $rootScope.$on('$routeChangeSuccess', onSuccess);
@@ -823,7 +823,7 @@ describe('$route', function() {
       });
 
       inject(function($route, $httpBackend, $location, $rootScope, $routeParams) {
-        var log = '';
+        let log = '';
         $rootScope.$on('$routeChangeStart', function(e, next) { log += '$before' + angular.toJson($routeParams) + ';'; });
         $rootScope.$on('$routeChangeSuccess', function(e, next) { log += '$after' + angular.toJson($routeParams) + ';'; });
 
@@ -855,7 +855,7 @@ describe('$route', function() {
       });
 
       inject(function($route, $httpBackend, $location, $rootScope) {
-        var log = '';
+        let log = '';
         $rootScope.$on('$routeChangeStart', function(e, next) { log += '$before(' + next.templateUrl + ');'; });
         $rootScope.$on('$routeChangeSuccess', function(e, next) { log += '$after(' + next.templateUrl + ');'; });
 
@@ -913,7 +913,7 @@ describe('$route', function() {
 
 
     it('should catch local factory errors', function() {
-      var myError = new Error('MyError');
+      let myError = new Error('MyError');
       module(function($routeProvider) {
         $routeProvider.when('/locals', {
           resolve: {
@@ -970,7 +970,7 @@ describe('$route', function() {
   it('should not get affected by modifying the route definition object after route registration',
     function() {
       module(function($routeProvider) {
-        var rdo = {};
+        let rdo = {};
 
         rdo.templateUrl = 'foo.html';
         $routeProvider.when('/foo', rdo);
@@ -996,14 +996,14 @@ describe('$route', function() {
 
   it('should use the property values of the passed in route definition object directly',
     function() {
-      var $routeProvider;
+      let $routeProvider;
 
       module(function(_$routeProvider_) {
         $routeProvider = _$routeProvider_;
       });
 
       inject(function($location, $rootScope, $route, $sce) {
-        var sceWrappedUrl = $sce.trustAsResourceUrl('foo.html');
+        let sceWrappedUrl = $sce.trustAsResourceUrl('foo.html');
         $routeProvider.when('/foo', {templateUrl: sceWrappedUrl});
 
         $location.path('/foo');
@@ -1017,14 +1017,14 @@ describe('$route', function() {
 
   it('should support custom `$sce` implementations', function() {
     function MySafeResourceUrl(val) {
-      var self = this;
+      let self = this;
       this._val = val;
       this.getVal = function() {
         return (this !== self) ? null : this._val;
       };
     }
 
-    var $routeProvider;
+    let $routeProvider;
 
     module(function($provide, _$routeProvider_) {
       $routeProvider = _$routeProvider_;
@@ -1061,7 +1061,7 @@ describe('$route', function() {
         });
 
         inject(function($route, $location, $rootScope) {
-          var onChangeSpy = jasmine.createSpy('onChange');
+          let onChangeSpy = jasmine.createSpy('onChange');
 
           $rootScope.$on('$routeChangeStart', onChangeSpy);
           expect($route.current).toBeUndefined();
@@ -1195,7 +1195,7 @@ describe('$route', function() {
 
 
       it('should broadcast `$routeChangeError` when redirectTo throws', function() {
-        var error = new Error('Test');
+        let error = new Error('Test');
 
         module(function($routeProvider) {
           $routeProvider.when('/foo', {redirectTo: function() { throw error; }});
@@ -1207,7 +1207,7 @@ describe('$route', function() {
           $location.path('/foo');
           $rootScope.$digest();
 
-          var lastCallArgs = $rootScope.$broadcast.calls.mostRecent().args;
+          let lastCallArgs = $rootScope.$broadcast.calls.mostRecent().args;
           expect(lastCallArgs[0]).toBe('$routeChangeError');
           expect(lastCallArgs[3]).toBe(error);
         });
@@ -1220,7 +1220,7 @@ describe('$route', function() {
           $routeProvider.when('/foo/:id/:extra', {redirectTo: '/bar/:id'});
         });
         inject(function($browser, $route, $location, $rootScope) {
-          var $browserUrl = spyOnlyCallsWithArgs($browser, 'url').and.callThrough();
+          let $browserUrl = spyOnlyCallsWithArgs($browser, 'url').and.callThrough();
 
           $location.path('/foo/id3/eId');
           $rootScope.$digest();
@@ -1233,12 +1233,12 @@ describe('$route', function() {
 
 
       it('should not process route bits', function() {
-        var firstController = jasmine.createSpy('first controller spy');
-        var firstTemplate = jasmine.createSpy('first template spy').and.returnValue('redirected view');
-        var firstResolve = jasmine.createSpy('first resolve spy');
-        var secondController = jasmine.createSpy('second controller spy');
-        var secondTemplate = jasmine.createSpy('second template spy').and.returnValue('redirected view');
-        var secondResolve = jasmine.createSpy('second resolve spy');
+        let firstController = jasmine.createSpy('first controller spy');
+        let firstTemplate = jasmine.createSpy('first template spy').and.returnValue('redirected view');
+        let firstResolve = jasmine.createSpy('first resolve spy');
+        let secondController = jasmine.createSpy('second controller spy');
+        let secondTemplate = jasmine.createSpy('second template spy').and.returnValue('redirected view');
+        let secondResolve = jasmine.createSpy('second resolve spy');
         module(function($routeProvider) {
           $routeProvider.when('/redirect', {
             template: firstTemplate,
@@ -1253,7 +1253,7 @@ describe('$route', function() {
           });
         });
         inject(function($route, $location, $rootScope, $compile) {
-          var element = $compile('<div><ng-view></ng-view></div>')($rootScope);
+          let element = $compile('<div><ng-view></ng-view></div>')($rootScope);
           $location.path('/redirect');
           $rootScope.$digest();
 
@@ -1271,8 +1271,8 @@ describe('$route', function() {
 
 
       it('should not redirect transition if `redirectTo` returns `undefined`', function() {
-        var controller = jasmine.createSpy('first controller spy');
-        var templateFn = jasmine.createSpy('first template spy').and.returnValue('redirected view');
+        let controller = jasmine.createSpy('first controller spy');
+        let templateFn = jasmine.createSpy('first template spy').and.returnValue('redirected view');
         module(function($routeProvider) {
           $routeProvider.when('/redirect/to/undefined', {
             template: templateFn,
@@ -1281,7 +1281,7 @@ describe('$route', function() {
           });
         });
         inject(function($route, $location, $rootScope, $compile) {
-          var element = $compile('<div><ng-view></ng-view></div>')($rootScope);
+          let element = $compile('<div><ng-view></ng-view></div>')($rootScope);
           $location.path('/redirect/to/undefined');
           $rootScope.$digest();
           expect(controller).toHaveBeenCalled();
@@ -1293,10 +1293,10 @@ describe('$route', function() {
     });
 
     describe('via `resolveRedirectTo`', function() {
-      var $compile;
-      var $location;
-      var $rootScope;
-      var $route;
+      let $compile;
+      let $location;
+      let $rootScope;
+      let $route;
 
       beforeEach(module(function() {
         return function(_$compile_, _$location_, _$rootScope_, _$route_) {
@@ -1309,12 +1309,12 @@ describe('$route', function() {
 
 
       it('should be ignored if `redirectTo` is also present', function() {
-        var newUrl;
-        var getNewUrl = function() { return newUrl; };
+        let newUrl;
+        let getNewUrl = function() { return newUrl; };
 
-        var resolveRedirectToSpy = jasmine.createSpy('resolveRedirectTo').and.returnValue('/bar');
-        var redirectToSpy = jasmine.createSpy('redirectTo').and.callFake(getNewUrl);
-        var templateSpy = jasmine.createSpy('template').and.returnValue('Foo');
+        let resolveRedirectToSpy = jasmine.createSpy('resolveRedirectTo').and.returnValue('/bar');
+        let redirectToSpy = jasmine.createSpy('redirectTo').and.callFake(getNewUrl);
+        let templateSpy = jasmine.createSpy('template').and.returnValue('Foo');
 
         module(function($routeProvider) {
           $routeProvider.
@@ -1434,9 +1434,9 @@ describe('$route', function() {
 
 
       it('should not process route bits until the promise is resolved', function() {
-        var spies = createSpies();
-        var called = false;
-        var deferred;
+        let spies = createSpies();
+        let called = false;
+        let deferred;
 
         module(function($routeProvider) {
           setupRoutes($routeProvider, spies, function($q) {
@@ -1447,7 +1447,7 @@ describe('$route', function() {
         });
 
         inject(function() {
-          var element = $compile('<div><ng-view></ng-view></div>')($rootScope);
+          let element = $compile('<div><ng-view></ng-view></div>')($rootScope);
 
           $location.path('/foo');
           $rootScope.$digest();
@@ -1477,8 +1477,8 @@ describe('$route', function() {
 
 
       it('should not redirect if `undefined` is returned', function() {
-        var spies = createSpies();
-        var called = false;
+        let spies = createSpies();
+        let called = false;
 
         module(function($routeProvider) {
           setupRoutes($routeProvider, spies, function() {
@@ -1488,7 +1488,7 @@ describe('$route', function() {
         });
 
         inject(function() {
-          var element = $compile('<div><ng-view></ng-view></div>')($rootScope);
+          let element = $compile('<div><ng-view></ng-view></div>')($rootScope);
 
           $location.path('/foo');
           $rootScope.$digest();
@@ -1508,8 +1508,8 @@ describe('$route', function() {
 
 
       it('should not redirect if the returned promise resolves to `undefined`', function() {
-        var spies = createSpies();
-        var called = false;
+        let spies = createSpies();
+        let called = false;
 
         module(function($routeProvider) {
           setupRoutes($routeProvider, spies, function($q) {
@@ -1519,7 +1519,7 @@ describe('$route', function() {
         });
 
         inject(function() {
-          var element = $compile('<div><ng-view></ng-view></div>')($rootScope);
+          let element = $compile('<div><ng-view></ng-view></div>')($rootScope);
 
           $location.path('/foo');
           $rootScope.$digest();
@@ -1539,8 +1539,8 @@ describe('$route', function() {
 
 
       it('should not redirect if the returned promise gets rejected', function() {
-        var spies = createSpies();
-        var called = false;
+        let spies = createSpies();
+        let called = false;
 
         module(function($routeProvider) {
           setupRoutes($routeProvider, spies, function($q) {
@@ -1552,7 +1552,7 @@ describe('$route', function() {
         inject(function() {
           spyOn($rootScope, '$broadcast').and.callThrough();
 
-          var element = $compile('<div><ng-view></ng-view></div>')($rootScope);
+          let element = $compile('<div><ng-view></ng-view></div>')($rootScope);
 
           $location.path('/foo');
           $rootScope.$digest();
@@ -1566,7 +1566,7 @@ describe('$route', function() {
           expect(spies.barTemplateSpy).not.toHaveBeenCalled();
           expect(spies.barControllerSpy).not.toHaveBeenCalled();
 
-          var lastCallArgs = $rootScope.$broadcast.calls.mostRecent().args;
+          let lastCallArgs = $rootScope.$broadcast.calls.mostRecent().args;
           expect(lastCallArgs[0]).toBe('$routeChangeError');
 
           dealoc(element);
@@ -1575,9 +1575,9 @@ describe('$route', function() {
 
 
       it('should ignore previous redirection if newer transition happened', function() {
-        var spies = createSpies();
-        var called = false;
-        var deferred;
+        let spies = createSpies();
+        let called = false;
+        let deferred;
 
         module(function($routeProvider) {
           setupRoutes($routeProvider, spies, function($q) {
@@ -1590,7 +1590,7 @@ describe('$route', function() {
         inject(function() {
           spyOn($location, 'url').and.callThrough();
 
-          var element = $compile('<div><ng-view></ng-view></div>')($rootScope);
+          let element = $compile('<div><ng-view></ng-view></div>')($rootScope);
 
           $location.path('/foo');
           $rootScope.$digest();
@@ -1680,7 +1680,7 @@ describe('$route', function() {
 
   describe('reloadOnUrl', function() {
     it('should reload when `reloadOnUrl` is true and `.url()` changes', function() {
-      var routeChange = jasmine.createSpy('routeChange');
+      let routeChange = jasmine.createSpy('routeChange');
 
       module(function($routeProvider) {
         $routeProvider.when('/path/:param', {});
@@ -1724,8 +1724,8 @@ describe('$route', function() {
 
     it('should reload when `reloadOnUrl` is false and URL maps to different route',
       function() {
-        var routeChange = jasmine.createSpy('routeChange');
-        var routeUpdate = jasmine.createSpy('routeUpdate');
+        let routeChange = jasmine.createSpy('routeChange');
+        let routeUpdate = jasmine.createSpy('routeUpdate');
 
         module(function($routeProvider) {
           $routeProvider.
@@ -1762,8 +1762,8 @@ describe('$route', function() {
 
     it('should not reload when `reloadOnUrl` is false and URL maps to the same route',
       function() {
-        var routeChange = jasmine.createSpy('routeChange');
-        var routeUpdate = jasmine.createSpy('routeUpdate');
+        let routeChange = jasmine.createSpy('routeChange');
+        let routeUpdate = jasmine.createSpy('routeUpdate');
 
         module(function($routeProvider) {
           $routeProvider.when('/path/:param', {reloadOnUrl: false});
@@ -1797,7 +1797,7 @@ describe('$route', function() {
 
 
     it('should update `$routeParams` even when not reloading a route', function() {
-      var routeChange = jasmine.createSpy('routeChange');
+      let routeChange = jasmine.createSpy('routeChange');
 
       module(function($routeProvider) {
         $routeProvider.when('/path/:param', {reloadOnUrl: false});
@@ -1827,12 +1827,12 @@ describe('$route', function() {
 
 
     describe('with `$route.reload()`', function() {
-      var $location;
-      var $log;
-      var $rootScope;
-      var $route;
-      var routeChangeStart;
-      var routeChangeSuccess;
+      let $location;
+      let $log;
+      let $rootScope;
+      let $route;
+      let routeChangeStart;
+      let routeChangeSuccess;
 
       beforeEach(module(function($routeProvider) {
         $routeProvider.when('/path/:param', {
@@ -1941,7 +1941,7 @@ describe('$route', function() {
 
   describe('reloadOnSearch', function() {
     it('should not have any effect if `reloadOnUrl` is false', function() {
-      var reloaded = jasmine.createSpy('route reload');
+      let reloaded = jasmine.createSpy('route reload');
 
       module(function($routeProvider) {
         $routeProvider.when('/foo', {
@@ -1977,7 +1977,7 @@ describe('$route', function() {
 
     it('should reload when `reloadOnSearch` is true and `.search()`/`.hash()` changes',
       function() {
-        var reloaded = jasmine.createSpy('route reload');
+        let reloaded = jasmine.createSpy('route reload');
 
         module(function($routeProvider) {
           $routeProvider.when('/foo', {controller: angular.noop});
@@ -2013,7 +2013,7 @@ describe('$route', function() {
 
     it('should not reload when `reloadOnSearch` is false and `.search()`/`.hash()` changes',
       function() {
-        var routeChange = jasmine.createSpy('route change'),
+        let routeChange = jasmine.createSpy('route change'),
             routeUpdate = jasmine.createSpy('route update');
 
         module(function($routeProvider) {
@@ -2054,7 +2054,7 @@ describe('$route', function() {
 
     it('should reload when `reloadOnSearch` is false and url differs only in route path param',
       function() {
-        var routeChange = jasmine.createSpy('route change');
+        let routeChange = jasmine.createSpy('route change');
 
         module(function($routeProvider) {
           $routeProvider.when('/foo/:fooId', {controller: angular.noop, reloadOnSearch: false});
@@ -2085,7 +2085,7 @@ describe('$route', function() {
 
 
     it('should update params when `reloadOnSearch` is false and `.search()` changes', function() {
-      var routeParamsWatcher = jasmine.createSpy('routeParamsWatcher');
+      let routeParamsWatcher = jasmine.createSpy('routeParamsWatcher');
 
       module(function($routeProvider) {
         $routeProvider.when('/foo', {controller: angular.noop});
@@ -2126,7 +2126,7 @@ describe('$route', function() {
 
 
     it('should allow using a function as a template', function() {
-      var customTemplateWatcher = jasmine.createSpy('customTemplateWatcher');
+      let customTemplateWatcher = jasmine.createSpy('customTemplateWatcher');
 
       function customTemplateFn(routePathParams) {
         customTemplateWatcher(routePathParams);
@@ -2149,7 +2149,7 @@ describe('$route', function() {
 
 
     it('should allow using a function as a templateUrl', function() {
-      var customTemplateUrlWatcher = jasmine.createSpy('customTemplateUrlWatcher');
+      let customTemplateUrlWatcher = jasmine.createSpy('customTemplateUrlWatcher');
 
       function customTemplateUrlFn(routePathParams) {
         customTemplateUrlWatcher(routePathParams);
@@ -2173,12 +2173,12 @@ describe('$route', function() {
 
 
     describe('with `$route.reload()`', function() {
-      var $location;
-      var $log;
-      var $rootScope;
-      var $route;
-      var routeChangeStartSpy;
-      var routeChangeSuccessSpy;
+      let $location;
+      let $log;
+      let $rootScope;
+      let $route;
+      let routeChangeStartSpy;
+      let routeChangeSuccessSpy;
 
       beforeEach(module(function($routeProvider) {
         $routeProvider.when('/bar/:barId', {
@@ -2291,7 +2291,7 @@ describe('$route', function() {
 
   describe('update', function() {
     it('should support single-parameter route updating', function() {
-      var routeChangeSpy = jasmine.createSpy('route change');
+      let routeChangeSpy = jasmine.createSpy('route change');
 
       module(function($routeProvider) {
         $routeProvider.when('/bar/:barId', {controller: angular.noop});
@@ -2314,7 +2314,7 @@ describe('$route', function() {
     });
 
     it('should support total multi-parameter route updating', function() {
-      var routeChangeSpy = jasmine.createSpy('route change');
+      let routeChangeSpy = jasmine.createSpy('route change');
 
       module(function($routeProvider) {
         $routeProvider.when('/bar/:barId/:fooId/:spamId/:eggId', {controller: angular.noop});
@@ -2337,7 +2337,7 @@ describe('$route', function() {
     });
 
     it('should support partial multi-parameter route updating', function() {
-      var routeChangeSpy = jasmine.createSpy('route change');
+      let routeChangeSpy = jasmine.createSpy('route change');
 
       module(function($routeProvider) {
         $routeProvider.when('/bar/:barId/:fooId/:spamId/:eggId', {controller: angular.noop});
@@ -2361,7 +2361,7 @@ describe('$route', function() {
 
 
     it('should update query params when new properties are not in path', function() {
-      var routeChangeSpy = jasmine.createSpy('route change');
+      let routeChangeSpy = jasmine.createSpy('route change');
 
       module(function($routeProvider) {
         $routeProvider.when('/bar/:barId/:fooId/:spamId/', {controller: angular.noop});
@@ -2386,7 +2386,7 @@ describe('$route', function() {
     });
 
     it('should not update query params when an optional property was previously not in path', function() {
-      var routeChangeSpy = jasmine.createSpy('route change');
+      let routeChangeSpy = jasmine.createSpy('route change');
 
       module(function($routeProvider) {
         $routeProvider.when('/bar/:barId/:fooId/:spamId/:eggId?', {controller: angular.noop});
@@ -2417,7 +2417,7 @@ describe('$route', function() {
 
   describe('testability', function() {
     it('should wait for $resolve promises before calling callbacks', function() {
-      var deferred;
+      let deferred;
 
       module(function($routeProvider) {
         $routeProvider.when('/path', {
@@ -2434,7 +2434,7 @@ describe('$route', function() {
         $location.path('/path');
         $rootScope.$digest();
 
-        var callback = jasmine.createSpy('callback');
+        let callback = jasmine.createSpy('callback');
         $$testability.whenStable(callback);
         expect(callback).not.toHaveBeenCalled();
 
@@ -2445,7 +2445,7 @@ describe('$route', function() {
     });
 
     it('should call callback after $resolve promises are rejected', function() {
-      var deferred;
+      let deferred;
 
       module(function($routeProvider) {
         $routeProvider.when('/path', {
@@ -2462,7 +2462,7 @@ describe('$route', function() {
         $location.path('/path');
         $rootScope.$digest();
 
-        var callback = jasmine.createSpy('callback');
+        let callback = jasmine.createSpy('callback');
         $$testability.whenStable(callback);
         expect(callback).not.toHaveBeenCalled();
 
@@ -2473,7 +2473,7 @@ describe('$route', function() {
     });
 
     it('should wait for resolveRedirectTo promises before calling callbacks', function() {
-      var deferred;
+      let deferred;
 
       module(function($routeProvider) {
         $routeProvider.when('/path', {
@@ -2488,7 +2488,7 @@ describe('$route', function() {
         $location.path('/path');
         $rootScope.$digest();
 
-        var callback = jasmine.createSpy('callback');
+        let callback = jasmine.createSpy('callback');
         $$testability.whenStable(callback);
         expect(callback).not.toHaveBeenCalled();
 
@@ -2499,7 +2499,7 @@ describe('$route', function() {
     });
 
     it('should call callback after resolveRedirectTo promises are rejected', function() {
-      var deferred;
+      let deferred;
 
       module(function($routeProvider) {
         $routeProvider.when('/path', {
@@ -2514,7 +2514,7 @@ describe('$route', function() {
         $location.path('/path');
         $rootScope.$digest();
 
-        var callback = jasmine.createSpy('callback');
+        let callback = jasmine.createSpy('callback');
         $$testability.whenStable(callback);
         expect(callback).not.toHaveBeenCalled();
 
@@ -2525,7 +2525,7 @@ describe('$route', function() {
     });
 
     it('should wait for all route promises before calling callbacks', function() {
-      var deferreds = {};
+      let deferreds = {};
 
       module(function($routeProvider) {
         addRouteWithAsyncRedirect('/foo', '/bar');
@@ -2534,7 +2534,7 @@ describe('$route', function() {
         $routeProvider.when('/qux', {
           resolve: {
             a: function($q) {
-              var deferred = deferreds['/qux'] = $q.defer();
+              let deferred = deferreds['/qux'] = $q.defer();
               return deferred.promise;
             }
           }
@@ -2544,7 +2544,7 @@ describe('$route', function() {
         function addRouteWithAsyncRedirect(fromPath, toPath) {
           $routeProvider.when(fromPath, {
             resolveRedirectTo: function($q) {
-              var deferred = deferreds[fromPath] = $q.defer();
+              let deferred = deferreds[fromPath] = $q.defer();
               return deferred.promise.then(function() { return toPath; });
             }
           });
@@ -2555,7 +2555,7 @@ describe('$route', function() {
         $location.path('/foo');
         $rootScope.$digest();
 
-        var callback = jasmine.createSpy('callback');
+        let callback = jasmine.createSpy('callback');
         $$testability.whenStable(callback);
         expect(callback).not.toHaveBeenCalled();
 

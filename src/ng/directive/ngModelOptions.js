@@ -1,8 +1,6 @@
-"use strict";
-
 /* exported defaultModelOptions */
-var defaultModelOptions;
-var DEFAULT_REGEXP = /(\s+|^)default(\s+|$)/;
+let defaultModelOptions;
+let DEFAULT_REGEXP = /(\s+|^)default(\s+|$)/;
 
 /**
  * @ngdoc type
@@ -34,7 +32,7 @@ ModelOptions.prototype = {
    * @return {ModelOptions} a new `ModelOptions` object initialized with the given options.
    */
   createChild: function (options) {
-    var inheritAll = false;
+    let inheritAll = false;
 
     // make a shallow copy
     options = extend({}, options);
@@ -218,9 +216,9 @@ defaultModelOptions = new ModelOptions({
  *       }]);
  *   </file>
  *   <file name="protractor.js" type="protractor">
- *     var model = element(by.binding('user.name'));
- *     var input = element(by.model('user.name'));
- *     var other = element(by.model('user.data'));
+ *     let model = element(by.binding('user.name'));
+ *     let input = element(by.model('user.name'));
+ *     let other = element(by.model('user.data'));
  *
  *     it('should allow custom events', function() {
  *       input.sendKeys(' hello');
@@ -311,11 +309,11 @@ defaultModelOptions = new ModelOptions({
             };
 
             this.updateEvents = function() {
-              var eventList = this.options.updateOn.split(' ');
+              let eventList = this.options.updateOn.split(' ');
               eventList.push('*');
-              var events = {};
+              let events = {};
 
-              for (var i = 0; i < eventList.length; i++) {
+              for (let i = 0; i < eventList.length; i++) {
                 events[eventList[i]] = this.options.debounce[eventList[i]];
               }
 
@@ -323,7 +321,7 @@ defaultModelOptions = new ModelOptions({
             };
 
             this.updateOptions = function() {
-              var options = angular.extend(this.options, {
+              let options = angular.extend(this.options, {
                 updateOn: Object.keys(this.events).join(' ').replace('*', ''),
                 debounce: this.events
               });
@@ -398,7 +396,7 @@ defaultModelOptions = new ModelOptions({
  *   <file name="app.js">
  *     angular.module('getterSetterExample', [])
  *       .controller('ExampleController', ['$scope', function($scope) {
- *         var _name = 'Brian';
+ *         let _name = 'Brian';
  *         $scope.user = {
  *           name: function(newName) {
  *             return angular.isDefined(newName) ? (_name = newName) : _name;
@@ -547,7 +545,7 @@ defaultModelOptions = new ModelOptions({
  *     {@link ngModelOptions#formatting-the-value-of-time-and-datetime-local- See the example}.
  *
  */
-var ngModelOptionsDirective = function () {
+let ngModelOptionsDirective = function () {
   NgModelOptionsController.$inject = ["$attrs", "$scope"];
   function NgModelOptionsController($attrs, $scope) {
     this.$$attrs = $attrs;
@@ -555,10 +553,10 @@ var ngModelOptionsDirective = function () {
   }
   NgModelOptionsController.prototype = {
     $onInit: function () {
-      var parentOptions = this.parentCtrl
+      let parentOptions = this.parentCtrl
         ? this.parentCtrl.$options
         : defaultModelOptions;
-      var modelOptionsDefinition = this.$$scope.$eval(
+      let modelOptionsDefinition = this.$$scope.$eval(
         this.$$attrs.ngModelOptions,
       );
 

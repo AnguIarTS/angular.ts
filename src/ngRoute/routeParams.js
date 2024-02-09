@@ -1,5 +1,3 @@
-"use strict";
-
 ngRouteModule.provider("$routeParams", $RouteParamsProvider);
 
 /**

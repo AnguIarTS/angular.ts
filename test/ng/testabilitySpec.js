@@ -1,8 +1,8 @@
-'use strict';
+
 
 describe('$$testability', function() {
   describe('finding elements', function() {
-    var $$testability, $compile, scope, element;
+    let $$testability, $compile, scope, element;
 
     beforeEach(inject(function(_$$testability_, _$compile_, $rootScope) {
       $$testability = _$$testability_;
@@ -21,7 +21,7 @@ describe('$$testability', function() {
           '  <span>{{username}}</span>' +
           '</div>';
       element = $compile(element)(scope);
-      var names = $$testability.findBindings(element[0], 'name');
+      let names = $$testability.findBindings(element[0], 'name');
       expect(names.length).toBe(2);
       expect(names[0]).toBe(element.find('span')[0]);
       expect(names[1]).toBe(element.find('span')[1]);
@@ -34,7 +34,7 @@ describe('$$testability', function() {
           '  <span>{{username}}</span>' +
           '</div>';
       element = $compile(element)(scope);
-      var users = $$testability.findBindings(element[0], 'name', true);
+      let users = $$testability.findBindings(element[0], 'name', true);
       expect(users.length).toBe(1);
       expect(users[0]).toBe(element.find('span')[0]);
     });
@@ -46,7 +46,7 @@ describe('$$testability', function() {
           '  <span>{{username}}</span>' +
           '</div>';
       element = $compile(element)(scope);
-      var users = $$testability.findBindings(element[0], 'name', true);
+      let users = $$testability.findBindings(element[0], 'name', true);
       expect(users.length).toBe(1);
       expect(users[0]).toBe(element.find('span')[0]);
     });
@@ -58,7 +58,7 @@ describe('$$testability', function() {
           '  <span>{{username}}</span>' +
           '</div>';
       element = $compile(element)(scope);
-      var users = $$testability.findBindings(element[0], 'name', true);
+      let users = $$testability.findBindings(element[0], 'name', true);
       expect(users.length).toBe(1);
       expect(users[0]).toBe(element.find('span')[0]);
     });
@@ -70,7 +70,7 @@ describe('$$testability', function() {
           '  <span>{{username}}</span>' +
           '</div>';
       element = $compile(element)(scope);
-      var names = $$testability.findBindings(element[0], 'name');
+      let names = $$testability.findBindings(element[0], 'name');
       expect(names.length).toBe(2);
       expect(names[0]).toBe(element.find('span')[0]);
       expect(names[1]).toBe(element.find('span')[1]);
@@ -83,7 +83,7 @@ describe('$$testability', function() {
           '  <ul><li>{{name}}</li></ul>' +
           '</div>';
       element = $compile(element)(scope);
-      var names = $$testability.findBindings(element.find('ul')[0], 'name');
+      let names = $$testability.findBindings(element.find('ul')[0], 'name');
       expect(names.length).toBe(1);
       expect(names[0]).toBe(element.find('li')[0]);
     });
@@ -97,19 +97,19 @@ describe('$$testability', function() {
           '  <span>{{foo | uppercase}}</span>' +
           '</div>';
       element = $compile(element)(scope);
-      var indexes = $$testability.findBindings(element[0], '$index', true);
+      let indexes = $$testability.findBindings(element[0], '$index', true);
       expect(indexes.length).toBe(1);
       expect(indexes[0]).toBe(element.find('span')[0]);
 
-      var foobars = $$testability.findBindings(element[0], 'foo.bar', true);
+      let foobars = $$testability.findBindings(element[0], 'foo.bar', true);
       expect(foobars.length).toBe(1); // it should not match {{foonbar}}
       expect(foobars[0]).toBe(element.find('span')[1]);
 
-      var foo = $$testability.findBindings(element[0], 'foo', true);
+      let foo = $$testability.findBindings(element[0], 'foo', true);
       expect(foo.length).toBe(1); // it should match {{foo | uppercase}}
-      var uppercase = $$testability.findBindings(element[0], 'uppercase', true);
+      let uppercase = $$testability.findBindings(element[0], 'uppercase', true);
       expect(uppercase.length).toBe(1); // it should match {{foo | uppercase}}
-      var filteredFoo = $$testability.findBindings(element[0], 'foo | uppercase', true);
+      let filteredFoo = $$testability.findBindings(element[0], 'foo | uppercase', true);
       expect(filteredFoo.length).toBe(1); // it should match {{foo | uppercase}}
       expect(filteredFoo[0]).toBe(element.find('span')[3]);
     });
@@ -121,7 +121,7 @@ describe('$$testability', function() {
           '  <input type="text" ng-model="username"/>' +
           '</div>';
       element = $compile(element)(scope);
-      var names = $$testability.findModels(element[0], 'name');
+      let names = $$testability.findModels(element[0], 'name');
       expect(names.length).toBe(2);
       expect(names[0]).toBe(element.find('input')[0]);
       expect(names[1]).toBe(element.find('input')[1]);
@@ -134,7 +134,7 @@ describe('$$testability', function() {
           '  <input type="text" ng-model="username"/>' +
           '</div>';
       element = $compile(element)(scope);
-      var users = $$testability.findModels(element[0], 'name', true);
+      let users = $$testability.findModels(element[0], 'name', true);
       expect(users.length).toBe(1);
       expect(users[0]).toBe(element.find('input')[0]);
     });
@@ -146,7 +146,7 @@ describe('$$testability', function() {
           '  <textarea ng-model="username"/>' +
           '</div>';
       element = $compile(element)(scope);
-      var names = $$testability.findModels(element[0], 'name');
+      let names = $$testability.findModels(element[0], 'name');
       expect(names.length).toBe(2);
       expect(names[0]).toBe(element.find('input')[0]);
       expect(names[1]).toBe(element.find('textarea')[0]);
@@ -159,7 +159,7 @@ describe('$$testability', function() {
           '  <ul><li><input type="text" ng-model="name"/></li></ul>' +
           '</div>';
       element = $compile(element)(scope);
-      var names = $$testability.findModels(element.find('ul')[0], 'name');
+      let names = $$testability.findModels(element.find('ul')[0], 'name');
       expect(names.length).toBe(1);
       expect(names[0]).toBe(angular.element(element.find('li')[0]).find('input')[0]);
     });
@@ -190,15 +190,15 @@ describe('$$testability', function() {
   describe('waiting for stability', function() {
     it('should process callbacks immediately with no outstanding requests',
       inject(function($$testability) {
-        var callback = jasmine.createSpy('callback');
+        let callback = jasmine.createSpy('callback');
         $$testability.whenStable(callback);
         expect(callback).toHaveBeenCalled();
       }));
 
     it('should delegate to `$browser.notifyWhenNoOutstandingRequests()`',
       inject(function($$testability, $browser) {
-        var spy = spyOn($browser, 'notifyWhenNoOutstandingRequests');
-        var callback = noop;
+        let spy = spyOn($browser, 'notifyWhenNoOutstandingRequests');
+        let callback = noop;
 
         $$testability.whenStable(callback);
         expect(spy).toHaveBeenCalledWith(callback);

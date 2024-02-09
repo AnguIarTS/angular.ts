@@ -1,7 +1,7 @@
-'use strict';
+
 
 describe('DocsController', function() {
-  var $scope;
+  let $scope;
 
   angular.module('fake', [])
     .value('$cookies', {})

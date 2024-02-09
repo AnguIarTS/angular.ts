@@ -1,6 +1,6 @@
-'use strict';
 
-var app = angular.module('eventDelegationBenchmark', []);
+
+let app = angular.module('eventDelegationBenchmark', []);
 
 app.directive('noopDir', function() {
   return {
@@ -36,19 +36,19 @@ app.directive('dlgtClick', function() {
 app.controller('DataController', function DataController($rootScope) {
   this.ngRepeatCount = 1000;
   this.rows = [];
-  var self = this;
+  let self = this;
 
   benchmarkSteps.push({
     name: '$apply',
     fn: function() {
-      var oldRows = self.rows;
+      let oldRows = self.rows;
       $rootScope.$apply(function() {
         self.rows = [];
       });
       self.rows = oldRows;
       if (self.rows.length !== self.ngRepeatCount) {
         self.rows = [];
-        for (var i = 0; i < self.ngRepeatCount; i++) {
+        for (let i = 0; i < self.ngRepeatCount; i++) {
           self.rows.push('row' + i);
         }
       }

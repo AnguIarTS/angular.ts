@@ -22,6 +22,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@web/dev-server": "^0.4.2",
     "angular-benchpress": "0.x.x",
     "benchmark": "1.x.x",
     "bootstrap": "^3.4.1",
@@ -88,7 +89,8 @@
     "serve-static": "^1.11.1",
     "shelljs": "^0.8.5",
     "sorted-object": "^1.0.0",
-    "stringmap": "^0.2.2"
+    "stringmap": "^0.2.2",
+    "typescript": "^5.3.3"
   },
   "config": {
     "commitizen": {

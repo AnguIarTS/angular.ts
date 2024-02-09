@@ -7,3 +7,10 @@ build:
 
 pretty:
 	@npx prettier ./src --write
+
+check:
+	@echo "Typechecking Js"
+	./node_modules/.bin/tsc
+
+test-server:
+	@npx  wds --node-resolve --open --watch --app-index test/index.html

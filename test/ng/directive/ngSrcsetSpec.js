@@ -1,9 +1,9 @@
-'use strict';
+
 
 /* eslint-disable no-script-url */
 
 describe('ngSrcset', function() {
-  var element;
+  let element;
 
   afterEach(function() {
     dealoc(element);
@@ -36,7 +36,7 @@ describe('ngSrcset', function() {
   }));
 
   it('should interpolate the expression and bind to srcset', inject(function($compile, $rootScope) {
-    var element = $compile('<img ng-srcset="some/{{id}} 2x"></div>')($rootScope);
+    let element = $compile('<img ng-srcset="some/{{id}} 2x"></div>')($rootScope);
 
     $rootScope.$digest();
     expect(element.attr('srcset')).toBeUndefined();

@@ -11,7 +11,7 @@ promise, and pass that new promise to {@link ng.$timeout#cancel $timeout.cancel(
 Example of incorrect usage that leads to this error:
 
 ```js
-var promise = $timeout(doSomething, 1000).then(doSomethingElse);
+let promise = $timeout(doSomething, 1000).then(doSomethingElse);
 $timeout.cancel(promise);
 ```
 
@@ -19,7 +19,7 @@ To fix the example above, keep a reference to the promise returned by
 {@link ng.$timeout $timeout()} and pass that to {@link ng.$timeout#cancel $timeout.cancel()}:
 
 ```js
-var promise = $timeout(doSomething, 1000);
-var newPromise = promise.then(doSomethingElse);
+let promise = $timeout(doSomething, 1000);
+let newPromise = promise.then(doSomethingElse);
 $timeout.cancel(promise);
 ```

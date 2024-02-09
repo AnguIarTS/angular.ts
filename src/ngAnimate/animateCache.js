@@ -1,18 +1,16 @@
-"use strict";
-
 /** @this */
-var $$AnimateCacheProvider = function () {
-  var KEY = "$$ngAnimateParentKey";
-  var parentCounter = 0;
-  var cache = Object.create(null);
+let $$AnimateCacheProvider = function () {
+  let KEY = "$$ngAnimateParentKey";
+  let parentCounter = 0;
+  let cache = Object.create(null);
 
   this.$get = [
     function () {
       return {
         cacheKey: function (node, method, addClass, removeClass) {
-          var parentNode = node.parentNode;
-          var parentID = parentNode[KEY] || (parentNode[KEY] = ++parentCounter);
-          var parts = [parentID, method, node.getAttribute("class")];
+          let parentNode = node.parentNode;
+          let parentID = parentNode[KEY] || (parentNode[KEY] = ++parentCounter);
+          let parts = [parentID, method, node.getAttribute("class")];
           if (addClass) {
             parts.push(addClass);
           }
@@ -23,7 +21,7 @@ var $$AnimateCacheProvider = function () {
         },
 
         containsCachedAnimationWithoutDuration: function (key) {
-          var entry = cache[key];
+          let entry = cache[key];
 
           // nothing cached, so go ahead and animate
           // otherwise it should be a valid animation
@@ -35,12 +33,12 @@ var $$AnimateCacheProvider = function () {
         },
 
         count: function (key) {
-          var entry = cache[key];
+          let entry = cache[key];
           return entry ? entry.total : 0;
         },
 
         get: function (key) {
-          var entry = cache[key];
+          let entry = cache[key];
           return entry && entry.value;
         },
 
