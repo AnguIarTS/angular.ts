@@ -67,17 +67,17 @@ let FN_ARG = /^\s*(_?)(\S+?)\1\s*$/;
 let STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
 let $injectorMinErr = minErr("$injector");
 
-function stringifyFn(fn) {
+export function stringifyFn(fn) {
   return Function.prototype.toString.call(fn);
 }
 
-function extractArgs(fn) {
+export function extractArgs(fn) {
   let fnText = stringifyFn(fn).replace(STRIP_COMMENTS, ""),
     args = fnText.match(ARROW_ARG) || fnText.match(FN_ARGS);
   return args;
 }
 
-function anonFn(fn) {
+export function anonFn(fn) {
   // For anonymous functions, showing at the very least the function signature can help in
   // debugging.
   let args = extractArgs(fn);
@@ -87,7 +87,7 @@ function anonFn(fn) {
   return "fn";
 }
 
-function annotate(fn, strictDi, name) {
+export function annotate(fn, strictDi, name) {
   let $inject, argDecl, last;
 
   if (typeof fn === "function") {
@@ -694,7 +694,7 @@ function annotate(fn, strictDi, name) {
  * ```
  */
 
-function createInjector(modulesToLoad, strictDi) {
+export function createInjector(modulesToLoad, strictDi) {
   strictDi = strictDi === true;
   let INSTANTIATING = {},
     providerSuffix = "Provider",

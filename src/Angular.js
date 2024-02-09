@@ -8,6 +8,8 @@ import {
   startingTag,
 } from "./ng/utils";
 
+import { createInjector } from "./auto/injector";
+
 /**
  * @ngdoc module
  * @name ng
@@ -31,22 +33,7 @@ export const VALIDITY_STATE_PROPERTY = "validity";
 let jqLite, // delay binding since jQuery could be loaded after us.
   ngMinErr = minErr("ng"),
   /** @name angular */
-  angular = window["angular"] || (window["angular"] = {}),
-  uid = 0;
-
-/**
- * A consistent way of creating unique IDs in angular.
- *
- * Using simple numbers allows us to generate 28.6 million unique ids per second for 10 years before
- * we hit number precision issues in JavaScript.
- *
- * Math.pow(2,53) / 60 / 60 / 24 / 365 / 10 = 28.6M
- *
- * @returns {number} an unique alpha-numeric string
- */
-function nextUid() {
-  return ++uid;
-}
+  angular = window["angular"] || (window["angular"] = {});
 
 /////////////////////////////////////////////////
 
@@ -488,10 +475,3 @@ export function assertArgFn(arg, name, acceptArrayAnnotation) {
   );
   return arg;
 }
-
-export const NODE_TYPE_ELEMENT = 1;
-export const NODE_TYPE_ATTRIBUTE = 2;
-export const NODE_TYPE_TEXT = 3;
-export const NODE_TYPE_COMMENT = 8;
-export const NODE_TYPE_DOCUMENT = 9;
-export const NODE_TYPE_DOCUMENT_FRAGMENT = 11;

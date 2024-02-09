@@ -1,4 +1,11 @@
-import { NODE_TYPE_ELEMENT } from "./Angular";
+import {
+  NODE_TYPE_ELEMENT,
+  NODE_TYPE_DOCUMENT,
+  NODE_TYPE_DOCUMENT_FRAGMENT,
+  NODE_TYPE_TEXT,
+  NODE_TYPE_ATTRIBUTE,
+  NODE_TYPE_COMMENT,
+} from "./constants";
 import { minErr } from "./minErr";
 import {
   arrayRemove,
@@ -14,15 +21,9 @@ import {
   lowercase,
   nodeName_,
   noop,
+  shallowCopy,
   trim,
 } from "./ng/utils";
-import { shallowCopy } from "./shallowCopy";
-
-/* global
-  JQLitePrototype: true,
-  BOOLEAN_ATTR: true,
-  ALIASED_ATTR: true
-*/
 
 //////////////////////////////////
 //JQLite
@@ -134,11 +135,9 @@ import { shallowCopy } from "./shallowCopy";
  * @knownIssue You cannot spy on `angular.element` if you are using Jasmine version 1.x. See
  * https://github.com/angular/angular.js/issues/14251 for more information.
  *
- * @param {string|DOMElement} element HTML string or DOMElement to be wrapped into jQuery.
+ * @param {string|HTMLElement} element HTML string or DOMElement to be wrapped into jQuery.
  * @returns {Object} jQuery object.
  */
-
-JQLite.expando = "ng339";
 
 let jqCache = (JQLite.cache = {}),
   jqId = 1;
@@ -148,7 +147,7 @@ let jqCache = (JQLite.cache = {}),
  */
 JQLite._data = function (node) {
   //jQuery always returns an object on cache miss
-  return this.cache[node[this.expando]] || {};
+  return this.cache[node["ng339"]] || {};
 };
 
 function jqNextId() {
@@ -264,12 +263,7 @@ function jqLiteBuildFragment(html, context) {
     // Convert html into DOM nodes
     tmp = fragment.appendChild(context.createElement("div"));
     tag = (TAG_NAME_REGEXP.exec(html) || ["", ""])[1].toLowerCase();
-    finalHtml = JQLite.legacyXHTMLReplacement
-      ? html.replace(XHTML_TAG_REGEXP, "<$1></$2>")
-      : html;
-
     wrap = wrapMap[tag] || [];
-
     // Create wrappers & descend into them
     i = wrap.length;
     while (--i > -1) {
@@ -277,7 +271,7 @@ function jqLiteBuildFragment(html, context) {
       tmp = tmp.firstChild;
     }
 
-    tmp.innerHTML = finalHtml;
+    tmp.innerHTML = html;
 
     nodes = concat(nodes, tmp.childNodes);
 
@@ -320,48 +314,151 @@ function jqLiteWrapNode(node, wrapper) {
   wrapper.appendChild(node);
 }
 
-// IE9-11 has no method "contains" in SVG element and in Node.prototype. Bug #10259.
-let jqLiteContains =
-  window.Node.prototype.contains ||
-  /** @this */ function (arg) {
-    // eslint-disable-next-line no-bitwise
-    return !!(this.compareDocumentPosition(arg) & 16);
-  };
+let jqLiteContains = window.Node.prototype.contains;
+
+/**
+ *
+ * @param {Node} element
+ * @returns
+ */
+export function jqLite(element) {
+  return new JQLite(element);
+}
 
 /////////////////////////////////////////////
-function JQLite(element) {
-  if (element instanceof JQLite) {
-    return element;
+class JQLite {
+  /**
+   * @param {Node} element
+   */
+  constructor(element) {
+    this.element = element;
+    this.length = 0;
   }
 
-  let argIsString;
-
-  if (isString(element)) {
-    element = trim(element);
-    argIsString = true;
+  splice() {
+    return [].splice;
   }
-  if (!(this instanceof JQLite)) {
-    if (argIsString && element.charAt(0) !== "<") {
-      throw jqLiteMinErr(
-        "nosel",
-        "Looking up elements via selectors is not supported by jqLite! See: http://docs.angularjs.org/api/angular.element",
-      );
+
+  sort() {
+    return [].sort;
+  }
+
+  clone() {
+    return jqLite(this.element.cloneNode(true));
+  }
+
+  ready(fn) {
+    function trigger() {
+      window.document.removeEventListener("DOMContentLoaded", trigger);
+      window.removeEventListener("load", trigger);
+      fn();
     }
-    return new JQLite(element);
+
+    // check if document is already loaded
+    if (window.document.readyState === "complete") {
+      window.setTimeout(fn);
+    } else {
+      // We can not use jqLite since we are not done loading and jQuery could be loaded later.
+
+      // Works for modern browsers and IE9
+      window.document.addEventListener("DOMContentLoaded", trigger);
+
+      // Fallback to window.onload for others
+      window.addEventListener("load", trigger);
+    }
   }
 
-  if (argIsString) {
-    jqLiteAddNodes(this, jqLiteParseHTML(element));
-  } else if (isFunction(element)) {
-    jqLiteReady(element);
-  } else {
-    jqLiteAddNodes(this, element);
+  toString() {
+    let value = [];
+    forEach(this, function (e) {
+      value.push("" + e);
+    });
+    return "[" + value.join(", ") + "]";
+  }
+
+  eq(index) {
+    return index >= 0 ? jqLite(this[index]) : jqLite(this[this.length + index]);
+  }
+
+  cleanData(nodes) {
+    for (let i = 0, ii = nodes.length; i < ii; i++) {
+      jqLiteRemoveData(nodes[i]);
+      jqLiteOff(nodes[i]);
+    }
+  }
+
+  removeData(element, name) {
+    let expandoId = element.ng339;
+    let expandoStore = expandoId && jqCache[expandoId];
+
+    if (expandoStore) {
+      if (name) {
+        delete expandoStore.data[name];
+      } else {
+        expandoStore.data = {};
+      }
+
+      removeIfEmptyData(element);
+    }
+  }
+
+  on(element, type, fn, unsupported) {
+    if (isDefined(unsupported))
+      throw jqLiteMinErr(
+        "onargs",
+        "jqLite#on() does not support the `selector` or `eventData` parameters",
+      );
+
+    // Do not add event handlers to non-elements because they will not be cleaned up.
+    if (!jqLiteAcceptsData(element)) {
+      return;
+    }
+
+    let expandoStore = jqLiteExpandoStore(element, true);
+    let events = expandoStore.events;
+    let handle = expandoStore.handle;
+
+    if (!handle) {
+      handle = expandoStore.handle = createEventHandler(element, events);
+    }
+
+    // http://jsperf.com/string-indexof-vs-split
+    let types = type.indexOf(" ") >= 0 ? type.split(" ") : [type];
+    let i = types.length;
+
+    let addHandler = function (type, specialHandlerWrapper, noEventListener) {
+      let eventFns = events[type];
+
+      if (!eventFns) {
+        eventFns = events[type] = [];
+        eventFns.specialHandlerWrapper = specialHandlerWrapper;
+        if (type !== "$destroy" && !noEventListener) {
+          element.addEventListener(type, handle);
+        }
+      }
+
+      eventFns.push(fn);
+    };
+
+    while (i--) {
+      type = types[i];
+      if (MOUSE_EVENT_MAP[type]) {
+        addHandler(MOUSE_EVENT_MAP[type], specialMouseHandlerWrapper);
+        addHandler(type, undefined, true);
+      } else {
+        addHandler(type);
+      }
+    }
+  }
+
+  injector(element) {
+    return jqLiteInheritedData(element, "$injector");
   }
 }
 
-function jqLiteClone(element) {
-  return element.cloneNode(true);
-}
+JQLite._data = undefined;
+
+JQLite.cache = undefined;
 
 function jqLiteDealoc(element, onlyDescendants) {
   if (!onlyDescendants && jqLiteAcceptsData(element))
@@ -631,50 +728,6 @@ function jqLiteDocumentLoaded(action, win) {
   }
 }
 
-function jqLiteReady(fn) {
-  function trigger() {
-    window.document.removeEventListener("DOMContentLoaded", trigger);
-    window.removeEventListener("load", trigger);
-    fn();
-  }
-
-  // check if document is already loaded
-  if (window.document.readyState === "complete") {
-    window.setTimeout(fn);
-  } else {
-    // We can not use jqLite since we are not done loading and jQuery could be loaded later.
-
-    // Works for modern browsers and IE9
-    window.document.addEventListener("DOMContentLoaded", trigger);
-
-    // Fallback to window.onload for others
-    window.addEventListener("load", trigger);
-  }
-}
-
-//////////////////////////////////////////
-// Functions which are declared directly.
-//////////////////////////////////////////
-let JQLitePrototype = (JQLite.prototype = {
-  ready: jqLiteReady,
-  toString: function () {
-    let value = [];
-    forEach(this, function (e) {
-      value.push("" + e);
-    });
-    return "[" + value.join(", ") + "]";
-  },
-
-  eq: function (index) {
-    return index >= 0 ? jqLite(this[index]) : jqLite(this[this.length + index]);
-  },
-
-  length: 0,
-  push: push,
-  sort: [].sort,
-  splice: [].splice,
-});
-
 //////////////////////////////////////////
 // Functions iterating getter/setters.
 // these functions return self on setter and
@@ -718,14 +771,7 @@ function getAliasedAttrName(name) {
 forEach(
   {
     data: jqLiteData,
-    removeData: jqLiteRemoveData,
     hasData: jqLiteHasData,
-    cleanData: function jqLiteCleanData(nodes) {
-      for (let i = 0, ii = nodes.length; i < ii; i++) {
-        jqLiteRemoveData(nodes[i]);
-        jqLiteOff(nodes[i]);
-      }
-    },
   },
   function (fn, name) {
     JQLite[name] = fn;
@@ -757,10 +803,6 @@ forEach(
     },
 
     controller: jqLiteController,
-
-    injector: function (element) {
-      return jqLiteInheritedData(element, "$injector");
-    },
 
     removeAttr: function (element, name) {
       element.removeAttribute(name);
@@ -1001,55 +1043,6 @@ forEach(
   {
     removeData: jqLiteRemoveData,
 
-    on: function jqLiteOn(element, type, fn, unsupported) {
-      if (isDefined(unsupported))
-        throw jqLiteMinErr(
-          "onargs",
-          "jqLite#on() does not support the `selector` or `eventData` parameters",
-        );
-
-      // Do not add event handlers to non-elements because they will not be cleaned up.
-      if (!jqLiteAcceptsData(element)) {
-        return;
-      }
-
-      let expandoStore = jqLiteExpandoStore(element, true);
-      let events = expandoStore.events;
-      let handle = expandoStore.handle;
-
-      if (!handle) {
-        handle = expandoStore.handle = createEventHandler(element, events);
-      }
-
-      // http://jsperf.com/string-indexof-vs-split
-      let types = type.indexOf(" ") >= 0 ? type.split(" ") : [type];
-      let i = types.length;
-
-      let addHandler = function (type, specialHandlerWrapper, noEventListener) {
-        let eventFns = events[type];
-
-        if (!eventFns) {
-          eventFns = events[type] = [];
-          eventFns.specialHandlerWrapper = specialHandlerWrapper;
-          if (type !== "$destroy" && !noEventListener) {
-            element.addEventListener(type, handle);
-          }
-        }
-
-        eventFns.push(fn);
-      };
-
-      while (i--) {
-        type = types[i];
-        if (MOUSE_EVENT_MAP[type]) {
-          addHandler(MOUSE_EVENT_MAP[type], specialMouseHandlerWrapper);
-          addHandler(type, undefined, true);
-        } else {
-          addHandler(type);
-        }
-      }
-    },
-
     off: jqLiteOff,
 
     one: function (element, type, fn) {
@@ -1179,8 +1172,6 @@ forEach(
         return [];
       }
     },
-
-    clone: jqLiteClone,
 
     triggerHandler: function (element, event, extraParameters) {
       let dummyEvent, eventFnsCopy, handlerArgs;

@@ -7,6 +7,8 @@
  * Interface for configuring AngularJS {@link angular.module modules}.
  */
 
+import { minErr } from "./minErr";
+
 export function setupModuleLoader(window) {
   let $injectorMinErr = minErr("$injector");
   let ngMinErr = minErr("ng");

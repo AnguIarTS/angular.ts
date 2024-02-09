@@ -1,3 +1,21 @@
+import { NODE_TYPE_TEXT } from "../constants";
+
+let uid = 0;
+
+/**
+ * A consistent way of creating unique IDs in angular.
+ *
+ * Using simple numbers allows us to generate 28.6 million unique ids per second for 10 years before
+ * we hit number precision issues in JavaScript.
+ *
+ * Math.pow(2,53) / 60 / 60 / 24 / 365 / 10 = 28.6M
+ *
+ * @returns {number} an unique alpha-numeric string
+ */
+export function nextUid() {
+  return ++uid;
+}
+
 /**
  *
  * @description Converts the specified string to lowercase.
@@ -1164,8 +1182,7 @@ export function sliceArgs(args, startIndex) {
  * distinguished from [function currying](http://en.wikipedia.org/wiki/Currying#Contrast_with_partial_function_application).
  *
  * @param {Object} self Context which `fn` should be evaluated in.
- * @param {function()} fn Function to be bound.
- * @param {...*} args Optional arguments to be prebound to the `fn` function call.
+ * @param {*} fn Function to be bound.
  * @returns {function()} Function that wraps the `fn` with all the specified bindings.
  */
 export function bind(self, fn) {
@@ -1291,8 +1308,15 @@ export function convertTimezoneToLocal(date, timezone, reverse) {
  * @returns {string} Returns the string representation of the element.
  */
 export function startingTag(element) {
-  element = jqLite(element).clone().empty();
-  let elemHtml = jqLite("<div></div>").append(element).html();
+  const clonedElement = element.cloneNode(true);
+  while (clonedElement.firstChild) {
+    clonedElement.removeChild(clonedElement.firstChild);
+  }
+  const tempDiv = document.createElement("div");
+
+  // Append the cloned element to the temp div and get its HTML
+  tempDiv.appendChild(clonedElement);
+  let elemHtml = tempDiv.innerHTML;
   try {
     return element[0].nodeType === NODE_TYPE_TEXT
       ? lowercase(elemHtml)
@@ -1427,6 +1451,32 @@ export function getNgAttribute(element, ngAttr) {
   }
   return null;
 }
+
 function ngMinErr(arg0, arg1) {
   throw new Error("Function not implemented.");
+}
+
+/**
+ * Creates a shallow copy of an object, an array or a primitive.
+ *
+ * Assumes that there are no proto properties for objects.
+ */
+export function shallowCopy(src, dst) {
+  if (isArray(src)) {
+    dst = dst || [];
+
+    for (let i = 0, ii = src.length; i < ii; i++) {
+      dst[i] = src[i];
+    }
+  } else if (isObject(src)) {
+    dst = dst || {};
+
+    for (let key in src) {
+      if (!(key.startsWith("$") && key.charAt(1) === "$")) {
+        dst[key] = src[key];
+      }
+    }
+  }
+
+  return dst || src;
 }

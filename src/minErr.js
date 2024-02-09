@@ -4,7 +4,13 @@
   isValidObjectMaxDepth
 */
 
-import { sliceArgs } from "./ng/utils";
+import {
+  isBoolean,
+  isDefined,
+  isObject,
+  isValidObjectMaxDepth,
+  sliceArgs,
+} from "./ng/utils";
 import { toDebugString } from "./stringify";
 
 export const minErrConfig = {
@@ -82,14 +88,10 @@ export function errorHandlingConfig(config) {
  * should all be static strings, not variables or general expressions.
  *
  * @param {string} module The namespace to use for the new minErr instance.
- * @param {function} ErrorConstructor Custom error constructor to be instantiated when returning
- *   error from returned function, for cases when a particular type of error is useful.
- * @returns {function(code:string, template:string, ...templateArgs): Error} minErr instance
+ * @returns {function(string, string, ...*): Error} minErr instance
  */
 
-export function minErr(module, ErrorConstructor) {
-  ErrorConstructor = ErrorConstructor || Error;
-
+export function minErr(module) {
   let url = 'https://errors.angularjs.org/"NG_VERSION_FULL"/';
   let regex = url.replace(".", "\\.") + "[\\s\\S]*";
   let errRegExp = new RegExp(regex, "g");
@@ -132,6 +134,6 @@ export function minErr(module, ErrorConstructor) {
       }
     }
 
-    return new ErrorConstructor(message);
+    return Error(message);
   };
 }

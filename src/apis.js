@@ -1,3 +1,5 @@
+import { isNumberNaN } from "./ng/utils";
+
 /**
  * Computes a hash of an 'obj'.
  * Hash of a:

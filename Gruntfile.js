@@ -202,9 +202,7 @@ module.exports = function(grunt) {
       },
       touchModuleTestBundle: {
         dest: 'build/test-bundles/angular-touch.js',
-        prefix: 'src/module.prefix',
         src: mergeFilesFor('karmaModules-ngTouch'),
-        suffix: 'src/module.suffix'
       },
       mocks: {
         dest: 'build/angular-mocks.js',
@@ -217,9 +215,7 @@ module.exports = function(grunt) {
       },
       sanitizeModuleTestBundle: {
         dest: 'build/test-bundles/angular-sanitize.js',
-        prefix: 'src/module.prefix',
         src: mergeFilesFor('karmaModules-ngSanitize'),
-        suffix: 'src/module.suffix'
       },
       resource: {
         dest: 'build/angular-resource.js',
@@ -227,9 +223,7 @@ module.exports = function(grunt) {
       },
       resourceModuleTestBundle: {
         dest: 'build/test-bundles/angular-resource.js',
-        prefix: 'src/module.prefix',
         src: mergeFilesFor('karmaModules-ngResource'),
-        suffix: 'src/module.suffix'
       },
       messageformat: {
         dest: 'build/angular-message-format.js',
@@ -237,9 +231,7 @@ module.exports = function(grunt) {
       },
       messageformatModuleTestBundle: {
         dest: 'build/test-bundles/angular-message-format.js',
-        prefix: 'src/module.prefix',
         src: mergeFilesFor('karmaModules-ngMessageFormat'),
-        suffix: 'src/module.suffix'
       },
       messages: {
         dest: 'build/angular-messages.js',
@@ -247,9 +239,7 @@ module.exports = function(grunt) {
       },
       messagesModuleTestBundle: {
         dest: 'build/test-bundles/angular-messages.js',
-        prefix: 'src/module.prefix',
         src: mergeFilesFor('karmaModules-ngMessages'),
-        suffix: 'src/module.suffix'
       },
       animate: {
         dest: 'build/angular-animate.js',
@@ -261,9 +251,7 @@ module.exports = function(grunt) {
       },
       routeModuleTestBundle: {
         dest: 'build/test-bundles/angular-route.js',
-        prefix: 'src/module.prefix',
         src: mergeFilesFor('karmaModules-ngRoute'),
-        suffix: 'src/module.suffix'
       },
       cookies: {
         dest: 'build/angular-cookies.js',
@@ -271,9 +259,7 @@ module.exports = function(grunt) {
       },
       cookiesModuleTestBundle: {
         dest: 'build/test-bundles/angular-cookies.js',
-        prefix: 'src/module.prefix',
         src: mergeFilesFor('karmaModules-ngCookies'),
-        suffix: 'src/module.suffix'
       },
       aria: {
         dest: 'build/angular-aria.js',

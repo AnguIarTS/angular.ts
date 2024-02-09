@@ -1,3 +1,4 @@
+import { jqLite } from "../jqLite";
 import { snake_case } from "./utils";
 
 /* ! VARIABLE/FUNCTION NAMING CONVENTIONS THAT APPLY TO THIS FILE!
@@ -2558,7 +2559,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           } else if (cloneConnectFn) {
             // important!!: we must call our jqLite.clone() since the jQuery one is trying to be smart
             // and sometimes changes the structure of the DOM.
-            $linkNode = JQLitePrototype.clone.call($compileNodes);
+            $linkNode = JQLite.prototype.clone.call($compileNodes);
           } else {
             $linkNode = $compileNodes;
           }
