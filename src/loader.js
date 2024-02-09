@@ -8,6 +8,7 @@
  */
 
 import { minErr } from "./minErr";
+import { isDefined, isFunction, isObject } from "./ng/utils";
 
 export function setupModuleLoader(window) {
   let $injectorMinErr = minErr("$injector");

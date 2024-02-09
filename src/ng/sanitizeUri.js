@@ -3,7 +3,7 @@
  * @description
  * Private service to sanitize uris for links and images. Used by $compile and $sanitize.
  */
-function $$SanitizeUriProvider() {
+export function $$SanitizeUriProvider() {
   let aHrefSanitizationTrustedUrlList = /^\s*(https?|s?ftp|mailto|tel|file):/,
     imgSrcSanitizationTrustedUrlList =
       /^\s*((https?|ftp|file|blob):|data:image\/)/;

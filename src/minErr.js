@@ -1,9 +1,3 @@
-/* exported
-  minErrConfig,
-  errorHandlingConfig,
-  isValidObjectMaxDepth
-*/
-
 import {
   isBoolean,
   isDefined,
@@ -13,7 +7,7 @@ import {
 } from "./ng/utils";
 import { toDebugString } from "./stringify";
 
-export const minErrConfig = {
+const minErrConfig = {
   objectMaxDepth: 5,
   urlErrorParamsEnabled: true,
 };

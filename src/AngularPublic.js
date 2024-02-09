@@ -1,109 +1,10 @@
-/* global angularModule: true,
-  version: true,
-
-  $CompileProvider,
-
-  htmlAnchorDirective,
-  inputDirective,
-  hiddenInputBrowserCacheDirective,
-  formDirective,
-  scriptDirective,
-  selectDirective,
-  optionDirective,
-  ngBindDirective,
-  ngBindHtmlDirective,
-  ngBindTemplateDirective,
-  ngClassDirective,
-  ngClassEvenDirective,
-  ngClassOddDirective,
-  ngCloakDirective,
-  ngControllerDirective,
-  ngFormDirective,
-  ngHideDirective,
-  ngIfDirective,
-  ngIncludeDirective,
-  ngIncludeFillContentDirective,
-  ngInitDirective,
-  ngNonBindableDirective,
-  ngPluralizeDirective,
-  ngRefDirective,
-  ngRepeatDirective,
-  ngShowDirective,
-  ngStyleDirective,
-  ngSwitchDirective,
-  ngSwitchWhenDirective,
-  ngSwitchDefaultDirective,
-  ngOptionsDirective,
-  ngTranscludeDirective,
-  ngModelDirective,
-  ngListDirective,
-  ngChangeDirective,
-  patternDirective,
-  patternDirective,
-  requiredDirective,
-  requiredDirective,
-  minlengthDirective,
-  minlengthDirective,
-  maxlengthDirective,
-  maxlengthDirective,
-  ngValueDirective,
-  ngModelOptionsDirective,
-  ngAttributeAliasDirectives,
-  ngEventDirectives,
-
-  $AnchorScrollProvider,
-  $AnimateProvider,
-  $CoreAnimateCssProvider,
-  $$CoreAnimateJsProvider,
-  $$CoreAnimateQueueProvider,
-  $$AnimateRunnerFactoryProvider,
-  $$AnimateAsyncRunFactoryProvider,
-  $BrowserProvider,
-  $CacheFactoryProvider,
-  $ControllerProvider,
-  $DateProvider,
-  $DocumentProvider,
-  $$IsDocumentHiddenProvider,
-  $ExceptionHandlerProvider,
-  $FilterProvider,
-  $$ForceReflowProvider,
-  $InterpolateProvider,
-  $$IntervalFactoryProvider,
-  $IntervalProvider,
-  $HttpProvider,
-  $HttpParamSerializerProvider,
-  $HttpParamSerializerJQLikeProvider,
-  $HttpBackendProvider,
-  $xhrFactoryProvider,
-  $jsonpCallbacksProvider,
-  $LocationProvider,
-  $LogProvider,
-  $$MapProvider,
-  $ParseProvider,
-  $RootScopeProvider,
-  $QProvider,
-  $$QProvider,
-  $$SanitizeUriProvider,
-  $SceProvider,
-  $SceDelegateProvider,
-  $SnifferProvider,
-  $$TaskTrackerFactoryProvider,
-  $TemplateCacheProvider,
-  $TemplateRequestProvider,
-  $$TestabilityProvider,
-  $TimeoutProvider,
-  $$RAFProvider,
-  $WindowProvider,
-  $$jqLiteProvider,
-  $$CookieReaderProvider
-*/
-
+import { createInjector } from "./auto/injector";
+import { jqLite } from "./jqLite";
 import { setupModuleLoader } from "./loader";
 
-const { bind } = require("serve-static");
-const { bootstrap, reloadWithDebugInfo } = require("./Angular");
+const { bootstrap, reloadWithDebugInfo, getTestability } = require("./Angular");
 const { errorHandlingConfig, minErr } = require("./minErr");
-const {
+import {
   extend,
   copy,
   merge,
@@ -128,7 +29,7 @@ const {
   lowercase,
   stringify,
   uppercase,
-} = require("./ng/utils");
+} from "./ng/utils";
 
 /**
  * @ngdoc object
@@ -193,7 +94,7 @@ export function publishExternalAPI(angular) {
     $$uppercase: uppercase,
   });
 
-  angularModule = setupModuleLoader(window);
+  const angularModule = setupModuleLoader(window);
 
   angularModule("ng", [
     "$provide",
