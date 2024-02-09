@@ -24,11 +24,9 @@
     if (obj == null || isWindow(obj)) return false;
 
     // arrays, strings and jQuery/jqLite objects are array like
-    // * jqLite is either the jQuery or jqLite constructor function
     // * we have to check the existence of jqLite first as this method is called
     //   via the forEach method when constructing the jqLite object in the first place
-    if (isArray$1(obj) || isString(obj) || (jqLite && obj instanceof jqLite))
-      return true;
+    if (isArray$1(obj) || isString(obj)) return true;
 
     // Support: iOS 8.2 (not reproducible in simulator)
     // "length" in obj used to prevent JIT error (gh-11508)
@@ -139,7 +137,7 @@
    * @description
    * Determines if a reference is an `Array`.
    *
-   * @param {*} value Reference to check.
+   * @param {*} arr Reference to check.
    * @returns {boolean} True if `value` is an `Array`.
    */
   function isArray$1(arr) {
@@ -193,7 +191,7 @@
   }
 
   /**
-   * @param {*} obj
+   * @param {*} value
    * @returns {boolean}
    */
   function isTypedArray(value) {
@@ -278,13 +276,6 @@
         // Slow path for objects inheriting Object.prototype, hasOwnProperty check needed
         for (key in obj) {
           if (obj.hasOwnProperty(key)) {
-            iterator.call(context, obj[key], key, obj);
-          }
-        }
-      } else {
-        // Slow path for objects which do not have a method `hasOwnProperty`
-        for (key in obj) {
-          if (hasOwnProperty.call(obj, key)) {
             iterator.call(context, obj[key], key, obj);
           }
         }
@@ -373,7 +364,7 @@
    * @description
    * Determines if a reference is a DOM element (or wrapped jQuery element).
    *
-   * @param {*} value Reference to check.
+   * @param {*} node Reference to check.
    * @returns {boolean} True if `value` is a DOM element (or wrapped jQuery element).
    */
   function isElement(node) {
@@ -478,16 +469,10 @@
 
     if (destination) {
       if (isTypedArray(destination) || isArrayBuffer(destination)) {
-        throw ngMinErr(
-          "cpta",
-          "Can't copy! TypedArray destination cannot be mutated.",
-        );
+        throw ngMinErr$1();
       }
       if (source === destination) {
-        throw ngMinErr(
-          "cpi",
-          "Can't copy! Source and destination are identical.",
-        );
+        throw ngMinErr$1();
       }
 
       // Empty the destination object
@@ -531,13 +516,6 @@
             destination[key] = copyElement(source[key], maxDepth);
           }
         }
-      } else {
-        // Slowest path --- hasOwnProperty can't be called as a method
-        for (key in source) {
-          if (hasOwnProperty.call(source, key)) {
-            destination[key] = copyElement(source[key], maxDepth);
-          }
-        }
       }
       setHashKey(destination, h);
       return destination;
@@ -556,10 +534,7 @@
       }
 
       if (isWindow(source) || isScope(source)) {
-        throw ngMinErr(
-          "cpws",
-          "Can't copy! Making copies of Window or Scope instances is not supported.",
-        );
+        throw ngMinErr$1();
       }
 
       let needsRecurse = false;
@@ -698,6 +673,9 @@
     }
     return null;
   }
+  function ngMinErr$1(arg0, arg1) {
+    throw new Error("Function not implemented.");
+  }
 
   function serializeObject(obj, maxDepth) {
     let seen = [];
@@ -823,86 +801,6 @@
     };
   }
 
-  /* We need to tell ESLint what variables are being exported */
-  /* exported
-    angularInit,
-    bootstrap,
-    jqLite,
-    jQuery,
-    slice,
-    splice,
-    push,
-    toString,
-    minErrConfig,
-    errorHandlingConfig,
-    isValidObjectMaxDepth,
-    ngMinErr,
-    angularModule,
-    uid,
-    REGEX_STRING_REGEXP,
-    VALIDITY_STATE_PROPERTY,
-
-    
-    nodeName_,
-    forEach,
-    forEachSorted,
-    reverseParams,
-    nextUid,
-    setHashKey,
-    extend,
-    toInt,
-    inherit,
-    merge,
-    noop,
-    identity,
-    valueFn,
-    trim,
-    escapeForRegexp,
-    isElement,
-    arrayRemove,
-    copy,
-    simpleCompare,
-    equals,
-    csp,
-    jq,
-    concat,
-    sliceArgs,
-    bind,
-    toJsonReplacer,
-    toJson,
-    fromJson,
-    convertTimezoneToLocal,
-    timezoneToOffset,
-    addDateMinutes,
-    startingTag,
-    tryDecodeURIComponent,
-    parseKeyValue,
-    toKeyValue,
-    encodeUriSegment,
-    encodeUriQuery,
-   
-    getTestability,
-    bindJQuery,
-    assertArg,
-    assertArgFn,
-    assertNotHasOwnProperty,
-    getter,
-    getBlockNodes,
-    hasOwnProperty,
-    createMap,
-    stringify,
-    UNSAFE_restoreLegacyJqLiteXHTMLReplacement,
-
-    NODE_TYPE_ELEMENT,
-    NODE_TYPE_ATTRIBUTE,
-    NODE_TYPE_TEXT,
-    NODE_TYPE_COMMENT,
-    NODE_TYPE_DOCUMENT,
-    NODE_TYPE_DOCUMENT_FRAGMENT
-  */
-
-  ////////////////////////////////////
-
   /**
    * @ngdoc module
    * @name ng
@@ -923,10 +821,8 @@
   // This is used so that it's possible for internal tests to create mock ValidityStates.
   const VALIDITY_STATE_PROPERTY = "validity";
 
-  const hasOwnProperty$1 = Object.prototype.hasOwnProperty;
-
   let jqLite$1, // delay binding since jQuery could be loaded after us.
-    ngMinErr$1 = minErr("ng"),
+    ngMinErr = minErr("ng"),
     /** @name angular */
     angular = window["angular"] || (window["angular"] = {});
 
@@ -1239,7 +1135,7 @@
         let tag =
           element[0] === window.document ? "document" : startingTag(element);
         // Encode angle brackets to prevent input from being sanitized to empty string #8683.
-        throw ngMinErr$1(
+        throw ngMinErr(
           "btstrpd",
           "App already bootstrapped with this element '{0}'",
           tag.replace(/</, "&lt;").replace(/>/, "&gt;"),
@@ -1322,11 +1218,30 @@
   }
 
   /**
+   * @function getTestability
+
+   * @description
+   * Get the testability service for the instance of AngularJS on the given
+   * element.
+   * @param {DOMElement} element DOM element which is the root of AngularJS application.
+   */
+  function getTestability(rootElement) {
+    let injector = angular.element(rootElement).injector();
+    if (!injector) {
+      throw ngMinErr(
+        "test",
+        "no injector found for element argument to getTestability",
+      );
+    }
+    return injector.get("$$testability");
+  }
+
+  /**
    * throw error if the argument is falsy.
    */
   function assertArg(arg, name, reason) {
     if (!arg) {
-      throw ngMinErr$1(
+      throw ngMinErr(
         "areq",
         "Argument '{0}' is {1}",
         name || "?",
@@ -1352,6 +1267,19 @@
     return arg;
   }
 
+  const NODE_TYPE_ELEMENT = 1;
+  const NODE_TYPE_ATTRIBUTE = 2;
+  const NODE_TYPE_TEXT$1 = 3;
+  const NODE_TYPE_COMMENT = 8;
+  const NODE_TYPE_DOCUMENT = 9;
+  const NODE_TYPE_DOCUMENT_FRAGMENT = 11;
+
+  exports.NODE_TYPE_ATTRIBUTE = NODE_TYPE_ATTRIBUTE;
+  exports.NODE_TYPE_COMMENT = NODE_TYPE_COMMENT;
+  exports.NODE_TYPE_DOCUMENT = NODE_TYPE_DOCUMENT;
+  exports.NODE_TYPE_DOCUMENT_FRAGMENT = NODE_TYPE_DOCUMENT_FRAGMENT;
+  exports.NODE_TYPE_ELEMENT = NODE_TYPE_ELEMENT;
+  exports.NODE_TYPE_TEXT = NODE_TYPE_TEXT$1;
   exports.REGEX_STRING_REGEXP = REGEX_STRING_REGEXP;
   exports.VALIDITY_STATE_PROPERTY = VALIDITY_STATE_PROPERTY;
   exports.allowAutoBootstrap = allowAutoBootstrap;
@@ -1359,7 +1287,7 @@
   exports.assertArg = assertArg;
   exports.assertArgFn = assertArgFn;
   exports.bootstrap = bootstrap;
-  exports.hasOwnProperty = hasOwnProperty$1;
+  exports.getTestability = getTestability;
   exports.reloadWithDebugInfo = reloadWithDebugInfo;
 
 }));

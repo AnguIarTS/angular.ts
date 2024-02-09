@@ -24,7 +24,7 @@
      </file>
    </example>
  */
-function $DocumentProvider() {
+export function $DocumentProvider() {
   this.$get = [
     "$window",
     function (window) {
@@ -38,7 +38,7 @@ function $DocumentProvider() {
  * @this
  * Listens for document visibility change and makes the current status accessible.
  */
-function $$IsDocumentHiddenProvider() {
+export function $$IsDocumentHiddenProvider() {
   this.$get = [
     "$document",
     "$rootScope",

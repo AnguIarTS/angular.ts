@@ -8,86 +8,6 @@ import {
   startingTag,
 } from "./ng/utils";
 
-/* We need to tell ESLint what variables are being exported */
-/* exported
-  angularInit,
-  bootstrap,
-  jqLite,
-  jQuery,
-  slice,
-  splice,
-  push,
-  toString,
-  minErrConfig,
-  errorHandlingConfig,
-  isValidObjectMaxDepth,
-  ngMinErr,
-  angularModule,
-  uid,
-  REGEX_STRING_REGEXP,
-  VALIDITY_STATE_PROPERTY,
-
-  
-  nodeName_,
-  forEach,
-  forEachSorted,
-  reverseParams,
-  nextUid,
-  setHashKey,
-  extend,
-  toInt,
-  inherit,
-  merge,
-  noop,
-  identity,
-  valueFn,
-  trim,
-  escapeForRegexp,
-  isElement,
-  arrayRemove,
-  copy,
-  simpleCompare,
-  equals,
-  csp,
-  jq,
-  concat,
-  sliceArgs,
-  bind,
-  toJsonReplacer,
-  toJson,
-  fromJson,
-  convertTimezoneToLocal,
-  timezoneToOffset,
-  addDateMinutes,
-  startingTag,
-  tryDecodeURIComponent,
-  parseKeyValue,
-  toKeyValue,
-  encodeUriSegment,
-  encodeUriQuery,
- 
-  getTestability,
-  bindJQuery,
-  assertArg,
-  assertArgFn,
-  assertNotHasOwnProperty,
-  getter,
-  getBlockNodes,
-  hasOwnProperty,
-  createMap,
-  stringify,
-  UNSAFE_restoreLegacyJqLiteXHTMLReplacement,
-
-  NODE_TYPE_ELEMENT,
-  NODE_TYPE_ATTRIBUTE,
-  NODE_TYPE_TEXT,
-  NODE_TYPE_COMMENT,
-  NODE_TYPE_DOCUMENT,
-  NODE_TYPE_DOCUMENT_FRAGMENT
-*/
-
-////////////////////////////////////
-
 /**
  * @ngdoc module
  * @name ng
@@ -108,13 +28,10 @@ export const REGEX_STRING_REGEXP = /^\/(.+)\/([a-z]*)$/;
 // This is used so that it's possible for internal tests to create mock ValidityStates.
 export const VALIDITY_STATE_PROPERTY = "validity";
 
-export const hasOwnProperty = Object.prototype.hasOwnProperty;
-
 let jqLite, // delay binding since jQuery could be loaded after us.
   ngMinErr = minErr("ng"),
   /** @name angular */
   angular = window["angular"] || (window["angular"] = {}),
-  angularModule,
   uid = 0;
 
 /**
@@ -530,7 +447,7 @@ export function reloadWithDebugInfo() {
  * element.
  * @param {DOMElement} element DOM element which is the root of AngularJS application.
  */
-function getTestability(rootElement) {
+export function getTestability(rootElement) {
   let injector = angular.element(rootElement).injector();
   if (!injector) {
     throw ngMinErr(
@@ -572,9 +489,9 @@ export function assertArgFn(arg, name, acceptArrayAnnotation) {
   return arg;
 }
 
-const NODE_TYPE_ELEMENT = 1;
-const NODE_TYPE_ATTRIBUTE = 2;
-const NODE_TYPE_TEXT = 3;
-const NODE_TYPE_COMMENT = 8;
-const NODE_TYPE_DOCUMENT = 9;
-const NODE_TYPE_DOCUMENT_FRAGMENT = 11;
+export const NODE_TYPE_ELEMENT = 1;
+export const NODE_TYPE_ATTRIBUTE = 2;
+export const NODE_TYPE_TEXT = 3;
+export const NODE_TYPE_COMMENT = 8;
+export const NODE_TYPE_DOCUMENT = 9;
+export const NODE_TYPE_DOCUMENT_FRAGMENT = 11;

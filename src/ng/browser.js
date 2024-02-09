@@ -1,11 +1,11 @@
 /* global getHash: true, stripHash: false */
 
-function getHash(url) {
+export function getHash(url) {
   let index = url.indexOf("#");
   return index === -1 ? "" : url.substr(index);
 }
 
-function trimEmptyHash(url) {
+export function trimEmptyHash(url) {
   return url.replace(/#$/, "");
 }
 
@@ -30,7 +30,13 @@ function trimEmptyHash(url) {
  * @param {object} $log window.console or an object with the same interface.
  * @param {object} $sniffer $sniffer service
  */
-function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
+export function Browser(
+  window,
+  document,
+  $log,
+  $sniffer,
+  $$taskTrackerFactory,
+) {
   let self = this,
     location = window.location,
     history = window.history,
@@ -337,7 +343,7 @@ function Browser(window, document, $log, $sniffer, $$taskTrackerFactory) {
 }
 
 /** @this */
-function $BrowserProvider() {
+export function $BrowserProvider() {
   this.$get = [
     "$window",
     "$log",

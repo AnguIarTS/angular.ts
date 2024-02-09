@@ -1,5 +1,4 @@
-/** @this */
-function $$RAFProvider() {
+export function $$RAFProvider() {
   //rAF
   this.$get = [
     "$window",

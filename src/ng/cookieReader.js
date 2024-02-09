@@ -7,7 +7,7 @@
  *
  * @return {Object} a key/value map of the current cookies
  */
-function $$CookieReader($document) {
+export function $$CookieReader($document) {
   let rawDocument = $document[0] || {};
   let lastCookies = {};
   let lastCookieString = "";
@@ -61,6 +61,6 @@ function $$CookieReader($document) {
 $$CookieReader.$inject = ["$document"];
 
 /** @this */
-function $$CookieReaderProvider() {
+export function $$CookieReaderProvider() {
   this.$get = $$CookieReader;
 }

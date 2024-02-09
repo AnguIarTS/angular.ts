@@ -15,7 +15,7 @@
  * @description
  * This is very simple implementation of testing browser's features.
  */
-function $SnifferProvider() {
+export function $SnifferProvider() {
   this.$get = [
     "$window",
     "$document",

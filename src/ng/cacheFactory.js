@@ -80,7 +80,7 @@
      </file>
    </example>
  */
-function $CacheFactoryProvider() {
+export function $CacheFactoryProvider() {
   this.$get = function () {
     let caches = {};
 
@@ -392,7 +392,7 @@ function $CacheFactoryProvider() {
  * ```
  *
  */
-function $TemplateCacheProvider() {
+export function $TemplateCacheProvider() {
   this.$get = [
     "$cacheFactory",
     function ($cacheFactory) {

@@ -28,11 +28,9 @@ export function isArrayLike(obj) {
   if (obj == null || isWindow(obj)) return false;
 
   // arrays, strings and jQuery/jqLite objects are array like
-  // * jqLite is either the jQuery or jqLite constructor function
   // * we have to check the existence of jqLite first as this method is called
   //   via the forEach method when constructing the jqLite object in the first place
-  if (isArray(obj) || isString(obj) || (jqLite && obj instanceof jqLite))
-    return true;
+  if (isArray(obj) || isString(obj)) return true;
 
   // Support: iOS 8.2 (not reproducible in simulator)
   // "length" in obj used to prevent JIT error (gh-11508)
@@ -157,7 +155,7 @@ export function isDate(value) {
  * @description
  * Determines if a reference is an `Array`.
  *
- * @param {*} value Reference to check.
+ * @param {*} arr Reference to check.
  * @returns {boolean} True if `value` is an `Array`.
  */
 export function isArray(arr) {
@@ -241,7 +239,7 @@ export function isFile(obj) {
 }
 
 /**
- * @param {*} value
+ * @param {*} obj
  * @returns {boolean}
  */
 export function isFormData(obj) {
@@ -249,7 +247,7 @@ export function isFormData(obj) {
 }
 
 /**
- * @param {*} value
+ * @param {*} obj
  * @returns {boolean}
  */
 export function isBlob(obj) {
@@ -273,7 +271,7 @@ export function isPromiseLike(obj) {
 }
 
 /**
- * @param {*} obj
+ * @param {*} value
  * @returns {boolean}
  */
 export function isTypedArray(value) {
@@ -295,8 +293,8 @@ export function isArrayBuffer(obj) {
 }
 
 /**
- * @param {T} obj
- * @returns {string | T}
+ * @param {*} value
+ * @returns {string | *}
  */
 export function trim(value) {
   return isString(value) ? value.trim() : value;
@@ -376,13 +374,6 @@ export function forEach(obj, iterator, context) {
           iterator.call(context, obj[key], key, obj);
         }
       }
-    } else {
-      // Slow path for objects which do not have a method `hasOwnProperty`
-      for (key in obj) {
-        if (hasOwnProperty.call(obj, key)) {
-          iterator.call(context, obj[key], key, obj);
-        }
-      }
     }
   }
   return obj;
@@ -390,8 +381,8 @@ export function forEach(obj, iterator, context) {
 
 export function forEachSorted(obj, iterator, context) {
   let keys = Object.keys(obj).sort();
-  for (let i = 0; i < keys.length; i++) {
-    iterator.call(context, obj[keys[i]], keys[i]);
+  for (const element of keys) {
+    iterator.call(context, obj[element], element);
   }
   return keys;
 }
@@ -573,10 +564,14 @@ export function noop() {}
  * @param {*} value to be returned.
  * @returns {*} the value passed in.
  */
-export function identity($) {
-  return $;
+export function identity(value) {
+  return value;
 }
 
+/**
+ * @param {*} value
+ * @returns {() => *}
+ */
 export function valueFn(value) {
   return function valueRef() {
     return value;
@@ -608,7 +603,7 @@ export function escapeForRegexp(s) {
  * @description
  * Determines if a reference is a DOM element (or wrapped jQuery element).
  *
- * @param {*} value Reference to check.
+ * @param {*} node Reference to check.
  * @returns {boolean} True if `value` is a DOM element (or wrapped jQuery element).
  */
 export function isElement(node) {
@@ -779,13 +774,6 @@ export function copy(source, destination, maxDepth) {
       // Slow path, which must rely on hasOwnProperty
       for (key in source) {
         if (source.hasOwnProperty(key)) {
-          destination[key] = copyElement(source[key], maxDepth);
-        }
-      }
-    } else {
-      // Slowest path --- hasOwnProperty can't be called as a method
-      for (key in source) {
-        if (hasOwnProperty.call(source, key)) {
           destination[key] = copyElement(source[key], maxDepth);
         }
       }
@@ -1336,7 +1324,7 @@ export function parseKeyValue(/**string*/ keyValue) {
       key = tryDecodeURIComponent(key);
       if (isDefined(key)) {
         val = isDefined(val) ? tryDecodeURIComponent(val) : true;
-        if (!hasOwnProperty.call(obj, key)) {
+        if (!Object.hasOwnProperty.call(obj, key)) {
           obj[key] = val;
         } else if (isArray(obj[key])) {
           obj[key].push(val);
@@ -1438,4 +1426,7 @@ export function getNgAttribute(element, ngAttr) {
     }
   }
   return null;
+}
+function ngMinErr(arg0, arg1) {
+  throw new Error("Function not implemented.");
 }

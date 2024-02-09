@@ -1,7 +1,7 @@
 let $intervalMinErr = minErr("$interval");
 
 /** @this */
-function $IntervalProvider() {
+export function $IntervalProvider() {
   this.$get = [
     "$$intervalFactory",
     "$window",

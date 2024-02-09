@@ -1,5 +1,3 @@
-/* global routeToRegExp: true */
-
 /**
  * @param {string} path - The path to parse. (It is assumed to have query and hash stripped off.)
  * @param {Object} opts - Options.
@@ -12,7 +10,7 @@
  *
  * Originally inspired by `pathRexp` in `visionmedia/express/lib/utils.js`.
  */
-function routeToRegExp(path, opts) {
+export function routeToRegExp(path, opts) {
   let keys = [];
 
   let pattern = path

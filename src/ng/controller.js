@@ -21,7 +21,7 @@ function identifierForController(controller, ident) {
  * This provider allows controller registration via the
  * {@link ng.$controllerProvider#register register} method.
  */
-function $ControllerProvider() {
+export function $ControllerProvider() {
   let controllers = {};
 
   /**

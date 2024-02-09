@@ -1,13 +1,22 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *     Any commits to this file should be reviewed with security in mind.  *
- *   Changes to this file can potentially create security vulnerabilities. *
- *          An approval from 2 Core members with history of modifying      *
- *                         this file is required.                          *
- *                                                                         *
- *  Does the change somehow allow for arbitrary javascript to be executed? *
- *    Or allows for someone to change the prototype of built-in objects?   *
- *     Or gives undesired access to variables likes document or window?    *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+import { NODE_TYPE_ELEMENT } from "./Angular";
+import { minErr } from "./minErr";
+import {
+  arrayRemove,
+  concat,
+  extend,
+  forEach,
+  isArray,
+  isDefined,
+  isFunction,
+  isObject,
+  isString,
+  isUndefined,
+  lowercase,
+  nodeName_,
+  noop,
+  trim,
+} from "./ng/utils";
+import { shallowCopy } from "./shallowCopy";
 
 /* global
   JQLitePrototype: true,

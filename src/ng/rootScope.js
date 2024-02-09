@@ -65,7 +65,7 @@
  * They also provide event emission/broadcast and subscription facility. See the
  * {@link guide/scope developer guide on scopes}.
  */
-function $RootScopeProvider() {
+export function $RootScopeProvider() {
   let TTL = 10;
   let $rootScopeMinErr = minErr("$rootScope");
   let lastDirtyWatch = null;

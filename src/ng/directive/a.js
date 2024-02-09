@@ -9,7 +9,7 @@
  *
  * For dynamically creating `href` attributes for a tags, see the {@link ng.ngHref `ngHref`} directive.
  */
-let htmlAnchorDirective = valueFn({
+export const htmlAnchorDirective = valueFn({
   restrict: "E",
   compile: function (element, attr) {
     if (!attr.href && !attr.xlinkHref) {

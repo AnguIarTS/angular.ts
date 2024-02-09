@@ -2,15 +2,14 @@ import { minErr } from "../minErr";
 
 let $timeoutMinErr = minErr("$timeout");
 
-/** @this */
-function $TimeoutProvider() {
+export function $TimeoutProvider() {
   this.$get = [
     "$rootScope",
     "$browser",
     "$q",
     "$$q",
     "$exceptionHandler",
-    function ($rootScope, $browser, $q, $$q, $exceptionHandler) {
+    ($rootScope, $browser, $q, $$q, $exceptionHandler) => {
       let deferreds = {};
 
       /**

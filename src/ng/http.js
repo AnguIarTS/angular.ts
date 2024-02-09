@@ -144,7 +144,7 @@ function $HttpParamSerializerJQLikeProvider() {
   };
 }
 
-function defaultHttpResponseTransform(data, headers) {
+export function defaultHttpResponseTransform(data, headers) {
   if (isString(data)) {
     // Strip json vulnerability protection prefix and trim whitespace
     let tempData = data.replace(JSON_PROTECTION_PREFIX, "").trim();

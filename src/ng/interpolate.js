@@ -62,9 +62,9 @@ $interpolateMinErr.interr = function (text, err) {
 </file>
 </example>
  */
-function $InterpolateProvider() {
-  let startSymbol = "{{";
-  let endSymbol = "}}";
+export function $InterpolateProvider() {
+  const startSymbol = "{{";
+  const endSymbol = "}}";
 
   /**
    * @ngdoc method

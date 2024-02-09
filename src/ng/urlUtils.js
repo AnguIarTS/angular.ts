@@ -62,7 +62,7 @@ let ipv6InBrackets = urlParsingNode.hostname === "[::1]";
  *   | pathname      | The pathname, beginning with "/"                                       |
  *
  */
-function urlResolve(url) {
+export function urlResolve(url) {
   if (!isString(url)) return url;
 
   let href = url;
@@ -102,7 +102,7 @@ function urlResolve(url) {
  * or a parsed URL object.
  * @returns {boolean} Whether the request is for the same origin as the application document.
  */
-function urlIsSameOrigin(requestUrl) {
+export function urlIsSameOrigin(requestUrl) {
   return urlsAreSameOrigin(requestUrl, originUrl);
 }
 
@@ -116,7 +116,7 @@ function urlIsSameOrigin(requestUrl) {
  * or a parsed URL object.
  * @returns {boolean} Whether the URL is same-origin as the document base URL.
  */
-function urlIsSameOriginAsBaseUrl(requestUrl) {
+export function urlIsSameOriginAsBaseUrl(requestUrl) {
   return urlsAreSameOrigin(requestUrl, getBaseUrl());
 }
 
@@ -129,7 +129,7 @@ function urlIsSameOriginAsBaseUrl(requestUrl) {
  * @returns {Function} - A function that receives a URL (string or parsed URL object) and returns
  *     whether it is of an allowed origin.
  */
-function urlIsAllowedOriginFactory(trustedOriginUrls) {
+export function urlIsAllowedOriginFactory(trustedOriginUrls) {
   let parsedAllowedOriginUrls = [originUrl].concat(
     trustedOriginUrls.map(urlResolve),
   );
@@ -162,7 +162,7 @@ function urlIsAllowedOriginFactory(trustedOriginUrls) {
  *
  * @returns {boolean} - True if both URLs have the same origin, and false otherwise.
  */
-function urlsAreSameOrigin(url1, url2) {
+export function urlsAreSameOrigin(url1, url2) {
   url1 = urlResolve(url1);
   url2 = urlResolve(url2);
 
@@ -173,7 +173,7 @@ function urlsAreSameOrigin(url1, url2) {
  * Returns the current document base URL.
  * @returns {string}
  */
-function getBaseUrl() {
+export function getBaseUrl() {
   if (window.document.baseURI) {
     return window.document.baseURI;
   }

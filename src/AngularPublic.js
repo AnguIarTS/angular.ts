@@ -98,6 +98,38 @@
   $$CookieReaderProvider
 */
 
+import { setupModuleLoader } from "./loader";
+
+const { bind } = require("serve-static");
+const { bootstrap, reloadWithDebugInfo } = require("./Angular");
+const { errorHandlingConfig, minErr } = require("./minErr");
+const {
+  extend,
+  copy,
+  merge,
+  equals,
+  forEach,
+  noop,
+  toJson,
+  fromJson,
+  identity,
+  isUndefined,
+  isDefined,
+  isString,
+  isFunction,
+  isObject,
+  isNumber,
+  isElement,
+  isArray,
+  isDate,
+  csp,
+  encodeUriSegment,
+  encodeUriQuery,
+  lowercase,
+  stringify,
+  uppercase,
+} = require("./ng/utils");
+
 /**
  * @ngdoc object
  * @name angular.version
@@ -123,7 +155,7 @@ let version = {
   codeName: '"NG_VERSION_CODENAME"',
 };
 
-function publishExternalAPI(angular) {
+export function publishExternalAPI(angular) {
   extend(angular, {
     errorHandlingConfig: errorHandlingConfig,
     bootstrap: bootstrap,
@@ -152,8 +184,6 @@ function publishExternalAPI(angular) {
     callbacks: { $$counter: 0 },
     getTestability: getTestability,
     reloadWithDebugInfo: reloadWithDebugInfo,
-    UNSAFE_restoreLegacyJqLiteXHTMLReplacement:
-      UNSAFE_restoreLegacyJqLiteXHTMLReplacement,
     $$minErr: minErr,
     $$csp: csp,
     $$encodeUriSegment: encodeUriSegment,

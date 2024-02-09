@@ -7,7 +7,7 @@
  * Use `$anchorScrollProvider` to disable automatic scrolling whenever
  * {@link ng.$location#hash $location.hash()} changes.
  */
-function $AnchorScrollProvider() {
+export function $AnchorScrollProvider() {
   let autoScrollingEnabled = true;
 
   /**

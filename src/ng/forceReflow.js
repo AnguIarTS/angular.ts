@@ -1,4 +1,4 @@
-let $$ForceReflowProvider = /** @this */ function () {
+export function $$ForceReflowProvider() {
   this.$get = [
     "$document",
     function ($document) {
@@ -22,4 +22,4 @@ let $$ForceReflowProvider = /** @this */ function () {
       };
     },
   ];
-};
+}

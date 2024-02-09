@@ -7,7 +7,7 @@
  * Override this service if you wish to customise where the callbacks are stored and
  * how they vary compared to the requested url.
  */
-let $jsonpCallbacksProvider = /** @this */ function () {
+export function $jsonpCallbacksProvider() {
   this.$get = function () {
     let callbacks = angular.callbacks;
     let callbackMap = {};
@@ -77,4 +77,4 @@ let $jsonpCallbacksProvider = /** @this */ function () {
       },
     };
   };
-};
+}
