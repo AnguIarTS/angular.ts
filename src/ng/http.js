@@ -1,14 +1,16 @@
-'use strict';
+"use strict";
 
-var APPLICATION_JSON = 'application/json';
-var CONTENT_TYPE_APPLICATION_JSON = {'Content-Type': APPLICATION_JSON + ';charset=utf-8'};
+var APPLICATION_JSON = "application/json";
+var CONTENT_TYPE_APPLICATION_JSON = {
+  "Content-Type": APPLICATION_JSON + ";charset=utf-8",
+};
 var JSON_START = /^\[|^\{(?!\{)/;
 var JSON_ENDS = {
-  '[': /]$/,
-  '{': /}$/
+  "[": /]$/,
+  "{": /}$/,
 };
 var JSON_PROTECTION_PREFIX = /^\)]\}',?\n/;
-var $httpMinErr = minErr('$http');
+var $httpMinErr = minErr("$http");
 
 function serializeValue(v) {
   if (isObject(v)) {
@@ -16,7 +18,6 @@ function serializeValue(v) {
   }
   return v;
 }
-
 
 /** @this */
 function $HttpParamSerializerProvider() {
@@ -36,22 +37,26 @@ function $HttpParamSerializerProvider() {
    * Note that serializer will sort the request parameters alphabetically.
    */
 
-  this.$get = function() {
+  this.$get = function () {
     return function ngParamSerializer(params) {
-      if (!params) return '';
+      if (!params) return "";
       var parts = [];
-      forEachSorted(params, function(value, key) {
+      forEachSorted(params, function (value, key) {
         if (value === null || isUndefined(value) || isFunction(value)) return;
         if (isArray(value)) {
-          forEach(value, function(v) {
-            parts.push(encodeUriQuery(key)  + '=' + encodeUriQuery(serializeValue(v)));
+          forEach(value, function (v) {
+            parts.push(
+              encodeUriQuery(key) + "=" + encodeUriQuery(serializeValue(v)),
+            );
           });
         } else {
-          parts.push(encodeUriQuery(key) + '=' + encodeUriQuery(serializeValue(value)));
+          parts.push(
+            encodeUriQuery(key) + "=" + encodeUriQuery(serializeValue(value)),
+          );
         }
       });
 
-      return parts.join('&');
+      return parts.join("&");
     };
   };
 }
@@ -102,31 +107,39 @@ function $HttpParamSerializerJQLikeProvider() {
    * ```
    *
    */
-  this.$get = function() {
+  this.$get = function () {
     return function jQueryLikeParamSerializer(params) {
-      if (!params) return '';
+      if (!params) return "";
       var parts = [];
-      serialize(params, '', true);
-      return parts.join('&');
+      serialize(params, "", true);
+      return parts.join("&");
 
       function serialize(toSerialize, prefix, topLevel) {
         if (isArray(toSerialize)) {
-          forEach(toSerialize, function(value, index) {
-            serialize(value, prefix + '[' + (isObject(value) ? index : '') + ']');
+          forEach(toSerialize, function (value, index) {
+            serialize(
+              value,
+              prefix + "[" + (isObject(value) ? index : "") + "]",
+            );
           });
         } else if (isObject(toSerialize) && !isDate(toSerialize)) {
-          forEachSorted(toSerialize, function(value, key) {
-            serialize(value, prefix +
-                (topLevel ? '' : '[') +
-                key +
-                (topLevel ? '' : ']'));
+          forEachSorted(toSerialize, function (value, key) {
+            serialize(
+              value,
+              prefix + (topLevel ? "" : "[") + key + (topLevel ? "" : "]"),
+            );
           });
         } else {
           if (isFunction(toSerialize)) {
             toSerialize = toSerialize();
           }
-          parts.push(encodeUriQuery(prefix) + '=' +
-              (toSerialize == null ? '' : encodeUriQuery(serializeValue(toSerialize))));
+          parts.push(
+            encodeUriQuery(prefix) +
+              "=" +
+              (toSerialize == null
+                ? ""
+                : encodeUriQuery(serializeValue(toSerialize))),
+          );
         }
       }
     };
@@ -136,11 +149,12 @@ function $HttpParamSerializerJQLikeProvider() {
 function defaultHttpResponseTransform(data, headers) {
   if (isString(data)) {
     // Strip json vulnerability protection prefix and trim whitespace
-    var tempData = data.replace(JSON_PROTECTION_PREFIX, '').trim();
+    var tempData = data.replace(JSON_PROTECTION_PREFIX, "").trim();
 
     if (tempData) {
-      var contentType = headers('Content-Type');
-      var hasJsonContentType = contentType && (contentType.indexOf(APPLICATION_JSON) === 0);
+      var contentType = headers("Content-Type");
+      var hasJsonContentType =
+        contentType && contentType.indexOf(APPLICATION_JSON) === 0;
 
       if (hasJsonContentType || isJsonLike(tempData)) {
         try {
@@ -149,8 +163,13 @@ function defaultHttpResponseTransform(data, headers) {
           if (!hasJsonContentType) {
             return data;
           }
-          throw $httpMinErr('baddata', 'Data must be a valid JSON object. Received: "{0}". ' +
-          'Parse error: "{1}"', data, e);
+          throw $httpMinErr(
+            "baddata",
+            'Data must be a valid JSON object. Received: "{0}". ' +
+              'Parse error: "{1}"',
+            data,
+            e,
+          );
         }
       }
     }
@@ -160,8 +179,8 @@ function defaultHttpResponseTransform(data, headers) {
 }
 
 function isJsonLike(str) {
-    var jsonStart = str.match(JSON_START);
-    return jsonStart && JSON_ENDS[jsonStart[0]].test(str);
+  var jsonStart = str.match(JSON_START);
+  return jsonStart && JSON_ENDS[jsonStart[0]].test(str);
 }
 
 /**
@@ -171,28 +190,31 @@ function isJsonLike(str) {
  * @returns {Object} Parsed headers as key value object
  */
 function parseHeaders(headers) {
-  var parsed = createMap(), i;
+  var parsed = createMap(),
+    i;
 
   function fillInParsed(key, val) {
     if (key) {
-      parsed[key] = parsed[key] ? parsed[key] + ', ' + val : val;
+      parsed[key] = parsed[key] ? parsed[key] + ", " + val : val;
     }
   }
 
   if (isString(headers)) {
-    forEach(headers.split('\n'), function(line) {
-      i = line.indexOf(':');
-      fillInParsed(lowercase(trim(line.substr(0, i))), trim(line.substr(i + 1)));
+    forEach(headers.split("\n"), function (line) {
+      i = line.indexOf(":");
+      fillInParsed(
+        lowercase(trim(line.substr(0, i))),
+        trim(line.substr(i + 1)),
+      );
     });
   } else if (isObject(headers)) {
-    forEach(headers, function(headerVal, headerKey) {
+    forEach(headers, function (headerVal, headerKey) {
       fillInParsed(lowercase(headerKey), trim(headerVal));
     });
   }
 
   return parsed;
 }
-
 
 /**
  * Returns a function that provides access to parsed headers.
@@ -209,8 +231,8 @@ function parseHeaders(headers) {
 function headersGetter(headers) {
   var headersObj;
 
-  return function(name) {
-    if (!headersObj) headersObj =  parseHeaders(headers);
+  return function (name) {
+    if (!headersObj) headersObj = parseHeaders(headers);
 
     if (name) {
       var value = headersObj[lowercase(name)];
@@ -223,7 +245,6 @@ function headersGetter(headers) {
     return headersObj;
   };
 }
-
 
 /**
  * Chain all given functions
@@ -241,18 +262,16 @@ function transformData(data, headers, status, fns) {
     return fns(data, headers, status);
   }
 
-  forEach(fns, function(fn) {
+  forEach(fns, function (fn) {
     data = fn(data, headers, status);
   });
 
   return data;
 }
 
-
 function isSuccess(status) {
   return 200 <= status && status < 300;
 }
-
 
 /**
  * @ngdoc provider
@@ -316,32 +335,36 @@ function $HttpProvider() {
    * XSRF token. Defaults value is `'X-XSRF-TOKEN'`.
    *
    */
-  var defaults = this.defaults = {
+  var defaults = (this.defaults = {
     // transform incoming response data
     transformResponse: [defaultHttpResponseTransform],
 
     // transform outgoing request data
-    transformRequest: [function(d) {
-      return isObject(d) && !isFile(d) && !isBlob(d) && !isFormData(d) ? toJson(d) : d;
-    }],
+    transformRequest: [
+      function (d) {
+        return isObject(d) && !isFile(d) && !isBlob(d) && !isFormData(d)
+          ? toJson(d)
+          : d;
+      },
+    ],
 
     // default headers
     headers: {
       common: {
-        'Accept': 'application/json, text/plain, */*'
+        Accept: "application/json, text/plain, */*",
       },
-      post:   shallowCopy(CONTENT_TYPE_APPLICATION_JSON),
-      put:    shallowCopy(CONTENT_TYPE_APPLICATION_JSON),
-      patch:  shallowCopy(CONTENT_TYPE_APPLICATION_JSON)
+      post: shallowCopy(CONTENT_TYPE_APPLICATION_JSON),
+      put: shallowCopy(CONTENT_TYPE_APPLICATION_JSON),
+      patch: shallowCopy(CONTENT_TYPE_APPLICATION_JSON),
     },
 
-    xsrfCookieName: 'XSRF-TOKEN',
-    xsrfHeaderName: 'X-XSRF-TOKEN',
+    xsrfCookieName: "XSRF-TOKEN",
+    xsrfHeaderName: "X-XSRF-TOKEN",
 
-    paramSerializer: '$httpParamSerializer',
+    paramSerializer: "$httpParamSerializer",
 
-    jsonpCallbackParam: 'callback'
-  };
+    jsonpCallbackParam: "callback",
+  });
 
   var useApplyAsync = false;
   /**
@@ -363,7 +386,7 @@ function $HttpProvider() {
    * @returns {boolean|Object} If a value is specified, returns the $httpProvider for chaining.
    *    otherwise, returns the current configured value.
    */
-  this.useApplyAsync = function(value) {
+  this.useApplyAsync = function (value) {
     if (isDefined(value)) {
       useApplyAsync = !!value;
       return this;
@@ -384,7 +407,7 @@ function $HttpProvider() {
    *
    * {@link ng.$http#interceptors Interceptors detailed info}
    */
-  var interceptorFactories = this.interceptors = [];
+  var interceptorFactories = (this.interceptors = []);
 
   /**
    * @ngdoc property
@@ -426,7 +449,7 @@ function $HttpProvider() {
    *   }]);
    * ```
    */
-  var xsrfTrustedOrigins = this.xsrfTrustedOrigins = [];
+  var xsrfTrustedOrigins = (this.xsrfTrustedOrigins = []);
 
   /**
    * @ngdoc property
@@ -439,44 +462,64 @@ function $HttpProvider() {
    * This property is deprecated. Use {@link $httpProvider#xsrfTrustedOrigins xsrfTrustedOrigins}
    * instead.
    */
-  Object.defineProperty(this, 'xsrfWhitelistedOrigins', {
-    get: function() {
+  Object.defineProperty(this, "xsrfWhitelistedOrigins", {
+    get: function () {
       return this.xsrfTrustedOrigins;
     },
-    set: function(origins) {
+    set: function (origins) {
       this.xsrfTrustedOrigins = origins;
-    }
+    },
   });
 
-  this.$get = ['$browser', '$httpBackend', '$$cookieReader', '$cacheFactory', '$rootScope', '$q', '$injector', '$sce',
-      function($browser, $httpBackend, $$cookieReader, $cacheFactory, $rootScope, $q, $injector, $sce) {
+  this.$get = [
+    "$browser",
+    "$httpBackend",
+    "$$cookieReader",
+    "$cacheFactory",
+    "$rootScope",
+    "$q",
+    "$injector",
+    "$sce",
+    function (
+      $browser,
+      $httpBackend,
+      $$cookieReader,
+      $cacheFactory,
+      $rootScope,
+      $q,
+      $injector,
+      $sce,
+    ) {
+      var defaultCache = $cacheFactory("$http");
 
-    var defaultCache = $cacheFactory('$http');
+      /**
+       * Make sure that default param serializer is exposed as a function
+       */
+      defaults.paramSerializer = isString(defaults.paramSerializer)
+        ? $injector.get(defaults.paramSerializer)
+        : defaults.paramSerializer;
 
-    /**
-     * Make sure that default param serializer is exposed as a function
-     */
-    defaults.paramSerializer = isString(defaults.paramSerializer) ?
-      $injector.get(defaults.paramSerializer) : defaults.paramSerializer;
+      /**
+       * Interceptors stored in reverse order. Inner interceptors before outer interceptors.
+       * The reversal is needed so that we can build up the interception chain around the
+       * server request.
+       */
+      var reversedInterceptors = [];
 
-    /**
-     * Interceptors stored in reverse order. Inner interceptors before outer interceptors.
-     * The reversal is needed so that we can build up the interception chain around the
-     * server request.
-     */
-    var reversedInterceptors = [];
+      forEach(interceptorFactories, function (interceptorFactory) {
+        reversedInterceptors.unshift(
+          isString(interceptorFactory)
+            ? $injector.get(interceptorFactory)
+            : $injector.invoke(interceptorFactory),
+        );
+      });
 
-    forEach(interceptorFactories, function(interceptorFactory) {
-      reversedInterceptors.unshift(isString(interceptorFactory)
-          ? $injector.get(interceptorFactory) : $injector.invoke(interceptorFactory));
-    });
+      /**
+       * A function to check request URLs against a list of allowed origins.
+       */
+      var urlIsAllowedOrigin = urlIsAllowedOriginFactory(xsrfTrustedOrigins);
 
-    /**
-     * A function to check request URLs against a list of allowed origins.
-     */
-    var urlIsAllowedOrigin = urlIsAllowedOriginFactory(xsrfTrustedOrigins);
-
-    /**
+      /**
      * @ngdoc service
      * @kind function
      * @name $http
@@ -1051,506 +1094,597 @@ function $HttpProvider() {
 </file>
 </example>
      */
-    function $http(requestConfig) {
-
-      if (!isObject(requestConfig)) {
-        throw minErr('$http')('badreq', 'Http request configuration must be an object.  Received: {0}', requestConfig);
-      }
-
-      if (!isString($sce.valueOf(requestConfig.url))) {
-        throw minErr('$http')('badreq', 'Http request configuration url must be a string or a $sce trusted object.  Received: {0}', requestConfig.url);
-      }
-
-      var config = extend({
-        method: 'get',
-        transformRequest: defaults.transformRequest,
-        transformResponse: defaults.transformResponse,
-        paramSerializer: defaults.paramSerializer,
-        jsonpCallbackParam: defaults.jsonpCallbackParam
-      }, requestConfig);
-
-      config.headers = mergeHeaders(requestConfig);
-      config.method = uppercase(config.method);
-      config.paramSerializer = isString(config.paramSerializer) ?
-          $injector.get(config.paramSerializer) : config.paramSerializer;
-
-      $browser.$$incOutstandingRequestCount('$http');
-
-      var requestInterceptors = [];
-      var responseInterceptors = [];
-      var promise = $q.resolve(config);
-
-      // apply interceptors
-      forEach(reversedInterceptors, function(interceptor) {
-        if (interceptor.request || interceptor.requestError) {
-          requestInterceptors.unshift(interceptor.request, interceptor.requestError);
-        }
-        if (interceptor.response || interceptor.responseError) {
-          responseInterceptors.push(interceptor.response, interceptor.responseError);
-        }
-      });
-
-      promise = chainInterceptors(promise, requestInterceptors);
-      promise = promise.then(serverRequest);
-      promise = chainInterceptors(promise, responseInterceptors);
-      promise = promise.finally(completeOutstandingRequest);
-
-      return promise;
-
-
-      function chainInterceptors(promise, interceptors) {
-        for (var i = 0, ii = interceptors.length; i < ii;) {
-          var thenFn = interceptors[i++];
-          var rejectFn = interceptors[i++];
-
-          promise = promise.then(thenFn, rejectFn);
+      function $http(requestConfig) {
+        if (!isObject(requestConfig)) {
+          throw minErr("$http")(
+            "badreq",
+            "Http request configuration must be an object.  Received: {0}",
+            requestConfig,
+          );
         }
 
-        interceptors.length = 0;
+        if (!isString($sce.valueOf(requestConfig.url))) {
+          throw minErr("$http")(
+            "badreq",
+            "Http request configuration url must be a string or a $sce trusted object.  Received: {0}",
+            requestConfig.url,
+          );
+        }
 
-        return promise;
-      }
+        var config = extend(
+          {
+            method: "get",
+            transformRequest: defaults.transformRequest,
+            transformResponse: defaults.transformResponse,
+            paramSerializer: defaults.paramSerializer,
+            jsonpCallbackParam: defaults.jsonpCallbackParam,
+          },
+          requestConfig,
+        );
 
-      function completeOutstandingRequest() {
-        $browser.$$completeOutstandingRequest(noop, '$http');
-      }
+        config.headers = mergeHeaders(requestConfig);
+        config.method = uppercase(config.method);
+        config.paramSerializer = isString(config.paramSerializer)
+          ? $injector.get(config.paramSerializer)
+          : config.paramSerializer;
 
-      function executeHeaderFns(headers, config) {
-        var headerContent, processedHeaders = {};
+        $browser.$$incOutstandingRequestCount("$http");
 
-        forEach(headers, function(headerFn, header) {
-          if (isFunction(headerFn)) {
-            headerContent = headerFn(config);
-            if (headerContent != null) {
-              processedHeaders[header] = headerContent;
-            }
-          } else {
-            processedHeaders[header] = headerFn;
+        var requestInterceptors = [];
+        var responseInterceptors = [];
+        var promise = $q.resolve(config);
+
+        // apply interceptors
+        forEach(reversedInterceptors, function (interceptor) {
+          if (interceptor.request || interceptor.requestError) {
+            requestInterceptors.unshift(
+              interceptor.request,
+              interceptor.requestError,
+            );
+          }
+          if (interceptor.response || interceptor.responseError) {
+            responseInterceptors.push(
+              interceptor.response,
+              interceptor.responseError,
+            );
           }
         });
 
-        return processedHeaders;
-      }
+        promise = chainInterceptors(promise, requestInterceptors);
+        promise = promise.then(serverRequest);
+        promise = chainInterceptors(promise, responseInterceptors);
+        promise = promise.finally(completeOutstandingRequest);
 
-      function mergeHeaders(config) {
-        var defHeaders = defaults.headers,
-            reqHeaders = extend({}, config.headers),
-            defHeaderName, lowercaseDefHeaderName, reqHeaderName;
+        return promise;
 
-        defHeaders = extend({}, defHeaders.common, defHeaders[lowercase(config.method)]);
+        function chainInterceptors(promise, interceptors) {
+          for (var i = 0, ii = interceptors.length; i < ii; ) {
+            var thenFn = interceptors[i++];
+            var rejectFn = interceptors[i++];
 
-        // using for-in instead of forEach to avoid unnecessary iteration after header has been found
-        defaultHeadersIteration:
-        for (defHeaderName in defHeaders) {
-          lowercaseDefHeaderName = lowercase(defHeaderName);
-
-          for (reqHeaderName in reqHeaders) {
-            if (lowercase(reqHeaderName) === lowercaseDefHeaderName) {
-              continue defaultHeadersIteration;
-            }
+            promise = promise.then(thenFn, rejectFn);
           }
 
-          reqHeaders[defHeaderName] = defHeaders[defHeaderName];
+          interceptors.length = 0;
+
+          return promise;
         }
 
-        // execute if header value is a function for merged headers
-        return executeHeaderFns(reqHeaders, shallowCopy(config));
-      }
+        function completeOutstandingRequest() {
+          $browser.$$completeOutstandingRequest(noop, "$http");
+        }
 
-      function serverRequest(config) {
-        var headers = config.headers;
-        var reqData = transformData(config.data, headersGetter(headers), undefined, config.transformRequest);
+        function executeHeaderFns(headers, config) {
+          var headerContent,
+            processedHeaders = {};
 
-        // strip content-type if data is undefined
-        if (isUndefined(reqData)) {
-          forEach(headers, function(value, header) {
-            if (lowercase(header) === 'content-type') {
-              delete headers[header];
+          forEach(headers, function (headerFn, header) {
+            if (isFunction(headerFn)) {
+              headerContent = headerFn(config);
+              if (headerContent != null) {
+                processedHeaders[header] = headerContent;
+              }
+            } else {
+              processedHeaders[header] = headerFn;
             }
           });
+
+          return processedHeaders;
         }
 
-        if (isUndefined(config.withCredentials) && !isUndefined(defaults.withCredentials)) {
-          config.withCredentials = defaults.withCredentials;
+        function mergeHeaders(config) {
+          var defHeaders = defaults.headers,
+            reqHeaders = extend({}, config.headers),
+            defHeaderName,
+            lowercaseDefHeaderName,
+            reqHeaderName;
+
+          defHeaders = extend(
+            {},
+            defHeaders.common,
+            defHeaders[lowercase(config.method)],
+          );
+
+          // using for-in instead of forEach to avoid unnecessary iteration after header has been found
+          defaultHeadersIteration: for (defHeaderName in defHeaders) {
+            lowercaseDefHeaderName = lowercase(defHeaderName);
+
+            for (reqHeaderName in reqHeaders) {
+              if (lowercase(reqHeaderName) === lowercaseDefHeaderName) {
+                continue defaultHeadersIteration;
+              }
+            }
+
+            reqHeaders[defHeaderName] = defHeaders[defHeaderName];
+          }
+
+          // execute if header value is a function for merged headers
+          return executeHeaderFns(reqHeaders, shallowCopy(config));
         }
 
-        // send request
-        return sendReq(config, reqData).then(transformResponse, transformResponse);
+        function serverRequest(config) {
+          var headers = config.headers;
+          var reqData = transformData(
+            config.data,
+            headersGetter(headers),
+            undefined,
+            config.transformRequest,
+          );
+
+          // strip content-type if data is undefined
+          if (isUndefined(reqData)) {
+            forEach(headers, function (value, header) {
+              if (lowercase(header) === "content-type") {
+                delete headers[header];
+              }
+            });
+          }
+
+          if (
+            isUndefined(config.withCredentials) &&
+            !isUndefined(defaults.withCredentials)
+          ) {
+            config.withCredentials = defaults.withCredentials;
+          }
+
+          // send request
+          return sendReq(config, reqData).then(
+            transformResponse,
+            transformResponse,
+          );
+        }
+
+        function transformResponse(response) {
+          // make a copy since the response must be cacheable
+          var resp = extend({}, response);
+          resp.data = transformData(
+            response.data,
+            response.headers,
+            response.status,
+            config.transformResponse,
+          );
+          return isSuccess(response.status) ? resp : $q.reject(resp);
+        }
       }
 
-      function transformResponse(response) {
-        // make a copy since the response must be cacheable
-        var resp = extend({}, response);
-        resp.data = transformData(response.data, response.headers, response.status,
-                                  config.transformResponse);
-        return (isSuccess(response.status))
-          ? resp
-          : $q.reject(resp);
+      $http.pendingRequests = [];
+
+      /**
+       * @ngdoc method
+       * @name $http#get
+       *
+       * @description
+       * Shortcut method to perform `GET` request.
+       *
+       * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
+       *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
+       * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
+       * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
+       * See {@link ng.$http#$http-returns `$http()` return value}.
+       */
+
+      /**
+       * @ngdoc method
+       * @name $http#delete
+       *
+       * @description
+       * Shortcut method to perform `DELETE` request.
+       *
+       * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
+       *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
+       * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
+       * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
+       * See {@link ng.$http#$http-returns `$http()` return value}.
+       */
+
+      /**
+       * @ngdoc method
+       * @name $http#head
+       *
+       * @description
+       * Shortcut method to perform `HEAD` request.
+       *
+       * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
+       *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
+       * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
+       * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
+       * See {@link ng.$http#$http-returns `$http()` return value}.
+       */
+
+      /**
+       * @ngdoc method
+       * @name $http#jsonp
+       *
+       * @description
+       * Shortcut method to perform `JSONP` request.
+       *
+       * Note that, since JSONP requests are sensitive because the response is given full access to the browser,
+       * the url must be declared, via {@link $sce} as a trusted resource URL.
+       * You can trust a URL by adding it to the trusted resource URL list via
+       * {@link $sceDelegateProvider#trustedResourceUrlList  `$sceDelegateProvider.trustedResourceUrlList`} or
+       * by explicitly trusting the URL via {@link $sce#trustAsResourceUrl `$sce.trustAsResourceUrl(url)`}.
+       *
+       * You should avoid generating the URL for the JSONP request from user provided data.
+       * Provide additional query parameters via `params` property of the `config` parameter, rather than
+       * modifying the URL itself.
+       *
+       * JSONP requests must specify a callback to be used in the response from the server. This callback
+       * is passed as a query parameter in the request. You must specify the name of this parameter by
+       * setting the `jsonpCallbackParam` property on the request config object.
+       *
+       * ```
+       * $http.jsonp('some/trusted/url', {jsonpCallbackParam: 'callback'})
+       * ```
+       *
+       * You can also specify a default callback parameter name in `$http.defaults.jsonpCallbackParam`.
+       * Initially this is set to `'callback'`.
+       *
+       * <div class="alert alert-danger">
+       * You can no longer use the `JSON_CALLBACK` string as a placeholder for specifying where the callback
+       * parameter value should go.
+       * </div>
+       *
+       * If you would like to customise where and how the callbacks are stored then try overriding
+       * or decorating the {@link $jsonpCallbacks} service.
+       *
+       * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
+       *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
+       * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
+       * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
+       * See {@link ng.$http#$http-returns `$http()` return value}.
+       */
+      createShortMethods("get", "delete", "head", "jsonp");
+
+      /**
+       * @ngdoc method
+       * @name $http#post
+       *
+       * @description
+       * Shortcut method to perform `POST` request.
+       *
+       * @param {string} url Relative or absolute URL specifying the destination of the request
+       * @param {*} data Request content
+       * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
+       * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
+       * See {@link ng.$http#$http-returns `$http()` return value}.
+       */
+
+      /**
+       * @ngdoc method
+       * @name $http#put
+       *
+       * @description
+       * Shortcut method to perform `PUT` request.
+       *
+       * @param {string} url Relative or absolute URL specifying the destination of the request
+       * @param {*} data Request content
+       * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
+       * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
+       * See {@link ng.$http#$http-returns `$http()` return value}.
+       */
+
+      /**
+       * @ngdoc method
+       * @name $http#patch
+       *
+       * @description
+       * Shortcut method to perform `PATCH` request.
+       *
+       * @param {string} url Relative or absolute URL specifying the destination of the request
+       * @param {*} data Request content
+       * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
+       * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
+       * See {@link ng.$http#$http-returns `$http()` return value}.
+       */
+      createShortMethodsWithData("post", "put", "patch");
+
+      /**
+       * @ngdoc property
+       * @name $http#defaults
+       *
+       * @description
+       * Runtime equivalent of the `$httpProvider.defaults` property. Allows configuration of
+       * default headers, withCredentials as well as request and response transformations.
+       *
+       * See "Setting HTTP Headers" and "Transforming Requests and Responses" sections above.
+       */
+      $http.defaults = defaults;
+
+      return $http;
+
+      function createShortMethods(names) {
+        forEach(arguments, function (name) {
+          $http[name] = function (url, config) {
+            return $http(
+              extend({}, config || {}, {
+                method: name,
+                url: url,
+              }),
+            );
+          };
+        });
       }
-    }
 
-    $http.pendingRequests = [];
+      function createShortMethodsWithData(name) {
+        forEach(arguments, function (name) {
+          $http[name] = function (url, data, config) {
+            return $http(
+              extend({}, config || {}, {
+                method: name,
+                url: url,
+                data: data,
+              }),
+            );
+          };
+        });
+      }
 
-    /**
-     * @ngdoc method
-     * @name $http#get
-     *
-     * @description
-     * Shortcut method to perform `GET` request.
-     *
-     * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
-     *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
-     * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
-     * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
-     * See {@link ng.$http#$http-returns `$http()` return value}.
-     */
-
-    /**
-     * @ngdoc method
-     * @name $http#delete
-     *
-     * @description
-     * Shortcut method to perform `DELETE` request.
-     *
-     * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
-     *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
-     * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
-     * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
-     * See {@link ng.$http#$http-returns `$http()` return value}.
-     */
-
-    /**
-     * @ngdoc method
-     * @name $http#head
-     *
-     * @description
-     * Shortcut method to perform `HEAD` request.
-     *
-     * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
-     *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
-     * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
-     * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
-     * See {@link ng.$http#$http-returns `$http()` return value}.
-     */
-
-    /**
-     * @ngdoc method
-     * @name $http#jsonp
-     *
-     * @description
-     * Shortcut method to perform `JSONP` request.
-     *
-     * Note that, since JSONP requests are sensitive because the response is given full access to the browser,
-     * the url must be declared, via {@link $sce} as a trusted resource URL.
-     * You can trust a URL by adding it to the trusted resource URL list via
-     * {@link $sceDelegateProvider#trustedResourceUrlList  `$sceDelegateProvider.trustedResourceUrlList`} or
-     * by explicitly trusting the URL via {@link $sce#trustAsResourceUrl `$sce.trustAsResourceUrl(url)`}.
-     *
-     * You should avoid generating the URL for the JSONP request from user provided data.
-     * Provide additional query parameters via `params` property of the `config` parameter, rather than
-     * modifying the URL itself.
-     *
-     * JSONP requests must specify a callback to be used in the response from the server. This callback
-     * is passed as a query parameter in the request. You must specify the name of this parameter by
-     * setting the `jsonpCallbackParam` property on the request config object.
-     *
-     * ```
-     * $http.jsonp('some/trusted/url', {jsonpCallbackParam: 'callback'})
-     * ```
-     *
-     * You can also specify a default callback parameter name in `$http.defaults.jsonpCallbackParam`.
-     * Initially this is set to `'callback'`.
-     *
-     * <div class="alert alert-danger">
-     * You can no longer use the `JSON_CALLBACK` string as a placeholder for specifying where the callback
-     * parameter value should go.
-     * </div>
-     *
-     * If you would like to customise where and how the callbacks are stored then try overriding
-     * or decorating the {@link $jsonpCallbacks} service.
-     *
-     * @param {string|TrustedObject} url Absolute or relative URL of the resource that is being requested;
-     *                                   or an object created by a call to `$sce.trustAsResourceUrl(url)`.
-     * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
-     * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
-     * See {@link ng.$http#$http-returns `$http()` return value}.
-     */
-    createShortMethods('get', 'delete', 'head', 'jsonp');
-
-    /**
-     * @ngdoc method
-     * @name $http#post
-     *
-     * @description
-     * Shortcut method to perform `POST` request.
-     *
-     * @param {string} url Relative or absolute URL specifying the destination of the request
-     * @param {*} data Request content
-     * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
-     * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
-     * See {@link ng.$http#$http-returns `$http()` return value}.
-     */
-
-    /**
-     * @ngdoc method
-     * @name $http#put
-     *
-     * @description
-     * Shortcut method to perform `PUT` request.
-     *
-     * @param {string} url Relative or absolute URL specifying the destination of the request
-     * @param {*} data Request content
-     * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
-     * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
-     * See {@link ng.$http#$http-returns `$http()` return value}.
-     */
-
-     /**
-      * @ngdoc method
-      * @name $http#patch
-      *
-      * @description
-      * Shortcut method to perform `PATCH` request.
-      *
-      * @param {string} url Relative or absolute URL specifying the destination of the request
-      * @param {*} data Request content
-      * @param {Object=} config Optional configuration object. See {@link ng.$http#$http-arguments `$http()` arguments}.
-      * @returns {HttpPromise}  A Promise that will be resolved or rejected with a response object.
-      * See {@link ng.$http#$http-returns `$http()` return value}.
-      */
-    createShortMethodsWithData('post', 'put', 'patch');
-
-        /**
-         * @ngdoc property
-         * @name $http#defaults
-         *
-         * @description
-         * Runtime equivalent of the `$httpProvider.defaults` property. Allows configuration of
-         * default headers, withCredentials as well as request and response transformations.
-         *
-         * See "Setting HTTP Headers" and "Transforming Requests and Responses" sections above.
-         */
-    $http.defaults = defaults;
-
-
-    return $http;
-
-
-    function createShortMethods(names) {
-      forEach(arguments, function(name) {
-        $http[name] = function(url, config) {
-          return $http(extend({}, config || {}, {
-            method: name,
-            url: url
-          }));
-        };
-      });
-    }
-
-
-    function createShortMethodsWithData(name) {
-      forEach(arguments, function(name) {
-        $http[name] = function(url, data, config) {
-          return $http(extend({}, config || {}, {
-            method: name,
-            url: url,
-            data: data
-          }));
-        };
-      });
-    }
-
-
-    /**
-     * Makes the request.
-     *
-     * !!! ACCESSES CLOSURE VARS:
-     * $httpBackend, defaults, $log, $rootScope, defaultCache, $http.pendingRequests
-     */
-    function sendReq(config, reqData) {
-      var deferred = $q.defer(),
+      /**
+       * Makes the request.
+       *
+       * !!! ACCESSES CLOSURE VARS:
+       * $httpBackend, defaults, $log, $rootScope, defaultCache, $http.pendingRequests
+       */
+      function sendReq(config, reqData) {
+        var deferred = $q.defer(),
           promise = deferred.promise,
           cache,
           cachedResp,
           reqHeaders = config.headers,
-          isJsonp = lowercase(config.method) === 'jsonp',
+          isJsonp = lowercase(config.method) === "jsonp",
           url = config.url;
 
-      if (isJsonp) {
-        // JSONP is a pretty sensitive operation where we're allowing a script to have full access to
-        // our DOM and JS space.  So we require that the URL satisfies SCE.RESOURCE_URL.
-        url = $sce.getTrustedResourceUrl(url);
-      } else if (!isString(url)) {
-        // If it is not a string then the URL must be a $sce trusted object
-        url = $sce.valueOf(url);
-      }
+        if (isJsonp) {
+          // JSONP is a pretty sensitive operation where we're allowing a script to have full access to
+          // our DOM and JS space.  So we require that the URL satisfies SCE.RESOURCE_URL.
+          url = $sce.getTrustedResourceUrl(url);
+        } else if (!isString(url)) {
+          // If it is not a string then the URL must be a $sce trusted object
+          url = $sce.valueOf(url);
+        }
 
-      url = buildUrl(url, config.paramSerializer(config.params));
+        url = buildUrl(url, config.paramSerializer(config.params));
 
-      if (isJsonp) {
-        // Check the url and add the JSONP callback placeholder
-        url = sanitizeJsonpCallbackParam(url, config.jsonpCallbackParam);
-      }
+        if (isJsonp) {
+          // Check the url and add the JSONP callback placeholder
+          url = sanitizeJsonpCallbackParam(url, config.jsonpCallbackParam);
+        }
 
-      $http.pendingRequests.push(config);
-      promise.then(removePendingReq, removePendingReq);
+        $http.pendingRequests.push(config);
+        promise.then(removePendingReq, removePendingReq);
 
-      if ((config.cache || defaults.cache) && config.cache !== false &&
-          (config.method === 'GET' || config.method === 'JSONP')) {
-        cache = isObject(config.cache) ? config.cache
+        if (
+          (config.cache || defaults.cache) &&
+          config.cache !== false &&
+          (config.method === "GET" || config.method === "JSONP")
+        ) {
+          cache = isObject(config.cache)
+            ? config.cache
             : isObject(/** @type {?} */ (defaults).cache)
               ? /** @type {?} */ (defaults).cache
               : defaultCache;
-      }
-
-      if (cache) {
-        cachedResp = cache.get(url);
-        if (isDefined(cachedResp)) {
-          if (isPromiseLike(cachedResp)) {
-            // cached request has already been sent, but there is no response yet
-            cachedResp.then(resolvePromiseWithResult, resolvePromiseWithResult);
-          } else {
-            // serving from cache
-            if (isArray(cachedResp)) {
-              resolvePromise(cachedResp[1], cachedResp[0], shallowCopy(cachedResp[2]), cachedResp[3], cachedResp[4]);
-            } else {
-              resolvePromise(cachedResp, 200, {}, 'OK', 'complete');
-            }
-          }
-        } else {
-          // put the promise for the non-transformed response into cache as a placeholder
-          cache.put(url, promise);
         }
-      }
 
+        if (cache) {
+          cachedResp = cache.get(url);
+          if (isDefined(cachedResp)) {
+            if (isPromiseLike(cachedResp)) {
+              // cached request has already been sent, but there is no response yet
+              cachedResp.then(
+                resolvePromiseWithResult,
+                resolvePromiseWithResult,
+              );
+            } else {
+              // serving from cache
+              if (isArray(cachedResp)) {
+                resolvePromise(
+                  cachedResp[1],
+                  cachedResp[0],
+                  shallowCopy(cachedResp[2]),
+                  cachedResp[3],
+                  cachedResp[4],
+                );
+              } else {
+                resolvePromise(cachedResp, 200, {}, "OK", "complete");
+              }
+            }
+          } else {
+            // put the promise for the non-transformed response into cache as a placeholder
+            cache.put(url, promise);
+          }
+        }
 
-      // if we won't have the response in cache, set the xsrf headers and
-      // send the request to the backend
-      if (isUndefined(cachedResp)) {
-        var xsrfValue = urlIsAllowedOrigin(config.url)
+        // if we won't have the response in cache, set the xsrf headers and
+        // send the request to the backend
+        if (isUndefined(cachedResp)) {
+          var xsrfValue = urlIsAllowedOrigin(config.url)
             ? $$cookieReader()[config.xsrfCookieName || defaults.xsrfCookieName]
             : undefined;
-        if (xsrfValue) {
-          reqHeaders[(config.xsrfHeaderName || defaults.xsrfHeaderName)] = xsrfValue;
-        }
+          if (xsrfValue) {
+            reqHeaders[config.xsrfHeaderName || defaults.xsrfHeaderName] =
+              xsrfValue;
+          }
 
-        $httpBackend(config.method, url, reqData, done, reqHeaders, config.timeout,
-            config.withCredentials, config.responseType,
+          $httpBackend(
+            config.method,
+            url,
+            reqData,
+            done,
+            reqHeaders,
+            config.timeout,
+            config.withCredentials,
+            config.responseType,
             createApplyHandlers(config.eventHandlers),
-            createApplyHandlers(config.uploadEventHandlers));
-      }
-
-      return promise;
-
-      function createApplyHandlers(eventHandlers) {
-        if (eventHandlers) {
-          var applyHandlers = {};
-          forEach(eventHandlers, function(eventHandler, key) {
-            applyHandlers[key] = function(event) {
-              if (useApplyAsync) {
-                $rootScope.$applyAsync(callEventHandler);
-              } else if ($rootScope.$$phase) {
-                callEventHandler();
-              } else {
-                $rootScope.$apply(callEventHandler);
-              }
-
-              function callEventHandler() {
-                eventHandler(event);
-              }
-            };
-          });
-          return applyHandlers;
+            createApplyHandlers(config.uploadEventHandlers),
+          );
         }
-      }
 
+        return promise;
 
-      /**
-       * Callback registered to $httpBackend():
-       *  - caches the response if desired
-       *  - resolves the raw $http promise
-       *  - calls $apply
-       */
-      function done(status, response, headersString, statusText, xhrStatus) {
-        if (cache) {
-          if (isSuccess(status)) {
-            cache.put(url, [status, response, parseHeaders(headersString), statusText, xhrStatus]);
-          } else {
-            // remove promise from the cache
-            cache.remove(url);
+        function createApplyHandlers(eventHandlers) {
+          if (eventHandlers) {
+            var applyHandlers = {};
+            forEach(eventHandlers, function (eventHandler, key) {
+              applyHandlers[key] = function (event) {
+                if (useApplyAsync) {
+                  $rootScope.$applyAsync(callEventHandler);
+                } else if ($rootScope.$$phase) {
+                  callEventHandler();
+                } else {
+                  $rootScope.$apply(callEventHandler);
+                }
+
+                function callEventHandler() {
+                  eventHandler(event);
+                }
+              };
+            });
+            return applyHandlers;
           }
         }
 
-        function resolveHttpPromise() {
-          resolvePromise(response, status, headersString, statusText, xhrStatus);
+        /**
+         * Callback registered to $httpBackend():
+         *  - caches the response if desired
+         *  - resolves the raw $http promise
+         *  - calls $apply
+         */
+        function done(status, response, headersString, statusText, xhrStatus) {
+          if (cache) {
+            if (isSuccess(status)) {
+              cache.put(url, [
+                status,
+                response,
+                parseHeaders(headersString),
+                statusText,
+                xhrStatus,
+              ]);
+            } else {
+              // remove promise from the cache
+              cache.remove(url);
+            }
+          }
+
+          function resolveHttpPromise() {
+            resolvePromise(
+              response,
+              status,
+              headersString,
+              statusText,
+              xhrStatus,
+            );
+          }
+
+          if (useApplyAsync) {
+            $rootScope.$applyAsync(resolveHttpPromise);
+          } else {
+            resolveHttpPromise();
+            if (!$rootScope.$$phase) $rootScope.$apply();
+          }
         }
 
-        if (useApplyAsync) {
-          $rootScope.$applyAsync(resolveHttpPromise);
-        } else {
-          resolveHttpPromise();
-          if (!$rootScope.$$phase) $rootScope.$apply();
+        /**
+         * Resolves the raw $http promise.
+         */
+        function resolvePromise(
+          response,
+          status,
+          headers,
+          statusText,
+          xhrStatus,
+        ) {
+          //status: HTTP response status code, 0, -1 (aborted by timeout / promise)
+          status = status >= -1 ? status : 0;
+
+          (isSuccess(status) ? deferred.resolve : deferred.reject)({
+            data: response,
+            status: status,
+            headers: headersGetter(headers),
+            config: config,
+            statusText: statusText,
+            xhrStatus: xhrStatus,
+          });
+        }
+
+        function resolvePromiseWithResult(result) {
+          resolvePromise(
+            result.data,
+            result.status,
+            shallowCopy(result.headers()),
+            result.statusText,
+            result.xhrStatus,
+          );
+        }
+
+        function removePendingReq() {
+          var idx = $http.pendingRequests.indexOf(config);
+          if (idx !== -1) $http.pendingRequests.splice(idx, 1);
         }
       }
 
+      function buildUrl(url, serializedParams) {
+        if (serializedParams.length > 0) {
+          url += (url.indexOf("?") === -1 ? "?" : "&") + serializedParams;
+        }
+        return url;
+      }
 
-      /**
-       * Resolves the raw $http promise.
-       */
-      function resolvePromise(response, status, headers, statusText, xhrStatus) {
-        //status: HTTP response status code, 0, -1 (aborted by timeout / promise)
-        status = status >= -1 ? status : 0;
-
-        (isSuccess(status) ? deferred.resolve : deferred.reject)({
-          data: response,
-          status: status,
-          headers: headersGetter(headers),
-          config: config,
-          statusText: statusText,
-          xhrStatus: xhrStatus
+      function sanitizeJsonpCallbackParam(url, cbKey) {
+        var parts = url.split("?");
+        if (parts.length > 2) {
+          // Throw if the url contains more than one `?` query indicator
+          throw $httpMinErr(
+            "badjsonp",
+            'Illegal use more than one "?", in url, "{1}"',
+            url,
+          );
+        }
+        var params = parseKeyValue(parts[1]);
+        forEach(params, function (value, key) {
+          if (value === "JSON_CALLBACK") {
+            // Throw if the url already contains a reference to JSON_CALLBACK
+            throw $httpMinErr(
+              "badjsonp",
+              'Illegal use of JSON_CALLBACK in url, "{0}"',
+              url,
+            );
+          }
+          if (key === cbKey) {
+            // Throw if the callback param was already provided
+            throw $httpMinErr(
+              "badjsonp",
+              'Illegal use of callback param, "{0}", in url, "{1}"',
+              cbKey,
+              url,
+            );
+          }
         });
+
+        // Add in the JSON_CALLBACK callback param value
+        url += (url.indexOf("?") === -1 ? "?" : "&") + cbKey + "=JSON_CALLBACK";
+
+        return url;
       }
-
-      function resolvePromiseWithResult(result) {
-        resolvePromise(result.data, result.status, shallowCopy(result.headers()), result.statusText, result.xhrStatus);
-      }
-
-      function removePendingReq() {
-        var idx = $http.pendingRequests.indexOf(config);
-        if (idx !== -1) $http.pendingRequests.splice(idx, 1);
-      }
-    }
-
-
-    function buildUrl(url, serializedParams) {
-      if (serializedParams.length > 0) {
-        url += ((url.indexOf('?') === -1) ? '?' : '&') + serializedParams;
-      }
-      return url;
-    }
-
-    function sanitizeJsonpCallbackParam(url, cbKey) {
-      var parts = url.split('?');
-      if (parts.length > 2) {
-        // Throw if the url contains more than one `?` query indicator
-        throw $httpMinErr('badjsonp', 'Illegal use more than one "?", in url, "{1}"', url);
-      }
-      var params = parseKeyValue(parts[1]);
-      forEach(params, function(value, key) {
-        if (value === 'JSON_CALLBACK') {
-          // Throw if the url already contains a reference to JSON_CALLBACK
-          throw $httpMinErr('badjsonp', 'Illegal use of JSON_CALLBACK in url, "{0}"', url);
-        }
-        if (key === cbKey) {
-          // Throw if the callback param was already provided
-          throw $httpMinErr('badjsonp', 'Illegal use of callback param, "{0}", in url, "{1}"', cbKey, url);
-        }
-      });
-
-      // Add in the JSON_CALLBACK callback param value
-      url += ((url.indexOf('?') === -1) ? '?' : '&') + cbKey + '=JSON_CALLBACK';
-
-      return url;
-    }
-  }];
+    },
+  ];
 }

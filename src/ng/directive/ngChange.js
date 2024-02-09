@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc directive
@@ -69,11 +69,11 @@
  * </example>
  */
 var ngChangeDirective = valueFn({
-  restrict: 'A',
-  require: 'ngModel',
-  link: function(scope, element, attr, ctrl) {
-    ctrl.$viewChangeListeners.push(function() {
+  restrict: "A",
+  require: "ngModel",
+  link: function (scope, element, attr, ctrl) {
+    ctrl.$viewChangeListeners.push(function () {
       scope.$eval(attr.ngChange);
     });
-  }
+  },
 });

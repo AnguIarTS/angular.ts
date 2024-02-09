@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc directive
@@ -137,89 +137,111 @@
     </file>
   </example>
  */
-var ngSwitchDirective = ['$animate', '$compile', function($animate, $compile) {
-  return {
-    require: 'ngSwitch',
+var ngSwitchDirective = [
+  "$animate",
+  "$compile",
+  function ($animate, $compile) {
+    return {
+      require: "ngSwitch",
 
-    // asks for $scope to fool the BC controller module
-    controller: ['$scope', function NgSwitchController() {
-     this.cases = {};
-    }],
-    link: function(scope, element, attr, ngSwitchController) {
-      var watchExpr = attr.ngSwitch || attr.on,
+      // asks for $scope to fool the BC controller module
+      controller: [
+        "$scope",
+        function NgSwitchController() {
+          this.cases = {};
+        },
+      ],
+      link: function (scope, element, attr, ngSwitchController) {
+        var watchExpr = attr.ngSwitch || attr.on,
           selectedTranscludes = [],
           selectedElements = [],
           previousLeaveAnimations = [],
           selectedScopes = [];
 
-      var spliceFactory = function(array, index) {
-          return function(response) {
+        var spliceFactory = function (array, index) {
+          return function (response) {
             if (response !== false) array.splice(index, 1);
           };
-      };
+        };
 
-      scope.$watch(watchExpr, function ngSwitchWatchAction(value) {
-        var i, ii;
+        scope.$watch(watchExpr, function ngSwitchWatchAction(value) {
+          var i, ii;
 
-        // Start with the last, in case the array is modified during the loop
-        while (previousLeaveAnimations.length) {
-          $animate.cancel(previousLeaveAnimations.pop());
-        }
+          // Start with the last, in case the array is modified during the loop
+          while (previousLeaveAnimations.length) {
+            $animate.cancel(previousLeaveAnimations.pop());
+          }
 
-        for (i = 0, ii = selectedScopes.length; i < ii; ++i) {
-          var selected = getBlockNodes(selectedElements[i].clone);
-          selectedScopes[i].$destroy();
-          var runner = previousLeaveAnimations[i] = $animate.leave(selected);
-          runner.done(spliceFactory(previousLeaveAnimations, i));
-        }
+          for (i = 0, ii = selectedScopes.length; i < ii; ++i) {
+            var selected = getBlockNodes(selectedElements[i].clone);
+            selectedScopes[i].$destroy();
+            var runner = (previousLeaveAnimations[i] =
+              $animate.leave(selected));
+            runner.done(spliceFactory(previousLeaveAnimations, i));
+          }
 
-        selectedElements.length = 0;
-        selectedScopes.length = 0;
+          selectedElements.length = 0;
+          selectedScopes.length = 0;
 
-        if ((selectedTranscludes = ngSwitchController.cases['!' + value] || ngSwitchController.cases['?'])) {
-          forEach(selectedTranscludes, function(selectedTransclude) {
-            selectedTransclude.transclude(function(caseElement, selectedScope) {
-              selectedScopes.push(selectedScope);
-              var anchor = selectedTransclude.element;
-              caseElement[caseElement.length++] = $compile.$$createComment('end ngSwitchWhen');
-              var block = { clone: caseElement };
+          if (
+            (selectedTranscludes =
+              ngSwitchController.cases["!" + value] ||
+              ngSwitchController.cases["?"])
+          ) {
+            forEach(selectedTranscludes, function (selectedTransclude) {
+              selectedTransclude.transclude(
+                function (caseElement, selectedScope) {
+                  selectedScopes.push(selectedScope);
+                  var anchor = selectedTransclude.element;
+                  caseElement[caseElement.length++] =
+                    $compile.$$createComment("end ngSwitchWhen");
+                  var block = { clone: caseElement };
 
-              selectedElements.push(block);
-              $animate.enter(caseElement, anchor.parent(), anchor);
+                  selectedElements.push(block);
+                  $animate.enter(caseElement, anchor.parent(), anchor);
+                },
+              );
             });
-          });
-        }
-      });
-    }
-  };
-}];
+          }
+        });
+      },
+    };
+  },
+];
 
 var ngSwitchWhenDirective = ngDirective({
-  transclude: 'element',
+  transclude: "element",
   priority: 1200,
-  require: '^ngSwitch',
+  require: "^ngSwitch",
   multiElement: true,
-  link: function(scope, element, attrs, ctrl, $transclude) {
+  link: function (scope, element, attrs, ctrl, $transclude) {
+    var cases = attrs.ngSwitchWhen
+      .split(attrs.ngSwitchWhenSeparator)
+      .sort()
+      .filter(
+        // Filter duplicate cases
+        function (element, index, array) {
+          return array[index - 1] !== element;
+        },
+      );
 
-    var cases = attrs.ngSwitchWhen.split(attrs.ngSwitchWhenSeparator).sort().filter(
-      // Filter duplicate cases
-      function(element, index, array) { return array[index - 1] !== element; }
-    );
-
-    forEach(cases, function(whenCase) {
-      ctrl.cases['!' + whenCase] = (ctrl.cases['!' + whenCase] || []);
-      ctrl.cases['!' + whenCase].push({ transclude: $transclude, element: element });
+    forEach(cases, function (whenCase) {
+      ctrl.cases["!" + whenCase] = ctrl.cases["!" + whenCase] || [];
+      ctrl.cases["!" + whenCase].push({
+        transclude: $transclude,
+        element: element,
+      });
     });
-  }
+  },
 });
 
 var ngSwitchDefaultDirective = ngDirective({
-  transclude: 'element',
+  transclude: "element",
   priority: 1200,
-  require: '^ngSwitch',
+  require: "^ngSwitch",
   multiElement: true,
-  link: function(scope, element, attr, ctrl, $transclude) {
-    ctrl.cases['?'] = (ctrl.cases['?'] || []);
-    ctrl.cases['?'].push({ transclude: $transclude, element: element });
-   }
+  link: function (scope, element, attr, ctrl, $transclude) {
+    ctrl.cases["?"] = ctrl.cases["?"] || [];
+    ctrl.cases["?"].push({ transclude: $transclude, element: element });
+  },
 });

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc provider
@@ -10,7 +10,6 @@
  * {@link ng.$location#hash $location.hash()} changes.
  */
 function $AnchorScrollProvider() {
-
   var autoScrollingEnabled = true;
 
   /**
@@ -26,7 +25,7 @@ function $AnchorScrollProvider() {
    * {@link ng.$anchorScroll $anchorScroll()} in order to scroll to the element related to the
    * current hash.
    */
-  this.disableAutoScrolling = function() {
+  this.disableAutoScrolling = function () {
     autoScrollingEnabled = false;
   };
 
@@ -171,104 +170,114 @@ function $AnchorScrollProvider() {
        </file>
      </example>
    */
-  this.$get = ['$window', '$location', '$rootScope', function($window, $location, $rootScope) {
-    var document = $window.document;
+  this.$get = [
+    "$window",
+    "$location",
+    "$rootScope",
+    function ($window, $location, $rootScope) {
+      var document = $window.document;
 
-    // Helper function to get first anchor from a NodeList
-    // (using `Array#some()` instead of `angular#forEach()` since it's more performant
-    //  and working in all supported browsers.)
-    function getFirstAnchor(list) {
-      var result = null;
-      Array.prototype.some.call(list, function(element) {
-        if (nodeName_(element) === 'a') {
-          result = element;
-          return true;
-        }
-      });
-      return result;
-    }
-
-    function getYOffset() {
-
-      var offset = scroll.yOffset;
-
-      if (isFunction(offset)) {
-        offset = offset();
-      } else if (isElement(offset)) {
-        var elem = offset[0];
-        var style = $window.getComputedStyle(elem);
-        if (style.position !== 'fixed') {
-          offset = 0;
-        } else {
-          offset = elem.getBoundingClientRect().bottom;
-        }
-      } else if (!isNumber(offset)) {
-        offset = 0;
-      }
-
-      return offset;
-    }
-
-    function scrollTo(elem) {
-      if (elem) {
-        elem.scrollIntoView();
-
-        var offset = getYOffset();
-
-        if (offset) {
-          // `offset` is the number of pixels we should scroll UP in order to align `elem` properly.
-          // This is true ONLY if the call to `elem.scrollIntoView()` initially aligns `elem` at the
-          // top of the viewport.
-          //
-          // IF the number of pixels from the top of `elem` to the end of the page's content is less
-          // than the height of the viewport, then `elem.scrollIntoView()` will align the `elem` some
-          // way down the page.
-          //
-          // This is often the case for elements near the bottom of the page.
-          //
-          // In such cases we do not need to scroll the whole `offset` up, just the difference between
-          // the top of the element and the offset, which is enough to align the top of `elem` at the
-          // desired position.
-          var elemTop = elem.getBoundingClientRect().top;
-          $window.scrollBy(0, elemTop - offset);
-        }
-      } else {
-        $window.scrollTo(0, 0);
-      }
-    }
-
-    function scroll(hash) {
-      // Allow numeric hashes
-      hash = isString(hash) ? hash : isNumber(hash) ? hash.toString() : $location.hash();
-      var elm;
-
-      // empty hash, scroll to the top of the page
-      if (!hash) scrollTo(null);
-
-      // element with given id
-      else if ((elm = document.getElementById(hash))) scrollTo(elm);
-
-      // first anchor with given name :-D
-      else if ((elm = getFirstAnchor(document.getElementsByName(hash)))) scrollTo(elm);
-
-      // no element and hash === 'top', scroll to the top of the page
-      else if (hash === 'top') scrollTo(null);
-    }
-
-    // does not scroll when user clicks on anchor link that is currently on
-    // (no url change, no $location.hash() change), browser native does scroll
-    if (autoScrollingEnabled) {
-      $rootScope.$watch(function autoScrollWatch() {return $location.hash();},
-        function autoScrollWatchAction(newVal, oldVal) {
-          // skip the initial scroll if $location.hash is empty
-          if (newVal === oldVal && newVal === '') return;
-
-          jqLiteDocumentLoaded(function() {
-            $rootScope.$evalAsync(scroll);
-          });
+      // Helper function to get first anchor from a NodeList
+      // (using `Array#some()` instead of `angular#forEach()` since it's more performant
+      //  and working in all supported browsers.)
+      function getFirstAnchor(list) {
+        var result = null;
+        Array.prototype.some.call(list, function (element) {
+          if (nodeName_(element) === "a") {
+            result = element;
+            return true;
+          }
         });
-    }
+        return result;
+      }
 
-    return scroll;
-  }];
+      function getYOffset() {
+        var offset = scroll.yOffset;
+
+        if (isFunction(offset)) {
+          offset = offset();
+        } else if (isElement(offset)) {
+          var elem = offset[0];
+          var style = $window.getComputedStyle(elem);
+          if (style.position !== "fixed") {
+            offset = 0;
+          } else {
+            offset = elem.getBoundingClientRect().bottom;
+          }
+        } else if (!isNumber(offset)) {
+          offset = 0;
+        }
+
+        return offset;
+      }
+
+      function scrollTo(elem) {
+        if (elem) {
+          elem.scrollIntoView();
+
+          var offset = getYOffset();
+
+          if (offset) {
+            // `offset` is the number of pixels we should scroll UP in order to align `elem` properly.
+            // This is true ONLY if the call to `elem.scrollIntoView()` initially aligns `elem` at the
+            // top of the viewport.
+            //
+            // IF the number of pixels from the top of `elem` to the end of the page's content is less
+            // than the height of the viewport, then `elem.scrollIntoView()` will align the `elem` some
+            // way down the page.
+            //
+            // This is often the case for elements near the bottom of the page.
+            //
+            // In such cases we do not need to scroll the whole `offset` up, just the difference between
+            // the top of the element and the offset, which is enough to align the top of `elem` at the
+            // desired position.
+            var elemTop = elem.getBoundingClientRect().top;
+            $window.scrollBy(0, elemTop - offset);
+          }
+        } else {
+          $window.scrollTo(0, 0);
+        }
+      }
+
+      function scroll(hash) {
+        // Allow numeric hashes
+        hash = isString(hash)
+          ? hash
+          : isNumber(hash)
+            ? hash.toString()
+            : $location.hash();
+        var elm;
+
+        // empty hash, scroll to the top of the page
+        if (!hash) scrollTo(null);
+        // element with given id
+        else if ((elm = document.getElementById(hash))) scrollTo(elm);
+        // first anchor with given name :-D
+        else if ((elm = getFirstAnchor(document.getElementsByName(hash))))
+          scrollTo(elm);
+        // no element and hash === 'top', scroll to the top of the page
+        else if (hash === "top") scrollTo(null);
+      }
+
+      // does not scroll when user clicks on anchor link that is currently on
+      // (no url change, no $location.hash() change), browser native does scroll
+      if (autoScrollingEnabled) {
+        $rootScope.$watch(
+          function autoScrollWatch() {
+            return $location.hash();
+          },
+          function autoScrollWatchAction(newVal, oldVal) {
+            // skip the initial scroll if $location.hash is empty
+            if (newVal === oldVal && newVal === "") return;
+
+            jqLiteDocumentLoaded(function () {
+              $rootScope.$evalAsync(scroll);
+            });
+          },
+        );
+      }
+
+      return scroll;
+    },
+  ];
 }

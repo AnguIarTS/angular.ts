@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-var $templateRequestMinErr = minErr('$templateRequest');
+var $templateRequestMinErr = minErr("$templateRequest");
 
 /**
  * @ngdoc provider
@@ -14,7 +14,6 @@ var $templateRequestMinErr = minErr('$templateRequest');
  * requesting a template.
  */
 function $TemplateRequestProvider() {
-
   var httpOptions;
 
   /**
@@ -30,7 +29,7 @@ function $TemplateRequestProvider() {
    * @param {string=} value new value for the {@link $http} options.
    * @returns {string|self} Returns the {@link $http} options when used as getter and self if used as setter.
    */
-  this.httpOptions = function(val) {
+  this.httpOptions = function (val) {
     if (val) {
       httpOptions = val;
       return this;
@@ -66,9 +65,13 @@ function $TemplateRequestProvider() {
    *
    * @property {number} totalPendingRequests total amount of pending template requests being downloaded.
    */
-  this.$get = ['$exceptionHandler', '$templateCache', '$http', '$q', '$sce',
-    function($exceptionHandler, $templateCache, $http, $q, $sce) {
-
+  this.$get = [
+    "$exceptionHandler",
+    "$templateCache",
+    "$http",
+    "$q",
+    "$sce",
+    function ($exceptionHandler, $templateCache, $http, $q, $sce) {
       function handleRequestFn(tpl, ignoreRequestError) {
         handleRequestFn.totalPendingRequests++;
 
@@ -81,32 +84,44 @@ function $TemplateRequestProvider() {
           tpl = $sce.getTrustedResourceUrl(tpl);
         }
 
-        var transformResponse = $http.defaults && $http.defaults.transformResponse;
+        var transformResponse =
+          $http.defaults && $http.defaults.transformResponse;
 
         if (isArray(transformResponse)) {
-          transformResponse = transformResponse.filter(function(transformer) {
+          transformResponse = transformResponse.filter(function (transformer) {
             return transformer !== defaultHttpResponseTransform;
           });
         } else if (transformResponse === defaultHttpResponseTransform) {
           transformResponse = null;
         }
 
-        return $http.get(tpl, extend({
-            cache: $templateCache,
-            transformResponse: transformResponse
-          }, httpOptions))
-          .finally(function() {
+        return $http
+          .get(
+            tpl,
+            extend(
+              {
+                cache: $templateCache,
+                transformResponse: transformResponse,
+              },
+              httpOptions,
+            ),
+          )
+          .finally(function () {
             handleRequestFn.totalPendingRequests--;
           })
-          .then(function(response) {
+          .then(function (response) {
             return $templateCache.put(tpl, response.data);
           }, handleError);
 
         function handleError(resp) {
           if (!ignoreRequestError) {
-            resp = $templateRequestMinErr('tpload',
-                'Failed to load template: {0} (HTTP status: {1} {2})',
-                tpl, resp.status, resp.statusText);
+            resp = $templateRequestMinErr(
+              "tpload",
+              "Failed to load template: {0} (HTTP status: {1} {2})",
+              tpl,
+              resp.status,
+              resp.statusText,
+            );
 
             $exceptionHandler(resp);
           }
@@ -118,6 +133,6 @@ function $TemplateRequestProvider() {
       handleRequestFn.totalPendingRequests = 0;
 
       return handleRequestFn;
-    }
+    },
   ];
 }

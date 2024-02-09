@@ -1,5 +1,4 @@
-'use strict';
-
+"use strict";
 
 /**
  * @ngdoc directive
@@ -90,24 +89,24 @@
  * </example>
  *
  */
-var ngListDirective = function() {
+var ngListDirective = function () {
   return {
-    restrict: 'A',
+    restrict: "A",
     priority: 100,
-    require: 'ngModel',
-    link: function(scope, element, attr, ctrl) {
-      var ngList = attr.ngList || ', ';
-      var trimValues = attr.ngTrim !== 'false';
+    require: "ngModel",
+    link: function (scope, element, attr, ctrl) {
+      var ngList = attr.ngList || ", ";
+      var trimValues = attr.ngTrim !== "false";
       var separator = trimValues ? trim(ngList) : ngList;
 
-      var parse = function(viewValue) {
+      var parse = function (viewValue) {
         // If the viewValue is invalid (say required but empty) it will be `undefined`
         if (isUndefined(viewValue)) return;
 
         var list = [];
 
         if (viewValue) {
-          forEach(viewValue.split(separator), function(value) {
+          forEach(viewValue.split(separator), function (value) {
             if (value) list.push(trimValues ? trim(value) : value);
           });
         }
@@ -116,7 +115,7 @@ var ngListDirective = function() {
       };
 
       ctrl.$parsers.push(parse);
-      ctrl.$formatters.push(function(value) {
+      ctrl.$formatters.push(function (value) {
         if (isArray(value)) {
           return value.join(ngList);
         }
@@ -125,9 +124,9 @@ var ngListDirective = function() {
       });
 
       // Override the standard $isEmpty because an empty array means the input is empty.
-      ctrl.$isEmpty = function(value) {
+      ctrl.$isEmpty = function (value) {
         return !value || !value.length;
       };
-    }
+    },
   };
 };

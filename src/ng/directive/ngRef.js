@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc directive
@@ -240,57 +240,66 @@
  *
  */
 
-var ngRefMinErr = minErr('ngRef');
+var ngRefMinErr = minErr("ngRef");
 
-var ngRefDirective = ['$parse', function($parse) {
-  return {
-    priority: -1, // Needed for compatibility with element transclusion on the same element
-    restrict: 'A',
-    compile: function(tElement, tAttrs) {
-      // Get the expected controller name, converts <data-some-thing> into "someThing"
-      var controllerName = directiveNormalize(nodeName_(tElement));
+var ngRefDirective = [
+  "$parse",
+  function ($parse) {
+    return {
+      priority: -1, // Needed for compatibility with element transclusion on the same element
+      restrict: "A",
+      compile: function (tElement, tAttrs) {
+        // Get the expected controller name, converts <data-some-thing> into "someThing"
+        var controllerName = directiveNormalize(nodeName_(tElement));
 
-      // Get the expression for value binding
-      var getter = $parse(tAttrs.ngRef);
-      var setter = getter.assign || function() {
-        throw ngRefMinErr('nonassign', 'Expression in ngRef="{0}" is non-assignable!', tAttrs.ngRef);
-      };
+        // Get the expression for value binding
+        var getter = $parse(tAttrs.ngRef);
+        var setter =
+          getter.assign ||
+          function () {
+            throw ngRefMinErr(
+              "nonassign",
+              'Expression in ngRef="{0}" is non-assignable!',
+              tAttrs.ngRef,
+            );
+          };
 
-      return function(scope, element, attrs) {
-        var refValue;
+        return function (scope, element, attrs) {
+          var refValue;
 
-        if (attrs.hasOwnProperty('ngRefRead')) {
-          if (attrs.ngRefRead === '$element') {
-            refValue = element;
-          } else {
-            refValue = element.data('$' + attrs.ngRefRead + 'Controller');
+          if (attrs.hasOwnProperty("ngRefRead")) {
+            if (attrs.ngRefRead === "$element") {
+              refValue = element;
+            } else {
+              refValue = element.data("$" + attrs.ngRefRead + "Controller");
 
-            if (!refValue) {
-              throw ngRefMinErr(
-                'noctrl',
-                'The controller for ngRefRead="{0}" could not be found on ngRef="{1}"',
-                attrs.ngRefRead,
-                tAttrs.ngRef
-              );
+              if (!refValue) {
+                throw ngRefMinErr(
+                  "noctrl",
+                  'The controller for ngRefRead="{0}" could not be found on ngRef="{1}"',
+                  attrs.ngRefRead,
+                  tAttrs.ngRef,
+                );
+              }
             }
+          } else {
+            refValue = element.data("$" + controllerName + "Controller");
           }
-        } else {
-          refValue = element.data('$' + controllerName + 'Controller');
-        }
 
-        refValue = refValue || element;
+          refValue = refValue || element;
 
-        setter(scope, refValue);
+          setter(scope, refValue);
 
-        // when the element is removed, remove it (nullify it)
-        element.on('$destroy', function() {
-          // only remove it if value has not changed,
-          // because animations (and other procedures) may duplicate elements
-          if (getter(scope) === refValue) {
-            setter(scope, null);
-          }
-        });
-      };
-    }
-  };
-}];
+          // when the element is removed, remove it (nullify it)
+          element.on("$destroy", function () {
+            // only remove it if value has not changed,
+            // because animations (and other procedures) may duplicate elements
+            if (getter(scope) === refValue) {
+              setter(scope, null);
+            }
+          });
+        };
+      },
+    };
+  },
+];

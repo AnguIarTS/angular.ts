@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc directive
@@ -53,8 +53,8 @@
  *
  */
 var ngCloakDirective = ngDirective({
-  compile: function(element, attr) {
-    attr.$set('ngCloak', undefined);
-    element.removeClass('ng-cloak');
-  }
+  compile: function (element, attr) {
+    attr.$set("ngCloak", undefined);
+    element.removeClass("ng-cloak");
+  },
 });

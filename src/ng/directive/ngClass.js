@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /* exported
   ngClassDirective,
@@ -7,99 +7,105 @@
 */
 
 function classDirective(name, selector) {
-  name = 'ngClass' + name;
+  name = "ngClass" + name;
   var indexWatchExpression;
 
-  return ['$parse', function($parse) {
-    return {
-      restrict: 'AC',
-      link: function(scope, element, attr) {
-        var classCounts = element.data('$classCounts');
-        var oldModulo = true;
-        var oldClassString;
+  return [
+    "$parse",
+    function ($parse) {
+      return {
+        restrict: "AC",
+        link: function (scope, element, attr) {
+          var classCounts = element.data("$classCounts");
+          var oldModulo = true;
+          var oldClassString;
 
-        if (!classCounts) {
-          // Use createMap() to prevent class assumptions involving property
-          // names in Object.prototype
-          classCounts = createMap();
-          element.data('$classCounts', classCounts);
-        }
-
-        if (name !== 'ngClass') {
-          if (!indexWatchExpression) {
-            indexWatchExpression = $parse('$index', function moduloTwo($index) {
-              // eslint-disable-next-line no-bitwise
-              return $index & 1;
-            });
+          if (!classCounts) {
+            // Use createMap() to prevent class assumptions involving property
+            // names in Object.prototype
+            classCounts = createMap();
+            element.data("$classCounts", classCounts);
           }
 
-          scope.$watch(indexWatchExpression, ngClassIndexWatchAction);
-        }
-
-        scope.$watch($parse(attr[name], toClassString), ngClassWatchAction);
-
-        function addClasses(classString) {
-          classString = digestClassCounts(split(classString), 1);
-          attr.$addClass(classString);
-        }
-
-        function removeClasses(classString) {
-          classString = digestClassCounts(split(classString), -1);
-          attr.$removeClass(classString);
-        }
-
-        function updateClasses(oldClassString, newClassString) {
-          var oldClassArray = split(oldClassString);
-          var newClassArray = split(newClassString);
-
-          var toRemoveArray = arrayDifference(oldClassArray, newClassArray);
-          var toAddArray = arrayDifference(newClassArray, oldClassArray);
-
-          var toRemoveString = digestClassCounts(toRemoveArray, -1);
-          var toAddString = digestClassCounts(toAddArray, 1);
-
-          attr.$addClass(toAddString);
-          attr.$removeClass(toRemoveString);
-        }
-
-        function digestClassCounts(classArray, count) {
-          var classesToUpdate = [];
-
-          forEach(classArray, function(className) {
-            if (count > 0 || classCounts[className]) {
-              classCounts[className] = (classCounts[className] || 0) + count;
-              if (classCounts[className] === +(count > 0)) {
-                classesToUpdate.push(className);
-              }
+          if (name !== "ngClass") {
+            if (!indexWatchExpression) {
+              indexWatchExpression = $parse(
+                "$index",
+                function moduloTwo($index) {
+                  // eslint-disable-next-line no-bitwise
+                  return $index & 1;
+                },
+              );
             }
-          });
 
-          return classesToUpdate.join(' ');
-        }
-
-        function ngClassIndexWatchAction(newModulo) {
-          // This watch-action should run before the `ngClassWatchAction()`, thus it
-          // adds/removes `oldClassString`. If the `ngClass` expression has changed as well, the
-          // `ngClassWatchAction()` will update the classes.
-          if (newModulo === selector) {
-            addClasses(oldClassString);
-          } else {
-            removeClasses(oldClassString);
+            scope.$watch(indexWatchExpression, ngClassIndexWatchAction);
           }
 
-          oldModulo = newModulo;
-        }
+          scope.$watch($parse(attr[name], toClassString), ngClassWatchAction);
 
-        function ngClassWatchAction(newClassString) {
-          if (oldModulo === selector) {
-            updateClasses(oldClassString, newClassString);
+          function addClasses(classString) {
+            classString = digestClassCounts(split(classString), 1);
+            attr.$addClass(classString);
           }
 
-          oldClassString = newClassString;
-        }
-      }
-    };
-  }];
+          function removeClasses(classString) {
+            classString = digestClassCounts(split(classString), -1);
+            attr.$removeClass(classString);
+          }
+
+          function updateClasses(oldClassString, newClassString) {
+            var oldClassArray = split(oldClassString);
+            var newClassArray = split(newClassString);
+
+            var toRemoveArray = arrayDifference(oldClassArray, newClassArray);
+            var toAddArray = arrayDifference(newClassArray, oldClassArray);
+
+            var toRemoveString = digestClassCounts(toRemoveArray, -1);
+            var toAddString = digestClassCounts(toAddArray, 1);
+
+            attr.$addClass(toAddString);
+            attr.$removeClass(toRemoveString);
+          }
+
+          function digestClassCounts(classArray, count) {
+            var classesToUpdate = [];
+
+            forEach(classArray, function (className) {
+              if (count > 0 || classCounts[className]) {
+                classCounts[className] = (classCounts[className] || 0) + count;
+                if (classCounts[className] === +(count > 0)) {
+                  classesToUpdate.push(className);
+                }
+              }
+            });
+
+            return classesToUpdate.join(" ");
+          }
+
+          function ngClassIndexWatchAction(newModulo) {
+            // This watch-action should run before the `ngClassWatchAction()`, thus it
+            // adds/removes `oldClassString`. If the `ngClass` expression has changed as well, the
+            // `ngClassWatchAction()` will update the classes.
+            if (newModulo === selector) {
+              addClasses(oldClassString);
+            } else {
+              removeClasses(oldClassString);
+            }
+
+            oldModulo = newModulo;
+          }
+
+          function ngClassWatchAction(newClassString) {
+            if (oldModulo === selector) {
+              updateClasses(oldClassString, newClassString);
+            }
+
+            oldClassString = newClassString;
+          }
+        },
+      };
+    },
+  ];
 
   // Helpers
   function arrayDifference(tokens1, tokens2) {
@@ -108,8 +114,7 @@ function classDirective(name, selector) {
 
     var values = [];
 
-    outer:
-    for (var i = 0; i < tokens1.length; i++) {
+    outer: for (var i = 0; i < tokens1.length; i++) {
       var token = tokens1[i];
       for (var j = 0; j < tokens2.length; j++) {
         if (token === tokens2[j]) continue outer;
@@ -121,7 +126,7 @@ function classDirective(name, selector) {
   }
 
   function split(classString) {
-    return classString && classString.split(' ');
+    return classString && classString.split(" ");
   }
 
   function toClassString(classValue) {
@@ -130,13 +135,15 @@ function classDirective(name, selector) {
     var classString = classValue;
 
     if (isArray(classValue)) {
-      classString = classValue.map(toClassString).join(' ');
+      classString = classValue.map(toClassString).join(" ");
     } else if (isObject(classValue)) {
-      classString = Object.keys(classValue).
-        filter(function(key) { return classValue[key]; }).
-        join(' ');
+      classString = Object.keys(classValue)
+        .filter(function (key) {
+          return classValue[key];
+        })
+        .join(" ");
     } else if (!isString(classValue)) {
-      classString = classValue + '';
+      classString = classValue + "";
     }
 
     return classString;
@@ -328,7 +335,7 @@ function classDirective(name, selector) {
      </file>
    </example>
  */
-var ngClassDirective = classDirective('', true);
+var ngClassDirective = classDirective("", true);
 
 /**
  * @ngdoc directive
@@ -438,7 +445,7 @@ var ngClassDirective = classDirective('', true);
      </file>
    </example>
  */
-var ngClassOddDirective = classDirective('Odd', 0);
+var ngClassOddDirective = classDirective("Odd", 0);
 
 /**
  * @ngdoc directive
@@ -548,4 +555,4 @@ var ngClassOddDirective = classDirective('Odd', 0);
      </file>
    </example>
  */
-var ngClassEvenDirective = classDirective('Even', 1);
+var ngClassEvenDirective = classDirective("Even", 1);

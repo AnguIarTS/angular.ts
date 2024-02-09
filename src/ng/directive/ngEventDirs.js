@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc directive
@@ -43,32 +43,53 @@ var ngEventDirectives = {};
 // we need to execute their event handlers asynchronously using $evalAsync,
 // so that they are not executed in an inconsistent state.
 var forceAsyncEvents = {
-  'blur': true,
-  'focus': true
+  blur: true,
+  focus: true,
 };
 forEach(
-  'click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup keypress submit focus blur copy cut paste'.split(' '),
-  function(eventName) {
-    var directiveName = directiveNormalize('ng-' + eventName);
-    ngEventDirectives[directiveName] = ['$parse', '$rootScope', '$exceptionHandler', function($parse, $rootScope, $exceptionHandler) {
-      return createEventDirective($parse, $rootScope, $exceptionHandler, directiveName, eventName, forceAsyncEvents[eventName]);
-    }];
-  }
+  "click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup keypress submit focus blur copy cut paste".split(
+    " ",
+  ),
+  function (eventName) {
+    var directiveName = directiveNormalize("ng-" + eventName);
+    ngEventDirectives[directiveName] = [
+      "$parse",
+      "$rootScope",
+      "$exceptionHandler",
+      function ($parse, $rootScope, $exceptionHandler) {
+        return createEventDirective(
+          $parse,
+          $rootScope,
+          $exceptionHandler,
+          directiveName,
+          eventName,
+          forceAsyncEvents[eventName],
+        );
+      },
+    ];
+  },
 );
 
-function createEventDirective($parse, $rootScope, $exceptionHandler, directiveName, eventName, forceAsync) {
+function createEventDirective(
+  $parse,
+  $rootScope,
+  $exceptionHandler,
+  directiveName,
+  eventName,
+  forceAsync,
+) {
   return {
-    restrict: 'A',
-    compile: function($element, attr) {
+    restrict: "A",
+    compile: function ($element, attr) {
       // NOTE:
       // We expose the powerful `$event` object on the scope that provides access to the Window,
       // etc. This is OK, because expressions are not sandboxed any more (and the expression
       // sandbox was never meant to be a security feature anyway).
       var fn = $parse(attr[directiveName]);
       return function ngEventHandler(scope, element) {
-        element.on(eventName, function(event) {
-          var callback = function() {
-            fn(scope, {$event: event});
+        element.on(eventName, function (event) {
+          var callback = function () {
+            fn(scope, { $event: event });
           };
 
           if (!$rootScope.$$phase) {
@@ -84,7 +105,7 @@ function createEventDirective($parse, $rootScope, $exceptionHandler, directiveNa
           }
         });
       };
-    }
+    },
   };
 }
 
@@ -112,7 +133,6 @@ function createEventDirective($parse, $rootScope, $exceptionHandler, directiveNa
    </example>
  */
 
-
 /**
  * @ngdoc directive
  * @name ngMousedown
@@ -136,7 +156,6 @@ function createEventDirective($parse, $rootScope, $exceptionHandler, directiveNa
      </file>
    </example>
  */
-
 
 /**
  * @ngdoc directive
@@ -186,7 +205,6 @@ function createEventDirective($parse, $rootScope, $exceptionHandler, directiveNa
    </example>
  */
 
-
 /**
  * @ngdoc directive
  * @name ngMouseenter
@@ -210,7 +228,6 @@ function createEventDirective($parse, $rootScope, $exceptionHandler, directiveNa
      </file>
    </example>
  */
-
 
 /**
  * @ngdoc directive
@@ -236,7 +253,6 @@ function createEventDirective($parse, $rootScope, $exceptionHandler, directiveNa
    </example>
  */
 
-
 /**
  * @ngdoc directive
  * @name ngMousemove
@@ -261,7 +277,6 @@ function createEventDirective($parse, $rootScope, $exceptionHandler, directiveNa
    </example>
  */
 
-
 /**
  * @ngdoc directive
  * @name ngKeydown
@@ -283,7 +298,6 @@ function createEventDirective($parse, $rootScope, $exceptionHandler, directiveNa
      </file>
    </example>
  */
-
 
 /**
  * @ngdoc directive
@@ -312,7 +326,6 @@ function createEventDirective($parse, $rootScope, $exceptionHandler, directiveNa
    </example>
  */
 
-
 /**
  * @ngdoc directive
  * @name ngKeypress
@@ -334,7 +347,6 @@ function createEventDirective($parse, $rootScope, $exceptionHandler, directiveNa
      </file>
    </example>
  */
-
 
 /**
  * @ngdoc directive

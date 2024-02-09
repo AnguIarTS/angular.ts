@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc service
@@ -11,6 +11,5 @@
  * location where the application's {@link auto.$injector $injector} service gets
  * published, and can be retrieved using `$rootElement.injector()`.
  */
-
 
 // the implementation is in angular.bootstrap

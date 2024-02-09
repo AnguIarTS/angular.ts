@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 // NOTE:  The usage of window and document instead of $window and $document here is
 // deliberate.  This service depends on the specific behavior of anchor nodes created by the
 // browser (resolving and parsing URLs) that is unlikely to be provided by mock objects and
@@ -6,16 +6,16 @@
 // doesn't know about mocked locations and resolves URLs to the real document - which is
 // exactly the behavior needed here.  There is little value is mocking these out for this
 // service.
-var urlParsingNode = window.document.createElement('a');
+var urlParsingNode = window.document.createElement("a");
 var originUrl = urlResolve(window.location.href);
 var baseUrlParsingNode;
 
-urlParsingNode.href = 'http://[::1]';
+urlParsingNode.href = "http://[::1]";
 
 // Support: IE 9-11 only, Edge 16-17 only (fixed in 18 Preview)
 // IE/Edge don't wrap IPv6 addresses' hostnames in square brackets
 // when parsed out of an anchor element.
-var ipv6InBrackets = urlParsingNode.hostname === '[::1]';
+var ipv6InBrackets = urlParsingNode.hostname === "[::1]";
 
 /**
  *
@@ -72,29 +72,34 @@ function urlResolve(url) {
   if (msie) {
     // Normalize before parse.  Refer Implementation Notes on why this is
     // done in two steps on IE.
-    urlParsingNode.setAttribute('href', href);
+    urlParsingNode.setAttribute("href", href);
     href = urlParsingNode.href;
   }
 
-  urlParsingNode.setAttribute('href', href);
+  urlParsingNode.setAttribute("href", href);
 
   var hostname = urlParsingNode.hostname;
 
-  if (!ipv6InBrackets && hostname.indexOf(':') > -1) {
-    hostname = '[' + hostname + ']';
+  if (!ipv6InBrackets && hostname.indexOf(":") > -1) {
+    hostname = "[" + hostname + "]";
   }
 
   return {
     href: urlParsingNode.href,
-    protocol: urlParsingNode.protocol ? urlParsingNode.protocol.replace(/:$/, '') : '',
+    protocol: urlParsingNode.protocol
+      ? urlParsingNode.protocol.replace(/:$/, "")
+      : "",
     host: urlParsingNode.host,
-    search: urlParsingNode.search ? urlParsingNode.search.replace(/^\?/, '') : '',
-    hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, '') : '',
+    search: urlParsingNode.search
+      ? urlParsingNode.search.replace(/^\?/, "")
+      : "",
+    hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, "") : "",
     hostname: hostname,
     port: urlParsingNode.port,
-    pathname: (urlParsingNode.pathname.charAt(0) === '/')
-      ? urlParsingNode.pathname
-      : '/' + urlParsingNode.pathname
+    pathname:
+      urlParsingNode.pathname.charAt(0) === "/"
+        ? urlParsingNode.pathname
+        : "/" + urlParsingNode.pathname,
   };
 }
 
@@ -134,7 +139,9 @@ function urlIsSameOriginAsBaseUrl(requestUrl) {
  *     whether it is of an allowed origin.
  */
 function urlIsAllowedOriginFactory(trustedOriginUrls) {
-  var parsedAllowedOriginUrls = [originUrl].concat(trustedOriginUrls.map(urlResolve));
+  var parsedAllowedOriginUrls = [originUrl].concat(
+    trustedOriginUrls.map(urlResolve),
+  );
 
   /**
    * Check whether the specified URL (string or parsed URL object) has an origin that is allowed
@@ -148,7 +155,9 @@ function urlIsAllowedOriginFactory(trustedOriginUrls) {
    */
   return function urlIsAllowedOrigin(requestUrl) {
     var parsedUrl = urlResolve(requestUrl);
-    return parsedAllowedOriginUrls.some(urlsAreSameOrigin.bind(null, parsedUrl));
+    return parsedAllowedOriginUrls.some(
+      urlsAreSameOrigin.bind(null, parsedUrl),
+    );
   };
 }
 
@@ -166,8 +175,7 @@ function urlsAreSameOrigin(url1, url2) {
   url1 = urlResolve(url1);
   url2 = urlResolve(url2);
 
-  return (url1.protocol === url2.protocol &&
-          url1.host === url2.host);
+  return url1.protocol === url2.protocol && url1.host === url2.host;
 }
 
 /**
@@ -181,8 +189,8 @@ function getBaseUrl() {
 
   // `document.baseURI` is available everywhere except IE
   if (!baseUrlParsingNode) {
-    baseUrlParsingNode = window.document.createElement('a');
-    baseUrlParsingNode.href = '.';
+    baseUrlParsingNode = window.document.createElement("a");
+    baseUrlParsingNode.href = ".";
 
     // Work-around for IE bug described in Implementation Notes. The fix in `urlResolve()` is not
     // suitable here because we need to track changes to the base URL.

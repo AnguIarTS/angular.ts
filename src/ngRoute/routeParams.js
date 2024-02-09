@@ -1,7 +1,6 @@
-'use strict';
+"use strict";
 
-ngRouteModule.provider('$routeParams', $RouteParamsProvider);
-
+ngRouteModule.provider("$routeParams", $RouteParamsProvider);
 
 /**
  * @ngdoc service
@@ -38,5 +37,7 @@ ngRouteModule.provider('$routeParams', $RouteParamsProvider);
  * ```
  */
 function $RouteParamsProvider() {
-  this.$get = function() { return {}; };
+  this.$get = function () {
+    return {};
+  };
 }

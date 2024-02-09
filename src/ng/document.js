@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc service
@@ -27,11 +27,13 @@
    </example>
  */
 function $DocumentProvider() {
-  this.$get = ['$window', function(window) {
-    return jqLite(window.document);
-  }];
+  this.$get = [
+    "$window",
+    function (window) {
+      return jqLite(window.document);
+    },
+  ];
 }
-
 
 /**
  * @private
@@ -39,22 +41,26 @@ function $DocumentProvider() {
  * Listens for document visibility change and makes the current status accessible.
  */
 function $$IsDocumentHiddenProvider() {
-  this.$get = ['$document', '$rootScope', function($document, $rootScope) {
-    var doc = $document[0];
-    var hidden = doc && doc.hidden;
+  this.$get = [
+    "$document",
+    "$rootScope",
+    function ($document, $rootScope) {
+      var doc = $document[0];
+      var hidden = doc && doc.hidden;
 
-    $document.on('visibilitychange', changeListener);
+      $document.on("visibilitychange", changeListener);
 
-    $rootScope.$on('$destroy', function() {
-      $document.off('visibilitychange', changeListener);
-    });
+      $rootScope.$on("$destroy", function () {
+        $document.off("visibilitychange", changeListener);
+      });
 
-    function changeListener() {
-      hidden = doc.hidden;
-    }
+      function changeListener() {
+        hidden = doc.hidden;
+      }
 
-    return function() {
-      return hidden;
-    };
-  }];
+      return function () {
+        return hidden;
+      };
+    },
+  ];
 }

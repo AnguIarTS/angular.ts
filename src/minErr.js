@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /* exported
   minErrConfig,
@@ -8,7 +8,7 @@
 
 var minErrConfig = {
   objectMaxDepth: 5,
-  urlErrorParamsEnabled: true
+  urlErrorParamsEnabled: true,
 };
 
 /**
@@ -41,9 +41,14 @@ var minErrConfig = {
 function errorHandlingConfig(config) {
   if (isObject(config)) {
     if (isDefined(config.objectMaxDepth)) {
-      minErrConfig.objectMaxDepth = isValidObjectMaxDepth(config.objectMaxDepth) ? config.objectMaxDepth : NaN;
+      minErrConfig.objectMaxDepth = isValidObjectMaxDepth(config.objectMaxDepth)
+        ? config.objectMaxDepth
+        : NaN;
     }
-    if (isDefined(config.urlErrorParamsEnabled) && isBoolean(config.urlErrorParamsEnabled)) {
+    if (
+      isDefined(config.urlErrorParamsEnabled) &&
+      isBoolean(config.urlErrorParamsEnabled)
+    ) {
       minErrConfig.urlErrorParamsEnabled = config.urlErrorParamsEnabled;
     }
   } else {
@@ -59,7 +64,6 @@ function errorHandlingConfig(config) {
 function isValidObjectMaxDepth(maxDepth) {
   return isNumber(maxDepth) && maxDepth > 0;
 }
-
 
 /**
  * @description
@@ -95,38 +99,44 @@ function minErr(module, ErrorConstructor) {
   ErrorConstructor = ErrorConstructor || Error;
 
   var url = 'https://errors.angularjs.org/"NG_VERSION_FULL"/';
-  var regex = url.replace('.', '\\.') + '[\\s\\S]*';
-  var errRegExp = new RegExp(regex, 'g');
+  var regex = url.replace(".", "\\.") + "[\\s\\S]*";
+  var errRegExp = new RegExp(regex, "g");
 
-  return function() {
+  return function () {
     var code = arguments[0],
       template = arguments[1],
-      message = '[' + (module ? module + ':' : '') + code + '] ',
-      templateArgs = sliceArgs(arguments, 2).map(function(arg) {
+      message = "[" + (module ? module + ":" : "") + code + "] ",
+      templateArgs = sliceArgs(arguments, 2).map(function (arg) {
         return toDebugString(arg, minErrConfig.objectMaxDepth);
       }),
-      paramPrefix, i;
+      paramPrefix,
+      i;
 
     // A minErr message has two parts: the message itself and the url that contains the
     // encoded message.
     // The message's parameters can contain other error messages which also include error urls.
     // To prevent the messages from getting too long, we strip the error urls from the parameters.
 
-    message += template.replace(/\{\d+\}/g, function(match) {
+    message += template.replace(/\{\d+\}/g, function (match) {
       var index = +match.slice(1, -1);
 
       if (index < templateArgs.length) {
-        return templateArgs[index].replace(errRegExp, '');
+        return templateArgs[index].replace(errRegExp, "");
       }
 
       return match;
     });
 
-    message += '\n' + url + (module ? module + '/' : '') + code;
+    message += "\n" + url + (module ? module + "/" : "") + code;
 
     if (minErrConfig.urlErrorParamsEnabled) {
-      for (i = 0, paramPrefix = '?'; i < templateArgs.length; i++, paramPrefix = '&') {
-        message += paramPrefix + 'p' + i + '=' + encodeURIComponent(templateArgs[i]);
+      for (
+        i = 0, paramPrefix = "?";
+        i < templateArgs.length;
+        i++, paramPrefix = "&"
+      ) {
+        message +=
+          paramPrefix + "p" + i + "=" + encodeURIComponent(templateArgs[i]);
       }
     }
 

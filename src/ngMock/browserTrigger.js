@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-(function() {
+(function () {
   /**
    * @ngdoc function
    * @name browserTrigger
@@ -56,7 +56,11 @@
    *    and [TouchEvent](https://developer.mozilla.org/docs/Web/API/TouchEvent).
    *
    */
-  window.browserTrigger = function browserTrigger(element, eventType, eventData) {
+  window.browserTrigger = function browserTrigger(
+    element,
+    eventType,
+    eventData,
+  ) {
     if (element && !element.nodeName) element = element[0];
     if (!element) return;
 
@@ -66,30 +70,30 @@
     var x = eventData.x;
     var y = eventData.y;
 
-    var inputType = (element.type) ? element.type.toLowerCase() : null,
-        nodeName = element.nodeName.toLowerCase();
+    var inputType = element.type ? element.type.toLowerCase() : null,
+      nodeName = element.nodeName.toLowerCase();
     if (!eventType) {
       eventType = {
-        'text':            'change',
-        'textarea':        'change',
-        'hidden':          'change',
-        'password':        'change',
-        'button':          'click',
-        'submit':          'click',
-        'reset':           'click',
-        'image':           'click',
-        'checkbox':        'click',
-        'radio':           'click',
-        'select-one':      'change',
-        'select-multiple': 'change',
-        '_default_':       'click'
-      }[inputType || '_default_'];
+        text: "change",
+        textarea: "change",
+        hidden: "change",
+        password: "change",
+        button: "click",
+        submit: "click",
+        reset: "click",
+        image: "click",
+        checkbox: "click",
+        radio: "click",
+        "select-one": "change",
+        "select-multiple": "change",
+        _default_: "click",
+      }[inputType || "_default_"];
     }
 
-    if (nodeName === 'option') {
+    if (nodeName === "option") {
       element.parentNode.value = element.value;
       element = element.parentNode;
-      eventType = 'change';
+      eventType = "change";
     }
 
     keys = keys || [];
@@ -106,8 +110,14 @@
         try {
           evnt = new window.TransitionEvent(eventType, eventData);
         } catch (e) {
-          evnt = window.document.createEvent('TransitionEvent');
-          evnt.initTransitionEvent(eventType, eventData.bubbles, null, null, eventData.elapsedTime || 0);
+          evnt = window.document.createEvent("TransitionEvent");
+          evnt.initTransitionEvent(
+            eventType,
+            eventData.bubbles,
+            null,
+            null,
+            eventData.elapsedTime || 0,
+          );
         }
       }
     } else if (/animationend/.test(eventType)) {
@@ -118,47 +128,67 @@
         try {
           evnt = new window.AnimationEvent(eventType, eventData);
         } catch (e) {
-          evnt = window.document.createEvent('AnimationEvent');
-          evnt.initAnimationEvent(eventType, eventData.bubbles, null, null, eventData.elapsedTime || 0);
+          evnt = window.document.createEvent("AnimationEvent");
+          evnt.initAnimationEvent(
+            eventType,
+            eventData.bubbles,
+            null,
+            null,
+            eventData.elapsedTime || 0,
+          );
         }
       }
     } else if (/touch/.test(eventType) && supportsTouchEvents()) {
       evnt = createTouchEvent(element, eventType, x, y);
     } else if (/key/.test(eventType)) {
-      evnt = window.document.createEvent('Events');
+      evnt = window.document.createEvent("Events");
       evnt.initEvent(eventType, eventData.bubbles, eventData.cancelable);
       evnt.view = window;
-      evnt.ctrlKey = pressed('ctrl');
-      evnt.altKey = pressed('alt');
-      evnt.shiftKey = pressed('shift');
-      evnt.metaKey = pressed('meta');
+      evnt.ctrlKey = pressed("ctrl");
+      evnt.altKey = pressed("alt");
+      evnt.shiftKey = pressed("shift");
+      evnt.metaKey = pressed("meta");
       evnt.keyCode = eventData.keyCode;
       evnt.charCode = eventData.charCode;
       evnt.which = eventData.which;
     } else if (/composition/.test(eventType)) {
       try {
         evnt = new window.CompositionEvent(eventType, {
-          data: eventData.data
+          data: eventData.data,
         });
       } catch (e) {
         // Support: IE9+
-        evnt = window.document.createEvent('CompositionEvent', {});
+        evnt = window.document.createEvent("CompositionEvent", {});
         evnt.initCompositionEvent(
           eventType,
           eventData.bubbles,
           eventData.cancelable,
           window,
           eventData.data,
-          null
+          null,
         );
       }
-
     } else {
-      evnt = window.document.createEvent('MouseEvents');
+      evnt = window.document.createEvent("MouseEvents");
       x = x || 0;
       y = y || 0;
-      evnt.initMouseEvent(eventType, true, true, window, 0, x, y, x, y, pressed('ctrl'),
-          pressed('alt'), pressed('shift'), pressed('meta'), 0, relatedTarget);
+      evnt.initMouseEvent(
+        eventType,
+        true,
+        true,
+        window,
+        0,
+        x,
+        y,
+        x,
+        y,
+        pressed("ctrl"),
+        pressed("alt"),
+        pressed("shift"),
+        pressed("meta"),
+        0,
+        relatedTarget,
+      );
     }
 
     /* we're unable to change the timeStamp value directly so this
@@ -168,7 +198,11 @@
 
     if (!evnt) return;
 
-    if (!eventData.bubbles || supportsEventBubblingInDetachedTree() || isAttachedToDocument(element)) {
+    if (
+      !eventData.bubbles ||
+      supportsEventBubblingInDetachedTree() ||
+      isAttachedToDocument(element)
+    ) {
       return element.dispatchEvent(evnt);
     } else {
       triggerForPath(element, evnt);
@@ -176,7 +210,7 @@
   };
 
   function supportsTouchEvents() {
-    if ('_cached' in supportsTouchEvents) {
+    if ("_cached" in supportsTouchEvents) {
       return supportsTouchEvents._cached;
     }
     if (!window.document.createTouch || !window.document.createTouchList) {
@@ -184,7 +218,7 @@
       return false;
     }
     try {
-      window.document.createEvent('TouchEvent');
+      window.document.createEvent("TouchEvent");
     } catch (e) {
       supportsTouchEvents._cached = false;
       return false;
@@ -198,7 +232,15 @@
     x = x || 0;
     y = y || 0;
 
-    var touch = window.document.createTouch(window, element, Date.now(), x, y, x, y);
+    var touch = window.document.createTouch(
+      window,
+      element,
+      Date.now(),
+      x,
+      y,
+      x,
+      y,
+    );
     var touches = window.document.createTouchList(touch);
 
     evnt.touches = touches;
@@ -207,20 +249,20 @@
   }
 
   function supportsEventBubblingInDetachedTree() {
-    if ('_cached' in supportsEventBubblingInDetachedTree) {
+    if ("_cached" in supportsEventBubblingInDetachedTree) {
       return supportsEventBubblingInDetachedTree._cached;
     }
     supportsEventBubblingInDetachedTree._cached = false;
     var doc = window.document;
     if (doc) {
-      var parent = doc.createElement('div'),
-          child = parent.cloneNode();
+      var parent = doc.createElement("div"),
+        child = parent.cloneNode();
       parent.appendChild(child);
-      parent.addEventListener('e', function() {
+      parent.addEventListener("e", function () {
         supportsEventBubblingInDetachedTree._cached = true;
       });
-      var evnt = window.document.createEvent('Events');
-      evnt.initEvent('e', true, true);
+      var evnt = window.document.createEvent("Events");
+      evnt.initEvent("e", true, true);
       child.dispatchEvent(evnt);
     }
     return supportsEventBubblingInDetachedTree._cached;
@@ -230,7 +272,7 @@
     var stop = false;
 
     var _stopPropagation = evnt.stopPropagation;
-    evnt.stopPropagation = function() {
+    evnt.stopPropagation = function () {
       stop = true;
       _stopPropagation.apply(evnt, arguments);
     };
@@ -243,14 +285,18 @@
 
   function patchEventTargetForBubbling(event, target) {
     event._target = target;
-    Object.defineProperty(event, 'target', {get: function() { return this._target;}});
+    Object.defineProperty(event, "target", {
+      get: function () {
+        return this._target;
+      },
+    });
   }
 
   function isAttachedToDocument(element) {
     while ((element = element.parentNode)) {
-        if (element === window) {
-            return true;
-        }
+      if (element === window) {
+        return true;
+      }
     }
     return false;
   }

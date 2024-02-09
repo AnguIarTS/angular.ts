@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 // NOTE: ADVANCED_OPTIMIZATIONS mode.
 //
@@ -30,19 +30,27 @@ function parseTextLiteral(text) {
   if (cachedFn != null) {
     return cachedFn;
   }
-  function parsedFn(context) { return text; }
-  parsedFn['$$watchDelegate'] = function watchDelegate(scope, listener, objectEquality) {
-    var unwatch = scope['$watch'](noop,
-        function textLiteralWatcher() {
-          listener(text, text, scope);
-          unwatch();
-        },
-        objectEquality);
+  function parsedFn(context) {
+    return text;
+  }
+  parsedFn["$$watchDelegate"] = function watchDelegate(
+    scope,
+    listener,
+    objectEquality,
+  ) {
+    var unwatch = scope["$watch"](
+      noop,
+      function textLiteralWatcher() {
+        listener(text, text, scope);
+        unwatch();
+      },
+      objectEquality,
+    );
     return unwatch;
   };
   PARSE_CACHE_FOR_TEXT_LITERALS[text] = parsedFn;
-  parsedFn['exp'] = text; // Needed to pretend to be $interpolate for tests copied from interpolateSpec.js
-  parsedFn['expressions'] = []; // Require this to call $compile.$$addBindingInfo() which allows Protractor to find elements by binding.
+  parsedFn["exp"] = text; // Needed to pretend to be $interpolate for tests copied from interpolateSpec.js
+  parsedFn["expressions"] = []; // Require this to call $compile.$$addBindingInfo() which allows Protractor to find elements by binding.
   return parsedFn;
 }
 
@@ -51,16 +59,24 @@ function subtractOffset(expressionFn, offset) {
     return expressionFn;
   }
   function minusOffset(value) {
-    return (value == null) ? value : value - offset;
+    return value == null ? value : value - offset;
   }
-  function parsedFn(context) { return minusOffset(expressionFn(context)); }
+  function parsedFn(context) {
+    return minusOffset(expressionFn(context));
+  }
   var unwatch;
-  parsedFn['$$watchDelegate'] = function watchDelegate(scope, listener, objectEquality) {
-    unwatch = scope['$watch'](expressionFn,
-        function pluralExpressionWatchListener(newValue, oldValue) {
-          listener(minusOffset(newValue), minusOffset(oldValue), scope);
-        },
-        objectEquality);
+  parsedFn["$$watchDelegate"] = function watchDelegate(
+    scope,
+    listener,
+    objectEquality,
+  ) {
+    unwatch = scope["$watch"](
+      expressionFn,
+      function pluralExpressionWatchListener(newValue, oldValue) {
+        listener(minusOffset(newValue), minusOffset(oldValue), scope);
+      },
+      objectEquality,
+    );
     return unwatch;
   };
   return parsedFn;

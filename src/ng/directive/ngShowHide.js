@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-var NG_HIDE_CLASS = 'ng-hide';
-var NG_HIDE_IN_PROGRESS_CLASS = 'ng-hide-animate';
+var NG_HIDE_CLASS = "ng-hide";
+var NG_HIDE_IN_PROGRESS_CLASS = "ng-hide-animate";
 /**
  * @ngdoc directive
  * @name ngShow
@@ -202,24 +202,26 @@ var NG_HIDE_IN_PROGRESS_CLASS = 'ng-hide-animate';
  * - Use `ng-class="{'ng-hide': expression}` instead of instead of {@link ngShow} / {@link ngHide}.
  * - Define an animation on the affected elements.
  */
-var ngShowDirective = ['$animate', function($animate) {
-  return {
-    restrict: 'A',
-    multiElement: true,
-    link: function(scope, element, attr) {
-      scope.$watch(attr.ngShow, function ngShowWatchAction(value) {
-        // we're adding a temporary, animation-specific class for ng-hide since this way
-        // we can control when the element is actually displayed on screen without having
-        // to have a global/greedy CSS selector that breaks when other animations are run.
-        // Read: https://github.com/angular/angular.js/issues/9103#issuecomment-58335845
-        $animate[value ? 'removeClass' : 'addClass'](element, NG_HIDE_CLASS, {
-          tempClasses: NG_HIDE_IN_PROGRESS_CLASS
+var ngShowDirective = [
+  "$animate",
+  function ($animate) {
+    return {
+      restrict: "A",
+      multiElement: true,
+      link: function (scope, element, attr) {
+        scope.$watch(attr.ngShow, function ngShowWatchAction(value) {
+          // we're adding a temporary, animation-specific class for ng-hide since this way
+          // we can control when the element is actually displayed on screen without having
+          // to have a global/greedy CSS selector that breaks when other animations are run.
+          // Read: https://github.com/angular/angular.js/issues/9103#issuecomment-58335845
+          $animate[value ? "removeClass" : "addClass"](element, NG_HIDE_CLASS, {
+            tempClasses: NG_HIDE_IN_PROGRESS_CLASS,
+          });
         });
-      });
-    }
-  };
-}];
-
+      },
+    };
+  },
+];
 
 /**
  * @ngdoc directive
@@ -421,18 +423,21 @@ var ngShowDirective = ['$animate', function($animate) {
  * - Use `ng-class="{'ng-hide': expression}` instead of instead of {@link ngShow} / {@link ngHide}.
  * - Define an animation on the affected elements.
  */
-var ngHideDirective = ['$animate', function($animate) {
-  return {
-    restrict: 'A',
-    multiElement: true,
-    link: function(scope, element, attr) {
-      scope.$watch(attr.ngHide, function ngHideWatchAction(value) {
-        // The comment inside of the ngShowDirective explains why we add and
-        // remove a temporary class for the show/hide animation
-        $animate[value ? 'addClass' : 'removeClass'](element,NG_HIDE_CLASS, {
-          tempClasses: NG_HIDE_IN_PROGRESS_CLASS
+var ngHideDirective = [
+  "$animate",
+  function ($animate) {
+    return {
+      restrict: "A",
+      multiElement: true,
+      link: function (scope, element, attr) {
+        scope.$watch(attr.ngHide, function ngHideWatchAction(value) {
+          // The comment inside of the ngShowDirective explains why we add and
+          // remove a temporary class for the show/hide animation
+          $animate[value ? "addClass" : "removeClass"](element, NG_HIDE_CLASS, {
+            tempClasses: NG_HIDE_IN_PROGRESS_CLASS,
+          });
         });
-      });
-    }
-  };
-}];
+      },
+    };
+  },
+];

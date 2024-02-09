@@ -4,3 +4,6 @@ setup:
 .PHONY: build
 build:
 	./node_modules/.bin/rollup -c
+
+pretty:
+	@npx prettier ./src --write

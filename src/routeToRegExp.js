@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /* global routeToRegExp: true */
 
@@ -18,29 +18,29 @@ function routeToRegExp(path, opts) {
   var keys = [];
 
   var pattern = path
-    .replace(/([().])/g, '\\$1')
-    .replace(/(\/)?:(\w+)(\*\?|[?*])?/g, function(_, slash, key, option) {
-      var optional = option === '?' || option === '*?';
-      var star = option === '*' || option === '*?';
-      keys.push({name: key, optional: optional});
-      slash = slash || '';
+    .replace(/([().])/g, "\\$1")
+    .replace(/(\/)?:(\w+)(\*\?|[?*])?/g, function (_, slash, key, option) {
+      var optional = option === "?" || option === "*?";
+      var star = option === "*" || option === "*?";
+      keys.push({ name: key, optional: optional });
+      slash = slash || "";
       return (
-        (optional ? '(?:' + slash : slash + '(?:') +
-        (star ? '(.+?)' : '([^/]+)') +
-        (optional ? '?)?' : ')')
+        (optional ? "(?:" + slash : slash + "(?:") +
+        (star ? "(.+?)" : "([^/]+)") +
+        (optional ? "?)?" : ")")
       );
     })
-    .replace(/([/$*])/g, '\\$1');
+    .replace(/([/$*])/g, "\\$1");
 
   if (opts.ignoreTrailingSlashes) {
-    pattern = pattern.replace(/\/+$/, '') + '/*';
+    pattern = pattern.replace(/\/+$/, "") + "/*";
   }
 
   return {
     keys: keys,
     regexp: new RegExp(
-      '^' + pattern + '(?:[?#]|$)',
-      opts.caseInsensitiveMatch ? 'i' : ''
-    )
+      "^" + pattern + "(?:[?#]|$)",
+      opts.caseInsensitiveMatch ? "i" : "",
+    ),
   };
 }

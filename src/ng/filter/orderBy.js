@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc filter
@@ -559,17 +559,24 @@
    </example>
  *
  */
-orderByFilter.$inject = ['$parse'];
+orderByFilter.$inject = ["$parse"];
 function orderByFilter($parse) {
-  return function(array, sortPredicate, reverseOrder, compareFn) {
-
+  return function (array, sortPredicate, reverseOrder, compareFn) {
     if (array == null) return array;
     if (!isArrayLike(array)) {
-      throw minErr('orderBy')('notarray', 'Expected array but received: {0}', array);
+      throw minErr("orderBy")(
+        "notarray",
+        "Expected array but received: {0}",
+        array,
+      );
     }
 
-    if (!isArray(sortPredicate)) { sortPredicate = [sortPredicate]; }
-    if (sortPredicate.length === 0) { sortPredicate = ['+']; }
+    if (!isArray(sortPredicate)) {
+      sortPredicate = [sortPredicate];
+    }
+    if (sortPredicate.length === 0) {
+      sortPredicate = ["+"];
+    }
 
     var predicates = processPredicates(sortPredicate);
 
@@ -583,7 +590,9 @@ function orderByFilter($parse) {
     // See https://en.wikipedia.org/wiki/Schwartzian_transform
     var compareValues = Array.prototype.map.call(array, getComparisonObject);
     compareValues.sort(doComparison);
-    array = compareValues.map(function(item) { return item.value; });
+    array = compareValues.map(function (item) {
+      return item.value;
+    });
 
     return array;
 
@@ -593,10 +602,10 @@ function orderByFilter($parse) {
       // distinguish between two elements.
       return {
         value: value,
-        tieBreaker: {value: index, type: 'number', index: index},
-        predicateValues: predicates.map(function(predicate) {
+        tieBreaker: { value: index, type: "number", index: index },
+        predicateValues: predicates.map(function (predicate) {
           return getPredicateValue(predicate.get(value), index);
-        })
+        }),
       };
     }
 
@@ -608,38 +617,44 @@ function orderByFilter($parse) {
         }
       }
 
-      return (compare(v1.tieBreaker, v2.tieBreaker) || defaultCompare(v1.tieBreaker, v2.tieBreaker)) * descending;
+      return (
+        (compare(v1.tieBreaker, v2.tieBreaker) ||
+          defaultCompare(v1.tieBreaker, v2.tieBreaker)) * descending
+      );
     }
   };
 
   function processPredicates(sortPredicates) {
-    return sortPredicates.map(function(predicate) {
-      var descending = 1, get = identity;
+    return sortPredicates.map(function (predicate) {
+      var descending = 1,
+        get = identity;
 
       if (isFunction(predicate)) {
         get = predicate;
       } else if (isString(predicate)) {
-        if ((predicate.charAt(0) === '+' || predicate.charAt(0) === '-')) {
-          descending = predicate.charAt(0) === '-' ? -1 : 1;
+        if (predicate.charAt(0) === "+" || predicate.charAt(0) === "-") {
+          descending = predicate.charAt(0) === "-" ? -1 : 1;
           predicate = predicate.substring(1);
         }
-        if (predicate !== '') {
+        if (predicate !== "") {
           get = $parse(predicate);
           if (get.constant) {
             var key = get();
-            get = function(value) { return value[key]; };
+            get = function (value) {
+              return value[key];
+            };
           }
         }
       }
-      return {get: get, descending: descending};
+      return { get: get, descending: descending };
     });
   }
 
   function isPrimitive(value) {
     switch (typeof value) {
-      case 'number': /* falls through */
-      case 'boolean': /* falls through */
-      case 'string':
+      case "number": /* falls through */
+      case "boolean": /* falls through */
+      case "string":
         return true;
       default:
         return false;
@@ -664,11 +679,11 @@ function orderByFilter($parse) {
   function getPredicateValue(value, index) {
     var type = typeof value;
     if (value === null) {
-      type = 'null';
-    } else if (type === 'object') {
+      type = "null";
+    } else if (type === "object") {
       value = objectValue(value);
     }
-    return {value: value, type: type, index: index};
+    return { value: value, type: type, index: index };
   }
 
   function defaultCompare(v1, v2) {
@@ -680,11 +695,11 @@ function orderByFilter($parse) {
       var value1 = v1.value;
       var value2 = v2.value;
 
-      if (type1 === 'string') {
+      if (type1 === "string") {
         // Compare strings case-insensitively
         value1 = value1.toLowerCase();
         value2 = value2.toLowerCase();
-      } else if (type1 === 'object') {
+      } else if (type1 === "object") {
         // For basic objects, use the position of the object
         // in the collection instead of the value
         if (isObject(value1)) value1 = v1.index;
@@ -695,11 +710,18 @@ function orderByFilter($parse) {
         result = value1 < value2 ? -1 : 1;
       }
     } else {
-      result = (type1 === 'undefined') ? 1 :
-        (type2 === 'undefined') ? -1 :
-        (type1 === 'null') ? 1 :
-        (type2 === 'null') ? -1 :
-        (type1 < type2) ? -1 : 1;
+      result =
+        type1 === "undefined"
+          ? 1
+          : type2 === "undefined"
+            ? -1
+            : type1 === "null"
+              ? 1
+              : type2 === "null"
+                ? -1
+                : type1 < type2
+                  ? -1
+                  : 1;
     }
 
     return result;

@@ -1,6 +1,6 @@
 {
   "rules": {
-    "maxlen": "off", /* ngAnimate docs contain wide tables */
+    "maxlen": "off" /* ngAnimate docs contain wide tables */,
     "new-cap": "off"
   },
 

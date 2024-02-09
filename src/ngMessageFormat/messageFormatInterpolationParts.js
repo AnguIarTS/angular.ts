@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 // NOTE: ADVANCED_OPTIMIZATIONS mode.
 //
@@ -19,7 +19,7 @@ function InterpolationParts(trustedContext, allOrNothing) {
   this.textParts = [];
   this.expressionFns = [];
   this.expressionIndices = [];
-  this.partialText = '';
+  this.partialText = "";
   this.concatParts = null;
 }
 
@@ -28,10 +28,10 @@ InterpolationParts.prototype.flushPartialText = function flushPartialText() {
     if (this.concatParts == null) {
       this.textParts.push(this.partialText);
     } else {
-      this.textParts.push(this.concatParts.join(''));
+      this.textParts.push(this.concatParts.join(""));
       this.concatParts = null;
     }
-    this.partialText = '';
+    this.partialText = "";
   }
 };
 
@@ -47,14 +47,18 @@ InterpolationParts.prototype.addText = function addText(text) {
   }
 };
 
-InterpolationParts.prototype.addExpressionFn = function addExpressionFn(expressionFn) {
+InterpolationParts.prototype.addExpressionFn = function addExpressionFn(
+  expressionFn,
+) {
   this.flushPartialText();
   this.expressionIndices.push(this.textParts.length);
   this.expressionFns.push(expressionFn);
-  this.textParts.push('');
+  this.textParts.push("");
 };
 
-InterpolationParts.prototype.getExpressionValues = function getExpressionValues(context) {
+InterpolationParts.prototype.getExpressionValues = function getExpressionValues(
+  context,
+) {
   var expressionValues = new Array(this.expressionFns.length);
   for (var i = 0; i < this.expressionFns.length; i++) {
     expressionValues[i] = this.expressionFns[i](context);
@@ -68,61 +72,96 @@ InterpolationParts.prototype.getResult = function getResult(expressionValues) {
     if (this.allOrNothing && expressionValue === undefined) return;
     this.textParts[this.expressionIndices[i]] = expressionValue;
   }
-  return this.textParts.join('');
+  return this.textParts.join("");
 };
 
-
-InterpolationParts.prototype.toParsedFn = function toParsedFn(mustHaveExpression, originalText) {
+InterpolationParts.prototype.toParsedFn = function toParsedFn(
+  mustHaveExpression,
+  originalText,
+) {
   var self = this;
   this.flushPartialText();
   if (mustHaveExpression && this.expressionFns.length === 0) {
     return undefined;
   }
   if (this.textParts.length === 0) {
-    return parseTextLiteral('');
+    return parseTextLiteral("");
   }
   if (this.trustedContext && this.textParts.length > 1) {
-    $interpolateMinErr['throwNoconcat'](originalText);
+    $interpolateMinErr["throwNoconcat"](originalText);
   }
   if (this.expressionFns.length === 0) {
-    if (this.textParts.length !== 1) { this.errorInParseLogic(); }
+    if (this.textParts.length !== 1) {
+      this.errorInParseLogic();
+    }
     return parseTextLiteral(this.textParts[0]);
   }
-  var parsedFn = function(context) {
+  var parsedFn = function (context) {
     return self.getResult(self.getExpressionValues(context));
   };
-  parsedFn['$$watchDelegate'] = function $$watchDelegate(scope, listener, objectEquality) {
+  parsedFn["$$watchDelegate"] = function $$watchDelegate(
+    scope,
+    listener,
+    objectEquality,
+  ) {
     return self.watchDelegate(scope, listener, objectEquality);
   };
 
-  parsedFn['exp'] = originalText; // Needed to pretend to be $interpolate for tests copied from interpolateSpec.js
-  parsedFn['expressions'] = new Array(this.expressionFns.length); // Require this to call $compile.$$addBindingInfo() which allows Protractor to find elements by binding.
+  parsedFn["exp"] = originalText; // Needed to pretend to be $interpolate for tests copied from interpolateSpec.js
+  parsedFn["expressions"] = new Array(this.expressionFns.length); // Require this to call $compile.$$addBindingInfo() which allows Protractor to find elements by binding.
   for (var i = 0; i < this.expressionFns.length; i++) {
-    parsedFn['expressions'][i] = this.expressionFns[i]['exp'];
+    parsedFn["expressions"][i] = this.expressionFns[i]["exp"];
   }
 
   return parsedFn;
 };
 
-InterpolationParts.prototype.watchDelegate = function watchDelegate(scope, listener, objectEquality) {
-  var watcher = new InterpolationPartsWatcher(this, scope, listener, objectEquality);
-  return function() { watcher.cancelWatch(); };
+InterpolationParts.prototype.watchDelegate = function watchDelegate(
+  scope,
+  listener,
+  objectEquality,
+) {
+  var watcher = new InterpolationPartsWatcher(
+    this,
+    scope,
+    listener,
+    objectEquality,
+  );
+  return function () {
+    watcher.cancelWatch();
+  };
 };
 
-function InterpolationPartsWatcher(interpolationParts, scope, listener, objectEquality) {
+function InterpolationPartsWatcher(
+  interpolationParts,
+  scope,
+  listener,
+  objectEquality,
+) {
   this.interpolationParts = interpolationParts;
   this.scope = scope;
-  this.previousResult = (undefined);
+  this.previousResult = undefined;
   this.listener = listener;
   var self = this;
-  this.expressionFnsWatcher = scope['$watchGroup'](interpolationParts.expressionFns, function(newExpressionValues, oldExpressionValues) {
-    self.watchListener(newExpressionValues, oldExpressionValues);
-  });
+  this.expressionFnsWatcher = scope["$watchGroup"](
+    interpolationParts.expressionFns,
+    function (newExpressionValues, oldExpressionValues) {
+      self.watchListener(newExpressionValues, oldExpressionValues);
+    },
+  );
 }
 
-InterpolationPartsWatcher.prototype.watchListener = function watchListener(newExpressionValues, oldExpressionValues) {
+InterpolationPartsWatcher.prototype.watchListener = function watchListener(
+  newExpressionValues,
+  oldExpressionValues,
+) {
   var result = this.interpolationParts.getResult(newExpressionValues);
-  this.listener.call(null, result, newExpressionValues === oldExpressionValues ? result : this.previousResult, this.scope);
+  this.listener.call(
+    null,
+    result,
+    newExpressionValues === oldExpressionValues ? result : this.previousResult,
+    this.scope,
+  );
   this.previousResult = result;
 };
 

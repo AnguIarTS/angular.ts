@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /* global shallowCopy: true */
 
@@ -18,7 +18,7 @@ function shallowCopy(src, dst) {
     dst = dst || {};
 
     for (var key in src) {
-      if (!(key.charAt(0) === '$' && key.charAt(1) === '$')) {
+      if (!(key.charAt(0) === "$" && key.charAt(1) === "$")) {
         dst[key] = src[key];
       }
     }

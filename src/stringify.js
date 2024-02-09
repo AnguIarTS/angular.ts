@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /* exported toDebugString */
 
@@ -13,11 +13,10 @@ function serializeObject(obj, maxDepth) {
     // the closure. Therefore, it is lazily retrieved as `angular.copy()` when needed.
     obj = angular.copy(obj, null, maxDepth);
   }
-  return JSON.stringify(obj, function(key, val) {
+  return JSON.stringify(obj, function (key, val) {
     val = toJsonReplacer(key, val);
     if (isObject(val)) {
-
-      if (seen.indexOf(val) >= 0) return '...';
+      if (seen.indexOf(val) >= 0) return "...";
 
       seen.push(val);
     }
@@ -26,11 +25,11 @@ function serializeObject(obj, maxDepth) {
 }
 
 function toDebugString(obj, maxDepth) {
-  if (typeof obj === 'function') {
-    return obj.toString().replace(/ \{[\s\S]*$/, '');
+  if (typeof obj === "function") {
+    return obj.toString().replace(/ \{[\s\S]*$/, "");
   } else if (isUndefined(obj)) {
-    return 'undefined';
-  } else if (typeof obj !== 'string') {
+    return "undefined";
+  } else if (typeof obj !== "string") {
     return serializeObject(obj, maxDepth);
   }
   return obj;

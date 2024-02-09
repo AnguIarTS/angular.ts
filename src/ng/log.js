@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc service
@@ -56,7 +56,7 @@
  */
 function $LogProvider() {
   var debug = true,
-      self = this;
+    self = this;
 
   /**
    * @ngdoc method
@@ -65,7 +65,7 @@ function $LogProvider() {
    * @param {boolean=} flag enable or disable debug level messages
    * @returns {*} current value if used as getter or itself (chaining) if used as setter
    */
-  this.debugEnabled = function(flag) {
+  this.debugEnabled = function (flag) {
     if (isDefined(flag)) {
       debug = flag;
       return this;
@@ -74,98 +74,104 @@ function $LogProvider() {
     }
   };
 
-  this.$get = ['$window', function($window) {
-    // Support: IE 9-11, Edge 12-14+
-    // IE/Edge display errors in such a way that it requires the user to click in 4 places
-    // to see the stack trace. There is no way to feature-detect it so there's a chance
-    // of the user agent sniffing to go wrong but since it's only about logging, this shouldn't
-    // break apps. Other browsers display errors in a sensible way and some of them map stack
-    // traces along source maps if available so it makes sense to let browsers display it
-    // as they want.
-    var formatStackTrace = msie || /\bEdge\//.test($window.navigator && $window.navigator.userAgent);
+  this.$get = [
+    "$window",
+    function ($window) {
+      // Support: IE 9-11, Edge 12-14+
+      // IE/Edge display errors in such a way that it requires the user to click in 4 places
+      // to see the stack trace. There is no way to feature-detect it so there's a chance
+      // of the user agent sniffing to go wrong but since it's only about logging, this shouldn't
+      // break apps. Other browsers display errors in a sensible way and some of them map stack
+      // traces along source maps if available so it makes sense to let browsers display it
+      // as they want.
+      var formatStackTrace =
+        msie ||
+        /\bEdge\//.test($window.navigator && $window.navigator.userAgent);
 
-    return {
-      /**
-       * @ngdoc method
-       * @name $log#log
-       *
-       * @description
-       * Write a log message
-       */
-      log: consoleLog('log'),
+      return {
+        /**
+         * @ngdoc method
+         * @name $log#log
+         *
+         * @description
+         * Write a log message
+         */
+        log: consoleLog("log"),
 
-      /**
-       * @ngdoc method
-       * @name $log#info
-       *
-       * @description
-       * Write an information message
-       */
-      info: consoleLog('info'),
+        /**
+         * @ngdoc method
+         * @name $log#info
+         *
+         * @description
+         * Write an information message
+         */
+        info: consoleLog("info"),
 
-      /**
-       * @ngdoc method
-       * @name $log#warn
-       *
-       * @description
-       * Write a warning message
-       */
-      warn: consoleLog('warn'),
+        /**
+         * @ngdoc method
+         * @name $log#warn
+         *
+         * @description
+         * Write a warning message
+         */
+        warn: consoleLog("warn"),
 
-      /**
-       * @ngdoc method
-       * @name $log#error
-       *
-       * @description
-       * Write an error message
-       */
-      error: consoleLog('error'),
+        /**
+         * @ngdoc method
+         * @name $log#error
+         *
+         * @description
+         * Write an error message
+         */
+        error: consoleLog("error"),
 
-      /**
-       * @ngdoc method
-       * @name $log#debug
-       *
-       * @description
-       * Write a debug message
-       */
-      debug: (function() {
-        var fn = consoleLog('debug');
+        /**
+         * @ngdoc method
+         * @name $log#debug
+         *
+         * @description
+         * Write a debug message
+         */
+        debug: (function () {
+          var fn = consoleLog("debug");
 
-        return function() {
-          if (debug) {
-            fn.apply(self, arguments);
+          return function () {
+            if (debug) {
+              fn.apply(self, arguments);
+            }
+          };
+        })(),
+      };
+
+      function formatError(arg) {
+        if (isError(arg)) {
+          if (arg.stack && formatStackTrace) {
+            arg =
+              arg.message && arg.stack.indexOf(arg.message) === -1
+                ? "Error: " + arg.message + "\n" + arg.stack
+                : arg.stack;
+          } else if (arg.sourceURL) {
+            arg = arg.message + "\n" + arg.sourceURL + ":" + arg.line;
           }
-        };
-      })()
-    };
-
-    function formatError(arg) {
-      if (isError(arg)) {
-        if (arg.stack && formatStackTrace) {
-          arg = (arg.message && arg.stack.indexOf(arg.message) === -1)
-              ? 'Error: ' + arg.message + '\n' + arg.stack
-              : arg.stack;
-        } else if (arg.sourceURL) {
-          arg = arg.message + '\n' + arg.sourceURL + ':' + arg.line;
         }
+        return arg;
       }
-      return arg;
-    }
 
-    function consoleLog(type) {
-      var console = $window.console || {},
+      function consoleLog(type) {
+        var console = $window.console || {},
           logFn = console[type] || console.log || noop;
 
-      return function() {
-        var args = [];
-        forEach(arguments, function(arg) {
-          args.push(formatError(arg));
-        });
-        // Support: IE 9 only
-        // console methods don't inherit from Function.prototype in IE 9 so we can't
-        // call `logFn.apply(console, args)` directly.
-        return Function.prototype.apply.call(logFn, console, args);
-      };
-    }
-  }];
+        return function () {
+          var args = [];
+          forEach(arguments, function (arg) {
+            args.push(formatError(arg));
+          });
+          // Support: IE 9 only
+          // console methods don't inherit from Function.prototype in IE 9 so we can't
+          // call `logFn.apply(console, args)` directly.
+          return Function.prototype.apply.call(logFn, console, args);
+        };
+      }
+    },
+  ];
 }

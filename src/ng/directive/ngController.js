@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc directive
@@ -224,11 +224,13 @@
  *</example>
 
  */
-var ngControllerDirective = [function() {
-  return {
-    restrict: 'A',
-    scope: true,
-    controller: '@',
-    priority: 500
-  };
-}];
+var ngControllerDirective = [
+  function () {
+    return {
+      restrict: "A",
+      scope: true,
+      controller: "@",
+      priority: 500,
+    };
+  },
+];

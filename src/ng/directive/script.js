@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc directive
@@ -33,17 +33,20 @@
     </file>
   </example>
  */
-var scriptDirective = ['$templateCache', function($templateCache) {
-  return {
-    restrict: 'E',
-    terminal: true,
-    compile: function(element, attr) {
-      if (attr.type === 'text/ng-template') {
-        var templateUrl = attr.id,
+var scriptDirective = [
+  "$templateCache",
+  function ($templateCache) {
+    return {
+      restrict: "E",
+      terminal: true,
+      compile: function (element, attr) {
+        if (attr.type === "text/ng-template") {
+          var templateUrl = attr.id,
             text = element[0].text;
 
-        $templateCache.put(templateUrl, text);
-      }
-    }
-  };
-}];
+          $templateCache.put(templateUrl, text);
+        }
+      },
+    };
+  },
+];

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc directive
@@ -175,66 +175,77 @@
       </file>
     </example>
  */
-var ngPluralizeDirective = ['$locale', '$interpolate', '$log', function($locale, $interpolate, $log) {
-  var BRACE = /{}/g,
+var ngPluralizeDirective = [
+  "$locale",
+  "$interpolate",
+  "$log",
+  function ($locale, $interpolate, $log) {
+    var BRACE = /{}/g,
       IS_WHEN = /^when(Minus)?(.+)$/;
 
-  return {
-    link: function(scope, element, attr) {
-      var numberExp = attr.count,
+    return {
+      link: function (scope, element, attr) {
+        var numberExp = attr.count,
           whenExp = attr.$attr.when && element.attr(attr.$attr.when), // we have {{}} in attrs
           offset = attr.offset || 0,
           whens = scope.$eval(whenExp) || {},
           whensExpFns = {},
           startSymbol = $interpolate.startSymbol(),
           endSymbol = $interpolate.endSymbol(),
-          braceReplacement = startSymbol + numberExp + '-' + offset + endSymbol,
+          braceReplacement = startSymbol + numberExp + "-" + offset + endSymbol,
           watchRemover = angular.noop,
           lastCount;
 
-      forEach(attr, function(expression, attributeName) {
-        var tmpMatch = IS_WHEN.exec(attributeName);
-        if (tmpMatch) {
-          var whenKey = (tmpMatch[1] ? '-' : '') + lowercase(tmpMatch[2]);
-          whens[whenKey] = element.attr(attr.$attr[attributeName]);
-        }
-      });
-      forEach(whens, function(expression, key) {
-        whensExpFns[key] = $interpolate(expression.replace(BRACE, braceReplacement));
-
-      });
-
-      scope.$watch(numberExp, function ngPluralizeWatchAction(newVal) {
-        var count = parseFloat(newVal);
-        var countIsNaN = isNumberNaN(count);
-
-        if (!countIsNaN && !(count in whens)) {
-          // If an explicit number rule such as 1, 2, 3... is defined, just use it.
-          // Otherwise, check it against pluralization rules in $locale service.
-          count = $locale.pluralCat(count - offset);
-        }
-
-        // If both `count` and `lastCount` are NaN, we don't need to re-register a watch.
-        // In JS `NaN !== NaN`, so we have to explicitly check.
-        if ((count !== lastCount) && !(countIsNaN && isNumberNaN(lastCount))) {
-          watchRemover();
-          var whenExpFn = whensExpFns[count];
-          if (isUndefined(whenExpFn)) {
-            if (newVal != null) {
-              $log.debug('ngPluralize: no rule defined for \'' + count + '\' in ' + whenExp);
-            }
-            watchRemover = noop;
-            updateElementText();
-          } else {
-            watchRemover = scope.$watch(whenExpFn, updateElementText);
+        forEach(attr, function (expression, attributeName) {
+          var tmpMatch = IS_WHEN.exec(attributeName);
+          if (tmpMatch) {
+            var whenKey = (tmpMatch[1] ? "-" : "") + lowercase(tmpMatch[2]);
+            whens[whenKey] = element.attr(attr.$attr[attributeName]);
           }
-          lastCount = count;
-        }
-      });
+        });
+        forEach(whens, function (expression, key) {
+          whensExpFns[key] = $interpolate(
+            expression.replace(BRACE, braceReplacement),
+          );
+        });
 
-      function updateElementText(newText) {
-        element.text(newText || '');
-      }
-    }
-  };
-}];
+        scope.$watch(numberExp, function ngPluralizeWatchAction(newVal) {
+          var count = parseFloat(newVal);
+          var countIsNaN = isNumberNaN(count);
+
+          if (!countIsNaN && !(count in whens)) {
+            // If an explicit number rule such as 1, 2, 3... is defined, just use it.
+            // Otherwise, check it against pluralization rules in $locale service.
+            count = $locale.pluralCat(count - offset);
+          }
+
+          // If both `count` and `lastCount` are NaN, we don't need to re-register a watch.
+          // In JS `NaN !== NaN`, so we have to explicitly check.
+          if (count !== lastCount && !(countIsNaN && isNumberNaN(lastCount))) {
+            watchRemover();
+            var whenExpFn = whensExpFns[count];
+            if (isUndefined(whenExpFn)) {
+              if (newVal != null) {
+                $log.debug(
+                  "ngPluralize: no rule defined for '" +
+                    count +
+                    "' in " +
+                    whenExp,
+                );
+              }
+              watchRemover = noop;
+              updateElementText();
+            } else {
+              watchRemover = scope.$watch(whenExpFn, updateElementText);
+            }
+            lastCount = count;
+          }
+        });
+
+        function updateElementText(newText) {
+          element.text(newText || "");
+        }
+      },
+    };
+  },
+];

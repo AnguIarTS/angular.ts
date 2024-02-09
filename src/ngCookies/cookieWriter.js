@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @name $$cookieWriter
@@ -21,19 +21,19 @@ function $$CookieWriter($document, $log, $browser) {
     expires = options.expires;
     path = angular.isDefined(options.path) ? options.path : cookiePath;
     if (angular.isUndefined(value)) {
-      expires = 'Thu, 01 Jan 1970 00:00:00 GMT';
-      value = '';
+      expires = "Thu, 01 Jan 1970 00:00:00 GMT";
+      value = "";
     }
     if (angular.isString(expires)) {
       expires = new Date(expires);
     }
 
-    var str = encodeURIComponent(name) + '=' + encodeURIComponent(value);
-    str += path ? ';path=' + path : '';
-    str += options.domain ? ';domain=' + options.domain : '';
-    str += expires ? ';expires=' + expires.toUTCString() : '';
-    str += options.secure ? ';secure' : '';
-    str += options.samesite ? ';samesite=' + options.samesite : '';
+    var str = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+    str += path ? ";path=" + path : "";
+    str += options.domain ? ";domain=" + options.domain : "";
+    str += expires ? ";expires=" + expires.toUTCString() : "";
+    str += options.secure ? ";secure" : "";
+    str += options.samesite ? ";samesite=" + options.samesite : "";
 
     // per http://www.ietf.org/rfc/rfc2109.txt browser must allow at minimum:
     // - 300 cookies
@@ -41,21 +41,28 @@ function $$CookieWriter($document, $log, $browser) {
     // - 4096 bytes per cookie
     var cookieLength = str.length + 1;
     if (cookieLength > 4096) {
-      $log.warn('Cookie \'' + name +
-        '\' possibly not set or overflowed because it was too large (' +
-        cookieLength + ' > 4096 bytes)!');
+      $log.warn(
+        "Cookie '" +
+          name +
+          "' possibly not set or overflowed because it was too large (" +
+          cookieLength +
+          " > 4096 bytes)!",
+      );
     }
 
     return str;
   }
 
-  return function(name, value, options) {
+  return function (name, value, options) {
     rawDocument.cookie = buildCookieString(name, value, options);
   };
 }
 
-$$CookieWriter.$inject = ['$document', '$log', '$browser'];
+$$CookieWriter.$inject = ["$document", "$log", "$browser"];
 
-angular.module('ngCookies').provider('$$cookieWriter', /** @this */ function $$CookieWriterProvider() {
-  this.$get = $$CookieWriter;
-});
+angular.module("ngCookies").provider(
+  "$$cookieWriter",
+  /** @this */ function $$CookieWriterProvider() {
+    this.$get = $$CookieWriter;
+  },
+);

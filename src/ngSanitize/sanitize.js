@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *     Any commits to this file should be reviewed with security in mind.  *
@@ -11,7 +11,7 @@
  *     Or gives undesired access to variables likes document or window?    *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-var $sanitizeMinErr = angular.$$minErr('$sanitize');
+var $sanitizeMinErr = angular.$$minErr("$sanitize");
 var bind;
 var extend;
 var forEach;
@@ -135,7 +135,6 @@ var htmlSanitizeWriter;
    </example>
  */
 
-
 /**
  * @ngdoc provider
  * @name $sanitizeProvider
@@ -148,20 +147,25 @@ function $SanitizeProvider() {
   var hasBeenInstantiated = false;
   var svgEnabled = false;
 
-  this.$get = ['$$sanitizeUri', function($$sanitizeUri) {
-    hasBeenInstantiated = true;
-    if (svgEnabled) {
-      extend(validElements, svgElements);
-    }
-    return function(html) {
-      var buf = [];
-      htmlParser(html, htmlSanitizeWriter(buf, function(uri, isImage) {
-        return !/^unsafe:/.test($$sanitizeUri(uri, isImage));
-      }));
-      return buf.join('');
-    };
-  }];
-
+  this.$get = [
+    "$$sanitizeUri",
+    function ($$sanitizeUri) {
+      hasBeenInstantiated = true;
+      if (svgEnabled) {
+        extend(validElements, svgElements);
+      }
+      return function (html) {
+        var buf = [];
+        htmlParser(
+          html,
+          htmlSanitizeWriter(buf, function (uri, isImage) {
+            return !/^unsafe:/.test($$sanitizeUri(uri, isImage));
+          }),
+        );
+        return buf.join("");
+      };
+    },
+  ];
 
   /**
    * @ngdoc method
@@ -193,7 +197,7 @@ function $SanitizeProvider() {
    * @returns {boolean|$sanitizeProvider} Returns the currently configured value if called
    *    without an argument or self for chaining otherwise.
    */
-  this.enableSvg = function(enableSvg) {
+  this.enableSvg = function (enableSvg) {
     if (isDefined(enableSvg)) {
       svgEnabled = enableSvg;
       return this;
@@ -201,7 +205,6 @@ function $SanitizeProvider() {
       return svgEnabled;
     }
   };
-
 
   /**
    * @ngdoc method
@@ -249,10 +252,10 @@ function $SanitizeProvider() {
    *
    * @return {$sanitizeProvider} Returns self for chaining.
    */
-  this.addValidElements = function(elements) {
+  this.addValidElements = function (elements) {
     if (!hasBeenInstantiated) {
       if (isArray(elements)) {
-        elements = {htmlElements: elements};
+        elements = { htmlElements: elements };
       }
 
       addElementsTo(svgElements, elements.svgElements);
@@ -263,7 +266,6 @@ function $SanitizeProvider() {
 
     return this;
   };
-
 
   /**
    * @ngdoc method
@@ -294,7 +296,7 @@ function $SanitizeProvider() {
    *
    * @returns {$sanitizeProvider} Returns self for chaining.
    */
-  this.addValidAttrs = function(attrs) {
+  this.addValidAttrs = function (attrs) {
     if (!hasBeenInstantiated) {
       extend(validAttrs, arrayToMap(attrs, true));
     }
@@ -316,16 +318,17 @@ function $SanitizeProvider() {
   htmlParser = htmlParserImpl;
   htmlSanitizeWriter = htmlSanitizeWriterImpl;
 
-  nodeContains = window.Node.prototype.contains || /** @this */ function(arg) {
-    // eslint-disable-next-line no-bitwise
-    return !!(this.compareDocumentPosition(arg) & 16);
-  };
+  nodeContains =
+    window.Node.prototype.contains ||
+    /** @this */ function (arg) {
+      // eslint-disable-next-line no-bitwise
+      return !!(this.compareDocumentPosition(arg) & 16);
+    };
 
   // Regular Expressions for parsing tags and attributes
   var SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
     // Match everything outside of normal chars and " (quote character)
     NON_ALPHANUMERIC_REGEXP = /([^#-~ |!])/g;
-
 
   // Good source of info about elements and attributes
   // http://dev.w3.org/html5/spec/Overview.html#semantics
@@ -333,81 +336,106 @@ function $SanitizeProvider() {
 
   // Safe Void Elements - HTML5
   // http://dev.w3.org/html5/spec/Overview.html#void-elements
-  var voidElements = stringToMap('area,br,col,hr,img,wbr');
+  var voidElements = stringToMap("area,br,col,hr,img,wbr");
 
   // Elements that you can, intentionally, leave open (and which close themselves)
   // http://dev.w3.org/html5/spec/Overview.html#optional-tags
-  var optionalEndTagBlockElements = stringToMap('colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr'),
-      optionalEndTagInlineElements = stringToMap('rp,rt'),
-      optionalEndTagElements = extend({},
-                                              optionalEndTagInlineElements,
-                                              optionalEndTagBlockElements);
+  var optionalEndTagBlockElements = stringToMap(
+      "colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr",
+    ),
+    optionalEndTagInlineElements = stringToMap("rp,rt"),
+    optionalEndTagElements = extend(
+      {},
+      optionalEndTagInlineElements,
+      optionalEndTagBlockElements,
+    );
 
   // Safe Block Elements - HTML5
-  var blockElements = extend({}, optionalEndTagBlockElements, stringToMap('address,article,' +
-          'aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5,' +
-          'h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,section,table,ul'));
+  var blockElements = extend(
+    {},
+    optionalEndTagBlockElements,
+    stringToMap(
+      "address,article," +
+        "aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5," +
+        "h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,section,table,ul",
+    ),
+  );
 
   // Inline Elements - HTML5
-  var inlineElements = extend({}, optionalEndTagInlineElements, stringToMap('a,abbr,acronym,b,' +
-          'bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s,' +
-          'samp,small,span,strike,strong,sub,sup,time,tt,u,var'));
+  var inlineElements = extend(
+    {},
+    optionalEndTagInlineElements,
+    stringToMap(
+      "a,abbr,acronym,b," +
+        "bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s," +
+        "samp,small,span,strike,strong,sub,sup,time,tt,u,var",
+    ),
+  );
 
   // SVG Elements
   // https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Elements
   // Note: the elements animate,animateColor,animateMotion,animateTransform,set are intentionally omitted.
   // They can potentially allow for arbitrary javascript to be executed. See #11290
-  var svgElements = stringToMap('circle,defs,desc,ellipse,font-face,font-face-name,font-face-src,g,glyph,' +
-          'hkern,image,linearGradient,line,marker,metadata,missing-glyph,mpath,path,polygon,polyline,' +
-          'radialGradient,rect,stop,svg,switch,text,title,tspan');
+  var svgElements = stringToMap(
+    "circle,defs,desc,ellipse,font-face,font-face-name,font-face-src,g,glyph," +
+      "hkern,image,linearGradient,line,marker,metadata,missing-glyph,mpath,path,polygon,polyline," +
+      "radialGradient,rect,stop,svg,switch,text,title,tspan",
+  );
 
   // Blocked Elements (will be stripped)
-  var blockedElements = stringToMap('script,style');
+  var blockedElements = stringToMap("script,style");
 
-  var validElements = extend({},
-                                     voidElements,
-                                     blockElements,
-                                     inlineElements,
-                                     optionalEndTagElements);
+  var validElements = extend(
+    {},
+    voidElements,
+    blockElements,
+    inlineElements,
+    optionalEndTagElements,
+  );
 
   //Attributes that have href and hence need to be sanitized
-  var uriAttrs = stringToMap('background,cite,href,longdesc,src,xlink:href,xml:base');
+  var uriAttrs = stringToMap(
+    "background,cite,href,longdesc,src,xlink:href,xml:base",
+  );
 
-  var htmlAttrs = stringToMap('abbr,align,alt,axis,bgcolor,border,cellpadding,cellspacing,class,clear,' +
-      'color,cols,colspan,compact,coords,dir,face,headers,height,hreflang,hspace,' +
-      'ismap,lang,language,nohref,nowrap,rel,rev,rows,rowspan,rules,' +
-      'scope,scrolling,shape,size,span,start,summary,tabindex,target,title,type,' +
-      'valign,value,vspace,width');
+  var htmlAttrs = stringToMap(
+    "abbr,align,alt,axis,bgcolor,border,cellpadding,cellspacing,class,clear," +
+      "color,cols,colspan,compact,coords,dir,face,headers,height,hreflang,hspace," +
+      "ismap,lang,language,nohref,nowrap,rel,rev,rows,rowspan,rules," +
+      "scope,scrolling,shape,size,span,start,summary,tabindex,target,title,type," +
+      "valign,value,vspace,width",
+  );
 
   // SVG attributes (without "id" and "name" attributes)
   // https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Attributes
-  var svgAttrs = stringToMap('accent-height,accumulate,additive,alphabetic,arabic-form,ascent,' +
-      'baseProfile,bbox,begin,by,calcMode,cap-height,class,color,color-rendering,content,' +
-      'cx,cy,d,dx,dy,descent,display,dur,end,fill,fill-rule,font-family,font-size,font-stretch,' +
-      'font-style,font-variant,font-weight,from,fx,fy,g1,g2,glyph-name,gradientUnits,hanging,' +
-      'height,horiz-adv-x,horiz-origin-x,ideographic,k,keyPoints,keySplines,keyTimes,lang,' +
-      'marker-end,marker-mid,marker-start,markerHeight,markerUnits,markerWidth,mathematical,' +
-      'max,min,offset,opacity,orient,origin,overline-position,overline-thickness,panose-1,' +
-      'path,pathLength,points,preserveAspectRatio,r,refX,refY,repeatCount,repeatDur,' +
-      'requiredExtensions,requiredFeatures,restart,rotate,rx,ry,slope,stemh,stemv,stop-color,' +
-      'stop-opacity,strikethrough-position,strikethrough-thickness,stroke,stroke-dasharray,' +
-      'stroke-dashoffset,stroke-linecap,stroke-linejoin,stroke-miterlimit,stroke-opacity,' +
-      'stroke-width,systemLanguage,target,text-anchor,to,transform,type,u1,u2,underline-position,' +
-      'underline-thickness,unicode,unicode-range,units-per-em,values,version,viewBox,visibility,' +
-      'width,widths,x,x-height,x1,x2,xlink:actuate,xlink:arcrole,xlink:role,xlink:show,xlink:title,' +
-      'xlink:type,xml:base,xml:lang,xml:space,xmlns,xmlns:xlink,y,y1,y2,zoomAndPan', true);
+  var svgAttrs = stringToMap(
+    "accent-height,accumulate,additive,alphabetic,arabic-form,ascent," +
+      "baseProfile,bbox,begin,by,calcMode,cap-height,class,color,color-rendering,content," +
+      "cx,cy,d,dx,dy,descent,display,dur,end,fill,fill-rule,font-family,font-size,font-stretch," +
+      "font-style,font-variant,font-weight,from,fx,fy,g1,g2,glyph-name,gradientUnits,hanging," +
+      "height,horiz-adv-x,horiz-origin-x,ideographic,k,keyPoints,keySplines,keyTimes,lang," +
+      "marker-end,marker-mid,marker-start,markerHeight,markerUnits,markerWidth,mathematical," +
+      "max,min,offset,opacity,orient,origin,overline-position,overline-thickness,panose-1," +
+      "path,pathLength,points,preserveAspectRatio,r,refX,refY,repeatCount,repeatDur," +
+      "requiredExtensions,requiredFeatures,restart,rotate,rx,ry,slope,stemh,stemv,stop-color," +
+      "stop-opacity,strikethrough-position,strikethrough-thickness,stroke,stroke-dasharray," +
+      "stroke-dashoffset,stroke-linecap,stroke-linejoin,stroke-miterlimit,stroke-opacity," +
+      "stroke-width,systemLanguage,target,text-anchor,to,transform,type,u1,u2,underline-position," +
+      "underline-thickness,unicode,unicode-range,units-per-em,values,version,viewBox,visibility," +
+      "width,widths,x,x-height,x1,x2,xlink:actuate,xlink:arcrole,xlink:role,xlink:show,xlink:title," +
+      "xlink:type,xml:base,xml:lang,xml:space,xmlns,xmlns:xlink,y,y1,y2,zoomAndPan",
+    true,
+  );
 
-  var validAttrs = extend({},
-                                  uriAttrs,
-                                  svgAttrs,
-                                  htmlAttrs);
+  var validAttrs = extend({}, uriAttrs, svgAttrs, htmlAttrs);
 
   function stringToMap(str, lowercaseKeys) {
-    return arrayToMap(str.split(','), lowercaseKeys);
+    return arrayToMap(str.split(","), lowercaseKeys);
   }
 
   function arrayToMap(items, lowercaseKeys) {
-    var obj = {}, i;
+    var obj = {},
+      i;
     for (i = 0; i < items.length; i++) {
       obj[lowercaseKeys ? lowercase(items[i]) : items[i]] = true;
     }
@@ -425,51 +453,57 @@ function $SanitizeProvider() {
    * We use the DOMParser API by default and fall back to createHTMLDocument if DOMParser is not
    * available.
    */
-  var getInertBodyElement /* function(html: string): HTMLBodyElement */ = (function(window, document) {
-    if (isDOMParserAvailable()) {
-      return getInertBodyElement_DOMParser;
-    }
-
-    if (!document || !document.implementation) {
-      throw $sanitizeMinErr('noinert', 'Can\'t create an inert html document');
-    }
-    var inertDocument = document.implementation.createHTMLDocument('inert');
-    var inertBodyElement = (inertDocument.documentElement || inertDocument.getDocumentElement()).querySelector('body');
-    return getInertBodyElement_InertDocument;
-
-    function isDOMParserAvailable() {
-      try {
-        return !!getInertBodyElement_DOMParser('');
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function getInertBodyElement_DOMParser(html) {
-      // We add this dummy element to ensure that the rest of the content is parsed as expected
-      // e.g. leading whitespace is maintained and tags like `<meta>` do not get hoisted to the `<head>` tag.
-      html = '<remove></remove>' + html;
-      try {
-        var body = new window.DOMParser().parseFromString(html, 'text/html').body;
-        body.firstChild.remove();
-        return body;
-      } catch (e) {
-        return undefined;
-      }
-    }
-
-    function getInertBodyElement_InertDocument(html) {
-      inertBodyElement.innerHTML = html;
-
-      // Support: IE 9-11 only
-      // strip custom-namespaced attributes on IE<=11
-      if (document.documentMode) {
-        stripCustomNsAttrs(inertBodyElement);
+  var getInertBodyElement /* function(html: string): HTMLBodyElement */ =
+    (function (window, document) {
+      if (isDOMParserAvailable()) {
+        return getInertBodyElement_DOMParser;
       }
 
-      return inertBodyElement;
-    }
-  })(window, window.document);
+      if (!document || !document.implementation) {
+        throw $sanitizeMinErr("noinert", "Can't create an inert html document");
+      }
+      var inertDocument = document.implementation.createHTMLDocument("inert");
+      var inertBodyElement = (
+        inertDocument.documentElement || inertDocument.getDocumentElement()
+      ).querySelector("body");
+      return getInertBodyElement_InertDocument;
+
+      function isDOMParserAvailable() {
+        try {
+          return !!getInertBodyElement_DOMParser("");
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function getInertBodyElement_DOMParser(html) {
+        // We add this dummy element to ensure that the rest of the content is parsed as expected
+        // e.g. leading whitespace is maintained and tags like `<meta>` do not get hoisted to the `<head>` tag.
+        html = "<remove></remove>" + html;
+        try {
+          var body = new window.DOMParser().parseFromString(
+            html,
+            "text/html",
+          ).body;
+          body.firstChild.remove();
+          return body;
+        } catch (e) {
+          return undefined;
+        }
+      }
+
+      function getInertBodyElement_InertDocument(html) {
+        inertBodyElement.innerHTML = html;
+
+        // Support: IE 9-11 only
+        // strip custom-namespaced attributes on IE<=11
+        if (document.documentMode) {
+          stripCustomNsAttrs(inertBodyElement);
+        }
+
+        return inertBodyElement;
+      }
+    })(window, window.document);
 
   /**
    * @example
@@ -485,19 +519,22 @@ function $SanitizeProvider() {
    */
   function htmlParserImpl(html, handler) {
     if (html === null || html === undefined) {
-      html = '';
-    } else if (typeof html !== 'string') {
-      html = '' + html;
+      html = "";
+    } else if (typeof html !== "string") {
+      html = "" + html;
     }
 
     var inertBodyElement = getInertBodyElement(html);
-    if (!inertBodyElement) return '';
+    if (!inertBodyElement) return "";
 
     //mXSS protection
     var mXSSAttempts = 5;
     do {
       if (mXSSAttempts === 0) {
-        throw $sanitizeMinErr('uinput', 'Failed to sanitize html because the input is unstable');
+        throw $sanitizeMinErr(
+          "uinput",
+          "Failed to sanitize html because the input is unstable",
+        );
       }
       mXSSAttempts--;
 
@@ -510,7 +547,10 @@ function $SanitizeProvider() {
     while (node) {
       switch (node.nodeType) {
         case 1: // ELEMENT_NODE
-          handler.start(node.nodeName.toLowerCase(), attrToMap(node.attributes));
+          handler.start(
+            node.nodeName.toLowerCase(),
+            attrToMap(node.attributes),
+          );
           break;
         case 3: // TEXT NODE
           handler.chars(node.textContent);
@@ -522,12 +562,12 @@ function $SanitizeProvider() {
         if (node.nodeType === 1) {
           handler.end(node.nodeName.toLowerCase());
         }
-        nextNode = getNonDescendant('nextSibling', node);
+        nextNode = getNonDescendant("nextSibling", node);
         if (!nextNode) {
           while (nextNode == null) {
-            node = getNonDescendant('parentNode', node);
+            node = getNonDescendant("parentNode", node);
             if (node === inertBodyElement) break;
-            nextNode = getNonDescendant('nextSibling', node);
+            nextNode = getNonDescendant("nextSibling", node);
             if (node.nodeType === 1) {
               handler.end(node.nodeName.toLowerCase());
             }
@@ -551,7 +591,6 @@ function $SanitizeProvider() {
     return map;
   }
 
-
   /**
    * Escapes all potentially dangerous characters, so that the
    * resulting string can be safely inserted into attribute or
@@ -560,18 +599,18 @@ function $SanitizeProvider() {
    * @returns {string} escaped text
    */
   function encodeEntities(value) {
-    return value.
-      replace(/&/g, '&amp;').
-      replace(SURROGATE_PAIR_REGEXP, function(value) {
+    return value
+      .replace(/&/g, "&amp;")
+      .replace(SURROGATE_PAIR_REGEXP, function (value) {
         var hi = value.charCodeAt(0);
         var low = value.charCodeAt(1);
-        return '&#' + (((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000) + ';';
-      }).
-      replace(NON_ALPHANUMERIC_REGEXP, function(value) {
-        return '&#' + value.charCodeAt(0) + ';';
-      }).
-      replace(/</g, '&lt;').
-      replace(/>/g, '&gt;');
+        return "&#" + ((hi - 0xd800) * 0x400 + (low - 0xdc00) + 0x10000) + ";";
+      })
+      .replace(NON_ALPHANUMERIC_REGEXP, function (value) {
+        return "&#" + value.charCodeAt(0) + ";";
+      })
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
   /**
@@ -588,49 +627,55 @@ function $SanitizeProvider() {
     var ignoreCurrentElement = false;
     var out = bind(buf, buf.push);
     return {
-      start: function(tag, attrs) {
+      start: function (tag, attrs) {
         tag = lowercase(tag);
         if (!ignoreCurrentElement && blockedElements[tag]) {
           ignoreCurrentElement = tag;
         }
         if (!ignoreCurrentElement && validElements[tag] === true) {
-          out('<');
+          out("<");
           out(tag);
-          forEach(attrs, function(value, key) {
+          forEach(attrs, function (value, key) {
             var lkey = lowercase(key);
-            var isImage = (tag === 'img' && lkey === 'src') || (lkey === 'background');
-            if (validAttrs[lkey] === true &&
-              (uriAttrs[lkey] !== true || uriValidator(value, isImage))) {
-              out(' ');
+            var isImage =
+              (tag === "img" && lkey === "src") || lkey === "background";
+            if (
+              validAttrs[lkey] === true &&
+              (uriAttrs[lkey] !== true || uriValidator(value, isImage))
+            ) {
+              out(" ");
               out(key);
               out('="');
               out(encodeEntities(value));
               out('"');
             }
           });
-          out('>');
+          out(">");
         }
       },
-      end: function(tag) {
+      end: function (tag) {
         tag = lowercase(tag);
-        if (!ignoreCurrentElement && validElements[tag] === true && voidElements[tag] !== true) {
-          out('</');
+        if (
+          !ignoreCurrentElement &&
+          validElements[tag] === true &&
+          voidElements[tag] !== true
+        ) {
+          out("</");
           out(tag);
-          out('>');
+          out(">");
         }
         // eslint-disable-next-line eqeqeq
         if (tag == ignoreCurrentElement) {
           ignoreCurrentElement = false;
         }
       },
-      chars: function(chars) {
+      chars: function (chars) {
         if (!ignoreCurrentElement) {
           out(encodeEntities(chars));
         }
-      }
+      },
     };
   }
-
 
   /**
    * When IE9-11 comes across an unknown namespaced attribute e.g. 'xlink:foo' it adds 'xmlns:ns1' attribute to declare
@@ -646,7 +691,10 @@ function $SanitizeProvider() {
         for (var i = 0, l = attrs.length; i < l; i++) {
           var attrNode = attrs[i];
           var attrName = attrNode.name.toLowerCase();
-          if (attrName === 'xmlns:ns1' || attrName.lastIndexOf('ns1:', 0) === 0) {
+          if (
+            attrName === "xmlns:ns1" ||
+            attrName.lastIndexOf("ns1:", 0) === 0
+          ) {
             node.removeAttributeNode(attrNode);
             i--;
             l--;
@@ -659,7 +707,7 @@ function $SanitizeProvider() {
         stripCustomNsAttrs(nextNode);
       }
 
-      node = getNonDescendant('nextSibling', node);
+      node = getNonDescendant("nextSibling", node);
     }
   }
 
@@ -667,7 +715,11 @@ function $SanitizeProvider() {
     // An element is clobbered if its `propName` property points to one of its descendants
     var nextNode = node[propName];
     if (nextNode && nodeContains.call(node, nextNode)) {
-      throw $sanitizeMinErr('elclob', 'Failed to sanitize html because the element is clobbered: {0}', node.outerHTML || node.outerText);
+      throw $sanitizeMinErr(
+        "elclob",
+        "Failed to sanitize html because the element is clobbered: {0}",
+        node.outerHTML || node.outerText,
+      );
     }
     return nextNode;
   }
@@ -677,11 +729,11 @@ function sanitizeText(chars) {
   var buf = [];
   var writer = htmlSanitizeWriter(buf, noop);
   writer.chars(chars);
-  return buf.join('');
+  return buf.join("");
 }
 
-
 // define ngSanitize module and register $sanitize service
-angular.module('ngSanitize', [])
-  .provider('$sanitize', $SanitizeProvider)
+angular
+  .module("ngSanitize", [])
+  .provider("$sanitize", $SanitizeProvider)
   .info({ angularVersion: '"NG_VERSION_FULL"' });

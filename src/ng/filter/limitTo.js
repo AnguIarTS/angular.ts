@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc filter
@@ -100,7 +100,7 @@
    </example>
 */
 function limitToFilter() {
-  return function(input, limit, begin) {
+  return function (input, limit, begin) {
     if (Math.abs(Number(limit)) === Infinity) {
       limit = Number(limit);
     } else {
@@ -111,8 +111,8 @@ function limitToFilter() {
     if (isNumber(input)) input = input.toString();
     if (!isArrayLike(input)) return input;
 
-    begin = (!begin || isNaN(begin)) ? 0 : toInt(begin);
-    begin = (begin < 0) ? Math.max(0, input.length + begin) : begin;
+    begin = !begin || isNaN(begin) ? 0 : toInt(begin);
+    begin = begin < 0 ? Math.max(0, input.length + begin) : begin;
 
     if (limit >= 0) {
       return sliceFn(input, begin, begin + limit);

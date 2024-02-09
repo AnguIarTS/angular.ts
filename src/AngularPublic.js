@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /* global angularModule: true,
   version: true,
@@ -100,7 +100,6 @@
   $$CookieReaderProvider
 */
 
-
 /**
  * @ngdoc object
  * @name angular.version
@@ -120,62 +119,67 @@ var version = {
   // These placeholder strings will be replaced by grunt's `build` task.
   // They need to be double- or single-quoted.
   full: '"NG_VERSION_FULL"',
-  major: 'NG_VERSION_MAJOR',
-  minor: 'NG_VERSION_MINOR',
-  dot: 'NG_VERSION_DOT',
-  codeName: '"NG_VERSION_CODENAME"'
+  major: "NG_VERSION_MAJOR",
+  minor: "NG_VERSION_MINOR",
+  dot: "NG_VERSION_DOT",
+  codeName: '"NG_VERSION_CODENAME"',
 };
-
 
 function publishExternalAPI(angular) {
   extend(angular, {
-    'errorHandlingConfig': errorHandlingConfig,
-    'bootstrap': bootstrap,
-    'copy': copy,
-    'extend': extend,
-    'merge': merge,
-    'equals': equals,
-    'element': jqLite,
-    'forEach': forEach,
-    'injector': createInjector,
-    'noop': noop,
-    'bind': bind,
-    'toJson': toJson,
-    'fromJson': fromJson,
-    'identity': identity,
-    'isUndefined': isUndefined,
-    'isDefined': isDefined,
-    'isString': isString,
-    'isFunction': isFunction,
-    'isObject': isObject,
-    'isNumber': isNumber,
-    'isElement': isElement,
-    'isArray': isArray,
-    'version': version,
-    'isDate': isDate,
-    'callbacks': {$$counter: 0},
-    'getTestability': getTestability,
-    'reloadWithDebugInfo': reloadWithDebugInfo,
-    'UNSAFE_restoreLegacyJqLiteXHTMLReplacement': UNSAFE_restoreLegacyJqLiteXHTMLReplacement,
-    '$$minErr': minErr,
-    '$$csp': csp,
-    '$$encodeUriSegment': encodeUriSegment,
-    '$$encodeUriQuery': encodeUriQuery,
-    '$$lowercase': lowercase,
-    '$$stringify': stringify,
-    '$$uppercase': uppercase
+    errorHandlingConfig: errorHandlingConfig,
+    bootstrap: bootstrap,
+    copy: copy,
+    extend: extend,
+    merge: merge,
+    equals: equals,
+    element: jqLite,
+    forEach: forEach,
+    injector: createInjector,
+    noop: noop,
+    bind: bind,
+    toJson: toJson,
+    fromJson: fromJson,
+    identity: identity,
+    isUndefined: isUndefined,
+    isDefined: isDefined,
+    isString: isString,
+    isFunction: isFunction,
+    isObject: isObject,
+    isNumber: isNumber,
+    isElement: isElement,
+    isArray: isArray,
+    version: version,
+    isDate: isDate,
+    callbacks: { $$counter: 0 },
+    getTestability: getTestability,
+    reloadWithDebugInfo: reloadWithDebugInfo,
+    UNSAFE_restoreLegacyJqLiteXHTMLReplacement:
+      UNSAFE_restoreLegacyJqLiteXHTMLReplacement,
+    $$minErr: minErr,
+    $$csp: csp,
+    $$encodeUriSegment: encodeUriSegment,
+    $$encodeUriQuery: encodeUriQuery,
+    $$lowercase: lowercase,
+    $$stringify: stringify,
+    $$uppercase: uppercase,
   });
 
   angularModule = setupModuleLoader(window);
 
-  angularModule('ng', ['ngLocale'], ['$provide',
-    function ngModule($provide) {
-      // $$sanitizeUriProvider needs to be before $compileProvider as it is used by it.
-      $provide.provider({
-        $$sanitizeUri: $$SanitizeUriProvider
-      });
-      $provide.provider('$compile', $CompileProvider).
-        directive({
+  angularModule(
+    "ng",
+    ["ngLocale"],
+    [
+      "$provide",
+      function ngModule($provide) {
+        // $$sanitizeUriProvider needs to be before $compileProvider as it is used by it.
+        $provide.provider({
+          $$sanitizeUri: $$SanitizeUriProvider,
+        });
+        $provide
+          .provider("$compile", $CompileProvider)
+          .directive({
             a: htmlAnchorDirective,
             input: inputDirective,
             textarea: inputDirective,
@@ -219,60 +223,60 @@ function publishExternalAPI(angular) {
             maxlength: maxlengthDirective,
             ngMaxlength: maxlengthDirective,
             ngValue: ngValueDirective,
-            ngModelOptions: ngModelOptionsDirective
-        }).
-        directive({
-          ngInclude: ngIncludeFillContentDirective,
-          input: hiddenInputBrowserCacheDirective
-        }).
-        directive(ngAttributeAliasDirectives).
-        directive(ngEventDirectives);
-      $provide.provider({
-        $anchorScroll: $AnchorScrollProvider,
-        $animate: $AnimateProvider,
-        $animateCss: $CoreAnimateCssProvider,
-        $$animateJs: $$CoreAnimateJsProvider,
-        $$animateQueue: $$CoreAnimateQueueProvider,
-        $$AnimateRunner: $$AnimateRunnerFactoryProvider,
-        $$animateAsyncRun: $$AnimateAsyncRunFactoryProvider,
-        $browser: $BrowserProvider,
-        $cacheFactory: $CacheFactoryProvider,
-        $controller: $ControllerProvider,
-        $document: $DocumentProvider,
-        $$isDocumentHidden: $$IsDocumentHiddenProvider,
-        $exceptionHandler: $ExceptionHandlerProvider,
-        $filter: $FilterProvider,
-        $$forceReflow: $$ForceReflowProvider,
-        $interpolate: $InterpolateProvider,
-        $interval: $IntervalProvider,
-        $$intervalFactory: $$IntervalFactoryProvider,
-        $http: $HttpProvider,
-        $httpParamSerializer: $HttpParamSerializerProvider,
-        $httpParamSerializerJQLike: $HttpParamSerializerJQLikeProvider,
-        $httpBackend: $HttpBackendProvider,
-        $xhrFactory: $xhrFactoryProvider,
-        $jsonpCallbacks: $jsonpCallbacksProvider,
-        $location: $LocationProvider,
-        $log: $LogProvider,
-        $parse: $ParseProvider,
-        $rootScope: $RootScopeProvider,
-        $q: $QProvider,
-        $$q: $$QProvider,
-        $sce: $SceProvider,
-        $sceDelegate: $SceDelegateProvider,
-        $sniffer: $SnifferProvider,
-        $$taskTrackerFactory: $$TaskTrackerFactoryProvider,
-        $templateCache: $TemplateCacheProvider,
-        $templateRequest: $TemplateRequestProvider,
-        $$testability: $$TestabilityProvider,
-        $timeout: $TimeoutProvider,
-        $window: $WindowProvider,
-        $$rAF: $$RAFProvider,
-        $$jqLite: $$jqLiteProvider,
-        $$Map: $$MapProvider,
-        $$cookieReader: $$CookieReaderProvider
-      });
-    }
-  ])
-  .info({ angularVersion: '"NG_VERSION_FULL"' });
+            ngModelOptions: ngModelOptionsDirective,
+          })
+          .directive({
+            ngInclude: ngIncludeFillContentDirective,
+            input: hiddenInputBrowserCacheDirective,
+          })
+          .directive(ngAttributeAliasDirectives)
+          .directive(ngEventDirectives);
+        $provide.provider({
+          $anchorScroll: $AnchorScrollProvider,
+          $animate: $AnimateProvider,
+          $animateCss: $CoreAnimateCssProvider,
+          $$animateJs: $$CoreAnimateJsProvider,
+          $$animateQueue: $$CoreAnimateQueueProvider,
+          $$AnimateRunner: $$AnimateRunnerFactoryProvider,
+          $$animateAsyncRun: $$AnimateAsyncRunFactoryProvider,
+          $browser: $BrowserProvider,
+          $cacheFactory: $CacheFactoryProvider,
+          $controller: $ControllerProvider,
+          $document: $DocumentProvider,
+          $$isDocumentHidden: $$IsDocumentHiddenProvider,
+          $exceptionHandler: $ExceptionHandlerProvider,
+          $filter: $FilterProvider,
+          $$forceReflow: $$ForceReflowProvider,
+          $interpolate: $InterpolateProvider,
+          $interval: $IntervalProvider,
+          $$intervalFactory: $$IntervalFactoryProvider,
+          $http: $HttpProvider,
+          $httpParamSerializer: $HttpParamSerializerProvider,
+          $httpParamSerializerJQLike: $HttpParamSerializerJQLikeProvider,
+          $httpBackend: $HttpBackendProvider,
+          $xhrFactory: $xhrFactoryProvider,
+          $jsonpCallbacks: $jsonpCallbacksProvider,
+          $location: $LocationProvider,
+          $log: $LogProvider,
+          $parse: $ParseProvider,
+          $rootScope: $RootScopeProvider,
+          $q: $QProvider,
+          $$q: $$QProvider,
+          $sce: $SceProvider,
+          $sceDelegate: $SceDelegateProvider,
+          $sniffer: $SnifferProvider,
+          $$taskTrackerFactory: $$TaskTrackerFactoryProvider,
+          $templateCache: $TemplateCacheProvider,
+          $templateRequest: $TemplateRequestProvider,
+          $$testability: $$TestabilityProvider,
+          $timeout: $TimeoutProvider,
+          $window: $WindowProvider,
+          $$rAF: $$RAFProvider,
+          $$jqLite: $$jqLiteProvider,
+          $$Map: $$MapProvider,
+          $$cookieReader: $$CookieReaderProvider,
+        });
+      },
+    ],
+  ).info({ angularVersion: '"NG_VERSION_FULL"' });
 }

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc service
@@ -83,22 +83,25 @@
    </example>
  */
 function $CacheFactoryProvider() {
-
-  this.$get = function() {
+  this.$get = function () {
     var caches = {};
 
     function cacheFactory(cacheId, options) {
       if (cacheId in caches) {
-        throw minErr('$cacheFactory')('iid', 'CacheId \'{0}\' is already taken!', cacheId);
+        throw minErr("$cacheFactory")(
+          "iid",
+          "CacheId '{0}' is already taken!",
+          cacheId,
+        );
       }
 
       var size = 0,
-          stats = extend({}, options, {id: cacheId}),
-          data = createMap(),
-          capacity = (options && options.capacity) || Number.MAX_VALUE,
-          lruHash = createMap(),
-          freshEnd = null,
-          staleEnd = null;
+        stats = extend({}, options, { id: cacheId }),
+        data = createMap(),
+        capacity = (options && options.capacity) || Number.MAX_VALUE,
+        lruHash = createMap(),
+        freshEnd = null,
+        staleEnd = null;
 
       /**
        * @ngdoc type
@@ -140,7 +143,6 @@ function $CacheFactoryProvider() {
        * ```
        */
       return (caches[cacheId] = {
-
         /**
          * @ngdoc method
          * @name $cacheFactory.Cache#put
@@ -159,10 +161,10 @@ function $CacheFactoryProvider() {
          *    will not be stored.
          * @returns {*} the value stored.
          */
-        put: function(key, value) {
+        put: function (key, value) {
           if (isUndefined(value)) return;
           if (capacity < Number.MAX_VALUE) {
-            var lruEntry = lruHash[key] || (lruHash[key] = {key: key});
+            var lruEntry = lruHash[key] || (lruHash[key] = { key: key });
 
             refresh(lruEntry);
           }
@@ -188,7 +190,7 @@ function $CacheFactoryProvider() {
          * @param {string} key the key of the data to be retrieved
          * @returns {*} the value stored.
          */
-        get: function(key) {
+        get: function (key) {
           if (capacity < Number.MAX_VALUE) {
             var lruEntry = lruHash[key];
 
@@ -200,7 +202,6 @@ function $CacheFactoryProvider() {
           return data[key];
         },
 
-
         /**
          * @ngdoc method
          * @name $cacheFactory.Cache#remove
@@ -211,7 +212,7 @@ function $CacheFactoryProvider() {
          *
          * @param {string} key the key of the entry to be removed
          */
-        remove: function(key) {
+        remove: function (key) {
           if (capacity < Number.MAX_VALUE) {
             var lruEntry = lruHash[key];
 
@@ -219,7 +220,7 @@ function $CacheFactoryProvider() {
 
             if (lruEntry === freshEnd) freshEnd = lruEntry.p;
             if (lruEntry === staleEnd) staleEnd = lruEntry.n;
-            link(lruEntry.n,lruEntry.p);
+            link(lruEntry.n, lruEntry.p);
 
             delete lruHash[key];
           }
@@ -230,7 +231,6 @@ function $CacheFactoryProvider() {
           size--;
         },
 
-
         /**
          * @ngdoc method
          * @name $cacheFactory.Cache#removeAll
@@ -239,13 +239,12 @@ function $CacheFactoryProvider() {
          * @description
          * Clears the cache object of any entries.
          */
-        removeAll: function() {
+        removeAll: function () {
           data = createMap();
           size = 0;
           lruHash = createMap();
           freshEnd = staleEnd = null;
         },
-
 
         /**
          * @ngdoc method
@@ -256,13 +255,12 @@ function $CacheFactoryProvider() {
          * Destroys the {@link $cacheFactory.Cache Cache} object entirely,
          * removing it from the {@link $cacheFactory $cacheFactory} set.
          */
-        destroy: function() {
+        destroy: function () {
           data = null;
           stats = null;
           lruHash = null;
           delete caches[cacheId];
         },
-
 
         /**
          * @ngdoc method
@@ -280,11 +278,10 @@ function $CacheFactoryProvider() {
          *       cache.</li>
          *   </ul>
          */
-        info: function() {
-          return extend({}, stats, {size: size});
-        }
+        info: function () {
+          return extend({}, stats, { size: size });
+        },
       });
-
 
       /**
        * makes the `entry` the freshEnd of the LRU linked list
@@ -304,7 +301,6 @@ function $CacheFactoryProvider() {
         }
       }
 
-
       /**
        * bidirectionally links two entries of the LRU linked list
        */
@@ -316,39 +312,36 @@ function $CacheFactoryProvider() {
       }
     }
 
-
-  /**
-   * @ngdoc method
-   * @name $cacheFactory#info
-   *
-   * @description
-   * Get information about all the caches that have been created
-   *
-   * @returns {Object} - key-value map of `cacheId` to the result of calling `cache#info`
-   */
-    cacheFactory.info = function() {
+    /**
+     * @ngdoc method
+     * @name $cacheFactory#info
+     *
+     * @description
+     * Get information about all the caches that have been created
+     *
+     * @returns {Object} - key-value map of `cacheId` to the result of calling `cache#info`
+     */
+    cacheFactory.info = function () {
       var info = {};
-      forEach(caches, function(cache, cacheId) {
+      forEach(caches, function (cache, cacheId) {
         info[cacheId] = cache.info();
       });
       return info;
     };
 
-
-  /**
-   * @ngdoc method
-   * @name $cacheFactory#get
-   *
-   * @description
-   * Get access to a cache object by the `cacheId` used when it was created.
-   *
-   * @param {string} cacheId Name or id of a cache to access.
-   * @returns {object} Cache object identified by the cacheId or undefined if no such cache.
-   */
-    cacheFactory.get = function(cacheId) {
+    /**
+     * @ngdoc method
+     * @name $cacheFactory#get
+     *
+     * @description
+     * Get access to a cache object by the `cacheId` used when it was created.
+     *
+     * @param {string} cacheId Name or id of a cache to access.
+     * @returns {object} Cache object identified by the cacheId or undefined if no such cache.
+     */
+    cacheFactory.get = function (cacheId) {
       return caches[cacheId];
     };
-
 
     return cacheFactory;
   };
@@ -402,7 +395,10 @@ function $CacheFactoryProvider() {
  *
  */
 function $TemplateCacheProvider() {
-  this.$get = ['$cacheFactory', function($cacheFactory) {
-    return $cacheFactory('templates');
-  }];
+  this.$get = [
+    "$cacheFactory",
+    function ($cacheFactory) {
+      return $cacheFactory("templates");
+    },
+  ];
 }

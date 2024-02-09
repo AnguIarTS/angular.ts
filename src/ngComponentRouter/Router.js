@@ -186,7 +186,6 @@
  * projects (e.g. [ui-router](https://github.com/angular-ui/ui-router)).
  */
 
-
 /**
  * @ngdoc service
  * @name  $rootRouter
@@ -201,7 +200,6 @@
  * We are investigating backporting the Router for the new Angular to AngularJS, but alternatively, use the {@link ngRoute} module or community developed
  * projects (e.g. [ui-router](https://github.com/angular-ui/ui-router)).
  */
-
 
 /**
  * @ngdoc service

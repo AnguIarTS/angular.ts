@@ -1,20 +1,20 @@
-'use strict';
+"use strict";
 
 /* global -nullFormCtrl, -PENDING_CLASS, -SUBMITTED_CLASS
  */
 var nullFormCtrl = {
-  $addControl: noop,
-  $getControls: valueFn([]),
-  $$renameControl: nullFormRenameControl,
-  $removeControl: noop,
-  $setValidity: noop,
-  $setDirty: noop,
-  $setPristine: noop,
-  $setSubmitted: noop,
-  $$setSubmitted: noop
-},
-PENDING_CLASS = 'ng-pending',
-SUBMITTED_CLASS = 'ng-submitted';
+    $addControl: noop,
+    $getControls: valueFn([]),
+    $$renameControl: nullFormRenameControl,
+    $removeControl: noop,
+    $setValidity: noop,
+    $setDirty: noop,
+    $setPristine: noop,
+    $setSubmitted: noop,
+    $$setSubmitted: noop,
+  },
+  PENDING_CLASS = "ng-pending",
+  SUBMITTED_CLASS = "ng-submitted";
 
 function nullFormRenameControl(control, name) {
   control.$name = name;
@@ -69,7 +69,13 @@ function nullFormRenameControl(control, name) {
  *
  */
 //asks for $scope to fool the BC controller module
-FormController.$inject = ['$element', '$attrs', '$scope', '$animate', '$interpolate'];
+FormController.$inject = [
+  "$element",
+  "$attrs",
+  "$scope",
+  "$animate",
+  "$interpolate",
+];
 function FormController($element, $attrs, $scope, $animate, $interpolate) {
   this.$$controls = [];
 
@@ -77,7 +83,7 @@ function FormController($element, $attrs, $scope, $animate, $interpolate) {
   this.$error = {};
   this.$$success = {};
   this.$pending = undefined;
-  this.$name = $interpolate($attrs.name || $attrs.ngForm || '')($scope);
+  this.$name = $interpolate($attrs.name || $attrs.ngForm || "")($scope);
   this.$dirty = false;
   this.$pristine = true;
   this.$valid = true;
@@ -103,8 +109,8 @@ FormController.prototype = {
    * event defined in `ng-model-options`. This method is typically needed by the reset button of
    * a form that uses `ng-model-options` to pend updates.
    */
-  $rollbackViewValue: function() {
-    forEach(this.$$controls, function(control) {
+  $rollbackViewValue: function () {
+    forEach(this.$$controls, function (control) {
       control.$rollbackViewValue();
     });
   },
@@ -120,8 +126,8 @@ FormController.prototype = {
    * event defined in `ng-model-options`. This method is rarely needed as `NgModelController`
    * usually handles calling this in response to input events.
    */
-  $commitViewValue: function() {
-    forEach(this.$$controls, function(control) {
+  $commitViewValue: function () {
+    forEach(this.$$controls, function (control) {
       control.$commitViewValue();
     });
   },
@@ -147,10 +153,10 @@ FormController.prototype = {
    * For example, if an input control is added that is already `$dirty` and has `$error` properties,
    * calling `$setDirty()` and `$validate()` afterwards will propagate the state to the parent form.
    */
-  $addControl: function(control) {
+  $addControl: function (control) {
     // Breaking change - before, inputs whose name was "hasOwnProperty" were quietly ignored
     // and not added to the scope.  Now we throw an error.
-    assertNotHasOwnProperty(control.$name, 'input');
+    assertNotHasOwnProperty(control.$name, "input");
     this.$$controls.push(control);
 
     if (control.$name) {
@@ -180,12 +186,12 @@ FormController.prototype = {
    * in the shallow copy. That means you should get a fresh copy from `$getControls()` every time
    * you need access to the controls.
    */
-  $getControls: function() {
+  $getControls: function () {
     return shallowCopy(this.$$controls);
   },
 
   // Private API: rename a form control
-  $$renameControl: function(control, newName) {
+  $$renameControl: function (control, newName) {
     var oldName = control.$name;
 
     if (this[oldName] === control) {
@@ -211,22 +217,34 @@ FormController.prototype = {
    * different from case to case. For example, removing the only `$dirty` control from a form may or
    * may not mean that the form is still `$dirty`.
    */
-  $removeControl: function(control) {
+  $removeControl: function (control) {
     if (control.$name && this[control.$name] === control) {
       delete this[control.$name];
     }
-    forEach(this.$pending, function(value, name) {
-      // eslint-disable-next-line no-invalid-this
-      this.$setValidity(name, null, control);
-    }, this);
-    forEach(this.$error, function(value, name) {
-      // eslint-disable-next-line no-invalid-this
-      this.$setValidity(name, null, control);
-    }, this);
-    forEach(this.$$success, function(value, name) {
-      // eslint-disable-next-line no-invalid-this
-      this.$setValidity(name, null, control);
-    }, this);
+    forEach(
+      this.$pending,
+      function (value, name) {
+        // eslint-disable-next-line no-invalid-this
+        this.$setValidity(name, null, control);
+      },
+      this,
+    );
+    forEach(
+      this.$error,
+      function (value, name) {
+        // eslint-disable-next-line no-invalid-this
+        this.$setValidity(name, null, control);
+      },
+      this,
+    );
+    forEach(
+      this.$$success,
+      function (value, name) {
+        // eslint-disable-next-line no-invalid-this
+        this.$setValidity(name, null, control);
+      },
+      this,
+    );
 
     arrayRemove(this.$$controls, control);
     control.$$parentForm = nullFormCtrl;
@@ -242,7 +260,7 @@ FormController.prototype = {
    * This method can be called to add the 'ng-dirty' class and set the form to a dirty
    * state (ng-dirty class). This method will also propagate to parent forms.
    */
-  $setDirty: function() {
+  $setDirty: function () {
     this.$$animate.removeClass(this.$$element, PRISTINE_CLASS);
     this.$$animate.addClass(this.$$element, DIRTY_CLASS);
     this.$dirty = true;
@@ -266,12 +284,16 @@ FormController.prototype = {
    * Setting a form back to a pristine state is often useful when we want to 'reuse' a form after
    * saving or resetting it.
    */
-  $setPristine: function() {
-    this.$$animate.setClass(this.$$element, PRISTINE_CLASS, DIRTY_CLASS + ' ' + SUBMITTED_CLASS);
+  $setPristine: function () {
+    this.$$animate.setClass(
+      this.$$element,
+      PRISTINE_CLASS,
+      DIRTY_CLASS + " " + SUBMITTED_CLASS,
+    );
     this.$dirty = false;
     this.$pristine = true;
     this.$submitted = false;
-    forEach(this.$$controls, function(control) {
+    forEach(this.$$controls, function (control) {
       control.$setPristine();
     });
   },
@@ -289,8 +311,8 @@ FormController.prototype = {
    * Setting a form controls back to their untouched state is often useful when setting the form
    * back to its pristine state.
    */
-  $setUntouched: function() {
-    forEach(this.$$controls, function(control) {
+  $setUntouched: function () {
+    forEach(this.$$controls, function (control) {
       control.$setUntouched();
     });
   },
@@ -303,23 +325,23 @@ FormController.prototype = {
    * Sets the form to its `$submitted` state. This will also set `$submitted` on all child and
    * parent forms of the form.
    */
-  $setSubmitted: function() {
+  $setSubmitted: function () {
     var rootForm = this;
-    while (rootForm.$$parentForm && (rootForm.$$parentForm !== nullFormCtrl)) {
+    while (rootForm.$$parentForm && rootForm.$$parentForm !== nullFormCtrl) {
       rootForm = rootForm.$$parentForm;
     }
     rootForm.$$setSubmitted();
   },
 
-  $$setSubmitted: function() {
+  $$setSubmitted: function () {
     this.$$animate.addClass(this.$$element, SUBMITTED_CLASS);
     this.$submitted = true;
-    forEach(this.$$controls, function(control) {
+    forEach(this.$$controls, function (control) {
       if (control.$$setSubmitted) {
         control.$$setSubmitted();
       }
     });
-  }
+  },
 };
 
 /**
@@ -348,7 +370,7 @@ FormController.prototype = {
  */
 addSetValidityMethod({
   clazz: FormController,
-  set: function(object, property, controller) {
+  set: function (object, property, controller) {
     var list = object[property];
     if (!list) {
       object[property] = [controller];
@@ -359,7 +381,7 @@ addSetValidityMethod({
       }
     }
   },
-  unset: function(object, property, controller) {
+  unset: function (object, property, controller) {
     var list = object[property];
     if (!list) {
       return;
@@ -368,7 +390,7 @@ addSetValidityMethod({
     if (list.length === 0) {
       delete object[property];
     }
-  }
+  },
 });
 
 /**
@@ -395,7 +417,7 @@ addSetValidityMethod({
  *
  */
 
- /**
+/**
  * @ngdoc directive
  * @name form
  * @restrict E
@@ -536,108 +558,126 @@ addSetValidityMethod({
  * @param {string=} name Name of the form. If specified, the form controller will be published into
  *                       related scope, under this name.
  */
-var formDirectiveFactory = function(isNgForm) {
-  return ['$timeout', '$parse', function($timeout, $parse) {
-    var formDirective = {
-      name: 'form',
-      restrict: isNgForm ? 'EAC' : 'E',
-      require: ['form', '^^?form'], //first is the form's own ctrl, second is an optional parent form
-      controller: FormController,
-      compile: function ngFormCompile(formElement, attr) {
-        // Setup initial state of the control
-        formElement.addClass(PRISTINE_CLASS).addClass(VALID_CLASS);
+var formDirectiveFactory = function (isNgForm) {
+  return [
+    "$timeout",
+    "$parse",
+    function ($timeout, $parse) {
+      var formDirective = {
+        name: "form",
+        restrict: isNgForm ? "EAC" : "E",
+        require: ["form", "^^?form"], //first is the form's own ctrl, second is an optional parent form
+        controller: FormController,
+        compile: function ngFormCompile(formElement, attr) {
+          // Setup initial state of the control
+          formElement.addClass(PRISTINE_CLASS).addClass(VALID_CLASS);
 
-        var nameAttr = attr.name ? 'name' : (isNgForm && attr.ngForm ? 'ngForm' : false);
+          var nameAttr = attr.name
+            ? "name"
+            : isNgForm && attr.ngForm
+              ? "ngForm"
+              : false;
 
-        return {
-          pre: function ngFormPreLink(scope, formElement, attr, ctrls) {
-            var controller = ctrls[0];
+          return {
+            pre: function ngFormPreLink(scope, formElement, attr, ctrls) {
+              var controller = ctrls[0];
 
-            // if `action` attr is not present on the form, prevent the default action (submission)
-            if (!('action' in attr)) {
-              // we can't use jq events because if a form is destroyed during submission the default
-              // action is not prevented. see #1238
-              //
-              // IE 9 is not affected because it doesn't fire a submit event and try to do a full
-              // page reload if the form was destroyed by submission of the form via a click handler
-              // on a button in the form. Looks like an IE9 specific bug.
-              var handleFormSubmission = function(event) {
-                scope.$apply(function() {
-                  controller.$commitViewValue();
-                  controller.$setSubmitted();
+              // if `action` attr is not present on the form, prevent the default action (submission)
+              if (!("action" in attr)) {
+                // we can't use jq events because if a form is destroyed during submission the default
+                // action is not prevented. see #1238
+                //
+                // IE 9 is not affected because it doesn't fire a submit event and try to do a full
+                // page reload if the form was destroyed by submission of the form via a click handler
+                // on a button in the form. Looks like an IE9 specific bug.
+                var handleFormSubmission = function (event) {
+                  scope.$apply(function () {
+                    controller.$commitViewValue();
+                    controller.$setSubmitted();
+                  });
+
+                  event.preventDefault();
+                };
+
+                formElement[0].addEventListener("submit", handleFormSubmission);
+
+                // unregister the preventDefault listener so that we don't not leak memory but in a
+                // way that will achieve the prevention of the default action.
+                formElement.on("$destroy", function () {
+                  $timeout(
+                    function () {
+                      formElement[0].removeEventListener(
+                        "submit",
+                        handleFormSubmission,
+                      );
+                    },
+                    0,
+                    false,
+                  );
                 });
+              }
 
-                event.preventDefault();
-              };
+              var parentFormCtrl = ctrls[1] || controller.$$parentForm;
+              parentFormCtrl.$addControl(controller);
 
-              formElement[0].addEventListener('submit', handleFormSubmission);
+              var setter = nameAttr ? getSetter(controller.$name) : noop;
 
-              // unregister the preventDefault listener so that we don't not leak memory but in a
-              // way that will achieve the prevention of the default action.
-              formElement.on('$destroy', function() {
-                $timeout(function() {
-                  formElement[0].removeEventListener('submit', handleFormSubmission);
-                }, 0, false);
-              });
-            }
-
-            var parentFormCtrl = ctrls[1] || controller.$$parentForm;
-            parentFormCtrl.$addControl(controller);
-
-            var setter = nameAttr ? getSetter(controller.$name) : noop;
-
-            if (nameAttr) {
-              setter(scope, controller);
-              attr.$observe(nameAttr, function(newValue) {
-                if (controller.$name === newValue) return;
-                setter(scope, undefined);
-                controller.$$parentForm.$$renameControl(controller, newValue);
-                setter = getSetter(controller.$name);
+              if (nameAttr) {
                 setter(scope, controller);
+                attr.$observe(nameAttr, function (newValue) {
+                  if (controller.$name === newValue) return;
+                  setter(scope, undefined);
+                  controller.$$parentForm.$$renameControl(controller, newValue);
+                  setter = getSetter(controller.$name);
+                  setter(scope, controller);
+                });
+              }
+              formElement.on("$destroy", function () {
+                controller.$$parentForm.$removeControl(controller);
+                setter(scope, undefined);
+                extend(controller, nullFormCtrl); //stop propagating child destruction handlers upwards
               });
-            }
-            formElement.on('$destroy', function() {
-              controller.$$parentForm.$removeControl(controller);
-              setter(scope, undefined);
-              extend(controller, nullFormCtrl); //stop propagating child destruction handlers upwards
-            });
-          }
-        };
-      }
-    };
+            },
+          };
+        },
+      };
 
-    return formDirective;
+      return formDirective;
 
-    function getSetter(expression) {
-      if (expression === '') {
-        //create an assignable expression, so forms with an empty name can be renamed later
-        return $parse('this[""]').assign;
+      function getSetter(expression) {
+        if (expression === "") {
+          //create an assignable expression, so forms with an empty name can be renamed later
+          return $parse('this[""]').assign;
+        }
+        return $parse(expression).assign || noop;
       }
-      return $parse(expression).assign || noop;
-    }
-  }];
+    },
+  ];
 };
 
 var formDirective = formDirectiveFactory();
 var ngFormDirective = formDirectiveFactory(true);
 
-
-
 // helper methods
 function setupValidity(instance) {
   instance.$$classCache = {};
-  instance.$$classCache[INVALID_CLASS] = !(instance.$$classCache[VALID_CLASS] = instance.$$element.hasClass(VALID_CLASS));
+  instance.$$classCache[INVALID_CLASS] = !(instance.$$classCache[VALID_CLASS] =
+    instance.$$element.hasClass(VALID_CLASS));
 }
 function addSetValidityMethod(context) {
   var clazz = context.clazz,
-      set = context.set,
-      unset = context.unset;
+    set = context.set,
+    unset = context.unset;
 
-  clazz.prototype.$setValidity = function(validationErrorKey, state, controller) {
+  clazz.prototype.$setValidity = function (
+    validationErrorKey,
+    state,
+    controller,
+  ) {
     if (isUndefined(state)) {
-      createAndSet(this, '$pending', validationErrorKey, controller);
+      createAndSet(this, "$pending", validationErrorKey, controller);
     } else {
-      unsetAndCleanup(this, '$pending', validationErrorKey, controller);
+      unsetAndCleanup(this, "$pending", validationErrorKey, controller);
     }
     if (!isBoolean(state)) {
       unset(this.$error, validationErrorKey, controller);
@@ -654,12 +694,12 @@ function addSetValidityMethod(context) {
     if (this.$pending) {
       cachedToggleClass(this, PENDING_CLASS, true);
       this.$valid = this.$invalid = undefined;
-      toggleValidationCss(this, '', null);
+      toggleValidationCss(this, "", null);
     } else {
       cachedToggleClass(this, PENDING_CLASS, false);
       this.$valid = isObjectEmpty(this.$error);
       this.$invalid = !this.$valid;
-      toggleValidationCss(this, '', this.$valid);
+      toggleValidationCss(this, "", this.$valid);
     }
 
     // re-read the state as the set/unset methods could have
@@ -708,10 +748,16 @@ function addSetValidityMethod(context) {
   }
 
   function toggleValidationCss(ctrl, validationErrorKey, isValid) {
-    validationErrorKey = validationErrorKey ? '-' + snake_case(validationErrorKey, '-') : '';
+    validationErrorKey = validationErrorKey
+      ? "-" + snake_case(validationErrorKey, "-")
+      : "";
 
     cachedToggleClass(ctrl, VALID_CLASS + validationErrorKey, isValid === true);
-    cachedToggleClass(ctrl, INVALID_CLASS + validationErrorKey, isValid === false);
+    cachedToggleClass(
+      ctrl,
+      INVALID_CLASS + validationErrorKey,
+      isValid === false,
+    );
   }
 }
 

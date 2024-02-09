@@ -25,7 +25,7 @@
     "uid": false,
     "toDebugString": false,
 
-    "REGEX_STRING_REGEXP" : false,
+    "REGEX_STRING_REGEXP": false,
     "lowercase": false,
     "uppercase": false,
     "isArrayLike": false,
@@ -189,6 +189,5 @@
 
     /* ng/directive/form.js */
     "nullFormCtrl": false
-
   }
 }

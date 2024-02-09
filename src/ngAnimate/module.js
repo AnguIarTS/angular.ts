@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc module
@@ -763,34 +763,35 @@ var noop;
  *
  * Click here {@link ng.$animate to learn more about animations with `$animate`}.
  */
-angular.module('ngAnimate', [], function initAngularHelpers() {
-  // Access helpers from AngularJS core.
-  // Do it inside a `config` block to ensure `window.angular` is available.
-  noop        = angular.noop;
-  copy        = angular.copy;
-  extend      = angular.extend;
-  jqLite      = angular.element;
-  forEach     = angular.forEach;
-  isArray     = angular.isArray;
-  isString    = angular.isString;
-  isObject    = angular.isObject;
-  isUndefined = angular.isUndefined;
-  isDefined   = angular.isDefined;
-  isFunction  = angular.isFunction;
-  isElement   = angular.isElement;
-})
+angular
+  .module("ngAnimate", [], function initAngularHelpers() {
+    // Access helpers from AngularJS core.
+    // Do it inside a `config` block to ensure `window.angular` is available.
+    noop = angular.noop;
+    copy = angular.copy;
+    extend = angular.extend;
+    jqLite = angular.element;
+    forEach = angular.forEach;
+    isArray = angular.isArray;
+    isString = angular.isString;
+    isObject = angular.isObject;
+    isUndefined = angular.isUndefined;
+    isDefined = angular.isDefined;
+    isFunction = angular.isFunction;
+    isElement = angular.isElement;
+  })
   .info({ angularVersion: '"NG_VERSION_FULL"' })
-  .directive('ngAnimateSwap', ngAnimateSwapDirective)
+  .directive("ngAnimateSwap", ngAnimateSwapDirective)
 
-  .directive('ngAnimateChildren', $$AnimateChildrenDirective)
-  .factory('$$rAFScheduler', $$rAFSchedulerFactory)
+  .directive("ngAnimateChildren", $$AnimateChildrenDirective)
+  .factory("$$rAFScheduler", $$rAFSchedulerFactory)
 
-  .provider('$$animateQueue', $$AnimateQueueProvider)
-  .provider('$$animateCache', $$AnimateCacheProvider)
-  .provider('$$animation', $$AnimationProvider)
+  .provider("$$animateQueue", $$AnimateQueueProvider)
+  .provider("$$animateCache", $$AnimateCacheProvider)
+  .provider("$$animation", $$AnimationProvider)
 
-  .provider('$animateCss', $AnimateCssProvider)
-  .provider('$$animateCssDriver', $$AnimateCssDriverProvider)
+  .provider("$animateCss", $AnimateCssProvider)
+  .provider("$$animateCssDriver", $$AnimateCssDriverProvider)
 
-  .provider('$$animateJs', $$AnimateJsProvider)
-  .provider('$$animateJsDriver', $$AnimateJsDriverProvider);
+  .provider("$$animateJs", $$AnimateJsProvider)
+  .provider("$$animateJsDriver", $$AnimateJsDriverProvider);

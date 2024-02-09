@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @ngdoc service
@@ -45,9 +45,12 @@
  *
  */
 function $ExceptionHandlerProvider() {
-  this.$get = ['$log', function($log) {
-    return function(exception, cause) {
-      $log.error.apply($log, arguments);
-    };
-  }];
+  this.$get = [
+    "$log",
+    function ($log) {
+      return function (exception, cause) {
+        $log.error.apply($log, arguments);
+      };
+    },
+  ];
 }
