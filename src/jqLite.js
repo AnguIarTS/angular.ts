@@ -241,18 +241,17 @@ function jqLiteAcceptsData(node) {
   );
 }
 
-function jqLiteHasData(node) {
+export function jqLiteHasData(node) {
   for (const key in jqCache[node.ng339]) {
     return true;
   }
   return false;
 }
 
-function jqLiteBuildFragment(html, context) {
+export function jqLiteBuildFragment(html, context) {
   let tmp;
   let tag;
   let wrap;
-  let finalHtml;
   const fragment = context.createDocumentFragment();
   let nodes = [];
   let i;
@@ -267,6 +266,7 @@ function jqLiteBuildFragment(html, context) {
     wrap = wrapMap[tag] || [];
     // Create wrappers & descend into them
     i = wrap.length;
+    // eslint-disable-next-line no-plusplus
     while (--i > -1) {
       tmp.appendChild(window.document.createElement(wrap[i]));
       tmp = tmp.firstChild;
@@ -290,7 +290,7 @@ function jqLiteBuildFragment(html, context) {
   return fragment;
 }
 
-function jqLiteParseHTML(html, context) {
+export function jqLiteParseHTML(html, context) {
   context = context || window.document;
   let parsed;
 

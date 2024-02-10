@@ -8,7 +8,7 @@ import { urlResolve } from "./urlUtils";
  * @description
  * Private service to sanitize uris for links and images. Used by $compile and $sanitize.
  */
-export function $$SanitizeUriProvider() {
+export function SanitizeUriProvider() {
   let aHrefSanitizationTrustedUrlList = /^\s*(https?|s?ftp|mailto|tel|file):/;
   let imgSrcSanitizationTrustedUrlList =
     /^\s*((https?|ftp|file|blob):|data:image\/)/;

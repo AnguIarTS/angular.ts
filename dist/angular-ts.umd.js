@@ -3018,10 +3018,6 @@
 
   const REGEX_STRING_REGEXP = /^\/(.+)\/([a-z]*)$/;
 
-  // The name of a form control's ValidityState property.
-  // This is used so that it's possible for internal tests to create mock ValidityStates.
-  const VALIDITY_STATE_PROPERTY = "validity";
-
   const ngMinErr = minErr$1("ng");
   /** @name angular */
   const angular$1 = window.angular || (window.angular = {});
@@ -3469,7 +3465,6 @@
   }
 
   exports.REGEX_STRING_REGEXP = REGEX_STRING_REGEXP;
-  exports.VALIDITY_STATE_PROPERTY = VALIDITY_STATE_PROPERTY;
   exports.allowAutoBootstrap = allowAutoBootstrap;
   exports.angularInit = angularInit;
   exports.assertArg = assertArg$1;

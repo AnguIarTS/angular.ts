@@ -3012,10 +3012,6 @@ createInjector.$$annotate = annotate;
 
 const REGEX_STRING_REGEXP = /^\/(.+)\/([a-z]*)$/;
 
-// The name of a form control's ValidityState property.
-// This is used so that it's possible for internal tests to create mock ValidityStates.
-const VALIDITY_STATE_PROPERTY = "validity";
-
 const ngMinErr = minErr$1("ng");
 /** @name angular */
 const angular$1 = window.angular || (window.angular = {});
@@ -3462,4 +3458,4 @@ function assertArgFn$1(arg, name, acceptArrayAnnotation) {
   return arg;
 }
 
-export { REGEX_STRING_REGEXP, VALIDITY_STATE_PROPERTY, allowAutoBootstrap, angularInit, assertArg$1 as assertArg, assertArgFn$1 as assertArgFn, bootstrap, getTestability, reloadWithDebugInfo };
+export { REGEX_STRING_REGEXP, allowAutoBootstrap, angularInit, assertArg$1 as assertArg, assertArgFn$1 as assertArgFn, bootstrap, getTestability, reloadWithDebugInfo };

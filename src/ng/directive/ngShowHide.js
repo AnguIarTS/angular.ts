@@ -200,10 +200,9 @@ const NG_HIDE_IN_PROGRESS_CLASS = "ng-hide-animate";
  * - Use `ng-class="{'ng-hide': expression}` instead of instead of {@link ngShow} / {@link ngHide}.
  * - Define an animation on the affected elements.
  */
-const ngShowDirective = [
+export const ngShowDirective = [
   "$animate",
-  function ($animate) {
-    return {
+  ($animate) => ({
       restrict: "A",
       multiElement: true,
       link(scope, element, attr) {
@@ -217,8 +216,7 @@ const ngShowDirective = [
           });
         });
       },
-    };
-  },
+    }),
 ];
 
 /**
@@ -421,10 +419,9 @@ const ngShowDirective = [
  * - Use `ng-class="{'ng-hide': expression}` instead of instead of {@link ngShow} / {@link ngHide}.
  * - Define an animation on the affected elements.
  */
-const ngHideDirective = [
+export const ngHideDirective = [
   "$animate",
-  function ($animate) {
-    return {
+  ($animate) => ({
       restrict: "A",
       multiElement: true,
       link(scope, element, attr) {
@@ -436,6 +433,5 @@ const ngHideDirective = [
           });
         });
       },
-    };
-  },
+    }),
 ];

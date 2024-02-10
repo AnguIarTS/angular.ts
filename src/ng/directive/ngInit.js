@@ -1,3 +1,5 @@
+import { ngDirective } from "./directives";
+
 /**
  * @ngdoc directive
  * @name ngInit
@@ -61,11 +63,11 @@
      </file>
    </example>
  */
-const ngInitDirective = ngDirective({
+export const ngInitDirective = ngDirective({
   priority: 450,
   compile() {
     return {
-      pre(scope, element, attrs) {
+      pre(scope, _element, attrs) {
         scope.$eval(attrs.ngInit);
       },
     };

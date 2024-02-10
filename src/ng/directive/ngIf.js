@@ -1,3 +1,5 @@
+import { getBlockNodes } from "../utils";
+
 /**
  * @ngdoc directive
  * @name ngIf
@@ -76,11 +78,10 @@
     </file>
   </example>
  */
-const ngIfDirective = [
+export const ngIfDirective = [
   "$animate",
   "$compile",
-  function ($animate, $compile) {
-    return {
+  ($animate, $compile) => ({
       multiElement: true,
       transclude: "element",
       priority: 600,
@@ -96,6 +97,7 @@ const ngIfDirective = [
             if (!childScope) {
               $transclude((clone, newScope) => {
                 childScope = newScope;
+                // eslint-disable-next-line no-plusplus, no-param-reassign
                 clone[clone.length++] = $compile.$$createComment(
                   "end ngIf",
                   $attr.ngIf,
@@ -128,6 +130,5 @@ const ngIfDirective = [
           }
         });
       },
-    };
-  },
+    }),
 ];

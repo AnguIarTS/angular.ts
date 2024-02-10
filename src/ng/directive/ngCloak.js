@@ -1,3 +1,5 @@
+import { ngDirective } from "./directives";
+
 /**
  * @ngdoc directive
  * @name ngCloak
@@ -50,7 +52,7 @@
    </example>
  *
  */
-const ngCloakDirective = ngDirective({
+export const ngCloakDirective = ngDirective({
   compile(element, attr) {
     attr.$set("ngCloak", undefined);
     element.removeClass("ng-cloak");

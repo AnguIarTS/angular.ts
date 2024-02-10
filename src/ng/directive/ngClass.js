@@ -5,6 +5,7 @@
 */
 
 function classDirective(name, selector) {
+  // eslint-disable-next-line no-param-reassign
   name = `ngClass${name}`;
   let indexWatchExpression;
 
@@ -330,7 +331,7 @@ function classDirective(name, selector) {
      </file>
    </example>
  */
-const ngClassDirective = classDirective("", true);
+export const ngClassDirective = classDirective("", true);
 
 /**
  * @ngdoc directive
@@ -440,7 +441,7 @@ const ngClassDirective = classDirective("", true);
      </file>
    </example>
  */
-const ngClassOddDirective = classDirective("Odd", 0);
+export const ngClassOddDirective = classDirective("Odd", 0);
 
 /**
  * @ngdoc directive
@@ -550,4 +551,4 @@ const ngClassOddDirective = classDirective("Odd", 0);
      </file>
    </example>
  */
-const ngClassEvenDirective = classDirective("Even", 1);
+export const ngClassEvenDirective = classDirective("Even", 1);

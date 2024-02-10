@@ -1,3 +1,5 @@
+import { isDefined, jqLiteBuildFragment } from "../utils";
+
 /**
  * @ngdoc directive
  * @name ngInclude
@@ -179,29 +181,28 @@
  * @param {Object} angularEvent Synthetic event object.
  * @param {String} src URL of content to load.
  */
-const ngIncludeDirective = [
+export const ngIncludeDirective = [
   "$templateRequest",
   "$anchorScroll",
   "$animate",
-  function ($templateRequest, $anchorScroll, $animate) {
-    return {
+  ($templateRequest, $anchorScroll, $animate) => ({
       restrict: "ECA",
       priority: 400,
       terminal: true,
       transclude: "element",
-      controller: angular.noop,
+      controller: () => {},
       compile(element, attr) {
         const srcExp = attr.ngInclude || attr.src;
         const onloadExp = attr.onload || "";
         const autoScrollExp = attr.autoscroll;
 
-        return function (scope, $element, $attr, ctrl, $transclude) {
+        return (scope, $element, $attr, ctrl, $transclude) => {
           let changeCounter = 0;
           let currentScope;
           let previousElement;
           let currentElement;
 
-          const cleanupLastIncludeContent = function () {
+          const cleanupLastIncludeContent = () => {
             if (previousElement) {
               previousElement.remove();
               previousElement = null;
@@ -229,6 +230,7 @@ const ngIncludeDirective = [
                 $anchorScroll();
               }
             };
+            // eslint-disable-next-line no-plusplus
             const thisChangeId = ++changeCounter;
 
             if (src) {
@@ -276,8 +278,7 @@ const ngIncludeDirective = [
           });
         };
       },
-    };
-  },
+    }),
 ];
 
 // This directive is called during the $transclude call of the first `ngInclude` directive.
@@ -285,10 +286,9 @@ const ngIncludeDirective = [
 // We need this directive so that the element content is already filled when
 // the link function of another directive on the same element as ngInclude
 // is called.
-const ngIncludeFillContentDirective = [
+export const ngIncludeFillContentDirective = [
   "$compile",
-  function ($compile) {
-    return {
+  ($compile) => ({
       restrict: "ECA",
       priority: -400,
       require: "ngInclude",
@@ -313,6 +313,5 @@ const ngIncludeFillContentDirective = [
         $element.html(ctrl.template);
         $compile($element.contents())(scope);
       },
-    };
-  },
+    }),
 ];
