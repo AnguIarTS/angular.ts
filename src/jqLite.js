@@ -1245,8 +1245,7 @@ JQLite.prototype.bind = JQLite.prototype.on;
 JQLite.prototype.unbind = JQLite.prototype.off;
 
 // Provider for private $$jqLite service
-/** @this */
-function $$jqLiteProvider() {
+export function $$jqLiteProvider() {
   this.$get = function $$jqLite() {
     return extend(JQLite, {
       hasClass(node, classes) {

@@ -3,6 +3,7 @@ import { createInjector } from "./auto/injector";
 import { jqLite } from "./jqLite";
 import { setupModuleLoader } from "./loader";
 import { $$CookieReaderProvider } from "./ng/cookieReader";
+import { AnimateAsyncRunFactoryProvider } from "./ng/animateRunner";
 import {
   extend,
   copy,
@@ -167,7 +168,7 @@ export function publishExternalAPI(angular) {
         $$animateJs: $$CoreAnimateJsProvider,
         $$animateQueue: $$CoreAnimateQueueProvider,
         $$AnimateRunner: $$AnimateRunnerFactoryProvider,
-        $$animateAsyncRun: $$AnimateAsyncRunFactoryProvider,
+        $$animateAsyncRun: AnimateAsyncRunFactoryProvider,
         $browser: $BrowserProvider,
         $cacheFactory: $CacheFactoryProvider,
         $controller: $ControllerProvider,
@@ -200,7 +201,6 @@ export function publishExternalAPI(angular) {
         $$testability: $$TestabilityProvider,
         $timeout: $TimeoutProvider,
         $window: $WindowProvider,
-        $$rAF: $$RAFProvider,
         $$jqLite: $$jqLiteProvider,
         $$cookieReader: $$CookieReaderProvider,
       });

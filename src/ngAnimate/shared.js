@@ -1,14 +1,17 @@
-const ELEMENT_NODE = 1;
-const COMMENT_NODE = 8;
+import { minErr } from "../minErr";
+import { isArray, isString } from "../ng/utils";
 
-const ADD_CLASS_SUFFIX = "-add";
-const REMOVE_CLASS_SUFFIX = "-remove";
-const EVENT_CLASS_PREFIX = "ng-";
-const ACTIVE_CLASS_SUFFIX = "-active";
-const PREPARE_CLASS_SUFFIX = "-prepare";
+export const ELEMENT_NODE = 1;
+export const COMMENT_NODE = 8;
 
-const NG_ANIMATE_CLASSNAME = "ng-animate";
-const NG_ANIMATE_CHILDREN_DATA = "$$ngAnimateChildren";
+export const ADD_CLASS_SUFFIX = "-add";
+export const REMOVE_CLASS_SUFFIX = "-remove";
+export const EVENT_CLASS_PREFIX = "ng-";
+export const ACTIVE_CLASS_SUFFIX = "-active";
+export const PREPARE_CLASS_SUFFIX = "-prepare";
+
+export const NG_ANIMATE_CLASSNAME = "ng-animate";
+export const NG_ANIMATE_CHILDREN_DATA = "$$ngAnimateChildren";
 
 // Detect proper transitionend/animationend event names.
 let CSS_PREFIX = "";
@@ -35,6 +38,7 @@ if (
   TRANSITIONEND_EVENT = "webkitTransitionEnd transitionend";
 } else {
   TRANSITION_PROP = "transition";
+  // eslint-disable-next-line no-unused-vars
   TRANSITIONEND_EVENT = "transitionend";
 }
 
@@ -42,29 +46,31 @@ if (
   window.onanimationend === undefined &&
   window.onwebkitanimationend !== undefined
 ) {
+  // eslint-disable-next-line no-unused-vars
   CSS_PREFIX = "-webkit-";
   ANIMATION_PROP = "WebkitAnimation";
   ANIMATIONEND_EVENT = "webkitAnimationEnd animationend";
 } else {
   ANIMATION_PROP = "animation";
+  // eslint-disable-next-line no-unused-vars
   ANIMATIONEND_EVENT = "animationend";
 }
 
-const DURATION_KEY = "Duration";
-const PROPERTY_KEY = "Property";
-const DELAY_KEY = "Delay";
-const TIMING_KEY = "TimingFunction";
-const ANIMATION_ITERATION_COUNT_KEY = "IterationCount";
-const ANIMATION_PLAYSTATE_KEY = "PlayState";
-const SAFE_FAST_FORWARD_DURATION_VALUE = 9999;
+export const DURATION_KEY = "Duration";
+export const PROPERTY_KEY = "Property";
+export const DELAY_KEY = "Delay";
+export const TIMING_KEY = "TimingFunction";
+export const ANIMATION_ITERATION_COUNT_KEY = "IterationCount";
+export const ANIMATION_PLAYSTATE_KEY = "PlayState";
+export const SAFE_FAST_FORWARD_DURATION_VALUE = 9999;
 
-const ANIMATION_DELAY_PROP = ANIMATION_PROP + DELAY_KEY;
-const ANIMATION_DURATION_PROP = ANIMATION_PROP + DURATION_KEY;
-const TRANSITION_DELAY_PROP = TRANSITION_PROP + DELAY_KEY;
-const TRANSITION_DURATION_PROP = TRANSITION_PROP + DURATION_KEY;
+export const ANIMATION_DELAY_PROP = ANIMATION_PROP + DELAY_KEY;
+export const ANIMATION_DURATION_PROP = ANIMATION_PROP + DURATION_KEY;
+export const TRANSITION_DELAY_PROP = TRANSITION_PROP + DELAY_KEY;
+export const TRANSITION_DURATION_PROP = TRANSITION_PROP + DURATION_KEY;
 
-const ngMinErr = angular.$$minErr("ng");
-function assertArg(arg, name, reason) {
+export const ngMinErr = minErr("ng");
+export function assertArg(arg, name, reason) {
   if (!arg) {
     throw ngMinErr(
       "areq",
@@ -76,7 +82,7 @@ function assertArg(arg, name, reason) {
   return arg;
 }
 
-function mergeClasses(a, b) {
+export function mergeClasses(a, b) {
   if (!a && !b) return "";
   if (!a) return b;
   if (!b) return a;
@@ -85,7 +91,7 @@ function mergeClasses(a, b) {
   return `${a} ${b}`;
 }
 
-function packageStyles(options) {
+export function packageStyles(options) {
   const styles = {};
   if (options && (options.to || options.from)) {
     styles.to = options.to;
@@ -94,14 +100,15 @@ function packageStyles(options) {
   return styles;
 }
 
-function pendClasses(classes, fix, isPrefix) {
+export function pendClasses(classes, fix, isPrefix) {
   let className = "";
+  // eslint-disable-next-line no-nested-ternary
   classes = isArray(classes)
     ? classes
     : classes && isString(classes) && classes.length
       ? classes.split(/\s+/)
       : [];
-  forEach(classes, (klass, i) => {
+  classes.forEach((klass, i) => {
     if (klass && klass.length > 0) {
       className += i > 0 ? " " : "";
       className += isPrefix ? fix + klass : klass + fix;
@@ -110,14 +117,14 @@ function pendClasses(classes, fix, isPrefix) {
   return className;
 }
 
-function removeFromArray(arr, val) {
+export function removeFromArray(arr, val) {
   const index = arr.indexOf(val);
   if (val >= 0) {
     arr.splice(index, 1);
   }
 }
 
-function stripCommentsFromElement(element) {
+export function stripCommentsFromElement(element) {
   if (element instanceof jqLite) {
     switch (element.length) {
       case 0:
@@ -142,7 +149,7 @@ function stripCommentsFromElement(element) {
   }
 }
 
-function extractElementNode(element) {
+export function extractElementNode(element) {
   if (!element[0]) return element;
   for (let i = 0; i < element.length; i++) {
     const elm = element[i];
@@ -152,19 +159,19 @@ function extractElementNode(element) {
   }
 }
 
-function $$addClass($$jqLite, element, className) {
+export function $$addClass($$jqLite, element, className) {
   forEach(element, (elm) => {
     $$jqLite.addClass(elm, className);
   });
 }
 
-function $$removeClass($$jqLite, element, className) {
+export function $$removeClass($$jqLite, element, className) {
   forEach(element, (elm) => {
     $$jqLite.removeClass(elm, className);
   });
 }
 
-function applyAnimationClassesFactory($$jqLite) {
+export function applyAnimationClassesFactory($$jqLite) {
   return function (element, options) {
     if (options.addClass) {
       $$addClass($$jqLite, element, options.addClass);
@@ -177,7 +184,7 @@ function applyAnimationClassesFactory($$jqLite) {
   };
 }
 
-function prepareAnimationOptions(options) {
+export function prepareAnimationOptions(options) {
   options = options || {};
   if (!options.$$prepared) {
     let domOperation = options.domOperation || noop;
@@ -191,26 +198,26 @@ function prepareAnimationOptions(options) {
   return options;
 }
 
-function applyAnimationStyles(element, options) {
+export function applyAnimationStyles(element, options) {
   applyAnimationFromStyles(element, options);
   applyAnimationToStyles(element, options);
 }
 
-function applyAnimationFromStyles(element, options) {
+export function applyAnimationFromStyles(element, options) {
   if (options.from) {
     element.css(options.from);
     options.from = null;
   }
 }
 
-function applyAnimationToStyles(element, options) {
+export function applyAnimationToStyles(element, options) {
   if (options.to) {
     element.css(options.to);
     options.to = null;
   }
 }
 
-function mergeAnimationDetails(element, oldAnimation, newAnimation) {
+export function mergeAnimationDetails(element, oldAnimation, newAnimation) {
   const target = oldAnimation.options || {};
   const newOptions = newAnimation.options || {};
 
@@ -255,7 +262,7 @@ function mergeAnimationDetails(element, oldAnimation, newAnimation) {
   return target;
 }
 
-function resolveElementClasses(existing, toAdd, toRemove) {
+export function resolveElementClasses(existing, toAdd, toRemove) {
   const ADD_CLASS = 1;
   const REMOVE_CLASS = -1;
 
@@ -277,7 +284,7 @@ function resolveElementClasses(existing, toAdd, toRemove) {
     removeClass: "",
   };
 
-  forEach(flags, (val, klass) => {
+  flags.forEach((val, klass) => {
     let prop;
     let allow;
     if (val === ADD_CLASS) {
@@ -314,11 +321,16 @@ function resolveElementClasses(existing, toAdd, toRemove) {
   return classes;
 }
 
-function getDomNode(element) {
+export function getDomNode(element) {
   return element instanceof jqLite ? element[0] : element;
 }
 
-function applyGeneratedPreparationClasses($$jqLite, element, event, options) {
+export function applyGeneratedPreparationClasses(
+  $$jqLite,
+  element,
+  event,
+  options,
+) {
   let classes = "";
   if (event) {
     classes = pendClasses(event, EVENT_CLASS_PREFIX, true);
@@ -341,7 +353,7 @@ function applyGeneratedPreparationClasses($$jqLite, element, event, options) {
   }
 }
 
-function clearGeneratedClasses(element, options) {
+export function clearGeneratedClasses(element, options) {
   if (options.preparationClasses) {
     element.removeClass(options.preparationClasses);
     options.preparationClasses = null;
@@ -352,26 +364,26 @@ function clearGeneratedClasses(element, options) {
   }
 }
 
-function blockKeyframeAnimations(node, applyBlock) {
+export function blockKeyframeAnimations(node, applyBlock) {
   const value = applyBlock ? "paused" : "";
   const key = ANIMATION_PROP + ANIMATION_PLAYSTATE_KEY;
   applyInlineStyle(node, [key, value]);
   return [key, value];
 }
 
-function applyInlineStyle(node, styleTuple) {
+export function applyInlineStyle(node, styleTuple) {
   const prop = styleTuple[0];
   const value = styleTuple[1];
   node.style[prop] = value;
 }
 
-function concatWithSpace(a, b) {
+export function concatWithSpace(a, b) {
   if (!a) return b;
   if (!b) return a;
   return `${a} ${b}`;
 }
 
-const helpers = {
+export const helpers = {
   blockTransitions(node, duration) {
     // we use a negative delay value since it performs blocking
     // yet it doesn't kill any existing transitions running on the

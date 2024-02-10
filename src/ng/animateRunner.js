@@ -1,13 +1,12 @@
-const $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
+export function AnimateAsyncRunFactoryProvider() {
   this.$get = [
-    "$$rAF",
-    function ($$rAF) {
+    function () {
       let waitQueue = [];
 
       function waitForTick(fn) {
         waitQueue.push(fn);
         if (waitQueue.length > 1) return;
-        $$rAF(() => {
+        window.requestAnimationFrame(() => {
           for (let i = 0; i < waitQueue.length; i++) {
             waitQueue[i]();
           }
@@ -15,12 +14,12 @@ const $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
         });
       }
 
-      return function () {
+      return () => {
         let passed = false;
         waitForTick(() => {
           passed = true;
         });
-        return function (callback) {
+        return (callback) => {
           if (passed) {
             callback();
           } else {
@@ -30,9 +29,9 @@ const $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
       };
     },
   ];
-};
+}
 
-const $$AnimateRunnerFactoryProvider = /** @this */ function () {
+export function $$AnimateRunnerFactoryProvider() {
   this.$get = [
     "$q",
     "$sniffer",
@@ -112,7 +111,7 @@ const $$AnimateRunnerFactoryProvider = /** @this */ function () {
           }
         },
 
-        progress: noop,
+        progress: () => {},
 
         getPromise() {
           if (!this.promise) {
@@ -192,4 +191,4 @@ const $$AnimateRunnerFactoryProvider = /** @this */ function () {
       return AnimateRunner;
     },
   ];
-};
+}

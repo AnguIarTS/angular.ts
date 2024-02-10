@@ -1,6 +1,7 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable import/prefer-default-export */
 export const $$rAFSchedulerFactory = [
-  "$$rAF",
-  function ($$rAF) {
+  () => {
     let queue;
     let cancelFn;
 
@@ -12,6 +13,7 @@ export const $$rAFSchedulerFactory = [
       nextTick();
     }
 
+    // eslint-disable-next-line no-multi-assign
     queue = scheduler.queue = [];
 
     /* waitUntilQuiet does two things:
@@ -25,7 +27,7 @@ export const $$rAFSchedulerFactory = [
     scheduler.waitUntilQuiet = function (fn) {
       if (cancelFn) cancelFn();
 
-      cancelFn = $$rAF(() => {
+      cancelFn = window.requestAnimationFrame(() => {
         cancelFn = null;
         fn();
         nextTick();
@@ -38,12 +40,10 @@ export const $$rAFSchedulerFactory = [
       if (!queue.length) return;
 
       const items = queue.shift();
-      for (const element of items) {
-        element();
-      }
+      items.forEach((i) => i());
 
       if (!cancelFn) {
-        $$rAF(() => {
+        window.requestAnimationFrame(() => {
           if (!cancelFn) nextTick();
         });
       }
