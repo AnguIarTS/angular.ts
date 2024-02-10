@@ -11,9 +11,9 @@
 
 /* exported $SceProvider, $SceDelegateProvider */
 
-let $sceMinErr = minErr("$sce");
+const $sceMinErr = minErr("$sce");
 
-let SCE_CONTEXTS = {
+const SCE_CONTEXTS = {
   // HTML is used when there's HTML rendered (e.g. ng-bind-html, iframe srcdoc binding).
   HTML: "html",
 
@@ -39,7 +39,7 @@ let SCE_CONTEXTS = {
 
 // Helper functions follow.
 
-let UNDERSCORE_LOWERCASE_REGEXP = /_([a-z])/g;
+const UNDERSCORE_LOWERCASE_REGEXP = /_([a-z])/g;
 
 function snakeToCamel(name) {
   return name.replace(UNDERSCORE_LOWERCASE_REGEXP, fnCamelCaseReplace);
@@ -48,7 +48,8 @@ function snakeToCamel(name) {
 function adjustMatcher(matcher) {
   if (matcher === "self") {
     return matcher;
-  } else if (isString(matcher)) {
+  }
+  if (isString(matcher)) {
     // Strings match exactly except for 2 wildcards - '*' and '**'.
     // '*' matches any character except those from the set ':/.?&'.
     // '**' matches any character (like .* in a RegExp).
@@ -63,24 +64,24 @@ function adjustMatcher(matcher) {
     matcher = escapeForRegexp(matcher)
       .replace(/\\\*\\\*/g, ".*")
       .replace(/\\\*/g, "[^:/.?&;]*");
-    return new RegExp("^" + matcher + "$");
-  } else if (isRegExp(matcher)) {
+    return new RegExp(`^${matcher}$`);
+  }
+  if (isRegExp(matcher)) {
     // The only other type of matcher allowed is a Regexp.
     // Match entire URL / disallow partial matches.
     // Flags are reset (i.e. no global, ignoreCase or multiline)
-    return new RegExp("^" + matcher.source + "$");
-  } else {
-    throw $sceMinErr(
-      "imatcher",
-      'Matchers may only be "self", string patterns or RegExp objects',
-    );
+    return new RegExp(`^${matcher.source}$`);
   }
+  throw $sceMinErr(
+    "imatcher",
+    'Matchers may only be "self", string patterns or RegExp objects',
+  );
 }
 
 function adjustMatchers(matchers) {
-  let adjustedMatchers = [];
+  const adjustedMatchers = [];
   if (isDefined(matchers)) {
-    forEach(matchers, function (matcher) {
+    forEach(matchers, (matcher) => {
       adjustedMatchers.push(adjustMatcher(matcher));
     });
   }
@@ -182,8 +183,8 @@ function $SceDelegateProvider() {
   this.SCE_CONTEXTS = SCE_CONTEXTS;
 
   // Resource URLs can also be trusted by policy.
-  let trustedResourceUrlList = ["self"],
-    bannedResourceUrlList = [];
+  let trustedResourceUrlList = ["self"];
+  let bannedResourceUrlList = [];
 
   /**
    * @ngdoc method
@@ -228,10 +229,10 @@ function $SceDelegateProvider() {
    * trustedResourceUrlList} instead.
    */
   Object.defineProperty(this, "resourceUrlWhitelist", {
-    get: function () {
+    get() {
       return this.trustedResourceUrlList;
     },
-    set: function (value) {
+    set(value) {
       this.trustedResourceUrlList = value;
     },
   });
@@ -280,10 +281,10 @@ function $SceDelegateProvider() {
    * bannedResourceUrlList} instead.
    */
   Object.defineProperty(this, "resourceUrlBlacklist", {
-    get: function () {
+    get() {
       return this.bannedResourceUrlList;
     },
-    set: function (value) {
+    set(value) {
       this.bannedResourceUrlList = value;
     },
   });
@@ -308,17 +309,16 @@ function $SceDelegateProvider() {
           return (
             urlIsSameOrigin(parsedUrl) || urlIsSameOriginAsBaseUrl(parsedUrl)
           );
-        } else {
-          // definitely a regex.  See adjustMatchers()
-          return !!matcher.exec(parsedUrl.href);
         }
+        // definitely a regex.  See adjustMatchers()
+        return !!matcher.exec(parsedUrl.href);
       }
 
       function isResourceUrlAllowedByPolicy(url) {
-        let parsedUrl = urlResolve(url.toString());
-        let i,
-          n,
-          allowed = false;
+        const parsedUrl = urlResolve(url.toString());
+        let i;
+        let n;
+        let allowed = false;
         // Ensure that at least one item from the trusted resource URL list allows this url.
         for (i = 0, n = trustedResourceUrlList.length; i < n; i++) {
           if (matchUrl(trustedResourceUrlList[i], parsedUrl)) {
@@ -339,7 +339,7 @@ function $SceDelegateProvider() {
       }
 
       function generateHolderType(Base) {
-        let holderType = function TrustedValueHolderType(trustedValue) {
+        const holderType = function TrustedValueHolderType(trustedValue) {
           this.$$unwrapTrustedValue = function () {
             return trustedValue;
           };
@@ -356,8 +356,8 @@ function $SceDelegateProvider() {
         return holderType;
       }
 
-      let trustedValueHolderBase = generateHolderType(),
-        byType = {};
+      const trustedValueHolderBase = generateHolderType();
+      const byType = {};
 
       byType[SCE_CONTEXTS.HTML] = generateHolderType(trustedValueHolderBase);
       byType[SCE_CONTEXTS.CSS] = generateHolderType(trustedValueHolderBase);
@@ -397,7 +397,7 @@ function $SceDelegateProvider() {
        * @return {*} A trusted representation of value, that can be used in the given context.
        */
       function trustAs(type, trustedValue) {
-        let Constructor = byType.hasOwnProperty(type) ? byType[type] : null;
+        const Constructor = byType.hasOwnProperty(type) ? byType[type] : null;
         if (!Constructor) {
           throw $sceMinErr(
             "icontext",
@@ -446,9 +446,8 @@ function $SceDelegateProvider() {
       function valueOf(maybeTrusted) {
         if (maybeTrusted instanceof trustedValueHolderBase) {
           return maybeTrusted.$$unwrapTrustedValue();
-        } else {
-          return maybeTrusted;
         }
+        return maybeTrusted;
       }
 
       /**
@@ -492,7 +491,7 @@ function $SceDelegateProvider() {
         ) {
           return maybeTrusted;
         }
-        let constructor = byType.hasOwnProperty(type) ? byType[type] : null;
+        const constructor = byType.hasOwnProperty(type) ? byType[type] : null;
         // If maybeTrusted is a trusted class instance or subclass instance, then unwrap and return
         // as-is.
         if (constructor && maybeTrusted instanceof constructor) {
@@ -512,16 +511,16 @@ function $SceDelegateProvider() {
             maybeTrusted.toString(),
             type === SCE_CONTEXTS.MEDIA_URL,
           );
-        } else if (type === SCE_CONTEXTS.RESOURCE_URL) {
+        }
+        if (type === SCE_CONTEXTS.RESOURCE_URL) {
           if (isResourceUrlAllowedByPolicy(maybeTrusted)) {
             return maybeTrusted;
-          } else {
-            throw $sceMinErr(
-              "insecurl",
-              "Blocked loading resource from url not allowed by $sceDelegate policy.  URL: {0}",
-              maybeTrusted.toString(),
-            );
           }
+          throw $sceMinErr(
+            "insecurl",
+            "Blocked loading resource from url not allowed by $sceDelegate policy.  URL: {0}",
+            maybeTrusted.toString(),
+          );
         } else if (type === SCE_CONTEXTS.HTML) {
           // htmlSanitizer throws its own error when no sanitizer is available.
           return htmlSanitizer(maybeTrusted);
@@ -533,7 +532,7 @@ function $SceDelegateProvider() {
         );
       }
 
-      return { trustAs: trustAs, getTrusted: getTrusted, valueOf: valueOf };
+      return { trustAs, getTrusted, valueOf };
     },
   ];
 }
@@ -918,7 +917,7 @@ function $SceProvider() {
     "$parse",
     "$sceDelegate",
     function ($parse, $sceDelegate) {
-      let sce = shallowCopy(SCE_CONTEXTS);
+      const sce = shallowCopy(SCE_CONTEXTS);
 
       /**
        * @ngdoc method
@@ -965,14 +964,11 @@ function $SceProvider() {
        *      in `context`.
        */
       sce.parseAs = function sceParseAs(type, expr) {
-        let parsed = $parse(expr);
+        const parsed = $parse(expr);
         if (parsed.literal && parsed.constant) {
           return parsed;
-        } else {
-          return $parse(expr, function (value) {
-            return sce.getTrusted(type, value);
-          });
         }
+        return $parse(expr, (value) => sce.getTrusted(type, value));
       };
 
       /**
@@ -1228,19 +1224,19 @@ function $SceProvider() {
        */
 
       // Shorthand delegations.
-      let parse = sce.parseAs,
-        getTrusted = sce.getTrusted,
-        trustAs = sce.trustAs;
+      const parse = sce.parseAs;
+      const { getTrusted } = sce;
+      const { trustAs } = sce;
 
-      forEach(SCE_CONTEXTS, function (enumValue, name) {
-        let lName = lowercase(name);
-        sce[snakeToCamel("parse_as_" + lName)] = function (expr) {
+      forEach(SCE_CONTEXTS, (enumValue, name) => {
+        const lName = lowercase(name);
+        sce[snakeToCamel(`parse_as_${lName}`)] = function (expr) {
           return parse(enumValue, expr);
         };
-        sce[snakeToCamel("get_trusted_" + lName)] = function (value) {
+        sce[snakeToCamel(`get_trusted_${lName}`)] = function (value) {
           return getTrusted(enumValue, value);
         };
-        sce[snakeToCamel("trust_as_" + lName)] = function (value) {
+        sce[snakeToCamel(`trust_as_${lName}`)] = function (value) {
           return trustAs(enumValue, value);
         };
       });

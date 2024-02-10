@@ -8,10 +8,10 @@ function assertCompareNodes(a,b,not) {
 }
 
 function baseThey(msg, vals, spec, itFn) {
-  let valsIsArray = angular.isArray(vals);
+  const valsIsArray = angular.isArray(vals);
 
-  angular.forEach(vals, function(val, key) {
-    let m = msg.split('$prop').join(angular.toJson(valsIsArray ? val : key));
+  angular.forEach(vals, (val, key) => {
+    const m = msg.split('$prop').join(angular.toJson(valsIsArray ? val : key));
     itFn(m, function() {
       spec.call(this, val);
     });
@@ -39,16 +39,16 @@ function browserSupportsCssAnimations() {
 function createMockStyleSheet(doc) {
   doc = doc ? doc[0] : window.document;
 
-  let node = doc.createElement('style');
-  let head = doc.getElementsByTagName('head')[0];
+  const node = doc.createElement('style');
+  const head = doc.getElementsByTagName('head')[0];
   head.appendChild(node);
 
-  let ss = doc.styleSheets[doc.styleSheets.length - 1];
+  const ss = doc.styleSheets[doc.styleSheets.length - 1];
 
   return {
-    addRule: function(selector, styles) {
+    addRule(selector, styles) {
       try {
-        ss.insertRule(selector + '{ ' + styles + '}', 0);
+        ss.insertRule(`${selector  }{ ${  styles  }}`, 0);
       } catch (e) {
         try {
           ss.addRule(selector, styles);
@@ -56,23 +56,19 @@ function createMockStyleSheet(doc) {
       }
     },
 
-    addPossiblyPrefixedRule: function(selector, styles) {
+    addPossiblyPrefixedRule(selector, styles) {
       // Support: Android <5, Blackberry Browser 10, default Chrome in Android 4.4.x
       // Mentioned browsers need a -webkit- prefix for transitions & animations.
-      let prefixedStyles = styles.split(/\s*;\s*/g)
-        .filter(function(style) {
-          return style && /^(?:transition|animation)\b/.test(style);
-        })
-        .map(function(style) {
-          return '-webkit-' + style;
-        }).join('; ');
+      const prefixedStyles = styles.split(/\s*;\s*/g)
+        .filter((style) => style && /^(?:transition|animation)\b/.test(style))
+        .map((style) => `-webkit-${  style}`).join('; ');
 
       this.addRule(selector, prefixedStyles);
 
       this.addRule(selector, styles);
     },
 
-    destroy: function() {
+    destroy() {
       head.removeChild(node);
     }
   };

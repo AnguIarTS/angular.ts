@@ -1,22 +1,22 @@
 
 
-describe('$$rAFScheduler', function() {
+describe('$$rAFScheduler', () => {
 
   beforeEach(module('ngAnimate'));
 
   it('should accept an array of tasks and run the first task immediately',
-    inject(function($$rAFScheduler) {
+    inject(($$rAFScheduler) => {
 
-    let taskSpy = jasmine.createSpy();
-    let tasks = [taskSpy];
+    const taskSpy = jasmine.createSpy();
+    const tasks = [taskSpy];
     $$rAFScheduler([tasks]);
     expect(taskSpy).toHaveBeenCalled();
   }));
 
   it('should run tasks based on how many RAFs have run in comparison to the task index',
-    inject(function($$rAFScheduler, $$rAF) {
+    inject(($$rAFScheduler, $$rAF) => {
 
-    let i, tasks = [];
+    let i; const tasks = [];
 
     for (i = 0; i < 5; i++) {
       tasks.push([jasmine.createSpy()]);
@@ -25,7 +25,7 @@ describe('$$rAFScheduler', function() {
     $$rAFScheduler(tasks);
 
     for (i = 1; i < 5; i++) {
-      let taskSpy = tasks[i][0];
+      const taskSpy = tasks[i][0];
       expect(taskSpy).not.toHaveBeenCalled();
       $$rAF.flush();
       expect(taskSpy).toHaveBeenCalled();
@@ -33,9 +33,9 @@ describe('$$rAFScheduler', function() {
   }));
 
   it('should space out subarrays by a RAF and run the internals in parallel',
-    inject(function($$rAFScheduler, $$rAF) {
+    inject(($$rAFScheduler, $$rAF) => {
 
-    let spies = {
+    const spies = {
       a: jasmine.createSpy(),
       b: jasmine.createSpy(),
       c: jasmine.createSpy(),
@@ -45,7 +45,7 @@ describe('$$rAFScheduler', function() {
       z: jasmine.createSpy()
     };
 
-    let items = [[spies.a, spies.x],
+    const items = [[spies.a, spies.x],
                  [spies.b, spies.y],
                  [spies.c, spies.z]];
 
@@ -76,23 +76,23 @@ describe('$$rAFScheduler', function() {
     expect(spies.z).toHaveBeenCalled();
   }));
 
-  describe('.waitUntilQuiet', function() {
+  describe('.waitUntilQuiet', () => {
 
     it('should run the `last` provided function when a RAF fully passes',
-      inject(function($$rAFScheduler, $$rAF) {
+      inject(($$rAFScheduler, $$rAF) => {
 
-      let q1 = jasmine.createSpy();
+      const q1 = jasmine.createSpy();
       $$rAFScheduler.waitUntilQuiet(q1);
 
       expect(q1).not.toHaveBeenCalled();
 
-      let q2 = jasmine.createSpy();
+      const q2 = jasmine.createSpy();
       $$rAFScheduler.waitUntilQuiet(q2);
 
       expect(q1).not.toHaveBeenCalled();
       expect(q2).not.toHaveBeenCalled();
 
-      let q3 = jasmine.createSpy();
+      const q3 = jasmine.createSpy();
       $$rAFScheduler.waitUntilQuiet(q3);
 
       expect(q1).not.toHaveBeenCalled();
@@ -106,11 +106,11 @@ describe('$$rAFScheduler', function() {
       expect(q3).toHaveBeenCalled();
     }));
 
-    it('should always execute itself before the next RAF task tick occurs', function() {
+    it('should always execute itself before the next RAF task tick occurs', () => {
       module(provideLog);
-      inject(function($$rAFScheduler, $$rAF, log) {
-        let quietFn = log.fn('quiet');
-        let tasks = [
+      inject(($$rAFScheduler, $$rAF, log) => {
+        const quietFn = log.fn('quiet');
+        const tasks = [
           [log.fn('task1')],
           [log.fn('task2')],
           [log.fn('task3')],

@@ -66,11 +66,11 @@
  *   </file>
  * </example>
  */
-let ngChangeDirective = valueFn({
+const ngChangeDirective = valueFn({
   restrict: "A",
   require: "ngModel",
-  link: function (scope, element, attr, ctrl) {
-    ctrl.$viewChangeListeners.push(function () {
+  link(scope, element, attr, ctrl) {
+    ctrl.$viewChangeListeners.push(() => {
       scope.$eval(attr.ngChange);
     });
   },

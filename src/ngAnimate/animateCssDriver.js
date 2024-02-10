@@ -1,13 +1,13 @@
-let $$AnimateCssDriverProvider = [
+const $$AnimateCssDriverProvider = [
   "$$animationProvider",
   /** @this */ function ($$animationProvider) {
     $$animationProvider.drivers.push("$$animateCssDriver");
 
-    let NG_ANIMATE_SHIM_CLASS_NAME = "ng-animate-shim";
-    let NG_ANIMATE_ANCHOR_CLASS_NAME = "ng-anchor";
+    const NG_ANIMATE_SHIM_CLASS_NAME = "ng-animate-shim";
+    const NG_ANIMATE_ANCHOR_CLASS_NAME = "ng-anchor";
 
-    let NG_OUT_ANCHOR_CLASS_NAME = "ng-anchor-out";
-    let NG_IN_ANCHOR_CLASS_NAME = "ng-anchor-in";
+    const NG_OUT_ANCHOR_CLASS_NAME = "ng-anchor-out";
+    const NG_IN_ANCHOR_CLASS_NAME = "ng-anchor-in";
 
     function isDocumentFragment(node) {
       return node.parentNode && node.parentNode.nodeType === 11;
@@ -33,10 +33,10 @@ let $$AnimateCssDriverProvider = [
         // only browsers that support these properties can render animations
         if (!$sniffer.animations && !$sniffer.transitions) return noop;
 
-        let bodyNode = $document[0].body;
-        let rootNode = getDomNode($rootElement);
+        const bodyNode = $document[0].body;
+        const rootNode = getDomNode($rootElement);
 
-        let rootBodyElement = jqLite(
+        const rootBodyElement = jqLite(
           // this is to avoid using something that exists outside of the body
           // we also special case the doc fragment case because our unit test code
           // appends the $rootElement to the body after the app has been bootstrapped
@@ -57,23 +57,19 @@ let $$AnimateCssDriverProvider = [
         };
 
         function filterCssClasses(classes) {
-          //remove all the `ng-` stuff
+          // remove all the `ng-` stuff
           return classes.replace(/\bng-\S+\b/g, "");
         }
 
         function getUniqueValues(a, b) {
           if (isString(a)) a = a.split(" ");
           if (isString(b)) b = b.split(" ");
-          return a
-            .filter(function (val) {
-              return b.indexOf(val) === -1;
-            })
-            .join(" ");
+          return a.filter((val) => b.indexOf(val) === -1).join(" ");
         }
 
         function prepareAnchoredAnimation(classes, outAnchor, inAnchor) {
-          let clone = jqLite(getDomNode(outAnchor).cloneNode(true));
-          let startingClasses = filterCssClasses(getClassVal(clone));
+          const clone = jqLite(getDomNode(outAnchor).cloneNode(true));
+          const startingClasses = filterCssClasses(getClassVal(clone));
 
           outAnchor.addClass(NG_ANIMATE_SHIM_CLASS_NAME);
           inAnchor.addClass(NG_ANIMATE_SHIM_CLASS_NAME);
@@ -82,8 +78,8 @@ let $$AnimateCssDriverProvider = [
 
           rootBodyElement.append(clone);
 
-          let animatorIn,
-            animatorOut = prepareOutAnimation();
+          let animatorIn;
+          const animatorOut = prepareOutAnimation();
 
           // the user may not end up using the `out` animation and
           // only making use of the `in` animation or vice-versa.
@@ -96,20 +92,20 @@ let $$AnimateCssDriverProvider = [
             }
           }
 
-          let startingAnimator = animatorOut || animatorIn;
+          const startingAnimator = animatorOut || animatorIn;
 
           return {
-            start: function () {
+            start() {
               let runner;
 
               let currentAnimation = startingAnimator.start();
-              currentAnimation.done(function () {
+              currentAnimation.done(() => {
                 currentAnimation = null;
                 if (!animatorIn) {
                   animatorIn = prepareInAnimation();
                   if (animatorIn) {
                     currentAnimation = animatorIn.start();
-                    currentAnimation.done(function () {
+                    currentAnimation.done(() => {
                       currentAnimation = null;
                       end();
                       runner.complete();
@@ -138,13 +134,13 @@ let $$AnimateCssDriverProvider = [
           };
 
           function calculateAnchorStyles(anchor) {
-            let styles = {};
+            const styles = {};
 
-            let coords = getDomNode(anchor).getBoundingClientRect();
+            const coords = getDomNode(anchor).getBoundingClientRect();
 
             // we iterate directly since safari messes up and doesn't return
             // all the keys for the coords object when iterated
-            forEach(["width", "height", "top", "left"], function (key) {
+            forEach(["width", "height", "top", "left"], (key) => {
               let value = coords[key];
               switch (key) {
                 case "top":
@@ -154,13 +150,13 @@ let $$AnimateCssDriverProvider = [
                   value += bodyNode.scrollLeft;
                   break;
               }
-              styles[key] = Math.floor(value) + "px";
+              styles[key] = `${Math.floor(value)}px`;
             });
             return styles;
           }
 
           function prepareOutAnimation() {
-            let animator = $animateCss(clone, {
+            const animator = $animateCss(clone, {
               addClass: NG_OUT_ANCHOR_CLASS_NAME,
               delay: true,
               from: calculateAnchorStyles(outAnchor),
@@ -176,14 +172,14 @@ let $$AnimateCssDriverProvider = [
           }
 
           function prepareInAnimation() {
-            let endingClasses = filterCssClasses(getClassVal(inAnchor));
-            let toAdd = getUniqueValues(endingClasses, startingClasses);
-            let toRemove = getUniqueValues(startingClasses, endingClasses);
+            const endingClasses = filterCssClasses(getClassVal(inAnchor));
+            const toAdd = getUniqueValues(endingClasses, startingClasses);
+            const toRemove = getUniqueValues(startingClasses, endingClasses);
 
-            let animator = $animateCss(clone, {
+            const animator = $animateCss(clone, {
               to: calculateAnchorStyles(inAnchor),
-              addClass: NG_IN_ANCHOR_CLASS_NAME + " " + toAdd,
-              removeClass: NG_OUT_ANCHOR_CLASS_NAME + " " + toRemove,
+              addClass: `${NG_IN_ANCHOR_CLASS_NAME} ${toAdd}`,
+              removeClass: `${NG_OUT_ANCHOR_CLASS_NAME} ${toRemove}`,
               delay: true,
             });
 
@@ -200,14 +196,14 @@ let $$AnimateCssDriverProvider = [
         }
 
         function prepareFromToAnchorAnimation(from, to, classes, anchors) {
-          let fromAnimation = prepareRegularAnimation(from, noop);
-          let toAnimation = prepareRegularAnimation(to, noop);
+          const fromAnimation = prepareRegularAnimation(from, noop);
+          const toAnimation = prepareRegularAnimation(to, noop);
 
-          let anchorAnimations = [];
-          forEach(anchors, function (anchor) {
-            let outElement = anchor["out"];
-            let inElement = anchor["in"];
-            let animator = prepareAnchoredAnimation(
+          const anchorAnimations = [];
+          forEach(anchors, (anchor) => {
+            const outElement = anchor.out;
+            const inElement = anchor.in;
+            const animator = prepareAnchoredAnimation(
               classes,
               outElement,
               inElement,
@@ -222,8 +218,8 @@ let $$AnimateCssDriverProvider = [
             return;
 
           return {
-            start: function () {
-              let animationRunners = [];
+            start() {
+              const animationRunners = [];
 
               if (fromAnimation) {
                 animationRunners.push(fromAnimation.start());
@@ -233,23 +229,23 @@ let $$AnimateCssDriverProvider = [
                 animationRunners.push(toAnimation.start());
               }
 
-              forEach(anchorAnimations, function (animation) {
+              forEach(anchorAnimations, (animation) => {
                 animationRunners.push(animation.start());
               });
 
-              let runner = new $$AnimateRunner({
+              const runner = new $$AnimateRunner({
                 end: endFn,
                 cancel: endFn, // CSS-driven animations cannot be cancelled, only ended
               });
 
-              $$AnimateRunner.all(animationRunners, function (status) {
+              $$AnimateRunner.all(animationRunners, (status) => {
                 runner.complete(status);
               });
 
               return runner;
 
               function endFn() {
-                forEach(animationRunners, function (runner) {
+                forEach(animationRunners, (runner) => {
                   runner.end();
                 });
               }
@@ -258,8 +254,8 @@ let $$AnimateCssDriverProvider = [
         }
 
         function prepareRegularAnimation(animationDetails) {
-          let element = animationDetails.element;
-          let options = animationDetails.options || {};
+          const { element } = animationDetails;
+          const options = animationDetails.options || {};
 
           if (animationDetails.structural) {
             options.event = animationDetails.event;
@@ -284,7 +280,7 @@ let $$AnimateCssDriverProvider = [
             );
           }
 
-          let animator = $animateCss(element, options);
+          const animator = $animateCss(element, options);
 
           // the driver lookup code inside of $$animation attempts to spawn a
           // driver one by one until a driver returns a.$$willAnimate animator object.

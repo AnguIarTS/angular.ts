@@ -3,11 +3,12 @@ import {
   extend,
   forEach,
   getNgAttribute,
+  isFunction,
   isObject,
   ngAttrPrefixes,
   startingTag,
 } from "./ng/utils";
-
+import { jqLite } from "./jqLite";
 import { createInjector } from "./auto/injector";
 
 /**
@@ -30,15 +31,14 @@ export const REGEX_STRING_REGEXP = /^\/(.+)\/([a-z]*)$/;
 // This is used so that it's possible for internal tests to create mock ValidityStates.
 export const VALIDITY_STATE_PROPERTY = "validity";
 
-let jqLite, // delay binding since jQuery could be loaded after us.
-  ngMinErr = minErr("ng"),
-  /** @name angular */
-  angular = window["angular"] || (window["angular"] = {});
+const ngMinErr = minErr("ng");
+/** @name angular */
+const angular = window.angular || (window.angular = {});
 
-/////////////////////////////////////////////////
+/// //////////////////////////////////////////////
 
 export function allowAutoBootstrap(document) {
-  let script = document.currentScript;
+  const script = document.currentScript;
 
   // If the `currentScript` property has been clobbered just return false, since this indicates a probable attack
   if (
@@ -50,14 +50,14 @@ export function allowAutoBootstrap(document) {
     return false;
   }
 
-  let attributes = script.attributes;
-  let srcs = [
+  const { attributes } = script;
+  const srcs = [
     attributes.getNamedItem("src"),
     attributes.getNamedItem("href"),
     attributes.getNamedItem("xlink:href"),
   ];
 
-  return srcs.every(function (src) {
+  return srcs.every((src) => {
     if (!src) {
       return true;
     }
@@ -65,7 +65,7 @@ export function allowAutoBootstrap(document) {
       return false;
     }
 
-    let link = document.createElement("a");
+    const link = document.createElement("a");
     link.href = src.value;
 
     if (document.location.origin === link.origin) {
@@ -234,26 +234,26 @@ const isAutoBootstrapAllowed = allowAutoBootstrap(window.document);
  </example>
  */
 export function angularInit(element, bootstrap) {
-  let appElement,
-    module,
-    config = {};
+  let appElement;
+  let module;
+  const config = {};
 
   // The element `element` has priority over any other element.
-  forEach(ngAttrPrefixes, function (prefix) {
-    let name = prefix + "app";
+  forEach(ngAttrPrefixes, (prefix) => {
+    const name = `${prefix}app`;
 
     if (!appElement && element.hasAttribute && element.hasAttribute(name)) {
       appElement = element;
       module = element.getAttribute(name);
     }
   });
-  forEach(ngAttrPrefixes, function (prefix) {
-    let name = prefix + "app";
+  forEach(ngAttrPrefixes, (prefix) => {
+    const name = `${prefix}app`;
     let candidate;
 
     if (
       !appElement &&
-      (candidate = element.querySelector("[" + name.replace(":", "\\:") + "]"))
+      (candidate = element.querySelector(`[${name.replace(":", "\\:")}]`))
     ) {
       appElement = candidate;
       module = candidate.getAttribute(name);
@@ -333,15 +333,15 @@ export function angularInit(element, bootstrap) {
  */
 export function bootstrap(element, modules, config) {
   if (!isObject(config)) config = {};
-  let defaultConfig = {
+  const defaultConfig = {
     strictDi: false,
   };
   config = extend(defaultConfig, config);
-  let doBootstrap = function () {
+  const doBootstrap = function () {
     element = jqLite(element);
 
     if (element.injector()) {
-      let tag =
+      const tag =
         element[0] === window.document ? "document" : startingTag(element);
       // Encode angle brackets to prevent input from being sanitized to empty string #8683.
       throw ngMinErr(
@@ -370,14 +370,14 @@ export function bootstrap(element, modules, config) {
     }
 
     modules.unshift("ng");
-    let injector = createInjector(modules, config.strictDi);
+    const injector = createInjector(modules, config.strictDi);
     injector.invoke([
       "$rootScope",
       "$rootElement",
       "$compile",
       "$injector",
       function bootstrapApply(scope, element, compile, injector) {
-        scope.$apply(function () {
+        scope.$apply(() => {
           element.data("$injector", injector);
           compile(element)(scope);
         });
@@ -400,7 +400,7 @@ export function bootstrap(element, modules, config) {
 
   window.name = window.name.replace(NG_DEFER_BOOTSTRAP, "");
   angular.resumeBootstrap = function (extraModules) {
-    forEach(extraModules, function (module) {
+    forEach(extraModules, (module) => {
       modules.push(module);
     });
     return doBootstrap();
@@ -422,7 +422,7 @@ export function bootstrap(element, modules, config) {
  * See {@link ng.$compileProvider#debugInfoEnabled} for more.
  */
 export function reloadWithDebugInfo() {
-  window.name = "NG_ENABLE_DEBUG_INFO!" + window.name;
+  window.name = `NG_ENABLE_DEBUG_INFO!${window.name}`;
   window.location.reload();
 }
 
@@ -435,7 +435,7 @@ export function reloadWithDebugInfo() {
  * @param {DOMElement} element DOM element which is the root of AngularJS application.
  */
 export function getTestability(rootElement) {
-  let injector = angular.element(rootElement).injector();
+  const injector = jqLite(rootElement).injector();
   if (!injector) {
     throw ngMinErr(
       "test",
@@ -468,10 +468,11 @@ export function assertArgFn(arg, name, acceptArrayAnnotation) {
   assertArg(
     isFunction(arg),
     name,
-    "not a function, got " +
-      (arg && typeof arg === "object"
+    `not a function, got ${
+      arg && typeof arg === "object"
         ? arg.constructor.name || "Object"
-        : typeof arg),
+        : typeof arg
+    }`,
   );
   return arg;
 }

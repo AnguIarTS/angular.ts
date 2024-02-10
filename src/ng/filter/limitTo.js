@@ -114,13 +114,11 @@ function limitToFilter() {
 
     if (limit >= 0) {
       return sliceFn(input, begin, begin + limit);
-    } else {
-      if (begin === 0) {
-        return sliceFn(input, limit, input.length);
-      } else {
-        return sliceFn(input, Math.max(0, begin + limit), begin);
-      }
     }
+    if (begin === 0) {
+      return sliceFn(input, limit, input.length);
+    }
+    return sliceFn(input, Math.max(0, begin + limit), begin);
   };
 }
 

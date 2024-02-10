@@ -576,21 +576,19 @@ function orderByFilter($parse) {
       sortPredicate = ["+"];
     }
 
-    let predicates = processPredicates(sortPredicate);
+    const predicates = processPredicates(sortPredicate);
 
-    let descending = reverseOrder ? -1 : 1;
+    const descending = reverseOrder ? -1 : 1;
 
     // Define the `compare()` function. Use a default comparator if none is specified.
-    let compare = isFunction(compareFn) ? compareFn : defaultCompare;
+    const compare = isFunction(compareFn) ? compareFn : defaultCompare;
 
     // The next three lines are a version of a Swartzian Transform idiom from Perl
     // (sometimes called the Decorate-Sort-Undecorate idiom)
     // See https://en.wikipedia.org/wiki/Schwartzian_transform
-    let compareValues = Array.prototype.map.call(array, getComparisonObject);
+    const compareValues = Array.prototype.map.call(array, getComparisonObject);
     compareValues.sort(doComparison);
-    array = compareValues.map(function (item) {
-      return item.value;
-    });
+    array = compareValues.map((item) => item.value);
 
     return array;
 
@@ -599,17 +597,17 @@ function orderByFilter($parse) {
       // This will be used to keep the sort stable when none of the input predicates can
       // distinguish between two elements.
       return {
-        value: value,
-        tieBreaker: { value: index, type: "number", index: index },
-        predicateValues: predicates.map(function (predicate) {
-          return getPredicateValue(predicate.get(value), index);
-        }),
+        value,
+        tieBreaker: { value: index, type: "number", index },
+        predicateValues: predicates.map((predicate) =>
+          getPredicateValue(predicate.get(value), index),
+        ),
       };
     }
 
     function doComparison(v1, v2) {
       for (let i = 0, ii = predicates.length; i < ii; i++) {
-        let result = compare(v1.predicateValues[i], v2.predicateValues[i]);
+        const result = compare(v1.predicateValues[i], v2.predicateValues[i]);
         if (result) {
           return result * predicates[i].descending * descending;
         }
@@ -623,9 +621,9 @@ function orderByFilter($parse) {
   };
 
   function processPredicates(sortPredicates) {
-    return sortPredicates.map(function (predicate) {
-      let descending = 1,
-        get = identity;
+    return sortPredicates.map((predicate) => {
+      let descending = 1;
+      let get = identity;
 
       if (isFunction(predicate)) {
         get = predicate;
@@ -637,14 +635,14 @@ function orderByFilter($parse) {
         if (predicate !== "") {
           get = $parse(predicate);
           if (get.constant) {
-            let key = get();
+            const key = get();
             get = function (value) {
               return value[key];
             };
           }
         }
       }
-      return { get: get, descending: descending };
+      return { get, descending };
     });
   }
 
@@ -681,13 +679,13 @@ function orderByFilter($parse) {
     } else if (type === "object") {
       value = objectValue(value);
     }
-    return { value: value, type: type, index: index };
+    return { value, type, index };
   }
 
   function defaultCompare(v1, v2) {
     let result = 0;
-    let type1 = v1.type;
-    let type2 = v2.type;
+    const type1 = v1.type;
+    const type2 = v2.type;
 
     if (type1 === type2) {
       let value1 = v1.value;

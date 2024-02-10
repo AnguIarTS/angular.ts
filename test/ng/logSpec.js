@@ -1,10 +1,10 @@
 /* global $LogProvider: false */
 
 
-describe('$log', function() {
-  let $window, logger, log, warn, info, error, debug;
+describe('$log', () => {
+  let $window; let logger; let log; let warn; let info; let error; let debug;
 
-  beforeEach(module(function($provide) {
+  beforeEach(module(($provide) => {
     $window = {
       navigator: {userAgent: window.navigator.userAgent},
       document: {}
@@ -22,14 +22,14 @@ describe('$log', function() {
   }));
 
   it('should use console if present', inject(
-    function() {
-      $window.console = {log: log,
-                         warn: warn,
-                         info: info,
-                         error: error,
-                         debug: debug};
+    () => {
+      $window.console = {log,
+                         warn,
+                         info,
+                         error,
+                         debug};
     },
-    function($log) {
+    ($log) => {
       $log.log();
       $log.warn();
       $log.info();
@@ -41,10 +41,10 @@ describe('$log', function() {
 
 
   it('should use console.log() if other not present', inject(
-    function() {
-      $window.console = {log: log};
+    () => {
+      $window.console = {log};
     },
-    function($log) {
+    ($log) => {
       $log.log();
       $log.warn();
       $log.info();
@@ -56,7 +56,7 @@ describe('$log', function() {
 
 
   it('should use noop if no console', inject(
-    function($log) {
+    ($log) => {
       $log.log();
       $log.warn();
       $log.info();
@@ -69,7 +69,7 @@ describe('$log', function() {
   runTests({ie9Mode: true});
 
   function runTests(options) {
-    let ie9Mode = options.ie9Mode;
+    const {ie9Mode} = options;
 
     function attachMockConsoleTo$window() {
       // Support: IE 9 only
@@ -83,25 +83,25 @@ describe('$log', function() {
       }
 
       $window.console = {
-        log: log,
-        warn: warn,
-        info: info,
-        error: error,
-        debug: debug
+        log,
+        warn,
+        info,
+        error,
+        debug
       };
     }
 
-    describe(ie9Mode ? 'IE 9 logging behavior' : 'Modern browsers\' logging behavior', function() {
+    describe(ie9Mode ? 'IE 9 logging behavior' : 'Modern browsers\' logging behavior', () => {
       beforeEach(module(attachMockConsoleTo$window));
 
       it('should work if $window.navigator not defined', inject(
-        function() {
+        () => {
           delete $window.navigator;
         },
-        function($log) {}
+        ($log) => {}
       ));
 
-      it('should have a working apply method', inject(function($log) {
+      it('should have a working apply method', inject(($log) => {
         $log.log.apply($log);
         $log.warn.apply($log);
         $log.info.apply($log);
@@ -115,15 +115,15 @@ describe('$log', function() {
       if (!/\b9\.\d(\.\d+)* safari/i.test(window.navigator.userAgent) &&
         !/\biphone os 9_/i.test(window.navigator.userAgent)) {
         it('should not attempt to log the second argument in IE if it is not specified', inject(
-          function() {
-            log = function(arg1, arg2) { logger += 'log,' + arguments.length + ';'; };
-            warn = function(arg1, arg2) { logger += 'warn,' + arguments.length + ';'; };
-            info = function(arg1, arg2) { logger += 'info,' + arguments.length + ';'; };
-            error = function(arg1, arg2) { logger += 'error,' + arguments.length + ';'; };
-            debug = function(arg1, arg2) { logger += 'debug,' + arguments.length + ';'; };
+          () => {
+            log = function(arg1, arg2) { logger += `log,${  arguments.length  };`; };
+            warn = function(arg1, arg2) { logger += `warn,${  arguments.length  };`; };
+            info = function(arg1, arg2) { logger += `info,${  arguments.length  };`; };
+            error = function(arg1, arg2) { logger += `error,${  arguments.length  };`; };
+            debug = function(arg1, arg2) { logger += `debug,${  arguments.length  };`; };
           },
           attachMockConsoleTo$window,
-          function($log) {
+          ($log) => {
             $log.log();
             $log.warn();
             $log.info();
@@ -134,19 +134,19 @@ describe('$log', function() {
         );
       }
 
-      describe('$log.debug', function() {
+      describe('$log.debug', () => {
 
         beforeEach(initService(false));
 
         it('should skip debugging output if disabled', inject(
-          function() {
-            $window.console = {log: log,
-                               warn: warn,
-                               info: info,
-                               error: error,
-                               debug: debug};
+          () => {
+            $window.console = {log,
+                               warn,
+                               info,
+                               error,
+                               debug};
           },
-          function($log) {
+          ($log) => {
             $log.log();
             $log.warn();
             $log.info();
@@ -158,8 +158,8 @@ describe('$log', function() {
 
       });
 
-      describe('$log.error', function() {
-        let e, $log;
+      describe('$log.error', () => {
+        let e; let $log;
 
         function TestError() {
           Error.prototype.constructor.apply(this, arguments);
@@ -172,38 +172,38 @@ describe('$log', function() {
         TestError.prototype.constructor = TestError;
 
         beforeEach(inject(
-          function() {
+          () => {
             e = new TestError('');
             $window.console = {
               error: jasmine.createSpy('error')
             };
           },
 
-          function(_$log_) {
+          (_$log_) => {
             $log = _$log_;
           }
         ));
 
-        it('should pass error if does not have trace', function() {
+        it('should pass error if does not have trace', () => {
           $log.error('abc', e);
           expect($window.console.error).toHaveBeenCalledWith('abc', e);
         });
 
         if (msie || /\bEdge\//.test(window.navigator.userAgent)) {
-          it('should print stack', function() {
+          it('should print stack', () => {
             e.stack = 'stack';
             $log.error('abc', e);
             expect($window.console.error).toHaveBeenCalledWith('abc', 'stack');
           });
         } else {
-          it('should print a raw error', function() {
+          it('should print a raw error', () => {
             e.stack = 'stack';
             $log.error('abc', e);
             expect($window.console.error).toHaveBeenCalledWith('abc', e);
           });
         }
 
-        it('should print line', function() {
+        it('should print line', () => {
           e.message = 'message';
           e.sourceURL = 'sourceURL';
           e.line = '123';
@@ -216,7 +216,7 @@ describe('$log', function() {
 
 
   function initService(debugEnabled) {
-    return module(function($logProvider) {
+    return module(($logProvider) => {
       $logProvider.debugEnabled(debugEnabled);
     });
   }

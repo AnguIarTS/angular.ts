@@ -1,6 +1,6 @@
-let $animateMinErr = minErr("$animate");
-let ELEMENT_NODE = 1;
-let NG_ANIMATE_CLASSNAME = "ng-animate";
+const $animateMinErr = minErr("$animate");
+const ELEMENT_NODE = 1;
+const NG_ANIMATE_CLASSNAME = "ng-animate";
 
 function mergeClasses(a, b) {
   if (!a && !b) return "";
@@ -8,12 +8,12 @@ function mergeClasses(a, b) {
   if (!b) return a;
   if (isArray(a)) a = a.join(" ");
   if (isArray(b)) b = b.join(" ");
-  return a + " " + b;
+  return `${a} ${b}`;
 }
 
 function extractElementNode(element) {
   for (let i = 0; i < element.length; i++) {
-    let elm = element[i];
+    const elm = element[i];
     if (elm.nodeType === ELEMENT_NODE) {
       return elm;
     }
@@ -27,8 +27,8 @@ function splitClasses(classes) {
 
   // Use createMap() to prevent class assumptions involving property names in
   // Object.prototype
-  let obj = createMap();
-  forEach(classes, function (klass) {
+  const obj = createMap();
+  forEach(classes, (klass) => {
     // sometimes the split leaves empty string values
     // incase extra spaces were applied to the options
     if (klass.length) {
@@ -49,15 +49,15 @@ function prepareAnimateOptions(options) {
   return isObject(options) ? options : {};
 }
 
-let $$CoreAnimateJsProvider = /** @this */ function () {
+const $$CoreAnimateJsProvider = /** @this */ function () {
   this.$get = noop;
 };
 
 // this is prefixed with Core since it conflicts with
 // the animateQueueProvider defined in ngAnimate/animateQueue.js
-let $$CoreAnimateQueueProvider = /** @this */ function () {
-  let postDigestQueue = new NgMap();
-  let postDigestElements = [];
+const $$CoreAnimateQueueProvider = /** @this */ function () {
+  const postDigestQueue = new NgMap();
+  const postDigestElements = [];
 
   this.$get = [
     "$$AnimateRunner",
@@ -69,7 +69,7 @@ let $$CoreAnimateQueueProvider = /** @this */ function () {
         off: noop,
         pin: noop,
 
-        push: function (element, event, options, domOperation) {
+        push(element, event, options, domOperation) {
           if (domOperation) {
             domOperation();
           }
@@ -90,7 +90,7 @@ let $$CoreAnimateQueueProvider = /** @this */ function () {
             );
           }
 
-          let runner = new $$AnimateRunner();
+          const runner = new $$AnimateRunner();
 
           // since there are no animations to run the runner needs to be
           // notified that the animation call is complete.
@@ -107,7 +107,7 @@ let $$CoreAnimateQueueProvider = /** @this */ function () {
             : isArray(classes)
               ? classes
               : [];
-          forEach(classes, function (className) {
+          forEach(classes, (className) => {
             if (className) {
               changed = true;
               data[className] = value;
@@ -118,14 +118,14 @@ let $$CoreAnimateQueueProvider = /** @this */ function () {
       }
 
       function handleCSSClassChanges() {
-        forEach(postDigestElements, function (element) {
-          let data = postDigestQueue.get(element);
+        forEach(postDigestElements, (element) => {
+          const data = postDigestQueue.get(element);
           if (data) {
-            let existing = splitClasses(element.attr("class"));
+            const existing = splitClasses(element.attr("class"));
             let toAdd = "";
             let toRemove = "";
-            forEach(data, function (status, className) {
-              let hasClass = !!existing[className];
+            forEach(data, (status, className) => {
+              const hasClass = !!existing[className];
               if (status !== hasClass) {
                 if (status) {
                   toAdd += (toAdd.length ? " " : "") + className;
@@ -135,7 +135,7 @@ let $$CoreAnimateQueueProvider = /** @this */ function () {
               }
             });
 
-            forEach(element, function (elm) {
+            forEach(element, (elm) => {
               if (toAdd) {
                 jqLiteAddClass(elm, toAdd);
               }
@@ -150,10 +150,10 @@ let $$CoreAnimateQueueProvider = /** @this */ function () {
       }
 
       function addRemoveClassesPostDigest(element, add, remove) {
-        let data = postDigestQueue.get(element) || {};
+        const data = postDigestQueue.get(element) || {};
 
-        let classesAdded = updateData(data, add, true);
-        let classesRemoved = updateData(data, remove, false);
+        const classesAdded = updateData(data, add, true);
+        const classesRemoved = updateData(data, remove, false);
 
         if (classesAdded || classesRemoved) {
           postDigestQueue.set(element, data);
@@ -180,10 +180,10 @@ let $$CoreAnimateQueueProvider = /** @this */ function () {
  *
  * To see the functional implementation check out `src/ngAnimate/animate.js`.
  */
-let $AnimateProvider = [
+const $AnimateProvider = [
   "$provide",
   /** @this */ function ($provide) {
-    let provider = this;
+    const provider = this;
     let classNameFilter = null;
     let customFilter = null;
 
@@ -237,7 +237,7 @@ let $AnimateProvider = [
         );
       }
 
-      let key = name + "-animation";
+      const key = `${name}-animation`;
       provider.$$registeredAnimations[name.substr(1)] = key;
       $provide.factory(key, factory);
     };
@@ -310,8 +310,8 @@ let $AnimateProvider = [
       if (arguments.length === 1) {
         classNameFilter = expression instanceof RegExp ? expression : null;
         if (classNameFilter) {
-          let reservedRegex = new RegExp(
-            "[(\\s|\\/)]" + NG_ANIMATE_CLASSNAME + "[(\\s|\\/)]",
+          const reservedRegex = new RegExp(
+            `[(\\s|\\/)]${NG_ANIMATE_CLASSNAME}[(\\s|\\/)]`,
           );
           if (reservedRegex.test(classNameFilter.toString())) {
             classNameFilter = null;
@@ -334,7 +334,7 @@ let $AnimateProvider = [
           // from the dom sometime before this code runs then let's
           // just stick to using the parent element as the anchor
           if (afterElement) {
-            let afterNode = extractElementNode(afterElement);
+            const afterNode = extractElementNode(afterElement);
             if (
               afterNode &&
               !afterNode.parentNode &&
@@ -578,7 +578,7 @@ let $AnimateProvider = [
           </file>
         </example>
        */
-          cancel: function (runner) {
+          cancel(runner) {
             if (runner.cancel) {
               runner.cancel();
             }
@@ -608,7 +608,7 @@ let $AnimateProvider = [
            *
            * @return {Runner} the animation runner
            */
-          enter: function (element, parent, after, options) {
+          enter(element, parent, after, options) {
             parent = parent && jqLite(parent);
             after = after && jqLite(after);
             parent = parent || after.parent();
@@ -644,7 +644,7 @@ let $AnimateProvider = [
            *
            * @return {Runner} the animation runner
            */
-          move: function (element, parent, after, options) {
+          move(element, parent, after, options) {
             parent = parent && jqLite(parent);
             after = after && jqLite(after);
             parent = parent || after.parent();
@@ -675,12 +675,12 @@ let $AnimateProvider = [
            *
            * @return {Runner} the animation runner
            */
-          leave: function (element, options) {
+          leave(element, options) {
             return $$animateQueue.push(
               element,
               "leave",
               prepareAnimateOptions(options),
-              function () {
+              () => {
                 element.remove();
               },
             );
@@ -709,7 +709,7 @@ let $AnimateProvider = [
            *
            * @return {Runner} animationRunner the animation runner
            */
-          addClass: function (element, className, options) {
+          addClass(element, className, options) {
             options = prepareAnimateOptions(options);
             options.addClass = mergeClasses(options.addclass, className);
             return $$animateQueue.push(element, "addClass", options);
@@ -738,7 +738,7 @@ let $AnimateProvider = [
            *
            * @return {Runner} the animation runner
            */
-          removeClass: function (element, className, options) {
+          removeClass(element, className, options) {
             options = prepareAnimateOptions(options);
             options.removeClass = mergeClasses(options.removeClass, className);
             return $$animateQueue.push(element, "removeClass", options);
@@ -769,7 +769,7 @@ let $AnimateProvider = [
            *
            * @return {Runner} the animation runner
            */
-          setClass: function (element, add, remove, options) {
+          setClass(element, add, remove, options) {
             options = prepareAnimateOptions(options);
             options.addClass = mergeClasses(options.addClass, add);
             options.removeClass = mergeClasses(options.removeClass, remove);
@@ -816,7 +816,7 @@ let $AnimateProvider = [
            *
            * @return {Runner} the animation runner
            */
-          animate: function (element, from, to, className, options) {
+          animate(element, from, to, className, options) {
             options = prepareAnimateOptions(options);
             options.from = options.from ? extend(options.from, from) : from;
             options.to = options.to ? extend(options.to, to) : to;

@@ -1,24 +1,22 @@
 
 
-let app = angular.module('largetableBenchmark', []);
+const app = angular.module('largetableBenchmark', []);
 
-app.config(function($compileProvider) {
+app.config(($compileProvider) => {
   if ($compileProvider.debugInfoEnabled) {
     $compileProvider.debugInfoEnabled(false);
   }
 });
 
-app.filter('noop', function() {
-  return function(input) {
+app.filter('noop', () => function(input) {
     return input;
-  };
-});
+  });
 
-app.controller('DataController', function DataController($scope, $rootScope) {
-  let totalRows = 1000;
-  let totalColumns = 20;
+app.controller('DataController', ($scope, $rootScope) => {
+  const totalRows = 1000;
+  const totalColumns = 20;
 
-  let data = $scope.data = [];
+  const data = $scope.data = [];
   $scope.digestDuration = '?';
   $scope.numberOfBindings = totalRows * totalColumns * 2 + totalRows + 1;
   $scope.numberOfWatches = '?';
@@ -32,7 +30,7 @@ app.controller('DataController', function DataController($scope, $rootScope) {
     data[i] = [];
     for (let j = 0; j < totalColumns; j++) {
       data[i][j] = {
-        i: i, j: j,
+        i, j,
         iFn: iGetter,
         jFn: jGetter
       };
@@ -43,8 +41,8 @@ app.controller('DataController', function DataController($scope, $rootScope) {
 
   benchmarkSteps.push({
     name: 'destroy',
-    fn: function() {
-      $scope.$apply(function() {
+    fn() {
+      $scope.$apply(() => {
         previousType = $scope.benchmarkType;
         $scope.benchmarkType = 'none';
       });
@@ -53,8 +51,8 @@ app.controller('DataController', function DataController($scope, $rootScope) {
 
   benchmarkSteps.push({
     name: 'create',
-    fn: function() {
-      $scope.$apply(function() {
+    fn() {
+      $scope.$apply(() => {
         $scope.benchmarkType = previousType;
       });
     }
@@ -62,20 +60,19 @@ app.controller('DataController', function DataController($scope, $rootScope) {
 
   benchmarkSteps.push({
     name: '$apply',
-    fn: function() {
+    fn() {
       $rootScope.$apply();
     }
   });
 });
 
 
-app.directive('baselineBindingTable', function() {
-  return {
+app.directive('baselineBindingTable', () => ({
     restrict: 'E',
-    link: function($scope, $element) {
-      let i, j, row, cell, comment;
-      let document = window.document;
-      let template = document.createElement('span');
+    link($scope, $element) {
+      let i; let j; let row; let cell; let comment;
+      const {document} = window;
+      const template = document.createElement('span');
       template.setAttribute('ng-repeat', 'foo in foos');
       template.classList.add('ng-scope');
       template.appendChild(document.createElement('span'));
@@ -100,17 +97,15 @@ app.directive('baselineBindingTable', function() {
         $element[0].appendChild(comment);
       }
     }
-  };
-});
+  }));
 
 
-app.directive('baselineInterpolationTable', function() {
-  return {
+app.directive('baselineInterpolationTable', () => ({
     restrict: 'E',
-    link: function($scope, $element) {
-      let i, j, row, cell, comment;
-      let document = window.document;
-      let template = document.createElement('span');
+    link($scope, $element) {
+      let i; let j; let row; let cell; let comment;
+      const {document} = window;
+      const template = document.createElement('span');
       template.setAttribute('ng-repeat', 'foo in foos');
       template.classList.add('ng-scope');
 
@@ -120,7 +115,7 @@ app.directive('baselineInterpolationTable', function() {
         for (j = 0; j < 20; j++) {
           cell = template.cloneNode(true);
           row.appendChild(cell);
-          cell.textContent = '' + i + ':' + j + '|';
+          cell.textContent = `${  i  }:${  j  }|`;
           cell.ng3992 = 'xxx';
           comment = document.createComment('ngRepeat end: bar in foo');
           row.appendChild(comment);
@@ -130,8 +125,7 @@ app.directive('baselineInterpolationTable', function() {
         $element[0].appendChild(comment);
       }
     }
-  };
-});
+  }));
 
 
 

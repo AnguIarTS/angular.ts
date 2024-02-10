@@ -222,7 +222,7 @@
  *</example>
 
  */
-let ngControllerDirective = [
+const ngControllerDirective = [
   function () {
     return {
       restrict: "A",

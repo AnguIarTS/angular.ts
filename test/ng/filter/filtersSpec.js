@@ -1,27 +1,27 @@
 
 
-describe('filters', function() {
+describe('filters', () => {
   let filter;
 
-  beforeEach(inject(function($filter) {
+  beforeEach(inject(($filter) => {
     filter = $filter;
   }));
 
-  it('should call the filter when evaluating expression', function() {
-    let filter = jasmine.createSpy('myFilter');
+  it('should call the filter when evaluating expression', () => {
+    const filter = jasmine.createSpy('myFilter');
     createInjector(['ng', function($filterProvider) {
       $filterProvider.register('myFilter', valueFn(filter));
-    }]).invoke(function($rootScope) {
+    }]).invoke(($rootScope) => {
       $rootScope.$eval('10|myFilter');
     });
     expect(filter).toHaveBeenCalledWith(10);
   });
 
-  describe('formatNumber', function() {
+  describe('formatNumber', () => {
     /* global formatNumber: false */
     let pattern;
 
-    beforeEach(function() {
+    beforeEach(() => {
       pattern = { minInt: 1,
                   minFrac: 0,
                   maxFrac: 3,
@@ -33,7 +33,7 @@ describe('filters', function() {
                   lgSize: 3 };
     });
 
-    it('should format according to different patterns', function() {
+    it('should format according to different patterns', () => {
       pattern.gSize = 2;
       let num = formatNumber(99, pattern, ',', '.');
       expect(num).toBe('99');
@@ -62,14 +62,14 @@ describe('filters', function() {
       expect(num).toBe('1.1112');
     });
 
-    it('should format according different separators', function() {
+    it('should format according different separators', () => {
       let num = formatNumber(1234567.1, pattern, '.', ',', 2);
       expect(num).toBe('1.234.567,10');
       num = formatNumber(1e-14, pattern, '.', ',', 14);
       expect(num).toBe('0,00000000000001');
     });
 
-    it('should format with or without fractionSize', function() {
+    it('should format with or without fractionSize', () => {
       let num = formatNumber(123.1, pattern, ',', '.', 3);
       expect(num).toBe('123.100');
       num = formatNumber(123.12, pattern, ',', '.');
@@ -78,7 +78,7 @@ describe('filters', function() {
       expect(num).toBe('123.112');
     });
 
-    it('should format the same with string as well as numeric fractionSize', function() {
+    it('should format the same with string as well as numeric fractionSize', () => {
       let num = formatNumber(123.1, pattern, ',', '.', '0');
       expect(num).toBe('123');
       num = formatNumber(123.1, pattern, ',', '.', 0);
@@ -89,7 +89,7 @@ describe('filters', function() {
       expect(num).toBe('123.100');
     });
 
-    it('should work with negative fractionSize', function() {
+    it('should work with negative fractionSize', () => {
       expect(formatNumber(49, pattern, ',', '.', -2)).toBe('0');
       expect(formatNumber(50, pattern, ',', '.', -2)).toBe('100');
       expect(formatNumber(51, pattern, ',', '.', -2)).toBe('100');
@@ -109,22 +109,22 @@ describe('filters', function() {
       expect(formatNumber(501, pattern, ',', '.', -3)).toBe('1,000');
     });
 
-    it('should format numbers that round to zero as nonnegative', function() {
+    it('should format numbers that round to zero as nonnegative', () => {
       expect(formatNumber(-0.01, pattern, ',', '.', 1)).toBe('0.0');
       expect(formatNumber(-1e-10, pattern, ',', '.', 1)).toBe('0.0');
       expect(formatNumber(-0.0001, pattern, ',', '.', 3)).toBe('0.000');
       expect(formatNumber(-0.0000001, pattern, ',', '.', 6)).toBe('0.000000');
     });
 
-    it('should work with numbers that are close to the limit for exponent notation', function() {
+    it('should work with numbers that are close to the limit for exponent notation', () => {
       // previously, numbers that n * (10 ^ fractionSize) > localLimitMax
       // were ending up with a second exponent in them, then coercing to
       // NaN when formatNumber rounded them with the safe rounding
       // function.
 
-      let localLimitMax = 999999999999999900000,
-          localLimitMin = 10000000000000000000,
-          exampleNumber = 444444444400000000000;
+      const localLimitMax = 999999999999999900000;
+          const localLimitMin = 10000000000000000000;
+          const exampleNumber = 444444444400000000000;
 
       expect(formatNumber(localLimitMax, pattern, ',', '.', 2))
         .toBe('999,999,999,999,999,900,000.00');
@@ -135,7 +135,7 @@ describe('filters', function() {
 
     });
 
-    it('should format large number',function() {
+    it('should format large number',() => {
       let num;
       num = formatNumber(12345868059685210000, pattern, ',', '.', 2);
       expect(num).toBe('12,345,868,059,685,210,000.00');
@@ -150,46 +150,46 @@ describe('filters', function() {
     });
   });
 
-  describe('currency', function() {
+  describe('currency', () => {
     let currency;
 
-    beforeEach(function() {
+    beforeEach(() => {
       currency = filter('currency');
     });
 
-    it('should do basic currency filtering', function() {
+    it('should do basic currency filtering', () => {
       expect(currency(0)).toEqual('$0.00');
       expect(currency(-999)).toEqual('-$999.00');
       expect(currency(1234.5678, 'USD$')).toEqual('USD$1,234.57');
       expect(currency(1234.5678, 'USD$', 0)).toEqual('USD$1,235');
     });
 
-    it('should pass through null and undefined to be compatible with one-time binding', function() {
+    it('should pass through null and undefined to be compatible with one-time binding', () => {
       expect(currency(undefined)).toBeUndefined();
       expect(currency(null)).toBe(null);
     });
 
-    it('should return empty string for non-numbers', function() {
+    it('should return empty string for non-numbers', () => {
       expect(currency('abc')).toBe('');
       expect(currency({})).toBe('');
     });
 
-    it('should handle zero and nearly-zero values properly', function() {
+    it('should handle zero and nearly-zero values properly', () => {
       // This expression is known to yield 4.440892098500626e-16 instead of 0.0.
       expect(currency(1.07 + 1 - 2.07)).toBe('$0.00');
       expect(currency(0.008)).toBe('$0.01');
       expect(currency(0.003)).toBe('$0.00');
     });
 
-    it('should set the default fraction size to the max fraction size of the locale value', inject(function($locale) {
+    it('should set the default fraction size to the max fraction size of the locale value', inject(($locale) => {
       $locale.NUMBER_FORMATS.PATTERNS[1].maxFrac = 1;
 
       expect(currency(1.07)).toBe('$1.1');
     }));
 
     it('should trim whitespace around the currency symbol if it is empty',
-      inject(function($locale) {
-        let pattern = $locale.NUMBER_FORMATS.PATTERNS[1];
+      inject(($locale) => {
+        const pattern = $locale.NUMBER_FORMATS.PATTERNS[1];
         pattern.posPre = pattern.posSuf = '     \u00A4     ';
         pattern.negPre = pattern.negSuf = '  -  \u00A4  -  ';
 
@@ -201,15 +201,15 @@ describe('filters', function() {
     );
   });
 
-  describe('number', function() {
+  describe('number', () => {
     let number;
 
-    beforeEach(function() {
+    beforeEach(() => {
       number = filter('number');
     });
 
 
-    it('should do basic filter', function() {
+    it('should do basic filter', () => {
       /* eslint-disable no-floating-decimal */
       expect(number(0, 0)).toEqual('0');
       expect(number(-999)).toEqual('-999');
@@ -249,19 +249,19 @@ describe('filters', function() {
       /* eslint-enable */
     });
 
-    it('should pass through null and undefined to be compatible with one-time binding', function() {
+    it('should pass through null and undefined to be compatible with one-time binding', () => {
       expect(number(null)).toBe(null);
       expect(number(undefined)).toBeUndefined();
     });
 
-    it('should filter exponentially large numbers', function() {
+    it('should filter exponentially large numbers', () => {
       expect(number(1.23e50)).toEqual('1.23e+50');
       expect(number(-2.3456e100)).toEqual('-2.346e+100');
       expect(number(1e50, 2)).toEqual('1.00e+50');
       expect(number(-2e100, 5)).toEqual('-2.00000e+100');
     });
 
-    it('should filter exponentially small numbers', function() {
+    it('should filter exponentially small numbers', () => {
       expect(number(1e-50, 0)).toEqual('0');
       expect(number(1e-6, 6)).toEqual('0.000001');
       expect(number(1e-7, 6)).toEqual('0.000000');
@@ -273,7 +273,7 @@ describe('filters', function() {
       expect(number(-1e-8, 9)).toEqual('-0.000000010');
     });
 
-    it('should filter exponentially small numbers when no fraction specified', function() {
+    it('should filter exponentially small numbers when no fraction specified', () => {
       expect(number(1e-10)).toEqual('0.000');
       expect(number(0.0000000001)).toEqual('0.000');
 
@@ -282,64 +282,64 @@ describe('filters', function() {
     });
   });
 
-  describe('json', function() {
-    it('should do basic filter', function() {
+  describe('json', () => {
+    it('should do basic filter', () => {
       expect(filter('json')({a:'b'})).toEqual(toJson({a:'b'}, true));
     });
-    it('should allow custom indentation', function() {
+    it('should allow custom indentation', () => {
       expect(filter('json')({a:'b'}, 4)).toEqual(toJson({a:'b'}, 4));
     });
   });
 
-  describe('lowercase', function() {
-    it('should do basic filter', function() {
+  describe('lowercase', () => {
+    it('should do basic filter', () => {
       expect(filter('lowercase')('AbC')).toEqual('abc');
       expect(filter('lowercase')(null)).toBeNull();
     });
   });
 
-  describe('uppercase', function() {
-    it('should do basic filter', function() {
+  describe('uppercase', () => {
+    it('should do basic filter', () => {
       expect(filter('uppercase')('AbC')).toEqual('ABC');
       expect(filter('uppercase')(null)).toBeNull();
     });
   });
 
-  describe('date', function() {
-    let morning    = new angular.mock.TzDate(+5, '2010-09-03T12:05:08.001Z'); //7am
-    let noon       = new angular.mock.TzDate(+5, '2010-09-03T17:05:08.012Z'); //12pm
-    let midnight   = new angular.mock.TzDate(+5, '2010-09-03T05:05:08.123Z'); //12am
-    let earlyDate  = new angular.mock.TzDate(+5, '0001-09-03T05:05:08.000Z');
-    let year0Date  = new angular.mock.TzDate(+5, '0000-12-25T05:05:08.000Z');
-    let bcDate     = new angular.mock.TzDate(+5, '-0026-01-16T05:05:08.000Z');
-    let secondWeek = new angular.mock.TzDate(+5, '2013-01-11T12:00:00.000Z'); //Friday Jan 11, 2013
+  describe('date', () => {
+    const morning    = new angular.mock.TzDate(+5, '2010-09-03T12:05:08.001Z'); // 7am
+    const noon       = new angular.mock.TzDate(+5, '2010-09-03T17:05:08.012Z'); // 12pm
+    const midnight   = new angular.mock.TzDate(+5, '2010-09-03T05:05:08.123Z'); // 12am
+    const earlyDate  = new angular.mock.TzDate(+5, '0001-09-03T05:05:08.000Z');
+    const year0Date  = new angular.mock.TzDate(+5, '0000-12-25T05:05:08.000Z');
+    const bcDate     = new angular.mock.TzDate(+5, '-0026-01-16T05:05:08.000Z');
+    const secondWeek = new angular.mock.TzDate(+5, '2013-01-11T12:00:00.000Z'); // Friday Jan 11, 2013
     let date;
 
-    beforeEach(function() {
+    beforeEach(() => {
       date = filter('date');
     });
 
-    it('should ignore falsy inputs', function() {
+    it('should ignore falsy inputs', () => {
       expect(date(null)).toBeNull();
       expect(date('')).toEqual('');
     });
 
-    it('should ignore invalid dates', function() {
-      let invalidDate = new Date('abc');
+    it('should ignore invalid dates', () => {
+      const invalidDate = new Date('abc');
       expect(date(invalidDate)).toBe(invalidDate);
     });
 
-    it('should do basic filter', function() {
+    it('should do basic filter', () => {
       expect(date(noon)).toEqual(date(noon, 'mediumDate'));
       expect(date(noon, '')).toEqual(date(noon, 'mediumDate'));
     });
 
-    it('should accept number or number string representing milliseconds as input', function() {
+    it('should accept number or number string representing milliseconds as input', () => {
       expect(date(noon.getTime())).toEqual(date(noon.getTime(), 'mediumDate'));
-      expect(date(noon.getTime() + '')).toEqual(date(noon.getTime() + '', 'mediumDate'));
+      expect(date(`${noon.getTime()  }`)).toEqual(date(`${noon.getTime()  }`, 'mediumDate'));
     });
 
-    it('should accept various format strings', function() {
+    it('should accept various format strings', () => {
       expect(date(secondWeek, 'yyyy-Ww')).
                       toEqual('2013-W2');
 
@@ -398,10 +398,10 @@ describe('filters', function() {
                       toEqual('September 03, 2010 Anno Domini');
     });
 
-    it('should support STANDALONEMONTH in format (`LLLL`)', inject(function($locale) {
-      let standAloneMonth = $locale.DATETIME_FORMATS.STANDALONEMONTH;
-      let september = standAloneMonth[8];
-      let standAloneSeptember = 'StandAlone' + september;
+    it('should support STANDALONEMONTH in format (`LLLL`)', inject(($locale) => {
+      const standAloneMonth = $locale.DATETIME_FORMATS.STANDALONEMONTH;
+      const september = standAloneMonth[8];
+      const standAloneSeptember = `StandAlone${  september}`;
 
       // Overwrite September in STANDALONEMONTH
       standAloneMonth[8] = standAloneSeptember;
@@ -413,20 +413,20 @@ describe('filters', function() {
       standAloneMonth[8] = september;
     }));
 
-    it('should accept negative numbers as strings', function() {
-      //Note: this tests a timestamp set for 3 days before the unix epoch.
-      //The behavior of `date` depends on your timezone, which is why we check just
-      //the year and not the whole daye. See Issue #4218
+    it('should accept negative numbers as strings', () => {
+      // Note: this tests a timestamp set for 3 days before the unix epoch.
+      // The behavior of `date` depends on your timezone, which is why we check just
+      // the year and not the whole daye. See Issue #4218
       expect(date('-259200000').split(' ')[2]).toEqual('1969');
     });
 
-    it('should format timezones correctly (as per ISO_8601)', function() {
-      //Note: TzDate's first argument is offset, _not_ timezone.
-      let utc       = new angular.mock.TzDate(0, '2010-09-03T12:05:08.000Z');
-      let eastOfUTC = new angular.mock.TzDate(-5, '2010-09-03T12:05:08.000Z');
-      let westOfUTC = new angular.mock.TzDate(+5, '2010-09-03T12:05:08.000Z');
-      let eastOfUTCPartial = new angular.mock.TzDate(-5.5, '2010-09-03T12:05:08.000Z');
-      let westOfUTCPartial = new angular.mock.TzDate(+5.5, '2010-09-03T12:05:08.000Z');
+    it('should format timezones correctly (as per ISO_8601)', () => {
+      // Note: TzDate's first argument is offset, _not_ timezone.
+      const utc       = new angular.mock.TzDate(0, '2010-09-03T12:05:08.000Z');
+      const eastOfUTC = new angular.mock.TzDate(-5, '2010-09-03T12:05:08.000Z');
+      const westOfUTC = new angular.mock.TzDate(+5, '2010-09-03T12:05:08.000Z');
+      const eastOfUTCPartial = new angular.mock.TzDate(-5.5, '2010-09-03T12:05:08.000Z');
+      const westOfUTCPartial = new angular.mock.TzDate(+5.5, '2010-09-03T12:05:08.000Z');
 
       expect(date(utc, 'yyyy-MM-ddTHH:mm:ssZ')).
                     toEqual('2010-09-03T12:05:08+0000');
@@ -444,9 +444,9 @@ describe('filters', function() {
                     toEqual('2010-09-03T06:35:08-0530');
     });
 
-    it('should correctly calculate week number', function() {
+    it('should correctly calculate week number', () => {
       function formatWeek(dateToFormat) {
-        return date(new angular.mock.TzDate(+5, dateToFormat + 'T12:00:00.000Z'), 'ww (EEE)');
+        return date(new angular.mock.TzDate(+5, `${dateToFormat  }T12:00:00.000Z`), 'ww (EEE)');
       }
 
       expect(formatWeek('2007-01-01')).toEqual('01 (Mon)');
@@ -474,19 +474,19 @@ describe('filters', function() {
       expect(formatWeek('2012-12-31')).toEqual('53 (Mon)');
     });
 
-    it('should treat single quoted strings as string literals', function() {
+    it('should treat single quoted strings as string literals', () => {
       expect(date(midnight, 'yyyy\'de\' \'a\'x\'dd\' \'adZ\' h=H:m:saZ')).
                       toEqual('2010de axdd adZ 12=0:5:8AM-0500');
     });
 
-    it('should treat a sequence of two single quotes as a literal single quote', function() {
+    it('should treat a sequence of two single quotes as a literal single quote', () => {
       expect(date(midnight, 'yyyy\'de\' \'a\'\'dd\' \'adZ\' h=H:m:saZ')).
                       toEqual('2010de a\'dd adZ 12=0:5:8AM-0500');
       expect(date(midnight, 'EEE, MMM d, \'\'yy')).
                       toEqual('Fri, Sep 3, \'10');
     });
 
-    it('should accept default formats', function() {
+    it('should accept default formats', () => {
 
       expect(date(noon, 'medium')).
                       toEqual('Sep 3, 2010 12:05:08 PM');
@@ -513,72 +513,72 @@ describe('filters', function() {
                       toEqual('12:05 PM');
     });
 
-    it('should parse format ending with non-replaced string', function() {
+    it('should parse format ending with non-replaced string', () => {
       expect(date(morning, 'yy/xxx')).toEqual('10/xxx');
     });
 
-    it('should allow newlines in format', function() {
+    it('should allow newlines in format', () => {
       expect(date(midnight, 'EEE\nMMM d\'\n\'yy/xxx\n')).toEqual('Fri\nSep 3\n10/xxx\n');
     });
 
-    it('should support various iso8061 date strings with timezone as input', function() {
-      let format = 'yyyy-MM-dd ss';
+    it('should support various iso8061 date strings with timezone as input', () => {
+      const format = 'yyyy-MM-dd ss';
 
-      let localDay = new Date(Date.UTC(2003, 9, 10, 13, 2, 3, 0)).getDate();
+      const localDay = new Date(Date.UTC(2003, 9, 10, 13, 2, 3, 0)).getDate();
 
-      //full ISO8061
-      expect(date('2003-09-10T13:02:03.000Z', format)).toEqual('2003-09-' + localDay + ' 03');
+      // full ISO8061
+      expect(date('2003-09-10T13:02:03.000Z', format)).toEqual(`2003-09-${  localDay  } 03`);
 
-      expect(date('2003-09-10T13:02:03.000+00:00', format)).toEqual('2003-09-' + localDay + ' 03');
+      expect(date('2003-09-10T13:02:03.000+00:00', format)).toEqual(`2003-09-${  localDay  } 03`);
 
-      expect(date('20030910T033203-0930', format)).toEqual('2003-09-' + localDay + ' 03');
+      expect(date('20030910T033203-0930', format)).toEqual(`2003-09-${  localDay  } 03`);
 
-      //no millis
-      expect(date('2003-09-10T13:02:03Z', format)).toEqual('2003-09-' + localDay + ' 03');
+      // no millis
+      expect(date('2003-09-10T13:02:03Z', format)).toEqual(`2003-09-${  localDay  } 03`);
 
-      //no seconds
-      expect(date('2003-09-10T13:02Z', format)).toEqual('2003-09-' + localDay + ' 00');
+      // no seconds
+      expect(date('2003-09-10T13:02Z', format)).toEqual(`2003-09-${  localDay  } 00`);
 
-      //no minutes
-      expect(date('2003-09-10T13Z', format)).toEqual('2003-09-' + localDay + ' 00');
+      // no minutes
+      expect(date('2003-09-10T13Z', format)).toEqual(`2003-09-${  localDay  } 00`);
     });
 
-    it('should parse iso8061 date strings without timezone as local time', function() {
-      let format = 'yyyy-MM-dd HH-mm-ss';
+    it('should parse iso8061 date strings without timezone as local time', () => {
+      const format = 'yyyy-MM-dd HH-mm-ss';
 
-      //full ISO8061 without timezone
+      // full ISO8061 without timezone
       expect(date('2003-09-10T03:02:04.000', format)).toEqual('2003-09-10 03-02-04');
 
       expect(date('20030910T030204', format)).toEqual('2003-09-10 03-02-04');
 
-      //no time
+      // no time
       expect(date('2003-09-10', format)).toEqual('2003-09-10 00-00-00');
     });
 
-    it('should support different degrees of subsecond precision', function() {
-      let format = 'yyyy-MM-dd ss';
+    it('should support different degrees of subsecond precision', () => {
+      const format = 'yyyy-MM-dd ss';
 
-      let localDay = new Date(Date.UTC(2003, 9 - 1, 10, 13, 2, 3, 123)).getDate();
+      const localDay = new Date(Date.UTC(2003, 9 - 1, 10, 13, 2, 3, 123)).getDate();
 
-      expect(date('2003-09-10T13:02:03.12345678Z', format)).toEqual('2003-09-' + localDay + ' 03');
-      expect(date('2003-09-10T13:02:03.1234567Z', format)).toEqual('2003-09-' + localDay + ' 03');
-      expect(date('2003-09-10T13:02:03.123456Z', format)).toEqual('2003-09-' + localDay + ' 03');
-      expect(date('2003-09-10T13:02:03.12345Z', format)).toEqual('2003-09-' + localDay + ' 03');
-      expect(date('2003-09-10T13:02:03.1234Z', format)).toEqual('2003-09-' + localDay + ' 03');
-      expect(date('2003-09-10T13:02:03.123Z', format)).toEqual('2003-09-' + localDay + ' 03');
-      expect(date('2003-09-10T13:02:03.12Z', format)).toEqual('2003-09-' + localDay + ' 03');
-      expect(date('2003-09-10T13:02:03.1Z', format)).toEqual('2003-09-' + localDay + ' 03');
+      expect(date('2003-09-10T13:02:03.12345678Z', format)).toEqual(`2003-09-${  localDay  } 03`);
+      expect(date('2003-09-10T13:02:03.1234567Z', format)).toEqual(`2003-09-${  localDay  } 03`);
+      expect(date('2003-09-10T13:02:03.123456Z', format)).toEqual(`2003-09-${  localDay  } 03`);
+      expect(date('2003-09-10T13:02:03.12345Z', format)).toEqual(`2003-09-${  localDay  } 03`);
+      expect(date('2003-09-10T13:02:03.1234Z', format)).toEqual(`2003-09-${  localDay  } 03`);
+      expect(date('2003-09-10T13:02:03.123Z', format)).toEqual(`2003-09-${  localDay  } 03`);
+      expect(date('2003-09-10T13:02:03.12Z', format)).toEqual(`2003-09-${  localDay  } 03`);
+      expect(date('2003-09-10T13:02:03.1Z', format)).toEqual(`2003-09-${  localDay  } 03`);
     });
 
-    it('should use UTC if the timezone is set to "UTC"', function() {
+    it('should use UTC if the timezone is set to "UTC"', () => {
       expect(date(new Date(2003, 8, 10, 3, 2, 4), 'yyyy-MM-dd HH-mm-ss')).toEqual('2003-09-10 03-02-04');
       expect(date(new Date(Date.UTC(2003, 8, 10, 3, 2, 4)), 'yyyy-MM-dd HH-mm-ss', 'UTC')).toEqual('2003-09-10 03-02-04');
       expect(date(new Date(Date.UTC(2003, 8, 10, 3, 2, 4)), 'yyyy-MM-dd HH-mm-ssZ', 'UTC')).toEqual('2003-09-10 03-02-04+0000');
     });
 
-    it('should support conversion to any timezone', function() {
-      let dateObj = new Date(Date.UTC(2003, 8, 10, 3, 2, 4));
-      let format = 'yyyy-MM-dd HH-mm-ssZ';
+    it('should support conversion to any timezone', () => {
+      const dateObj = new Date(Date.UTC(2003, 8, 10, 3, 2, 4));
+      const format = 'yyyy-MM-dd HH-mm-ssZ';
 
       expect(date(dateObj, format, '+0500')).toEqual('2003-09-10 08-02-04+0500');
       expect(date(dateObj, format, '+05:00')).toEqual('2003-09-10 08-02-04+0500');
@@ -586,8 +586,8 @@ describe('filters', function() {
       expect(date(dateObj, format, 'GMT+05:00')).toEqual('2003-09-10 08-02-04+0500');
     });
 
-    it('should fallback to default timezone in case an unknown timezone was passed', function() {
-      let value = new Date(2003, 8, 10, 3, 2, 4);
+    it('should fallback to default timezone in case an unknown timezone was passed', () => {
+      const value = new Date(2003, 8, 10, 3, 2, 4);
       expect(date(value, 'yyyy-MM-dd HH-mm-ssZ', 'WTF')).toEqual(date(value, 'yyyy-MM-dd HH-mm-ssZ'));
     });
   });

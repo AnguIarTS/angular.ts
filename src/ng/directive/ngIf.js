@@ -76,7 +76,7 @@
     </file>
   </example>
  */
-let ngIfDirective = [
+const ngIfDirective = [
   "$animate",
   "$compile",
   function ($animate, $compile) {
@@ -87,12 +87,14 @@ let ngIfDirective = [
       terminal: true,
       restrict: "A",
       $$tlb: true,
-      link: function ($scope, $element, $attr, ctrl, $transclude) {
-        let block, childScope, previousElements;
-        $scope.$watch($attr.ngIf, function ngIfWatchAction(value) {
+      link($scope, $element, $attr, ctrl, $transclude) {
+        let block;
+        let childScope;
+        let previousElements;
+        $scope.$watch($attr.ngIf, (value) => {
           if (value) {
             if (!childScope) {
-              $transclude(function (clone, newScope) {
+              $transclude((clone, newScope) => {
                 childScope = newScope;
                 clone[clone.length++] = $compile.$$createComment(
                   "end ngIf",
@@ -102,7 +104,7 @@ let ngIfDirective = [
                 // However, we need to keep the reference to the jqlite wrapper as it might be changed later
                 // by a directive with templateUrl when its template arrives.
                 block = {
-                  clone: clone,
+                  clone,
                 };
                 $animate.enter(clone, $element.parent(), $element);
               });
@@ -118,7 +120,7 @@ let ngIfDirective = [
             }
             if (block) {
               previousElements = getBlockNodes(block.clone);
-              $animate.leave(previousElements).done(function (response) {
+              $animate.leave(previousElements).done((response) => {
                 if (response !== false) previousElements = null;
               });
               block = null;

@@ -1,6 +1,6 @@
 
 
 angular.module('repeatAnimateBenchmark', [])
-  .run(function($rootScope) {
+  .run(($rootScope) => {
     $rootScope.fileType = 'noanimate';
   });

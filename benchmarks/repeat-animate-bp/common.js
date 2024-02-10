@@ -1,24 +1,24 @@
 
 
 (function() {
-  let app = angular.module('repeatAnimateBenchmark');
+  const app = angular.module('repeatAnimateBenchmark');
 
-  app.config(function($compileProvider, $animateProvider) {
+  app.config(($compileProvider, $animateProvider) => {
     if ($compileProvider.debugInfoEnabled) {
       $compileProvider.debugInfoEnabled(false);
     }
 
   });
 
-  app.run(function($animate) {
+  app.run(($animate) => {
     if ($animate.enabled) {
       $animate.enabled(true);
     }
   });
 
-  app.controller('DataController', function($scope, $rootScope, $animate) {
-    let totalRows = 500;
-    let totalColumns = 20;
+  app.controller('DataController', ($scope, $rootScope, $animate) => {
+    const totalRows = 500;
+    const totalColumns = 20;
 
     let data = $scope.data = [];
 
@@ -31,7 +31,7 @@
         data[i] = [];
         for (let j = 0; j < totalColumns; j++) {
           data[i][j] = {
-            i: i
+            i
           };
         }
       }
@@ -39,8 +39,8 @@
 
     benchmarkSteps.push({
       name: 'enter',
-      fn: function() {
-        $scope.$apply(function() {
+      fn() {
+        $scope.$apply(() => {
           fillData();
         });
       }
@@ -48,40 +48,35 @@
 
     benchmarkSteps.push({
       name: 'leave',
-      fn: function() {
-        $scope.$apply(function() {
+      fn() {
+        $scope.$apply(() => {
           data = $scope.data = [];
         });
       }
     });
   });
 
-  app.directive('disableAnimations', function($animate) {
-    return {
+  app.directive('disableAnimations', ($animate) => ({
       link: {
-        pre: function(s, e) {
+        pre(s, e) {
           $animate.enabled(e, false);
         }
       }
-    };
-  });
+    }));
 
-  app.directive('noop', function($animate) {
-    return {
+  app.directive('noop', ($animate) => ({
       link: {
         pre: angular.noop
       }
-    };
-  });
+    }));
 
-  app.directive('baseline', function($document) {
-    return {
+  app.directive('baseline', ($document) => ({
       restrict: 'E',
-      link: function($scope, $element) {
-        let document = $document[0];
+      link($scope, $element) {
+        const document = $document[0];
 
-        let i, j, row, cell, comment;
-        let template = document.createElement('span');
+        let i; let j; let row; let cell; let comment;
+        const template = document.createElement('span');
         template.setAttribute('ng-repeat', 'foo in foos');
         template.classList.add('ng-scope');
         template.appendChild(document.createElement('span'));
@@ -105,7 +100,7 @@
           }
         }
 
-        $scope.$watch('data.length', function(newVal) {
+        $scope.$watch('data.length', (newVal) => {
           if (newVal === 0) {
             while ($element[0].firstChild) {
                 $element[0].removeChild($element[0].firstChild);
@@ -115,6 +110,5 @@
           }
         });
       }
-    };
-  });
+    }));
 })();

@@ -238,21 +238,21 @@
  *
  */
 
-let ngRefMinErr = minErr("ngRef");
+const ngRefMinErr = minErr("ngRef");
 
-let ngRefDirective = [
+const ngRefDirective = [
   "$parse",
   function ($parse) {
     return {
       priority: -1, // Needed for compatibility with element transclusion on the same element
       restrict: "A",
-      compile: function (tElement, tAttrs) {
+      compile(tElement, tAttrs) {
         // Get the expected controller name, converts <data-some-thing> into "someThing"
-        let controllerName = directiveNormalize(nodeName_(tElement));
+        const controllerName = directiveNormalize(nodeName_(tElement));
 
         // Get the expression for value binding
-        let getter = $parse(tAttrs.ngRef);
-        let setter =
+        const getter = $parse(tAttrs.ngRef);
+        const setter =
           getter.assign ||
           function () {
             throw ngRefMinErr(
@@ -269,7 +269,7 @@ let ngRefDirective = [
             if (attrs.ngRefRead === "$element") {
               refValue = element;
             } else {
-              refValue = element.data("$" + attrs.ngRefRead + "Controller");
+              refValue = element.data(`$${attrs.ngRefRead}Controller`);
 
               if (!refValue) {
                 throw ngRefMinErr(
@@ -281,7 +281,7 @@ let ngRefDirective = [
               }
             }
           } else {
-            refValue = element.data("$" + controllerName + "Controller");
+            refValue = element.data(`$${controllerName}Controller`);
           }
 
           refValue = refValue || element;
@@ -289,7 +289,7 @@ let ngRefDirective = [
           setter(scope, refValue);
 
           // when the element is removed, remove it (nullify it)
-          element.on("$destroy", function () {
+          element.on("$destroy", () => {
             // only remove it if value has not changed,
             // because animations (and other procedures) may duplicate elements
             if (getter(scope) === refValue) {

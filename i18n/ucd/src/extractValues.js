@@ -5,21 +5,22 @@
 
 exports.extractValues = extractValues;
 
-let sax = require('sax/lib/sax');
-let saxStrict = true;
-let saxOptions = {};
-let validXMLTagNames = { char: 'Y', reserved: 'Y', surrogate: 'Y', noncharacter: 'Y'};
+const sax = require('sax/lib/sax');
+
+const saxStrict = true;
+const saxOptions = {};
+const validXMLTagNames = { char: 'Y', reserved: 'Y', surrogate: 'Y', noncharacter: 'Y'};
 
 function extractValues(stream, propertiesToExtract, callback) {
-  let saxStream = sax.createStream(saxStrict, saxOptions);
-  let firstValid = {};
-  let lastValid = {};
-  let keys = Object.keys(propertiesToExtract);
-  let keyValues = keys.map(function(k) { return propertiesToExtract[k]; });
-  let validRanges = {};
+  const saxStream = sax.createStream(saxStrict, saxOptions);
+  const firstValid = {};
+  const lastValid = {};
+  const keys = Object.keys(propertiesToExtract);
+  const keyValues = keys.map((k) => propertiesToExtract[k]);
+  const validRanges = {};
 
-  for (let i in keys) {
-    validRanges[keys[i] + '_' + keyValues[i]] = [];
+  for (const i in keys) {
+    validRanges[`${keys[i]  }_${  keyValues[i]}`] = [];
   }
   saxStream.onopentag = onOpenTag;
   stream
@@ -29,10 +30,10 @@ function extractValues(stream, propertiesToExtract, callback) {
   function onOpenTag(node) {
     let property;
     if (validXMLTagNames[node.name]) {
-      for (let i in keys) {
+      for (const i in keys) {
         property = keyValues[i];
-        if (node.attributes[keys[i]] === property) validProperty(keys[i] + '_' + property, node);
-        else invalidProperty(keys[i] + '_' + property);
+        if (node.attributes[keys[i]] === property) validProperty(`${keys[i]  }_${  property}`, node);
+        else invalidProperty(`${keys[i]  }_${  property}`);
       }
     }
   }
@@ -50,8 +51,8 @@ function extractValues(stream, propertiesToExtract, callback) {
   }
 
   function doCallback() {
-    for (let i in keys) {
-      let property = keys[i] + '_' + keyValues[i];
+    for (const i in keys) {
+      const property = `${keys[i]  }_${  keyValues[i]}`;
       invalidProperty(property);
     }
     callback(validRanges);

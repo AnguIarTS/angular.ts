@@ -1,21 +1,21 @@
-let ELEMENT_NODE = 1;
-let COMMENT_NODE = 8;
+const ELEMENT_NODE = 1;
+const COMMENT_NODE = 8;
 
-let ADD_CLASS_SUFFIX = "-add";
-let REMOVE_CLASS_SUFFIX = "-remove";
-let EVENT_CLASS_PREFIX = "ng-";
-let ACTIVE_CLASS_SUFFIX = "-active";
-let PREPARE_CLASS_SUFFIX = "-prepare";
+const ADD_CLASS_SUFFIX = "-add";
+const REMOVE_CLASS_SUFFIX = "-remove";
+const EVENT_CLASS_PREFIX = "ng-";
+const ACTIVE_CLASS_SUFFIX = "-active";
+const PREPARE_CLASS_SUFFIX = "-prepare";
 
-let NG_ANIMATE_CLASSNAME = "ng-animate";
-let NG_ANIMATE_CHILDREN_DATA = "$$ngAnimateChildren";
+const NG_ANIMATE_CLASSNAME = "ng-animate";
+const NG_ANIMATE_CHILDREN_DATA = "$$ngAnimateChildren";
 
 // Detect proper transitionend/animationend event names.
-let CSS_PREFIX = "",
-  TRANSITION_PROP,
-  TRANSITIONEND_EVENT,
-  ANIMATION_PROP,
-  ANIMATIONEND_EVENT;
+let CSS_PREFIX = "";
+let TRANSITION_PROP;
+let TRANSITIONEND_EVENT;
+let ANIMATION_PROP;
+let ANIMATIONEND_EVENT;
 
 // If unprefixed events are not supported but webkit-prefixed are, use the latter.
 // Otherwise, just use W3C names, browsers not supporting them at all will just ignore them.
@@ -50,20 +50,20 @@ if (
   ANIMATIONEND_EVENT = "animationend";
 }
 
-let DURATION_KEY = "Duration";
-let PROPERTY_KEY = "Property";
-let DELAY_KEY = "Delay";
-let TIMING_KEY = "TimingFunction";
-let ANIMATION_ITERATION_COUNT_KEY = "IterationCount";
-let ANIMATION_PLAYSTATE_KEY = "PlayState";
-let SAFE_FAST_FORWARD_DURATION_VALUE = 9999;
+const DURATION_KEY = "Duration";
+const PROPERTY_KEY = "Property";
+const DELAY_KEY = "Delay";
+const TIMING_KEY = "TimingFunction";
+const ANIMATION_ITERATION_COUNT_KEY = "IterationCount";
+const ANIMATION_PLAYSTATE_KEY = "PlayState";
+const SAFE_FAST_FORWARD_DURATION_VALUE = 9999;
 
-let ANIMATION_DELAY_PROP = ANIMATION_PROP + DELAY_KEY;
-let ANIMATION_DURATION_PROP = ANIMATION_PROP + DURATION_KEY;
-let TRANSITION_DELAY_PROP = TRANSITION_PROP + DELAY_KEY;
-let TRANSITION_DURATION_PROP = TRANSITION_PROP + DURATION_KEY;
+const ANIMATION_DELAY_PROP = ANIMATION_PROP + DELAY_KEY;
+const ANIMATION_DURATION_PROP = ANIMATION_PROP + DURATION_KEY;
+const TRANSITION_DELAY_PROP = TRANSITION_PROP + DELAY_KEY;
+const TRANSITION_DURATION_PROP = TRANSITION_PROP + DURATION_KEY;
 
-let ngMinErr = angular.$$minErr("ng");
+const ngMinErr = angular.$$minErr("ng");
 function assertArg(arg, name, reason) {
   if (!arg) {
     throw ngMinErr(
@@ -82,11 +82,11 @@ function mergeClasses(a, b) {
   if (!b) return a;
   if (isArray(a)) a = a.join(" ");
   if (isArray(b)) b = b.join(" ");
-  return a + " " + b;
+  return `${a} ${b}`;
 }
 
 function packageStyles(options) {
-  let styles = {};
+  const styles = {};
   if (options && (options.to || options.from)) {
     styles.to = options.to;
     styles.from = options.from;
@@ -101,7 +101,7 @@ function pendClasses(classes, fix, isPrefix) {
     : classes && isString(classes) && classes.length
       ? classes.split(/\s+/)
       : [];
-  forEach(classes, function (klass, i) {
+  forEach(classes, (klass, i) => {
     if (klass && klass.length > 0) {
       className += i > 0 ? " " : "";
       className += isPrefix ? fix + klass : klass + fix;
@@ -111,7 +111,7 @@ function pendClasses(classes, fix, isPrefix) {
 }
 
 function removeFromArray(arr, val) {
-  let index = arr.indexOf(val);
+  const index = arr.indexOf(val);
   if (val >= 0) {
     arr.splice(index, 1);
   }
@@ -145,7 +145,7 @@ function stripCommentsFromElement(element) {
 function extractElementNode(element) {
   if (!element[0]) return element;
   for (let i = 0; i < element.length; i++) {
-    let elm = element[i];
+    const elm = element[i];
     if (elm.nodeType === ELEMENT_NODE) {
       return elm;
     }
@@ -153,13 +153,13 @@ function extractElementNode(element) {
 }
 
 function $$addClass($$jqLite, element, className) {
-  forEach(element, function (elm) {
+  forEach(element, (elm) => {
     $$jqLite.addClass(elm, className);
   });
 }
 
 function $$removeClass($$jqLite, element, className) {
-  forEach(element, function (elm) {
+  forEach(element, (elm) => {
     $$jqLite.removeClass(elm, className);
   });
 }
@@ -211,13 +211,12 @@ function applyAnimationToStyles(element, options) {
 }
 
 function mergeAnimationDetails(element, oldAnimation, newAnimation) {
-  let target = oldAnimation.options || {};
-  let newOptions = newAnimation.options || {};
+  const target = oldAnimation.options || {};
+  const newOptions = newAnimation.options || {};
 
-  let toAdd = (target.addClass || "") + " " + (newOptions.addClass || "");
-  let toRemove =
-    (target.removeClass || "") + " " + (newOptions.removeClass || "");
-  let classes = resolveElementClasses(element.attr("class"), toAdd, toRemove);
+  const toAdd = `${target.addClass || ""} ${newOptions.addClass || ""}`;
+  const toRemove = `${target.removeClass || ""} ${newOptions.removeClass || ""}`;
+  const classes = resolveElementClasses(element.attr("class"), toAdd, toRemove);
 
   if (newOptions.preparationClasses) {
     target.preparationClasses = concatWithSpace(
@@ -228,7 +227,7 @@ function mergeAnimationDetails(element, oldAnimation, newAnimation) {
   }
 
   // noop is basically when there is no callback; otherwise something has been set
-  let realDomOperation =
+  const realDomOperation =
     target.domOperation !== noop ? target.domOperation : null;
 
   extend(target, newOptions);
@@ -257,29 +256,30 @@ function mergeAnimationDetails(element, oldAnimation, newAnimation) {
 }
 
 function resolveElementClasses(existing, toAdd, toRemove) {
-  let ADD_CLASS = 1;
-  let REMOVE_CLASS = -1;
+  const ADD_CLASS = 1;
+  const REMOVE_CLASS = -1;
 
-  let flags = {};
+  const flags = {};
   existing = splitClassesToLookup(existing);
 
   toAdd = splitClassesToLookup(toAdd);
-  forEach(toAdd, function (value, key) {
+  forEach(toAdd, (value, key) => {
     flags[key] = ADD_CLASS;
   });
 
   toRemove = splitClassesToLookup(toRemove);
-  forEach(toRemove, function (value, key) {
+  forEach(toRemove, (value, key) => {
     flags[key] = flags[key] === ADD_CLASS ? null : REMOVE_CLASS;
   });
 
-  let classes = {
+  const classes = {
     addClass: "",
     removeClass: "",
   };
 
-  forEach(flags, function (val, klass) {
-    let prop, allow;
+  forEach(flags, (val, klass) => {
+    let prop;
+    let allow;
     if (val === ADD_CLASS) {
       prop = "addClass";
       allow = !existing[klass] || existing[klass + REMOVE_CLASS_SUFFIX];
@@ -300,8 +300,8 @@ function resolveElementClasses(existing, toAdd, toRemove) {
       classes = classes.split(" ");
     }
 
-    let obj = {};
-    forEach(classes, function (klass) {
+    const obj = {};
+    forEach(classes, (klass) => {
       // sometimes the split leaves empty string values
       // incase extra spaces were applied to the options
       if (klass.length) {
@@ -353,30 +353,30 @@ function clearGeneratedClasses(element, options) {
 }
 
 function blockKeyframeAnimations(node, applyBlock) {
-  let value = applyBlock ? "paused" : "";
-  let key = ANIMATION_PROP + ANIMATION_PLAYSTATE_KEY;
+  const value = applyBlock ? "paused" : "";
+  const key = ANIMATION_PROP + ANIMATION_PLAYSTATE_KEY;
   applyInlineStyle(node, [key, value]);
   return [key, value];
 }
 
 function applyInlineStyle(node, styleTuple) {
-  let prop = styleTuple[0];
-  let value = styleTuple[1];
+  const prop = styleTuple[0];
+  const value = styleTuple[1];
   node.style[prop] = value;
 }
 
 function concatWithSpace(a, b) {
   if (!a) return b;
   if (!b) return a;
-  return a + " " + b;
+  return `${a} ${b}`;
 }
 
-let helpers = {
-  blockTransitions: function (node, duration) {
+const helpers = {
+  blockTransitions(node, duration) {
     // we use a negative delay value since it performs blocking
     // yet it doesn't kill any existing transitions running on the
     // same element which makes this safe for class-based animations
-    let value = duration ? "-" + duration + "s" : "";
+    const value = duration ? `-${duration}s` : "";
     applyInlineStyle(node, [TRANSITION_DELAY_PROP, value]);
     return [TRANSITION_DELAY_PROP, value];
   },

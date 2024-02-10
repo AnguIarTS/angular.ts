@@ -2,29 +2,27 @@
 
 angular.
   module('test', []).
-  config(function($httpProvider) {
-    $httpProvider.interceptors.push(function($q) {
-      return {
-        request: function(config) {
-          return $q(function(resolve) {
+  config(($httpProvider) => {
+    $httpProvider.interceptors.push(($q) => ({
+        request(config) {
+          return $q((resolve) => {
             window.setTimeout(resolve, 100, config);
           });
         },
-        response: function(response) {
-          return $q(function(resolve) {
+        response(response) {
+          return $q((resolve) => {
             window.setTimeout(resolve, 100, response);
           });
         }
-      };
-    });
+      }));
   }).
-  controller('TestController', function($cacheFactory, $http, $scope) {
-    let url = '/some/url';
+  controller('TestController', ($cacheFactory, $http, $scope) => {
+    const url = '/some/url';
 
-    let cache = $cacheFactory('test');
+    const cache = $cacheFactory('test');
     cache.put(url, 'Hello, world!');
 
     $http.
-      get(url, {cache: cache}).
-      then(function(response) { $scope.text = response.data; });
+      get(url, {cache}).
+      then((response) => { $scope.text = response.data; });
   });

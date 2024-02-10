@@ -1,11 +1,11 @@
 
 
-let app = angular.module('orderByBenchmark', []);
+const app = angular.module('orderByBenchmark', []);
 
 app.controller('DataController', function DataController($rootScope, $scope) {
   this.ngRepeatCount = 5000;
   this.rows = [];
-  let self = this;
+  const self = this;
 
   $scope.benchmarkType = 'baseline';
 
@@ -23,9 +23,9 @@ app.controller('DataController', function DataController($rootScope, $scope) {
   benchmarkSteps.push({
     name: 'setup',
     description: 'Set rows to empty array and apply, then push new rows to be applied in next step',
-    fn: function() {
-      let oldRows = self.rows;
-      $rootScope.$apply(function() {
+    fn() {
+      const oldRows = self.rows;
+      $rootScope.$apply(() => {
         self.rows = [];
       });
       self.rows = oldRows;
@@ -43,7 +43,7 @@ app.controller('DataController', function DataController($rootScope, $scope) {
 
   benchmarkSteps.push({
     name: '$apply',
-    fn: function() {
+    fn() {
       $rootScope.$apply();
     }
   });

@@ -1,16 +1,16 @@
 
 
-describe('scriptDirective', function() {
+describe('scriptDirective', () => {
   let element;
 
 
-  afterEach(function() {
+  afterEach(() => {
     dealoc(element);
   });
 
 
   it('should populate $templateCache with contents of a ng-template script element', inject(
-      function($compile, $templateCache) {
+      ($compile, $templateCache) => {
         $compile('<div>foo' +
                    '<script id="/ignore">ignore me</script>' +
                    '<script type="text/ng-template" id="/myTemplate.html"><x>{{y}}</x></script>' +
@@ -21,8 +21,8 @@ describe('scriptDirective', function() {
   ));
 
 
-  it('should not compile scripts', inject(function($compile, $templateCache, $rootScope) {
-    let doc = jqLite('<div></div>');
+  it('should not compile scripts', inject(($compile, $templateCache, $rootScope) => {
+    const doc = jqLite('<div></div>');
     // jQuery is too smart and removes script tags
     doc[0].innerHTML = 'foo' +
         '<script type="text/javascript">some {{binding}}</script>' +
@@ -31,7 +31,7 @@ describe('scriptDirective', function() {
     $compile(doc)($rootScope);
     $rootScope.$digest();
 
-    let scripts = doc.find('script');
+    const scripts = doc.find('script');
     expect(scripts.eq(0)[0].text).toBe('some {{binding}}');
     expect(scripts.eq(1)[0].text).toBe('other {{binding}}');
     dealoc(doc);

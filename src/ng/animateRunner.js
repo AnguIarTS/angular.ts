@@ -1,4 +1,4 @@
-let $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
+const $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
   this.$get = [
     "$$rAF",
     function ($$rAF) {
@@ -7,7 +7,7 @@ let $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
       function waitForTick(fn) {
         waitQueue.push(fn);
         if (waitQueue.length > 1) return;
-        $$rAF(function () {
+        $$rAF(() => {
           for (let i = 0; i < waitQueue.length; i++) {
             waitQueue[i]();
           }
@@ -17,7 +17,7 @@ let $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
 
       return function () {
         let passed = false;
-        waitForTick(function () {
+        waitForTick(() => {
           passed = true;
         });
         return function (callback) {
@@ -32,7 +32,7 @@ let $$AnimateAsyncRunFactoryProvider = /** @this */ function () {
   ];
 };
 
-let $$AnimateRunnerFactoryProvider = /** @this */ function () {
+const $$AnimateRunnerFactoryProvider = /** @this */ function () {
   this.$get = [
     "$q",
     "$sniffer",
@@ -40,9 +40,9 @@ let $$AnimateRunnerFactoryProvider = /** @this */ function () {
     "$$isDocumentHidden",
     "$timeout",
     function ($q, $sniffer, $$animateAsyncRun, $$isDocumentHidden, $timeout) {
-      let INITIAL_STATE = 0;
-      let DONE_PENDING_STATE = 1;
-      let DONE_COMPLETE_STATE = 2;
+      const INITIAL_STATE = 0;
+      const DONE_PENDING_STATE = 1;
+      const DONE_COMPLETE_STATE = 2;
 
       AnimateRunner.chain = function (chain, callback) {
         let index = 0;
@@ -54,7 +54,7 @@ let $$AnimateRunnerFactoryProvider = /** @this */ function () {
             return;
           }
 
-          chain[index](function (response) {
+          chain[index]((response) => {
             if (response === false) {
               callback(false);
               return;
@@ -68,7 +68,7 @@ let $$AnimateRunnerFactoryProvider = /** @this */ function () {
       AnimateRunner.all = function (runners, callback) {
         let count = 0;
         let status = true;
-        forEach(runners, function (runner) {
+        forEach(runners, (runner) => {
           runner.done(onProgress);
         });
 
@@ -83,8 +83,8 @@ let $$AnimateRunnerFactoryProvider = /** @this */ function () {
       function AnimateRunner(host) {
         this.setHost(host);
 
-        let rafTick = $$animateAsyncRun();
-        let timeoutTick = function (fn) {
+        const rafTick = $$animateAsyncRun();
+        const timeoutTick = function (fn) {
           $timeout(fn, 0, false);
         };
 
@@ -100,11 +100,11 @@ let $$AnimateRunnerFactoryProvider = /** @this */ function () {
       }
 
       AnimateRunner.prototype = {
-        setHost: function (host) {
+        setHost(host) {
           this.host = host || {};
         },
 
-        done: function (fn) {
+        done(fn) {
           if (this._state === DONE_COMPLETE_STATE) {
             fn();
           } else {
@@ -114,11 +114,11 @@ let $$AnimateRunnerFactoryProvider = /** @this */ function () {
 
         progress: noop,
 
-        getPromise: function () {
+        getPromise() {
           if (!this.promise) {
-            let self = this;
-            this.promise = $q(function (resolve, reject) {
-              self.done(function (status) {
+            const self = this;
+            this.promise = $q((resolve, reject) => {
+              self.done((status) => {
                 if (status === false) {
                   reject();
                 } else {
@@ -130,57 +130,57 @@ let $$AnimateRunnerFactoryProvider = /** @this */ function () {
           return this.promise;
         },
 
-        then: function (resolveHandler, rejectHandler) {
+        then(resolveHandler, rejectHandler) {
           return this.getPromise().then(resolveHandler, rejectHandler);
         },
 
-        catch: function (handler) {
-          return this.getPromise()["catch"](handler);
+        catch(handler) {
+          return this.getPromise().catch(handler);
         },
 
-        finally: function (handler) {
-          return this.getPromise()["finally"](handler);
+        finally(handler) {
+          return this.getPromise().finally(handler);
         },
 
-        pause: function () {
+        pause() {
           if (this.host.pause) {
             this.host.pause();
           }
         },
 
-        resume: function () {
+        resume() {
           if (this.host.resume) {
             this.host.resume();
           }
         },
 
-        end: function () {
+        end() {
           if (this.host.end) {
             this.host.end();
           }
           this._resolve(true);
         },
 
-        cancel: function () {
+        cancel() {
           if (this.host.cancel) {
             this.host.cancel();
           }
           this._resolve(false);
         },
 
-        complete: function (response) {
-          let self = this;
+        complete(response) {
+          const self = this;
           if (self._state === INITIAL_STATE) {
             self._state = DONE_PENDING_STATE;
-            self._tick(function () {
+            self._tick(() => {
               self._resolve(response);
             });
           }
         },
 
-        _resolve: function (response) {
+        _resolve(response) {
           if (this._state !== DONE_COMPLETE_STATE) {
-            forEach(this._doneCallbacks, function (fn) {
+            forEach(this._doneCallbacks, (fn) => {
               fn(response);
             });
             this._doneCallbacks.length = 0;

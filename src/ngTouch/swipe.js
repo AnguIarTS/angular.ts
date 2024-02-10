@@ -26,9 +26,9 @@
 ngTouch.factory("$swipe", [
   function () {
     // The total distance in any direction before we make the call on swipe vs. scroll.
-    let MOVE_BUFFER_RADIUS = 10;
+    const MOVE_BUFFER_RADIUS = 10;
 
-    let POINTER_EVENTS = {
+    const POINTER_EVENTS = {
       mouse: {
         start: "mousedown",
         move: "mousemove",
@@ -49,12 +49,12 @@ ngTouch.factory("$swipe", [
     };
 
     function getCoordinates(event) {
-      let originalEvent = event.originalEvent || event;
-      let touches =
+      const originalEvent = event.originalEvent || event;
+      const touches =
         originalEvent.touches && originalEvent.touches.length
           ? originalEvent.touches
           : [originalEvent];
-      let e =
+      const e =
         (originalEvent.changedTouches && originalEvent.changedTouches[0]) ||
         touches[0];
 
@@ -65,9 +65,9 @@ ngTouch.factory("$swipe", [
     }
 
     function getEvents(pointerTypes, eventType) {
-      let res = [];
-      angular.forEach(pointerTypes, function (pointerType) {
-        let eventName = POINTER_EVENTS[pointerType][eventType];
+      const res = [];
+      angular.forEach(pointerTypes, (pointerType) => {
+        const eventName = POINTER_EVENTS[pointerType][eventType];
         if (eventName) {
           res.push(eventName);
         }
@@ -109,9 +109,10 @@ ngTouch.factory("$swipe", [
        * as described above.
        *
        */
-      bind: function (element, eventHandlers, pointerTypes) {
+      bind(element, eventHandlers, pointerTypes) {
         // Absolute total movement, used to control swipe vs. scroll.
-        let totalX, totalY;
+        let totalX;
+        let totalY;
         // Coordinates of the start position.
         let startCoords;
         // Last event's position.
@@ -120,27 +121,27 @@ ngTouch.factory("$swipe", [
         let active = false;
 
         pointerTypes = pointerTypes || ["mouse", "touch", "pointer"];
-        element.on(getEvents(pointerTypes, "start"), function (event) {
+        element.on(getEvents(pointerTypes, "start"), (event) => {
           startCoords = getCoordinates(event);
           active = true;
           totalX = 0;
           totalY = 0;
           lastPos = startCoords;
-          if (eventHandlers["start"]) {
-            eventHandlers["start"](startCoords, event);
+          if (eventHandlers.start) {
+            eventHandlers.start(startCoords, event);
           }
         });
-        let events = getEvents(pointerTypes, "cancel");
+        const events = getEvents(pointerTypes, "cancel");
         if (events) {
-          element.on(events, function (event) {
+          element.on(events, (event) => {
             active = false;
-            if (eventHandlers["cancel"]) {
-              eventHandlers["cancel"](event);
+            if (eventHandlers.cancel) {
+              eventHandlers.cancel(event);
             }
           });
         }
 
-        element.on(getEvents(pointerTypes, "move"), function (event) {
+        element.on(getEvents(pointerTypes, "move"), (event) => {
           if (!active) return;
 
           // Android will send a touchcancel if it thinks we're starting to scroll.
@@ -150,7 +151,7 @@ ngTouch.factory("$swipe", [
           // - On totalY > totalX, we let the browser handle it as a scroll.
 
           if (!startCoords) return;
-          let coords = getCoordinates(event);
+          const coords = getCoordinates(event);
 
           totalX += Math.abs(coords.x - lastPos.x);
           totalY += Math.abs(coords.y - lastPos.y);
@@ -165,24 +166,23 @@ ngTouch.factory("$swipe", [
           if (totalY > totalX) {
             // Allow native scrolling to take over.
             active = false;
-            if (eventHandlers["cancel"]) {
-              eventHandlers["cancel"](event);
+            if (eventHandlers.cancel) {
+              eventHandlers.cancel(event);
             }
-            return;
           } else {
             // Prevent the browser from scrolling.
             event.preventDefault();
-            if (eventHandlers["move"]) {
-              eventHandlers["move"](coords, event);
+            if (eventHandlers.move) {
+              eventHandlers.move(coords, event);
             }
           }
         });
 
-        element.on(getEvents(pointerTypes, "end"), function (event) {
+        element.on(getEvents(pointerTypes, "end"), (event) => {
           if (!active) return;
           active = false;
-          if (eventHandlers["end"]) {
-            eventHandlers["end"](getCoordinates(event), event);
+          if (eventHandlers.end) {
+            eventHandlers.end(getCoordinates(event), event);
           }
         });
       },

@@ -277,7 +277,7 @@ let jqLite;
 
  */
 angular
-  .module("ngMessages", [], function initAngularHelpers() {
+  .module("ngMessages", [], () => {
     // Access helpers from AngularJS core.
     // Do it inside a `config` block to ensure `window.angular` is available.
     forEach = angular.forEach;
@@ -368,8 +368,8 @@ angular
   .directive("ngMessages", [
     "$animate",
     function ($animate) {
-      let ACTIVE_CLASS = "ng-active";
-      let INACTIVE_CLASS = "ng-inactive";
+      const ACTIVE_CLASS = "ng-active";
+      const INACTIVE_CLASS = "ng-inactive";
 
       return {
         require: "ngMessages",
@@ -379,7 +379,7 @@ angular
           "$scope",
           "$attrs",
           function NgMessagesCtrl($element, $scope, $attrs) {
-            let ctrl = this;
+            const ctrl = this;
             let latestKey = 0;
             let nextAttachId = 0;
 
@@ -387,8 +387,9 @@ angular
               return nextAttachId++;
             };
 
-            let messages = (this.messages = {});
-            let renderLater, cachedCollection;
+            const messages = (this.messages = {});
+            let renderLater;
+            let cachedCollection;
 
             this.render = function (collection) {
               collection = collection || {};
@@ -397,12 +398,12 @@ angular
               cachedCollection = collection;
 
               // this is true if the attribute is empty or if the attribute value is truthy
-              let multiple =
+              const multiple =
                 isAttrTruthy($scope, $attrs.ngMessagesMultiple) ||
                 isAttrTruthy($scope, $attrs.multiple);
 
-              let unmatchedMessages = [];
-              let matchedKeys = {};
+              const unmatchedMessages = [];
+              const matchedKeys = {};
               let truthyKeys = 0;
               let messageItem = ctrl.head;
               let messageFound = false;
@@ -411,11 +412,11 @@ angular
               // we use != instead of !== to allow for both undefined and null values
               while (messageItem != null) {
                 totalMessages++;
-                let messageCtrl = messageItem.message;
+                const messageCtrl = messageItem.message;
 
                 let messageUsed = false;
                 if (!messageFound) {
-                  forEach(collection, function (value, key) {
+                  forEach(collection, (value, key) => {
                     if (truthy(value) && !messageUsed) {
                       truthyKeys++;
 
@@ -442,12 +443,12 @@ angular
                 messageItem = messageItem.next;
               }
 
-              forEach(unmatchedMessages, function (messageCtrl) {
+              forEach(unmatchedMessages, (messageCtrl) => {
                 messageCtrl.detach();
               });
 
-              let messageMatched = unmatchedMessages.length !== totalMessages;
-              let attachDefault =
+              const messageMatched = unmatchedMessages.length !== totalMessages;
+              const attachDefault =
                 ctrl.default && !messageMatched && truthyKeys > 0;
 
               if (attachDefault) {
@@ -464,14 +465,14 @@ angular
             };
 
             $scope.$watchCollection(
-              $attrs.ngMessages || $attrs["for"],
+              $attrs.ngMessages || $attrs.for,
               ctrl.render,
             );
 
             this.reRender = function () {
               if (!renderLater) {
                 renderLater = true;
-                $scope.$evalAsync(function () {
+                $scope.$evalAsync(() => {
                   if (renderLater && cachedCollection) {
                     ctrl.render(cachedCollection);
                   }
@@ -483,7 +484,7 @@ angular
               if (isDefault) {
                 ctrl.default = messageCtrl;
               } else {
-                let nextKey = latestKey.toString();
+                const nextKey = latestKey.toString();
                 messages[nextKey] = {
                   message: messageCtrl,
                 };
@@ -499,7 +500,7 @@ angular
               if (isDefault) {
                 delete ctrl.default;
               } else {
-                let key = comment.$$ngMessageNode;
+                const key = comment.$$ngMessageNode;
                 delete comment.$$ngMessageNode;
                 removeMessageNode($element[0], comment, key);
                 delete messages[key];
@@ -509,10 +510,10 @@ angular
 
             function findPreviousMessage(parent, comment) {
               let prevNode = comment;
-              let parentLookup = [];
+              const parentLookup = [];
 
               while (prevNode && prevNode !== parent) {
-                let prevKey = prevNode.$$ngMessageNode;
+                const prevKey = prevNode.$$ngMessageNode;
                 if (prevKey && prevKey.length) {
                   return messages[prevKey];
                 }
@@ -536,11 +537,11 @@ angular
             }
 
             function insertMessageNode(parent, comment, key) {
-              let messageNode = messages[key];
+              const messageNode = messages[key];
               if (!ctrl.head) {
                 ctrl.head = messageNode;
               } else {
-                let match = findPreviousMessage(parent, comment);
+                const match = findPreviousMessage(parent, comment);
                 if (match) {
                   messageNode.next = match.next;
                   match.next = messageNode;
@@ -552,12 +553,12 @@ angular
             }
 
             function removeMessageNode(parent, comment, key) {
-              let messageNode = messages[key];
+              const messageNode = messages[key];
 
               // This message node may have already been removed by a call to deregister()
               if (!messageNode) return;
 
-              let match = findPreviousMessage(parent, comment);
+              const match = findPreviousMessage(parent, comment);
               if (match) {
                 match.next = messageNode.next;
               } else {
@@ -570,7 +571,7 @@ angular
 
       function isAttrTruthy(scope, attr) {
         return (
-          (isString(attr) && attr.length === 0) || //empty attribute
+          (isString(attr) && attr.length === 0) || // empty attribute
           truthy(scope.$eval(attr))
         );
       }
@@ -619,9 +620,9 @@ angular
       return {
         restrict: "AE",
         require: "^^ngMessages", // we only require this for validation sake
-        link: function ($scope, element, attrs) {
-          let src = attrs.ngMessagesInclude || attrs.src;
-          $templateRequest(src).then(function (html) {
+        link($scope, element, attrs) {
+          const src = attrs.ngMessagesInclude || attrs.src;
+          $templateRequest(src).then((html) => {
             if ($scope.$$destroyed) return;
 
             if (isString(html) && !html.trim()) {
@@ -629,7 +630,7 @@ angular
               replaceElementWithMarker(element, src);
             } else {
               // Non-empty template - compile and link
-              $compile(html)($scope, function (contents) {
+              $compile(html)($scope, (contents) => {
                 element.after(contents);
                 replaceElementWithMarker(element, src);
               });
@@ -641,10 +642,10 @@ angular
       // Helpers
       function replaceElementWithMarker(element, src) {
         // A comment marker is placed for debugging purposes
-        let comment = $compile.$$createComment
+        const comment = $compile.$$createComment
           ? $compile.$$createComment("ngMessagesInclude", src)
-          : $document[0].createComment(" ngMessagesInclude: " + src + " ");
-        let marker = jqLite(comment);
+          : $document[0].createComment(` ngMessagesInclude: ${src} `);
+        const marker = jqLite(comment);
         element.after(marker);
 
         // Don't pollute the DOM anymore by keeping an empty directive element
@@ -760,15 +761,18 @@ function ngMessageDirectiveFactory(isDefault) {
         priority: 1, // must run before ngBind, otherwise the text is set on the comment
         terminal: true,
         require: "^^ngMessages",
-        link: function (scope, element, attrs, ngMessagesCtrl, $transclude) {
-          let commentNode, records, staticExp, dynamicExp;
+        link(scope, element, attrs, ngMessagesCtrl, $transclude) {
+          let commentNode;
+          let records;
+          let staticExp;
+          let dynamicExp;
 
           if (!isDefault) {
             commentNode = element[0];
             staticExp = attrs.ngMessage || attrs.when;
             dynamicExp = attrs.ngMessageExp || attrs.whenExp;
 
-            let assignRecords = function (items) {
+            const assignRecords = function (items) {
               records = items
                 ? isArray(items)
                   ? items
@@ -785,28 +789,29 @@ function ngMessageDirectiveFactory(isDefault) {
             }
           }
 
-          let currentElement, messageCtrl;
+          let currentElement;
+          let messageCtrl;
           ngMessagesCtrl.register(
             commentNode,
             (messageCtrl = {
-              test: function (name) {
+              test(name) {
                 return contains(records, name);
               },
-              attach: function () {
+              attach() {
                 if (!currentElement) {
-                  $transclude(function (elm, newScope) {
+                  $transclude((elm, newScope) => {
                     $animate.enter(elm, null, element);
                     currentElement = elm;
 
                     // Each time we attach this node to a message we get a new id that we can match
                     // when we are destroying the node later.
-                    let $$attachId = (currentElement.$$attachId =
+                    const $$attachId = (currentElement.$$attachId =
                       ngMessagesCtrl.getAttachId());
 
                     // in the event that the element or a parent element is destroyed
                     // by another structural directive then it's time
                     // to deregister the message from the controller
-                    currentElement.on("$destroy", function () {
+                    currentElement.on("$destroy", () => {
                       // If the message element was removed via a call to `detach` then `currentElement` will be null
                       // So this handler only handles cases where something else removed the message element.
                       if (
@@ -821,9 +826,9 @@ function ngMessageDirectiveFactory(isDefault) {
                   });
                 }
               },
-              detach: function () {
+              detach() {
                 if (currentElement) {
-                  let elm = currentElement;
+                  const elm = currentElement;
                   currentElement = null;
                   $animate.leave(elm);
                 }
@@ -836,7 +841,7 @@ function ngMessageDirectiveFactory(isDefault) {
           // Normally this is done when the attached element is destroyed; but if this directive
           // gets removed before we attach the message to the DOM there is nothing to watch
           // in which case we must deregister when the containing scope is destroyed.
-          scope.$on("$destroy", function () {
+          scope.$on("$destroy", () => {
             ngMessagesCtrl.deregister(commentNode, isDefault);
           });
         },

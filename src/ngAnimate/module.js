@@ -762,7 +762,7 @@ let noop;
  * Click here {@link ng.$animate to learn more about animations with `$animate`}.
  */
 angular
-  .module("ngAnimate", [], function initAngularHelpers() {
+  .module("ngAnimate", [], () => {
     // Access helpers from AngularJS core.
     // Do it inside a `config` block to ensure `window.angular` is available.
     noop = angular.noop;

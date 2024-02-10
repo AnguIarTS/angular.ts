@@ -1,9 +1,9 @@
 
 
-let _ = require('lodash');
-let path = require('canonical-path');
+const _ = require('lodash');
+const path = require('canonical-path');
 
-let AREA_NAMES = {
+const AREA_NAMES = {
   api: 'API',
   guide: 'Developer Guide',
   misc: 'Miscellaneous',
@@ -13,9 +13,9 @@ let AREA_NAMES = {
 
 function getNavGroup(pages, area, pageSorter, pageMapper) {
 
-  let navItems = _(pages)
+  const navItems = _(pages)
     // We don't want the child to include the index page as this is already catered for
-    .omit(function(page) { return page.id === 'index'; })
+    .omit((page) => page.id === 'index')
 
     // Apply the supplied sorting function
     .sortBy(pageSorter)
@@ -29,7 +29,7 @@ function getNavGroup(pages, area, pageSorter, pageMapper) {
     name: area.name,
     type: 'group',
     href: area.id,
-    navItems: navItems
+    navItems
   };
 }
 
@@ -43,30 +43,30 @@ function getNavGroup(pages, area, pageSorter, pageMapper) {
 module.exports = function generatePagesDataProcessor(log) {
 
 
-  let navGroupMappers = {
-    api: function(areaPages, area) {
-      let navGroups = _(areaPages)
+  const navGroupMappers = {
+    api(areaPages, area) {
+      const navGroups = _(areaPages)
         .filter('module') // We are not interested in docs that are not in a module
 
         .groupBy('module')
 
-        .map(function(modulePages, moduleName) {
-          log.debug('moduleName: ' + moduleName);
-          let navItems = [];
+        .map((modulePages, moduleName) => {
+          log.debug(`moduleName: ${  moduleName}`);
+          const navItems = [];
           let modulePage;
 
           _(modulePages)
 
             .groupBy('docType')
 
-            .tap(function(docTypes) {
+            .tap((docTypes) => {
               log.debug(moduleName, _.keys(docTypes));
               // Extract the module page from the collection
               modulePage = docTypes.module[0];
               delete docTypes.module;
             })
 
-            .tap(function(docTypes) {
+            .tap((docTypes) => {
               if (docTypes.input) {
                 docTypes.directive = docTypes.directive || [];
                 // Combine input docTypes into directive docTypes
@@ -75,7 +75,7 @@ module.exports = function generatePagesDataProcessor(log) {
               }
             })
 
-            .forEach(function(sectionPages, sectionName) {
+            .forEach((sectionPages, sectionName) => {
 
               sectionPages = _.sortBy(sectionPages, 'name');
 
@@ -88,7 +88,7 @@ module.exports = function generatePagesDataProcessor(log) {
                 });
 
                 // Push the rest of the sectionPages for this section
-                _.forEach(sectionPages, function(sectionPage) {
+                _.forEach(sectionPages, (sectionPage) => {
 
                   navItems.push({
                     name: sectionPage.name,
@@ -103,45 +103,37 @@ module.exports = function generatePagesDataProcessor(log) {
             name: moduleName,
             href: modulePage.path,
             type: 'group',
-            navItems: navItems
+            navItems
           };
         })
         .value();
       return navGroups;
     },
-    tutorial: function(pages, area) {
-      return [getNavGroup(pages, area, 'step', function(page) {
-        return {
+    tutorial(pages, area) {
+      return [getNavGroup(pages, area, 'step', (page) => ({
           name: page.name,
           step: page.step,
           href: page.path,
           type: 'tutorial'
-        };
-      })];
+        }))];
     },
-    error: function(pages, area) {
-      return [getNavGroup(pages, area, 'path', function(page) {
-        return {
+    error(pages, area) {
+      return [getNavGroup(pages, area, 'path', (page) => ({
           name: page.name,
           href: page.path,
           type: page.docType === 'errorNamespace' ? 'section' : 'error'
-        };
-      })];
+        }))];
     },
-    pages: function(pages, area) {
+    pages(pages, area) {
       return [getNavGroup(
         pages,
         area,
-        function(page) {
-          return page.sortOrder || page.path;
-        },
-        function(page) {
-          return {
+        (page) => page.sortOrder || page.path,
+        (page) => ({
             name: page.name,
             href: page.path,
             type: 'page'
-          };
-        }
+          })
       )];
     }
   };
@@ -149,17 +141,13 @@ module.exports = function generatePagesDataProcessor(log) {
   return {
     $runAfter: ['paths-computed', 'generateKeywordsProcessor'],
     $runBefore: ['rendering-docs'],
-    $process: function(docs) {
+    $process(docs) {
 
       // We are only interested in docs that are in an area
-      let pages = _.filter(docs, function(doc) {
-        return doc.area;
-      });
+      const pages = _.filter(docs, (doc) => doc.area);
 
       // We are only interested in pages that are not landing pages
-      let navPages = _.filter(pages, function(page) {
-        return page.docType !== 'componentGroup';
-      });
+      const navPages = _.filter(pages, (page) => page.docType !== 'componentGroup');
 
       // Generate an object collection of pages that is grouped by area e.g.
       // - area "api"
@@ -178,17 +166,17 @@ module.exports = function generatePagesDataProcessor(log) {
       //    - section "service"
       //    - $route
       //
-      let areas = {};
+      const areas = {};
       _(navPages)
         .groupBy('area')
-        .forEach(function(pages, areaId) {
-          let area = {
+        .forEach((pages, areaId) => {
+          const area = {
             id: areaId,
             name: AREA_NAMES[areaId]
           };
           areas[areaId] = area;
 
-          let navGroupMapper = navGroupMappers[area.id] || navGroupMappers['pages'];
+          const navGroupMapper = navGroupMappers[area.id] || navGroupMappers.pages;
           area.navGroups = navGroupMapper(pages, area);
         });
 
@@ -197,18 +185,14 @@ module.exports = function generatePagesDataProcessor(log) {
         id: 'nav-data',
         template: 'nav-data.template.js',
         outputPath: 'js/nav-data.js',
-        areas: areas
+        areas
       });
 
 
 
-      let searchData = _(pages)
-        .filter(function(page) {
-            return page.searchTerms;
-        })
-        .map(function(page) {
-          return _.extend({ path: page.path }, page.searchTerms);
-        })
+      const searchData = _(pages)
+        .filter((page) => page.searchTerms)
+        .map((page) => _.extend({ path: page.path }, page.searchTerms))
         .value();
 
       docs.push({
@@ -220,10 +204,8 @@ module.exports = function generatePagesDataProcessor(log) {
       });
 
       // Extract a list of basic page information for mapping paths to partials and for client side searching
-      let pageData = _(docs)
-        .map(function(doc) {
-          return _.pick(doc, ['name', 'area', 'path']);
-        })
+      const pageData = _(docs)
+        .map((doc) => _.pick(doc, ['name', 'area', 'path']))
         .keyBy('path')
         .value();
 

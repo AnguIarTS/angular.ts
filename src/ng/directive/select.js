@@ -1,6 +1,6 @@
 /* exported selectDirective, optionDirective */
 
-let noopNgModelController = { $setViewValue: noop, $render: noop };
+const noopNgModelController = { $setViewValue: noop, $render: noop };
 
 function setOptionSelectedStatus(optionEl, value) {
   optionEl.prop("selected", value);
@@ -149,12 +149,12 @@ function setOptionSelectedStatus(optionEl, value) {
  *
  *
  */
-let SelectController = [
+const SelectController = [
   "$element",
   "$scope",
   /** @this */ function ($element, $scope) {
-    let self = this,
-      optionsMap = new NgMap();
+    const self = this;
+    const optionsMap = new NgMap();
 
     self.selectValueMap = {}; // Keys are the hashed values, values the original values
 
@@ -182,7 +182,7 @@ let SelectController = [
     self.emptyOption = undefined;
 
     self.renderUnknownOption = function (val) {
-      let unknownVal = self.generateUnknownOptionValue(val);
+      const unknownVal = self.generateUnknownOptionValue(val);
       self.unknownOption.val(unknownVal);
       $element.prepend(self.unknownOption);
       setOptionSelectedStatus(self.unknownOption, true);
@@ -190,14 +190,14 @@ let SelectController = [
     };
 
     self.updateUnknownOption = function (val) {
-      let unknownVal = self.generateUnknownOptionValue(val);
+      const unknownVal = self.generateUnknownOptionValue(val);
       self.unknownOption.val(unknownVal);
       setOptionSelectedStatus(self.unknownOption, true);
       $element.val(unknownVal);
     };
 
     self.generateUnknownOptionValue = function (val) {
-      return "? " + hashKey(val) + " ?";
+      return `? ${hashKey(val)} ?`;
     };
 
     self.removeUnknownOption = function () {
@@ -217,7 +217,7 @@ let SelectController = [
       }
     };
 
-    $scope.$on("$destroy", function () {
+    $scope.$on("$destroy", () => {
       // disable unknown option so that we don't do work when the whole select is being destroyed
       self.renderUnknownOption = noop;
     });
@@ -225,9 +225,10 @@ let SelectController = [
     // Read the value of the select control, the implementation of this changes depending
     // upon whether the select can have multiple values and whether ngOptions is at work.
     self.readValue = function readSingleValue() {
-      let val = $element.val();
+      const val = $element.val();
       // ngValue added option values are stored in the selectValueMap, normal interpolations are not
-      let realVal = val in self.selectValueMap ? self.selectValueMap[val] : val;
+      const realVal =
+        val in self.selectValueMap ? self.selectValueMap[val] : val;
 
       if (self.hasOption(realVal)) {
         return realVal;
@@ -241,7 +242,7 @@ let SelectController = [
     self.writeValue = function writeSingleValue(value) {
       // Make sure to remove the selected attribute from the previously selected option
       // Otherwise, screen readers might get confused
-      let currentlySelectedOption =
+      const currentlySelectedOption =
         $element[0].options[$element[0].selectedIndex];
       if (currentlySelectedOption)
         setOptionSelectedStatus(jqLite(currentlySelectedOption), false);
@@ -249,11 +250,11 @@ let SelectController = [
       if (self.hasOption(value)) {
         self.removeUnknownOption();
 
-        let hashedVal = hashKey(value);
+        const hashedVal = hashKey(value);
         $element.val(hashedVal in self.selectValueMap ? hashedVal : value);
 
         // Set selected attribute and property on selected option for screen readers
-        let selectedOption = $element[0].options[$element[0].selectedIndex];
+        const selectedOption = $element[0].options[$element[0].selectedIndex];
         setOptionSelectedStatus(jqLite(selectedOption), true);
       } else {
         self.selectUnknownOrEmptyOption(value);
@@ -270,7 +271,7 @@ let SelectController = [
         self.hasEmptyOption = true;
         self.emptyOption = element;
       }
-      let count = optionsMap.get(value) || 0;
+      const count = optionsMap.get(value) || 0;
       optionsMap.set(value, count + 1);
       // Only render at the end of a digest. This improves render performance when many options
       // are added during a digest and ensures all relevant options are correctly marked as selected
@@ -279,7 +280,7 @@ let SelectController = [
 
     // Tell the select control that an option, with the given value, has been removed
     self.removeOption = function (value) {
-      let count = optionsMap.get(value);
+      const count = optionsMap.get(value);
       if (count) {
         if (count === 1) {
           optionsMap.delete(value);
@@ -359,7 +360,7 @@ let SelectController = [
     function scheduleRender() {
       if (renderScheduled) return;
       renderScheduled = true;
-      $scope.$$postDigest(function () {
+      $scope.$$postDigest(() => {
         renderScheduled = false;
         self.ngModelCtrl.$render();
       });
@@ -371,7 +372,7 @@ let SelectController = [
 
       updateScheduled = true;
 
-      $scope.$$postDigest(function () {
+      $scope.$$postDigest(() => {
         if ($scope.$$destroyed) return;
 
         updateScheduled = false;
@@ -389,79 +390,71 @@ let SelectController = [
     ) {
       if (optionAttrs.$attr.ngValue) {
         // The value attribute is set by ngValue
-        let oldVal, hashedVal;
-        optionAttrs.$observe(
-          "value",
-          function valueAttributeObserveAction(newVal) {
-            let removal;
-            let previouslySelected = optionElement.prop("selected");
+        let oldVal;
+        let hashedVal;
+        optionAttrs.$observe("value", (newVal) => {
+          let removal;
+          const previouslySelected = optionElement.prop("selected");
 
-            if (isDefined(hashedVal)) {
-              self.removeOption(oldVal);
-              delete self.selectValueMap[hashedVal];
-              removal = true;
-            }
+          if (isDefined(hashedVal)) {
+            self.removeOption(oldVal);
+            delete self.selectValueMap[hashedVal];
+            removal = true;
+          }
 
-            hashedVal = hashKey(newVal);
-            oldVal = newVal;
-            self.selectValueMap[hashedVal] = newVal;
-            self.addOption(newVal, optionElement);
-            // Set the attribute directly instead of using optionAttrs.$set - this stops the observer
-            // from firing a second time. Other $observers on value will also get the result of the
-            // ngValue expression, not the hashed value
-            optionElement.attr("value", hashedVal);
+          hashedVal = hashKey(newVal);
+          oldVal = newVal;
+          self.selectValueMap[hashedVal] = newVal;
+          self.addOption(newVal, optionElement);
+          // Set the attribute directly instead of using optionAttrs.$set - this stops the observer
+          // from firing a second time. Other $observers on value will also get the result of the
+          // ngValue expression, not the hashed value
+          optionElement.attr("value", hashedVal);
 
-            if (removal && previouslySelected) {
-              scheduleViewValueUpdate();
-            }
-          },
-        );
+          if (removal && previouslySelected) {
+            scheduleViewValueUpdate();
+          }
+        });
       } else if (interpolateValueFn) {
         // The value attribute is interpolated
-        optionAttrs.$observe(
-          "value",
-          function valueAttributeObserveAction(newVal) {
-            // This method is overwritten in ngOptions and has side-effects!
-            self.readValue();
+        optionAttrs.$observe("value", (newVal) => {
+          // This method is overwritten in ngOptions and has side-effects!
+          self.readValue();
 
-            let removal;
-            let previouslySelected = optionElement.prop("selected");
+          let removal;
+          const previouslySelected = optionElement.prop("selected");
 
-            if (isDefined(oldVal)) {
-              self.removeOption(oldVal);
-              removal = true;
-            }
-            oldVal = newVal;
-            self.addOption(newVal, optionElement);
+          if (isDefined(oldVal)) {
+            self.removeOption(oldVal);
+            removal = true;
+          }
+          oldVal = newVal;
+          self.addOption(newVal, optionElement);
 
-            if (removal && previouslySelected) {
-              scheduleViewValueUpdate();
-            }
-          },
-        );
+          if (removal && previouslySelected) {
+            scheduleViewValueUpdate();
+          }
+        });
       } else if (interpolateTextFn) {
         // The text content is interpolated
-        optionScope.$watch(
-          interpolateTextFn,
-          function interpolateWatchAction(newVal, oldVal) {
-            optionAttrs.$set("value", newVal);
-            let previouslySelected = optionElement.prop("selected");
-            if (oldVal !== newVal) {
-              self.removeOption(oldVal);
-            }
-            self.addOption(newVal, optionElement);
+        optionScope.$watch(interpolateTextFn, (newVal, oldVal) => {
+          optionAttrs.$set("value", newVal);
+          const previouslySelected = optionElement.prop("selected");
+          if (oldVal !== newVal) {
+            self.removeOption(oldVal);
+          }
+          self.addOption(newVal, optionElement);
 
-            if (oldVal && previouslySelected) {
-              scheduleViewValueUpdate();
-            }
-          },
-        );
+          if (oldVal && previouslySelected) {
+            scheduleViewValueUpdate();
+          }
+        });
       } else {
         // The value attribute is static
         self.addOption(optionAttrs.value, optionElement);
       }
 
-      optionAttrs.$observe("disabled", function (newVal) {
+      optionAttrs.$observe("disabled", (newVal) => {
         // Since model updates will also select disabled options (like ngOptions),
         // we only have to handle options becoming disabled, not enabled
 
@@ -475,9 +468,9 @@ let SelectController = [
         }
       });
 
-      optionElement.on("$destroy", function () {
-        let currentValue = self.readValue();
-        let removeValue = optionAttrs.value;
+      optionElement.on("$destroy", () => {
+        const currentValue = self.readValue();
+        const removeValue = optionAttrs.value;
 
         self.removeOption(removeValue);
         scheduleRender();
@@ -754,7 +747,7 @@ let SelectController = [
  * </example>
  *
  */
-let selectDirective = function () {
+const selectDirective = function () {
   return {
     restrict: "E",
     require: ["select", "?ngModel"],
@@ -767,8 +760,8 @@ let selectDirective = function () {
   };
 
   function selectPreLink(scope, element, attr, ctrls) {
-    let selectCtrl = ctrls[0];
-    let ngModelCtrl = ctrls[1];
+    const selectCtrl = ctrls[0];
+    const ngModelCtrl = ctrls[1];
 
     // if ngModel is not defined, we don't need to do anything but set the registerOption
     // function to noop, so options don't get added internally
@@ -782,9 +775,9 @@ let selectDirective = function () {
     // When the selected item(s) changes we delegate getting the value of the select control
     // to the `readValue` method, which can be changed if the select can have multiple
     // selected values or if the options are being generated by `ngOptions`
-    element.on("change", function () {
+    element.on("change", () => {
       selectCtrl.removeUnknownOption();
-      scope.$apply(function () {
+      scope.$apply(() => {
         ngModelCtrl.$setViewValue(selectCtrl.readValue());
       });
     });
@@ -798,10 +791,10 @@ let selectDirective = function () {
 
       // Read value now needs to check each option to see if it is selected
       selectCtrl.readValue = function readMultipleValue() {
-        let array = [];
-        forEach(element.find("option"), function (option) {
+        const array = [];
+        forEach(element.find("option"), (option) => {
           if (option.selected && !option.disabled) {
-            let val = option.value;
+            const val = option.value;
             array.push(
               val in selectCtrl.selectValueMap
                 ? selectCtrl.selectValueMap[val]
@@ -814,12 +807,12 @@ let selectDirective = function () {
 
       // Write value now needs to set the selected property of each matching option
       selectCtrl.writeValue = function writeMultipleValue(value) {
-        forEach(element.find("option"), function (option) {
-          let shouldBeSelected =
+        forEach(element.find("option"), (option) => {
+          const shouldBeSelected =
             !!value &&
             (includes(value, option.value) ||
               includes(value, selectCtrl.selectValueMap[option.value]));
-          let currentlySelected = option.selected;
+          const currentlySelected = option.selected;
 
           // Support: IE 9-11 only, Edge 12-15+
           // In IE and Edge adding options to the selection via shift+click/UP/DOWN
@@ -836,9 +829,9 @@ let selectDirective = function () {
 
       // we have to do it on each watch since ngModel watches reference, but
       // we need to work of an array, so we need to see if anything was inserted/removed
-      let lastView,
-        lastViewRef = NaN;
-      scope.$watch(function selectMultipleWatch() {
+      let lastView;
+      let lastViewRef = NaN;
+      scope.$watch(() => {
         if (
           lastViewRef === ngModelCtrl.$viewValue &&
           !equals(lastView, ngModelCtrl.$viewValue)
@@ -859,10 +852,10 @@ let selectDirective = function () {
 
   function selectPostLink(scope, element, attrs, ctrls) {
     // if ngModel is not defined, we don't need to do anything
-    let ngModelCtrl = ctrls[1];
+    const ngModelCtrl = ctrls[1];
     if (!ngModelCtrl) return;
 
-    let selectCtrl = ctrls[0];
+    const selectCtrl = ctrls[0];
 
     // We delegate rendering to the `writeValue` method, which can be changed
     // if the select can have multiple selected values or if the options are being
@@ -878,14 +871,15 @@ let selectDirective = function () {
 // The option directive is purely designed to communicate the existence (or lack of)
 // of dynamically created (and destroyed) option elements to their containing select
 // directive via its controller.
-let optionDirective = [
+const optionDirective = [
   "$interpolate",
   function ($interpolate) {
     return {
       restrict: "E",
       priority: 100,
-      compile: function (element, attr) {
-        let interpolateValueFn, interpolateTextFn;
+      compile(element, attr) {
+        let interpolateValueFn;
+        let interpolateTextFn;
 
         if (isDefined(attr.ngValue)) {
           // Will be handled by registerOption
@@ -904,11 +898,10 @@ let optionDirective = [
         return function (scope, element, attr) {
           // This is an optimization over using ^^ since we don't want to have to search
           // all the way to the root of the DOM for every single option element
-          let selectCtrlName = "$selectController",
-            parent = element.parent(),
-            selectCtrl =
-              parent.data(selectCtrlName) ||
-              parent.parent().data(selectCtrlName); // in case we are in optgroup
+          const selectCtrlName = "$selectController";
+          const parent = element.parent();
+          const selectCtrl =
+            parent.data(selectCtrlName) || parent.parent().data(selectCtrlName); // in case we are in optgroup
 
           if (selectCtrl) {
             selectCtrl.registerOption(

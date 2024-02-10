@@ -7,6 +7,9 @@ build:
 
 pretty:
 	@npx prettier ./src --write
+	
+lint:
+	npx eslint ./src --fix
 
 check:
 	@echo "Typechecking Js"

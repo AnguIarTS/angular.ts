@@ -76,14 +76,14 @@
     </file>
   </example>
  */
-let $$AnimateChildrenDirective = [
+const $$AnimateChildrenDirective = [
   "$interpolate",
   function ($interpolate) {
     return {
-      link: function (scope, element, attrs) {
-        let val = attrs.ngAnimateChildren;
+      link(scope, element, attrs) {
+        const val = attrs.ngAnimateChildren;
         if (isString(val) && val.length === 0) {
-          //empty attribute
+          // empty attribute
           element.data(NG_ANIMATE_CHILDREN_DATA, true);
         } else {
           // Interpolate and set the value, so that it is available to

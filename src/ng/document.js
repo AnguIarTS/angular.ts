@@ -43,12 +43,12 @@ export function $$IsDocumentHiddenProvider() {
     "$document",
     "$rootScope",
     function ($document, $rootScope) {
-      let doc = $document[0];
+      const doc = $document[0];
       let hidden = doc && doc.hidden;
 
       $document.on("visibilitychange", changeListener);
 
-      $rootScope.$on("$destroy", function () {
+      $rootScope.$on("$destroy", () => {
         $document.off("visibilitychange", changeListener);
       });
 

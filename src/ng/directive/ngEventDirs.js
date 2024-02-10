@@ -35,12 +35,12 @@
  * A collection of directives that allows creation of custom event handlers that are defined as
  * AngularJS expressions and are compiled and executed within the current scope.
  */
-let ngEventDirectives = {};
+const ngEventDirectives = {};
 
 // For events that might fire synchronously during DOM manipulation
 // we need to execute their event handlers asynchronously using $evalAsync,
 // so that they are not executed in an inconsistent state.
-let forceAsyncEvents = {
+const forceAsyncEvents = {
   blur: true,
   focus: true,
 };
@@ -48,8 +48,8 @@ forEach(
   "click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup keypress submit focus blur copy cut paste".split(
     " ",
   ),
-  function (eventName) {
-    let directiveName = directiveNormalize("ng-" + eventName);
+  (eventName) => {
+    const directiveName = directiveNormalize(`ng-${eventName}`);
     ngEventDirectives[directiveName] = [
       "$parse",
       "$rootScope",
@@ -78,15 +78,15 @@ function createEventDirective(
 ) {
   return {
     restrict: "A",
-    compile: function ($element, attr) {
+    compile($element, attr) {
       // NOTE:
       // We expose the powerful `$event` object on the scope that provides access to the Window,
       // etc. This is OK, because expressions are not sandboxed any more (and the expression
       // sandbox was never meant to be a security feature anyway).
-      let fn = $parse(attr[directiveName]);
+      const fn = $parse(attr[directiveName]);
       return function ngEventHandler(scope, element) {
-        element.on(eventName, function (event) {
-          let callback = function () {
+        element.on(eventName, (event) => {
+          const callback = function () {
             fn(scope, { $event: event });
           };
 

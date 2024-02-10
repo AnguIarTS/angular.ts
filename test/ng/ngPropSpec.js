@@ -2,9 +2,9 @@
 
 /* eslint-disable no-script-url */
 
-describe('ngProp*', function() {
-  it('should bind boolean properties (input disabled)', inject(function($rootScope, $compile) {
-    let element = $compile('<button ng-prop-disabled="isDisabled">Button</button>')($rootScope);
+describe('ngProp*', () => {
+  it('should bind boolean properties (input disabled)', inject(($rootScope, $compile) => {
+    const element = $compile('<button ng-prop-disabled="isDisabled">Button</button>')($rootScope);
     $rootScope.$digest();
     expect(element.prop('disabled')).toBe(false);
     $rootScope.isDisabled = true;
@@ -15,8 +15,8 @@ describe('ngProp*', function() {
     expect(element.prop('disabled')).toBe(false);
   }));
 
-  it('should bind boolean properties (input checked)', inject(function($rootScope, $compile) {
-    let element = $compile('<input type="checkbox" ng-prop-checked="isChecked" />')($rootScope);
+  it('should bind boolean properties (input checked)', inject(($rootScope, $compile) => {
+    const element = $compile('<input type="checkbox" ng-prop-checked="isChecked" />')($rootScope);
     expect(element.prop('checked')).toBe(false);
     $rootScope.isChecked = true;
     $rootScope.$digest();
@@ -26,8 +26,8 @@ describe('ngProp*', function() {
     expect(element.prop('checked')).toBe(false);
   }));
 
-  it('should bind string properties (title)', inject(function($rootScope, $compile) {
-    let element = $compile('<span ng-prop-title="title" />')($rootScope);
+  it('should bind string properties (title)', inject(($rootScope, $compile) => {
+    const element = $compile('<span ng-prop-title="title" />')($rootScope);
     $rootScope.title = 123;
     $rootScope.$digest();
     expect(element.prop('title')).toBe('123');
@@ -36,8 +36,8 @@ describe('ngProp*', function() {
     expect(element.prop('title')).toBe('foobar');
   }));
 
-  it('should bind variable type properties', inject(function($rootScope, $compile) {
-    let element = $compile('<span ng-prop-asdf="asdf" />')($rootScope);
+  it('should bind variable type properties', inject(($rootScope, $compile) => {
+    const element = $compile('<span ng-prop-asdf="asdf" />')($rootScope);
     $rootScope.asdf = 123;
     $rootScope.$digest();
     expect(element.prop('asdf')).toBe(123);
@@ -50,8 +50,8 @@ describe('ngProp*', function() {
   }));
 
   // https://github.com/angular/angular.js/issues/16797
-  it('should support falsy property values', inject(function($rootScope, $compile) {
-    let element = $compile('<span ng-prop-text="myText" />')($rootScope);
+  it('should support falsy property values', inject(($rootScope, $compile) => {
+    const element = $compile('<span ng-prop-text="myText" />')($rootScope);
     // Initialize to truthy value
     $rootScope.myText = 'abc';
     $rootScope.$digest();
@@ -75,47 +75,47 @@ describe('ngProp*', function() {
     expect(element.prop('text')).toBe(null);
   }));
 
-  it('should directly map special properties (class)', inject(function($rootScope, $compile) {
-    let element = $compile('<span ng-prop-class="myText" />')($rootScope);
+  it('should directly map special properties (class)', inject(($rootScope, $compile) => {
+    const element = $compile('<span ng-prop-class="myText" />')($rootScope);
     $rootScope.myText = 'abc';
     $rootScope.$digest();
     expect(element[0].class).toBe('abc');
     expect(element).not.toHaveClass('abc');
   }));
 
-  it('should not use jQuery .prop() to avoid jQuery propFix/hooks', inject(function($rootScope, $compile) {
-    let element = $compile('<span ng-prop-class="myText" />')($rootScope);
+  it('should not use jQuery .prop() to avoid jQuery propFix/hooks', inject(($rootScope, $compile) => {
+    const element = $compile('<span ng-prop-class="myText" />')($rootScope);
     spyOn(jqLite.prototype, 'prop');
     $rootScope.myText = 'abc';
     $rootScope.$digest();
     expect(jqLite.prototype.prop).not.toHaveBeenCalled();
   }));
 
-  it('should support mixed case using underscore-separated names', inject(function($rootScope, $compile) {
-    let element = $compile('<span ng-prop-a_bcd_e="value" />')($rootScope);
+  it('should support mixed case using underscore-separated names', inject(($rootScope, $compile) => {
+    const element = $compile('<span ng-prop-a_bcd_e="value" />')($rootScope);
     $rootScope.value = 123;
     $rootScope.$digest();
     expect(element.prop('aBcdE')).toBe(123);
   }));
 
-  it('should work with different prefixes', inject(function($rootScope, $compile) {
+  it('should work with different prefixes', inject(($rootScope, $compile) => {
     $rootScope.name = 'Misko';
-    let element = $compile('<span ng:prop:test="name" ng-Prop-test2="name" ng_Prop_test3="name"></span>')($rootScope);
+    const element = $compile('<span ng:prop:test="name" ng-Prop-test2="name" ng_Prop_test3="name"></span>')($rootScope);
     expect(element.prop('test')).toBe('Misko');
     expect(element.prop('test2')).toBe('Misko');
     expect(element.prop('test3')).toBe('Misko');
   }));
 
-  it('should work with the "href" property', inject(function($rootScope, $compile) {
+  it('should work with the "href" property', inject(($rootScope, $compile) => {
     $rootScope.value = 'test';
-    let element = $compile('<a ng-prop-href="\'test/\' + value"></a>')($rootScope);
+    const element = $compile('<a ng-prop-href="\'test/\' + value"></a>')($rootScope);
     $rootScope.$digest();
     expect(element.prop('href')).toMatch(/\/test\/test$/);
   }));
 
-  it('should work if they are prefixed with x- or data- and different prefixes', inject(function($rootScope, $compile) {
+  it('should work if they are prefixed with x- or data- and different prefixes', inject(($rootScope, $compile) => {
     $rootScope.name = 'Misko';
-    let element = $compile('<span data-ng-prop-test2="name" x-ng-prop-test3="name" data-ng:prop-test4="name" ' +
+    const element = $compile('<span data-ng-prop-test2="name" x-ng-prop-test3="name" data-ng:prop-test4="name" ' +
       'x_ng-prop-test5="name" data:ng-prop-test6="name"></span>')($rootScope);
     expect(element.prop('test2')).toBe('Misko');
     expect(element.prop('test3')).toBe('Misko');
@@ -124,32 +124,32 @@ describe('ngProp*', function() {
     expect(element.prop('test6')).toBe('Misko');
   }));
 
-  it('should work independently of attributes with the same name', inject(function($rootScope, $compile) {
-    let element = $compile('<span ng-prop-asdf="asdf" asdf="foo" />')($rootScope);
+  it('should work independently of attributes with the same name', inject(($rootScope, $compile) => {
+    const element = $compile('<span ng-prop-asdf="asdf" asdf="foo" />')($rootScope);
     $rootScope.asdf = 123;
     $rootScope.$digest();
     expect(element.prop('asdf')).toBe(123);
     expect(element.attr('asdf')).toBe('foo');
   }));
 
-  it('should work independently of (ng-)attributes with the same name', inject(function($rootScope, $compile) {
-    let element = $compile('<span ng-prop-asdf="asdf" ng-attr-asdf="foo" />')($rootScope);
+  it('should work independently of (ng-)attributes with the same name', inject(($rootScope, $compile) => {
+    const element = $compile('<span ng-prop-asdf="asdf" ng-attr-asdf="foo" />')($rootScope);
     $rootScope.asdf = 123;
     $rootScope.$digest();
     expect(element.prop('asdf')).toBe(123);
     expect(element.attr('asdf')).toBe('foo');
   }));
 
-  it('should use the full ng-prop-* attribute name in $attr mappings', function() {
+  it('should use the full ng-prop-* attribute name in $attr mappings', () => {
     let attrs;
-    module(function($compileProvider) {
+    module(($compileProvider) => {
       $compileProvider.directive('attrExposer', valueFn({
-        link: function($scope, $element, $attrs) {
+        link($scope, $element, $attrs) {
           attrs = $attrs;
         }
       }));
     });
-    inject(function($compile, $rootScope) {
+    inject(($compile, $rootScope) => {
       $compile('<div attr-exposer ng-prop-title="12" ng-prop-super-title="34" ng-prop-my-camel_title="56">')($rootScope);
 
       expect(attrs.title).toBeUndefined();
@@ -169,16 +169,16 @@ describe('ngProp*', function() {
     });
   });
 
-  it('should not conflict with (ng-attr-)attribute mappings of the same name', function() {
+  it('should not conflict with (ng-attr-)attribute mappings of the same name', () => {
     let attrs;
-    module(function($compileProvider) {
+    module(($compileProvider) => {
       $compileProvider.directive('attrExposer', valueFn({
-        link: function($scope, $element, $attrs) {
+        link($scope, $element, $attrs) {
           attrs = $attrs;
         }
       }));
     });
-    inject(function($compile, $rootScope) {
+    inject(($compile, $rootScope) => {
       $compile('<div attr-exposer ng-prop-title="42" ng-attr-title="foo" title="bar">')($rootScope);
       expect(attrs.title).toBe('foo');
       expect(attrs.$attr.title).toBe('title');
@@ -186,69 +186,65 @@ describe('ngProp*', function() {
     });
   });
 
-  it('should disallow property binding to onclick', inject(function($compile, $rootScope) {
+  it('should disallow property binding to onclick', inject(($compile, $rootScope) => {
     // All event prop bindings are disallowed.
-    expect(function() {
+    expect(() => {
         $compile('<button ng-prop-onclick="onClickJs"></button>');
       }).toThrowMinErr(
         '$compile', 'nodomevents', 'Property bindings for HTML DOM event properties are disallowed');
-    expect(function() {
+    expect(() => {
         $compile('<button ng-prop-ONCLICK="onClickJs"></button>');
       }).toThrowMinErr(
         '$compile', 'nodomevents', 'Property bindings for HTML DOM event properties are disallowed');
   }));
 
-  it('should process property bindings in pre-linking phase at priority 100', function() {
+  it('should process property bindings in pre-linking phase at priority 100', () => {
     module(provideLog);
-    module(function($compileProvider) {
-      $compileProvider.directive('propLog', function(log, $rootScope) {
-        return {
-          compile: function($element, $attrs) {
-            log('compile=' + $element.prop('myName'));
+    module(($compileProvider) => {
+      $compileProvider.directive('propLog', (log, $rootScope) => ({
+          compile($element, $attrs) {
+            log(`compile=${  $element.prop('myName')}`);
 
             return {
-              pre: function($scope, $element, $attrs) {
-                log('preLinkP0=' + $element.prop('myName'));
+              pre($scope, $element, $attrs) {
+                log(`preLinkP0=${  $element.prop('myName')}`);
                 $rootScope.name = 'pre0';
               },
-              post: function($scope, $element, $attrs) {
-                log('postLink=' + $element.prop('myName'));
+              post($scope, $element, $attrs) {
+                log(`postLink=${  $element.prop('myName')}`);
                 $rootScope.name = 'post0';
               }
             };
           }
-        };
-      });
+        }));
     });
-    module(function($compileProvider) {
-      $compileProvider.directive('propLogHighPriority', function(log, $rootScope) {
-        return {
+    module(($compileProvider) => {
+      $compileProvider.directive('propLogHighPriority', (log, $rootScope) => ({
           priority: 101,
-          compile: function() {
+          compile() {
             return {
-              pre: function($scope, $element, $attrs) {
-                log('preLinkP101=' + $element.prop('myName'));
+              pre($scope, $element, $attrs) {
+                log(`preLinkP101=${  $element.prop('myName')}`);
                 $rootScope.name = 'pre101';
               }
             };
           }
-        };
-      });
+        }));
     });
-    inject(function($rootScope, $compile, log) {
-      let element = $compile('<div prop-log-high-priority prop-log ng-prop-my_name="name"></div>')($rootScope);
+    inject(($rootScope, $compile, log) => {
+      const element = $compile('<div prop-log-high-priority prop-log ng-prop-my_name="name"></div>')($rootScope);
       $rootScope.name = 'angular';
       $rootScope.$apply();
-      log('digest=' + element.prop('myName'));
+      log(`digest=${  element.prop('myName')}`);
       expect(log).toEqual('compile=undefined; preLinkP101=undefined; preLinkP0=pre101; postLink=pre101; digest=angular');
     });
   });
 
   
-  describe('img[src] sanitization', function() {
+  describe('img[src] sanitization', () => {
 
-    it('should accept trusted values', inject(function($rootScope, $compile, $sce) {
-      let element = $compile('<img ng-prop-src="testUrl"></img>')($rootScope);
+    it('should accept trusted values', inject(($rootScope, $compile, $sce) => {
+      const element = $compile('<img ng-prop-src="testUrl"></img>')($rootScope);
       // Some browsers complain if you try to write `javascript:` into an `img[src]`
       // So for the test use something different
       $rootScope.testUrl = $sce.trustAsMediaUrl('someuntrustedthing:foo();');
@@ -256,13 +252,13 @@ describe('ngProp*', function() {
       expect(element.prop('src')).toEqual('someuntrustedthing:foo();');
     }));
 
-    it('should use $$sanitizeUri', function() {
-      let $$sanitizeUri = jasmine.createSpy('$$sanitizeUri').and.returnValue('someSanitizedUrl');
-      module(function($provide) {
+    it('should use $$sanitizeUri', () => {
+      const $$sanitizeUri = jasmine.createSpy('$$sanitizeUri').and.returnValue('someSanitizedUrl');
+      module(($provide) => {
         $provide.value('$$sanitizeUri', $$sanitizeUri);
       });
-      inject(function($compile, $rootScope) {
-        let element = $compile('<img ng-prop-src="testUrl"></img>')($rootScope);
+      inject(($compile, $rootScope) => {
+        const element = $compile('<img ng-prop-src="testUrl"></img>')($rootScope);
         $rootScope.testUrl = 'someUrl';
 
         $rootScope.$apply();
@@ -271,13 +267,13 @@ describe('ngProp*', function() {
       });
     });
 
-    it('should not use $$sanitizeUri with trusted values', function() {
-      let $$sanitizeUri = jasmine.createSpy('$$sanitizeUri').and.throwError('Should not have been called');
-      module(function($provide) {
+    it('should not use $$sanitizeUri with trusted values', () => {
+      const $$sanitizeUri = jasmine.createSpy('$$sanitizeUri').and.throwError('Should not have been called');
+      module(($provide) => {
         $provide.value('$$sanitizeUri', $$sanitizeUri);
       });
-      inject(function($compile, $rootScope, $sce) {
-        let element = $compile('<img ng-prop-src="testUrl"></img>')($rootScope);
+      inject(($compile, $rootScope, $sce) => {
+        const element = $compile('<img ng-prop-src="testUrl"></img>')($rootScope);
         // Assigning javascript:foo to src makes at least IE9-11 complain, so use another
         // protocol name.
         $rootScope.testUrl = $sce.trustAsMediaUrl('untrusted:foo();');
@@ -289,8 +285,8 @@ describe('ngProp*', function() {
 
   
 
-  describe('a[href] sanitization', function() {
-    it('should NOT require trusted values for trusted URI values', inject(function($rootScope, $compile) {
+  describe('a[href] sanitization', () => {
+    it('should NOT require trusted values for trusted URI values', inject(($rootScope, $compile) => {
       $rootScope.testUrl = 'http://example.com/image.png'; // `http` is trusted
       let element = $compile('<a ng-prop-href="testUrl"></a>')($rootScope);
       $rootScope.$digest();
@@ -301,7 +297,7 @@ describe('ngProp*', function() {
       expect(element.prop('href')).toEqual('http://example.com/image.png');
     }));
 
-    it('should accept trusted values for non-trusted URI values', inject(function($rootScope, $compile, $sce) {
+    it('should accept trusted values for non-trusted URI values', inject(($rootScope, $compile, $sce) => {
       $rootScope.testUrl = $sce.trustAsUrl('javascript:foo()'); // `javascript` is not trusted
       let element = $compile('<a ng-prop-href="testUrl"></a>')($rootScope);
       $rootScope.$digest();
@@ -312,7 +308,7 @@ describe('ngProp*', function() {
       expect(element.prop('href')).toEqual('javascript:foo()');
     }));
 
-    it('should sanitize non-trusted values', inject(function($rootScope, $compile) {
+    it('should sanitize non-trusted values', inject(($rootScope, $compile) => {
       $rootScope.testUrl = 'javascript:foo()'; // `javascript` is not trusted
       let element = $compile('<a ng-prop-href="testUrl"></a>')($rootScope);
       $rootScope.$digest();
@@ -323,28 +319,28 @@ describe('ngProp*', function() {
       expect(element.prop('href')).toEqual('unsafe:javascript:foo()');
     }));
 
-    it('should not sanitize href on elements other than anchor', inject(function($compile, $rootScope) {
-      let element = $compile('<div ng-prop-href="testUrl"></div>')($rootScope);
+    it('should not sanitize href on elements other than anchor', inject(($compile, $rootScope) => {
+      const element = $compile('<div ng-prop-href="testUrl"></div>')($rootScope);
       $rootScope.testUrl = 'javascript:doEvilStuff()';
       $rootScope.$apply();
 
       expect(element.prop('href')).toBe('javascript:doEvilStuff()');
     }));
 
-    it('should not sanitize properties other then those configured', inject(function($compile, $rootScope) {
-      let element = $compile('<a ng-prop-title="testUrl"></a>')($rootScope);
+    it('should not sanitize properties other then those configured', inject(($compile, $rootScope) => {
+      const element = $compile('<a ng-prop-title="testUrl"></a>')($rootScope);
       $rootScope.testUrl = 'javascript:doEvilStuff()';
       $rootScope.$apply();
 
       expect(element.prop('title')).toBe('javascript:doEvilStuff()');
     }));
 
-    it('should use $$sanitizeUri', function() {
-      let $$sanitizeUri = jasmine.createSpy('$$sanitizeUri').and.returnValue('someSanitizedUrl');
-      module(function($provide) {
+    it('should use $$sanitizeUri', () => {
+      const $$sanitizeUri = jasmine.createSpy('$$sanitizeUri').and.returnValue('someSanitizedUrl');
+      module(($provide) => {
         $provide.value('$$sanitizeUri', $$sanitizeUri);
       });
-      inject(function($compile, $rootScope) {
+      inject(($compile, $rootScope) => {
         let element = $compile('<a ng-prop-href="testUrl"></a>')($rootScope);
         $rootScope.testUrl = 'someUrl';
         $rootScope.$apply();
@@ -360,8 +356,8 @@ describe('ngProp*', function() {
       });
     });
 
-    it('should not have endless digests when given arrays in concatenable context', inject(function($compile, $rootScope) {
-      let element = $compile('<foo ng-prop-href="testUrl"></foo><foo ng-prop-href="::testUrl"></foo>' +
+    it('should not have endless digests when given arrays in concatenable context', inject(($compile, $rootScope) => {
+      const element = $compile('<foo ng-prop-href="testUrl"></foo><foo ng-prop-href="::testUrl"></foo>' +
         '<foo ng-prop-href="\'http://example.com/\' + testUrl"></foo><foo ng-prop-href="::\'http://example.com/\' + testUrl"></foo>')($rootScope);
       $rootScope.testUrl = [1];
       $rootScope.$digest();
@@ -377,40 +373,40 @@ describe('ngProp*', function() {
     }));
   });
 
-  describe('iframe[src]', function() {
-    it('should pass through src properties for the same domain', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<iframe ng-prop-src="testUrl"></iframe>')($rootScope);
+  describe('iframe[src]', () => {
+    it('should pass through src properties for the same domain', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<iframe ng-prop-src="testUrl"></iframe>')($rootScope);
       $rootScope.testUrl = 'different_page';
       $rootScope.$apply();
       expect(element.prop('src')).toMatch(/\/different_page$/);
     }));
 
-    it('should clear out src properties for a different domain', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<iframe ng-prop-src="testUrl"></iframe>')($rootScope);
+    it('should clear out src properties for a different domain', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<iframe ng-prop-src="testUrl"></iframe>')($rootScope);
       $rootScope.testUrl = 'http://a.different.domain.example.com';
-      expect(function() { $rootScope.$apply(); }).toThrowMinErr(
+      expect(() => { $rootScope.$apply(); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.' +
           '  URL: http://a.different.domain.example.com');
     }));
 
-    it('should clear out JS src properties', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<iframe ng-prop-src="testUrl"></iframe>')($rootScope);
+    it('should clear out JS src properties', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<iframe ng-prop-src="testUrl"></iframe>')($rootScope);
       $rootScope.testUrl = 'javascript:alert(1);';
-      expect(function() { $rootScope.$apply(); }).toThrowMinErr(
+      expect(() => { $rootScope.$apply(); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.' +
           '  URL: javascript:alert(1);');
     }));
 
-    it('should clear out non-resource_url src properties', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<iframe ng-prop-src="testUrl"></iframe>')($rootScope);
+    it('should clear out non-resource_url src properties', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<iframe ng-prop-src="testUrl"></iframe>')($rootScope);
       $rootScope.testUrl = $sce.trustAsUrl('javascript:doTrustedStuff()');
-      expect(function() { $rootScope.$apply(); }).toThrowMinErr(
+      expect(() => { $rootScope.$apply(); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.' +
           '  URL: javascript:doTrustedStuff()');
     }));
 
-    it('should pass through $sce.trustAs() values in src properties', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<iframe ng-prop-src="testUrl"></iframe>')($rootScope);
+    it('should pass through $sce.trustAs() values in src properties', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<iframe ng-prop-src="testUrl"></iframe>')($rootScope);
       $rootScope.testUrl = $sce.trustAsResourceUrl('javascript:doTrustedStuff()');
       $rootScope.$apply();
 
@@ -418,56 +414,56 @@ describe('ngProp*', function() {
     }));
   });
 
-  describe('base[href]', function() {
-    it('should be a RESOURCE_URL context', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<base ng-prop-href="testUrl"/>')($rootScope);
+  describe('base[href]', () => {
+    it('should be a RESOURCE_URL context', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<base ng-prop-href="testUrl"/>')($rootScope);
 
       $rootScope.testUrl = $sce.trustAsResourceUrl('https://example.com/');
       $rootScope.$apply();
       expect(element.prop('href')).toContain('https://example.com/');
 
       $rootScope.testUrl = 'https://not.example.com/';
-      expect(function() { $rootScope.$apply(); }).toThrowMinErr(
+      expect(() => { $rootScope.$apply(); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.' +
           '  URL: https://not.example.com/');
     }));
   });
 
-  describe('form[action]', function() {
-    it('should pass through action property for the same domain', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<form ng-prop-action="testUrl"></form>')($rootScope);
+  describe('form[action]', () => {
+    it('should pass through action property for the same domain', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<form ng-prop-action="testUrl"></form>')($rootScope);
       $rootScope.testUrl = 'different_page';
       $rootScope.$apply();
       expect(element.prop('action')).toMatch(/\/different_page$/);
     }));
 
-    it('should clear out action property for a different domain', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<form ng-prop-action="testUrl"></form>')($rootScope);
+    it('should clear out action property for a different domain', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<form ng-prop-action="testUrl"></form>')($rootScope);
       $rootScope.testUrl = 'http://a.different.domain.example.com';
-      expect(function() { $rootScope.$apply(); }).toThrowMinErr(
+      expect(() => { $rootScope.$apply(); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.' +
           '  URL: http://a.different.domain.example.com');
     }));
 
-    it('should clear out JS action property', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<form ng-prop-action="testUrl"></form>')($rootScope);
+    it('should clear out JS action property', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<form ng-prop-action="testUrl"></form>')($rootScope);
       $rootScope.testUrl = 'javascript:alert(1);';
-      expect(function() { $rootScope.$apply(); }).toThrowMinErr(
+      expect(() => { $rootScope.$apply(); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.' +
           '  URL: javascript:alert(1);');
     }));
 
-    it('should clear out non-resource_url action property', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<form ng-prop-action="testUrl"></form>')($rootScope);
+    it('should clear out non-resource_url action property', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<form ng-prop-action="testUrl"></form>')($rootScope);
       $rootScope.testUrl = $sce.trustAsUrl('javascript:doTrustedStuff()');
-      expect(function() { $rootScope.$apply(); }).toThrowMinErr(
+      expect(() => { $rootScope.$apply(); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.' +
           '  URL: javascript:doTrustedStuff()');
     }));
 
 
-    it('should pass through $sce.trustAsResourceUrl() values in action property', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<form ng-prop-action="testUrl"></form>')($rootScope);
+    it('should pass through $sce.trustAsResourceUrl() values in action property', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<form ng-prop-action="testUrl"></form>')($rootScope);
       $rootScope.testUrl = $sce.trustAsResourceUrl('javascript:doTrustedStuff()');
       $rootScope.$apply();
 
@@ -475,17 +471,17 @@ describe('ngProp*', function() {
     }));
   });
 
-  describe('link[href]', function() {
-    it('should reject invalid RESOURCE_URLs', inject(function($compile, $rootScope) {
-      let element = $compile('<link ng-prop-href="testUrl" rel="stylesheet" />')($rootScope);
+  describe('link[href]', () => {
+    it('should reject invalid RESOURCE_URLs', inject(($compile, $rootScope) => {
+      const element = $compile('<link ng-prop-href="testUrl" rel="stylesheet" />')($rootScope);
       $rootScope.testUrl = 'https://evil.example.org/css.css';
-      expect(function() { $rootScope.$apply(); }).toThrowMinErr(
+      expect(() => { $rootScope.$apply(); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.' +
           '  URL: https://evil.example.org/css.css');
     }));
 
-    it('should accept valid RESOURCE_URLs', inject(function($compile, $rootScope, $sce) {
-      let element = $compile('<link ng-prop-href="testUrl" rel="stylesheet" />')($rootScope);
+    it('should accept valid RESOURCE_URLs', inject(($compile, $rootScope, $sce) => {
+      const element = $compile('<link ng-prop-href="testUrl" rel="stylesheet" />')($rootScope);
 
       $rootScope.testUrl = './css1.css';
       $rootScope.$apply();
@@ -497,21 +493,21 @@ describe('ngProp*', function() {
     }));
   });
 
-  describe('*[innerHTML]', function() {
-    describe('SCE disabled', function() {
-      beforeEach(function() {
-        module(function($sceProvider) { $sceProvider.enabled(false); });
+  describe('*[innerHTML]', () => {
+    describe('SCE disabled', () => {
+      beforeEach(() => {
+        module(($sceProvider) => { $sceProvider.enabled(false); });
       });
 
-      it('should set html', inject(function($rootScope, $compile) {
-        let element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
+      it('should set html', inject(($rootScope, $compile) => {
+        const element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
         $rootScope.html = '<div onclick="">hello</div>';
         $rootScope.$digest();
         expect(lowercase(element.html())).toEqual('<div onclick="">hello</div>');
       }));
 
-      it('should update html', inject(function($rootScope, $compile, $sce) {
-        let element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
+      it('should update html', inject(($rootScope, $compile, $sce) => {
+        const element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
         $rootScope.html = 'hello';
         $rootScope.$digest();
         expect(lowercase(element.html())).toEqual('hello');
@@ -520,8 +516,8 @@ describe('ngProp*', function() {
         expect(lowercase(element.html())).toEqual('goodbye');
       }));
 
-      it('should one-time bind if the expression starts with two colons', inject(function($rootScope, $compile) {
-        let element = $compile('<div ng-prop-inner_h_t_m_l="::html"></div>')($rootScope);
+      it('should one-time bind if the expression starts with two colons', inject(($rootScope, $compile) => {
+        const element = $compile('<div ng-prop-inner_h_t_m_l="::html"></div>')($rootScope);
         $rootScope.html = '<div onclick="">hello</div>';
         expect($rootScope.$$watchers.length).toEqual(1);
         $rootScope.$digest();
@@ -534,28 +530,28 @@ describe('ngProp*', function() {
     });
 
 
-    describe('SCE enabled', function() {
-      it('should NOT set html for untrusted values', inject(function($rootScope, $compile) {
-        let element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
+    describe('SCE enabled', () => {
+      it('should NOT set html for untrusted values', inject(($rootScope, $compile) => {
+        const element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
         $rootScope.html = '<div onclick="">hello</div>';
-        expect(function() { $rootScope.$digest(); }).toThrowMinErr('$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
+        expect(() => { $rootScope.$digest(); }).toThrowMinErr('$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
       }));
 
-      it('should NOT set html for wrongly typed values', inject(function($rootScope, $compile, $sce) {
-        let element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
+      it('should NOT set html for wrongly typed values', inject(($rootScope, $compile, $sce) => {
+        const element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
         $rootScope.html = $sce.trustAsCss('<div onclick="">hello</div>');
-        expect(function() { $rootScope.$digest(); }).toThrowMinErr('$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
+        expect(() => { $rootScope.$digest(); }).toThrowMinErr('$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
       }));
 
-      it('should set html for trusted values', inject(function($rootScope, $compile, $sce) {
-        let element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
+      it('should set html for trusted values', inject(($rootScope, $compile, $sce) => {
+        const element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
         $rootScope.html = $sce.trustAsHtml('<div onclick="">hello</div>');
         $rootScope.$digest();
         expect(lowercase(element.html())).toEqual('<div onclick="">hello</div>');
       }));
 
-      it('should update html', inject(function($rootScope, $compile, $sce) {
-        let element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
+      it('should update html', inject(($rootScope, $compile, $sce) => {
+        const element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
         $rootScope.html = $sce.trustAsHtml('hello');
         $rootScope.$digest();
         expect(lowercase(element.html())).toEqual('hello');
@@ -565,11 +561,11 @@ describe('ngProp*', function() {
       }));
 
       it('should not cause infinite recursion for trustAsHtml object watches',
-          inject(function($rootScope, $compile, $sce) {
+          inject(($rootScope, $compile, $sce) => {
         // Ref: https://github.com/angular/angular.js/issues/3932
         // If the binding is a function that creates a new value on every call via trustAs, we'll
         // trigger an infinite digest if we don't take care of it.
-        let element = $compile('<div ng-prop-inner_h_t_m_l="getHtml()"></div>')($rootScope);
+        const element = $compile('<div ng-prop-inner_h_t_m_l="getHtml()"></div>')($rootScope);
         $rootScope.getHtml = function() {
           return $sce.trustAsHtml('<div onclick="">hello</div>');
         };
@@ -577,11 +573,11 @@ describe('ngProp*', function() {
         expect(lowercase(element.html())).toEqual('<div onclick="">hello</div>');
       }));
 
-      it('should handle custom $sce objects', function() {
+      it('should handle custom $sce objects', () => {
         function MySafeHtml(val) { this.val = val; }
 
-        module(function($provide) {
-          $provide.decorator('$sce', function($delegate) {
+        module(($provide) => {
+          $provide.decorator('$sce', ($delegate) => {
             $delegate.trustAsHtml = function(html) { return new MySafeHtml(html); };
             $delegate.getTrusted = function(type, mySafeHtml) { return mySafeHtml && mySafeHtml.val; };
             $delegate.valueOf = function(v) { return v instanceof MySafeHtml ? v.val : v; };
@@ -589,11 +585,11 @@ describe('ngProp*', function() {
           });
         });
 
-        inject(function($rootScope, $compile, $sce) {
+        inject(($rootScope, $compile, $sce) => {
           // Ref: https://github.com/angular/angular.js/issues/14526
           // Previous code used toString for change detection, which fails for custom objects
           // that don't override toString.
-          let element = $compile('<div ng-prop-inner_h_t_m_l="getHtml()"></div>')($rootScope);
+          const element = $compile('<div ng-prop-inner_h_t_m_l="getHtml()"></div>')($rootScope);
           let html = 'hello';
           $rootScope.getHtml = function() { return $sce.trustAsHtml(html); };
           $rootScope.$digest();
@@ -604,11 +600,11 @@ describe('ngProp*', function() {
         });
       });
 
-      describe('when $sanitize is available', function() {
-        beforeEach(function() { module('ngSanitize'); });
+      describe('when $sanitize is available', () => {
+        beforeEach(() => { module('ngSanitize'); });
 
-        it('should sanitize untrusted html', inject(function($rootScope, $compile) {
-          let element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
+        it('should sanitize untrusted html', inject(($rootScope, $compile) => {
+          const element = $compile('<div ng-prop-inner_h_t_m_l="html"></div>')($rootScope);
           $rootScope.html = '<div onclick="">hello</div>';
           $rootScope.$digest();
           expect(lowercase(element.html())).toEqual('<div>hello</div>');
@@ -618,7 +614,7 @@ describe('ngProp*', function() {
 
   });
 
-  describe('*[style]', function() {
+  describe('*[style]', () => {
     // Support: IE9
     // Some browsers throw when assignging to HTMLElement.style
     function canAssignStyleProp() {
@@ -630,21 +626,21 @@ describe('ngProp*', function() {
       }
     }
 
-    it('should NOT set style for untrusted values', inject(function($rootScope, $compile) {
-      let element = $compile('<div ng-prop-style="style"></div>')($rootScope);
+    it('should NOT set style for untrusted values', inject(($rootScope, $compile) => {
+      const element = $compile('<div ng-prop-style="style"></div>')($rootScope);
       $rootScope.style = 'margin-left: 10px';
-      expect(function() { $rootScope.$digest(); }).toThrowMinErr('$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
+      expect(() => { $rootScope.$digest(); }).toThrowMinErr('$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
     }));
 
-    it('should NOT set style for wrongly typed values', inject(function($rootScope, $compile, $sce) {
-      let element = $compile('<div ng-prop-style="style"></div>')($rootScope);
+    it('should NOT set style for wrongly typed values', inject(($rootScope, $compile, $sce) => {
+      const element = $compile('<div ng-prop-style="style"></div>')($rootScope);
       $rootScope.style = $sce.trustAsHtml('margin-left: 10px');
-      expect(function() { $rootScope.$digest(); }).toThrowMinErr('$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
+      expect(() => { $rootScope.$digest(); }).toThrowMinErr('$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
     }));
 
     if (canAssignStyleProp()) {
-      it('should set style for trusted values', inject(function($rootScope, $compile, $sce) {
-        let element = $compile('<div ng-prop-style="style"></div>')($rootScope);
+      it('should set style for trusted values', inject(($rootScope, $compile, $sce) => {
+        const element = $compile('<div ng-prop-style="style"></div>')($rootScope);
         $rootScope.style = $sce.trustAsCss('margin-left: 10px');
         $rootScope.$digest();
 

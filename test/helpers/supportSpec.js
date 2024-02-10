@@ -1,8 +1,8 @@
 
 
-describe('support test results', function() {
-  let expected, version, testName;
-  let userAgent = window.navigator.userAgent;
+describe('support test results', () => {
+  let expected; let version; let testName;
+  let {userAgent} = window.navigator;
 
   // Support: iOS 8 only
   if (/iPhone OS 10_1\d(?:_\d+)? /.test(userAgent)) {
@@ -84,13 +84,13 @@ describe('support test results', function() {
     };
   }
 
-  it('should have expected values specified', function() {
+  it('should have expected values specified', () => {
       expect(expected).not.toBe(null);
       expect(typeof expected).toBe('object');
   });
 
   for (testName in expected) {
-    it('should report support.' + testName + ' to be ' + expected[testName], function() {
+    it(`should report support.${  testName  } to be ${  expected[testName]}`, () => {
         expect(support[testName]).toBe(expected[testName]);
     });
   }

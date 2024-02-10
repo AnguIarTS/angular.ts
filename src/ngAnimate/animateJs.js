@@ -2,7 +2,7 @@
 // TODO(matsko): add documentation
 //  by the time...
 
-let $$AnimateJsProvider = [
+const $$AnimateJsProvider = [
   "$animateProvider",
   /** @this */ function ($animateProvider) {
     this.$get = [
@@ -10,7 +10,7 @@ let $$AnimateJsProvider = [
       "$$AnimateRunner",
       "$$jqLite",
       function ($injector, $$AnimateRunner, $$jqLite) {
-        let applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
+        const applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
         // $animateJs(element, 'enter');
         return function (element, event, classes, options) {
           let animationClosed = false;
@@ -27,30 +27,31 @@ let $$AnimateJsProvider = [
           if (!classes) {
             classes = element.attr("class") || "";
             if (options.addClass) {
-              classes += " " + options.addClass;
+              classes += ` ${options.addClass}`;
             }
             if (options.removeClass) {
-              classes += " " + options.removeClass;
+              classes += ` ${options.removeClass}`;
             }
           }
 
-          let classesToAdd = options.addClass;
-          let classesToRemove = options.removeClass;
+          const classesToAdd = options.addClass;
+          const classesToRemove = options.removeClass;
 
           // the lookupAnimations function returns a series of animation objects that are
           // matched up with one or more of the CSS classes. These animation objects are
           // defined via the module.animation factory function. If nothing is detected then
           // we don't return anything which then makes $animation query the next driver.
-          let animations = lookupAnimations(classes);
-          let before, after;
+          const animations = lookupAnimations(classes);
+          let before;
+          let after;
           if (animations.length) {
-            let afterFn, beforeFn;
+            let afterFn;
+            let beforeFn;
             if (event === "leave") {
               beforeFn = "leave";
               afterFn = "afterLeave"; // TODO(matsko): get rid of this
             } else {
-              beforeFn =
-                "before" + event.charAt(0).toUpperCase() + event.substr(1);
+              beforeFn = `before${event.charAt(0).toUpperCase()}${event.substr(1)}`;
               afterFn = event;
             }
 
@@ -90,7 +91,7 @@ let $$AnimateJsProvider = [
 
           return {
             $$willAnimate: true,
-            end: function () {
+            end() {
               if (runner) {
                 runner.end();
               } else {
@@ -100,23 +101,23 @@ let $$AnimateJsProvider = [
               }
               return runner;
             },
-            start: function () {
+            start() {
               if (runner) {
                 return runner;
               }
 
               runner = new $$AnimateRunner();
               let closeActiveAnimations;
-              let chain = [];
+              const chain = [];
 
               if (before) {
-                chain.push(function (fn) {
+                chain.push((fn) => {
                   closeActiveAnimations = before(fn);
                 });
               }
 
               if (chain.length) {
-                chain.push(function (fn) {
+                chain.push((fn) => {
                   applyOptions();
                   fn(true);
                 });
@@ -125,16 +126,16 @@ let $$AnimateJsProvider = [
               }
 
               if (after) {
-                chain.push(function (fn) {
+                chain.push((fn) => {
                   closeActiveAnimations = after(fn);
                 });
               }
 
               runner.setHost({
-                end: function () {
+                end() {
                   endAnimations();
                 },
-                cancel: function () {
+                cancel() {
                   endAnimations(true);
                 },
               });
@@ -206,18 +207,18 @@ let $$AnimateJsProvider = [
             animations,
             fnName,
           ) {
-            let operations = [];
-            forEach(animations, function (ani) {
-              let animation = ani[fnName];
+            const operations = [];
+            forEach(animations, (ani) => {
+              const animation = ani[fnName];
               if (!animation) return;
 
               // note that all of these animations will run in parallel
-              operations.push(function () {
+              operations.push(() => {
                 let runner;
                 let endProgressCb;
 
                 let resolved = false;
-                let onAnimationComplete = function (rejected) {
+                const onAnimationComplete = function (rejected) {
                   if (!resolved) {
                     resolved = true;
                     (endProgressCb || noop)(rejected);
@@ -226,10 +227,10 @@ let $$AnimateJsProvider = [
                 };
 
                 runner = new $$AnimateRunner({
-                  end: function () {
+                  end() {
                     onAnimationComplete();
                   },
-                  cancel: function () {
+                  cancel() {
                     onAnimationComplete(true);
                   },
                 });
@@ -239,8 +240,8 @@ let $$AnimateJsProvider = [
                   element,
                   event,
                   options,
-                  function (result) {
-                    let cancelled = result === false;
+                  (result) => {
+                    const cancelled = result === false;
                     onAnimationComplete(cancelled);
                   },
                 );
@@ -267,7 +268,8 @@ let $$AnimateJsProvider = [
               fnName,
             );
             if (operations.length === 0) {
-              let a, b;
+              let a;
+              let b;
               if (fnName === "beforeSetClass") {
                 a = groupEventedAnimations(
                   element,
@@ -312,9 +314,9 @@ let $$AnimateJsProvider = [
 
             // TODO(matsko): add documentation
             return function startAnimation(callback) {
-              let runners = [];
+              const runners = [];
               if (operations.length) {
-                forEach(operations, function (animateFn) {
+                forEach(operations, (animateFn) => {
                   runners.push(animateFn());
                 });
               }
@@ -326,7 +328,7 @@ let $$AnimateJsProvider = [
               }
 
               return function endFn(reject) {
-                forEach(runners, function (runner) {
+                forEach(runners, (runner) => {
                   if (reject) {
                     runner.cancel();
                   } else {
@@ -340,11 +342,12 @@ let $$AnimateJsProvider = [
 
         function lookupAnimations(classes) {
           classes = isArray(classes) ? classes : classes.split(" ");
-          let matches = [],
-            flagMap = {};
+          const matches = [];
+          const flagMap = {};
           for (let i = 0; i < classes.length; i++) {
-            let klass = classes[i],
-              animationFactory = $animateProvider.$$registeredAnimations[klass];
+            const klass = classes[i];
+            const animationFactory =
+              $animateProvider.$$registeredAnimations[klass];
             if (animationFactory && !flagMap[klass]) {
               matches.push($injector.get(animationFactory));
               flagMap[klass] = true;

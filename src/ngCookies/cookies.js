@@ -55,8 +55,8 @@ angular
        *     $cookiesProvider.defaults.secure = true;
        *   }]);
        * ```
-       **/
-      let defaults = (this.defaults = {});
+       * */
+      const defaults = (this.defaults = {});
 
       function calcOptions(options) {
         return options ? angular.extend({}, defaults, options) : defaults;
@@ -104,7 +104,7 @@ angular
              * @param {string} key Id to use for lookup.
              * @returns {string} Raw cookie value.
              */
-            get: function (key) {
+            get(key) {
               return $$cookieReader()[key];
             },
 
@@ -118,8 +118,8 @@ angular
              * @param {string} key Id to use for lookup.
              * @returns {Object} Deserialized cookie value.
              */
-            getObject: function (key) {
-              let value = this.get(key);
+            getObject(key) {
+              const value = this.get(key);
               return value ? angular.fromJson(value) : value;
             },
 
@@ -132,7 +132,7 @@ angular
              *
              * @returns {Object} All cookies
              */
-            getAll: function () {
+            getAll() {
               return $$cookieReader();
             },
 
@@ -148,7 +148,7 @@ angular
              * @param {Object=} options Options object.
              *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
              */
-            put: function (key, value, options) {
+            put(key, value, options) {
               $$cookieWriter(key, value, calcOptions(options));
             },
 
@@ -164,7 +164,7 @@ angular
              * @param {Object=} options Options object.
              *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
              */
-            putObject: function (key, value, options) {
+            putObject(key, value, options) {
               this.put(key, angular.toJson(value), options);
             },
 
@@ -179,7 +179,7 @@ angular
              * @param {Object=} options Options object.
              *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
              */
-            remove: function (key, options) {
+            remove(key, options) {
               $$cookieWriter(key, undefined, calcOptions(options));
             },
           };

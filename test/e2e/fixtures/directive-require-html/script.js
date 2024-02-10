@@ -10,19 +10,15 @@ angular.
       }];
   }).
 
-  directive('requireDirective', function() {
-    return {
+  directive('requireDirective', () => ({
       require: '^^requireTargetDirective',
-      link: function(scope, element, attrs, ctrl) {
+      link(scope, element, attrs, ctrl) {
         window.document.querySelector('#container').textContent = ctrl.content;
       }
-    };
-  }).
-  directive('requireTargetDirective', function() {
-    return {
-      controller: function() {
+    })).
+  directive('requireTargetDirective', () => ({
+      controller() {
         this.content = 'requiredContent';
       }
-    };
-  });
+    }));
 

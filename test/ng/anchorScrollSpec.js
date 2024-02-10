@@ -1,19 +1,19 @@
 
 
-describe('$anchorScroll', function() {
+describe('$anchorScroll', () => {
 
   let elmSpy;
 
   function createMockWindow() {
     return function() {
-      module(function($provide) {
+      module(($provide) => {
         elmSpy = {};
 
-        let mockedWin = {
+        const mockedWin = {
           scrollTo: jasmine.createSpy('$window.scrollTo'),
           scrollBy: jasmine.createSpy('$window.scrollBy'),
           document: window.document,
-          getComputedStyle: function(elem) {
+          getComputedStyle(elem) {
             return window.getComputedStyle(elem);
           }
         };
@@ -24,18 +24,18 @@ describe('$anchorScroll', function() {
   }
 
   function addElements() {
-    let elements = sliceArgs(arguments);
+    const elements = sliceArgs(arguments);
 
     return function($window) {
-      forEach(elements, function(identifier) {
-        let match = identifier.match(/(?:(\w*) )?(\w*)=(\w*)/),
-            nodeName = match[1] || 'a',
-            tmpl = '<' + nodeName + ' ' + match[2] + '="' + match[3] + '">' +
-                      match[3] +   // add some content or else Firefox and IE place the element
+      forEach(elements, (identifier) => {
+        const match = identifier.match(/(?:(\w*) )?(\w*)=(\w*)/);
+            const nodeName = match[1] || 'a';
+            const tmpl = `<${  nodeName  } ${  match[2]  }="${  match[3]  }">${ 
+                      match[3]    // add some content or else Firefox and IE place the element
                                    // in weird ways that break yOffset-testing.
-                   '</' + nodeName + '>',
-            jqElm = jqLite(tmpl),
-            elm = jqElm[0];
+                   }</${  nodeName  }>`;
+            const jqElm = jqLite(tmpl);
+            const elm = jqElm[0];
             // Inline elements cause Firefox to report an unexpected value for
             // `getBoundingClientRect().top` on some platforms (depending on the default font and
             // line-height). Using inline-block elements prevents this.
@@ -63,7 +63,7 @@ describe('$anchorScroll', function() {
 
   function changeHashTo(hash) {
     return function($anchorScroll, $location, $rootScope) {
-      $rootScope.$apply(function() {
+      $rootScope.$apply(() => {
         $location.hash(hash);
       });
     };
@@ -78,7 +78,7 @@ describe('$anchorScroll', function() {
     if (isString(identifierCountMap)) {
       map[identifierCountMap] = 1;
     } else if (isArray(identifierCountMap)) {
-      forEach(identifierCountMap, function(identifier) {
+      forEach(identifierCountMap, (identifier) => {
         map[identifier] = 1;
       });
     } else {
@@ -86,7 +86,7 @@ describe('$anchorScroll', function() {
     }
 
     return function($window) {
-      forEach(elmSpy, function(spy, id) {
+      forEach(elmSpy, (spy, id) => {
         expect(spy).toHaveBeenCalledTimes(map[id] || 0);
       });
       expect($window.scrollTo).not.toHaveBeenCalled();
@@ -94,7 +94,7 @@ describe('$anchorScroll', function() {
   }
 
   function expectScrollingToTop($window) {
-    forEach(elmSpy, function(spy, id) {
+    forEach(elmSpy, (spy, id) => {
       expect(spy).not.toHaveBeenCalled();
     });
 
@@ -117,29 +117,29 @@ describe('$anchorScroll', function() {
   }
 
   function simulateDocumentLoaded() {
-    return spyOnJQLiteDocumentLoaded(function(callback) { callback(); });
+    return spyOnJQLiteDocumentLoaded((callback) => { callback(); });
   }
 
   function fireWindowLoadEvent() {
     return function($browser) {
-      let callback = window.jqLiteDocumentLoaded.calls.mostRecent().args[0];
+      const callback = window.jqLiteDocumentLoaded.calls.mostRecent().args[0];
       callback();
       $browser.defer.flush();
     };
   }
 
-  afterEach(inject(function($browser, $document) {
+  afterEach(inject(($browser, $document) => {
     expect($browser.deferredFns.length).toBe(0);
     dealoc($document);
   }));
 
 
-  describe('when explicitly called', function() {
+  describe('when explicitly called', () => {
 
     beforeEach(createMockWindow());
 
 
-    describe('and implicitly using `$location.hash()`', function() {
+    describe('and implicitly using `$location.hash()`', () => {
 
       it('should scroll to top of the window if empty hash', inject(
         changeHashAndScroll(''),
@@ -188,7 +188,7 @@ describe('$anchorScroll', function() {
     });
 
 
-    describe('and specifying a hash', function() {
+    describe('and specifying a hash', () => {
 
       it('should ignore the `hash` argument if not a string', inject(
         spyOnJQLiteDocumentLoaded(),
@@ -268,7 +268,7 @@ describe('$anchorScroll', function() {
   });
 
 
-  describe('watcher', function() {
+  describe('watcher', () => {
 
     function initLocation(config) {
       return function($provide, $locationProvider) {
@@ -286,12 +286,12 @@ describe('$anchorScroll', function() {
 
     beforeEach(createMockWindow());
 
-    describe('when document has completed loading', function() {
+    describe('when document has completed loading', () => {
 
       beforeEach(simulateDocumentLoaded());
       afterEach(unspyOnJQLiteDocumentLoaded());
 
-      it('should scroll to element when hash change in hashbang mode', function() {
+      it('should scroll to element when hash change in hashbang mode', () => {
         module(initLocation({html5Mode: false, historyApi: true}));
         inject(
           addElements('id=some'),
@@ -301,7 +301,7 @@ describe('$anchorScroll', function() {
       });
 
 
-      it('should scroll to element when hash change in html5 mode with no history api', function() {
+      it('should scroll to element when hash change in html5 mode with no history api', () => {
         module(initLocation({html5Mode: true, historyApi: false}));
         inject(
           addElements('id=some'),
@@ -317,7 +317,7 @@ describe('$anchorScroll', function() {
       );
 
 
-      it('should not scroll when element does not exist', function() {
+      it('should not scroll when element does not exist', () => {
         module(initLocation({html5Mode: false, historyApi: false}));
         inject(
           addElements('id=some'),
@@ -327,7 +327,7 @@ describe('$anchorScroll', function() {
       });
 
 
-      it('should scroll when html5 mode with history api', function() {
+      it('should scroll when html5 mode with history api', () => {
         module(initLocation({html5Mode: true, historyApi: true}));
         inject(
           addElements('id=some'),
@@ -337,7 +337,7 @@ describe('$anchorScroll', function() {
       });
 
 
-      it('should not scroll when auto-scrolling is disabled', function() {
+      it('should not scroll when auto-scrolling is disabled', () => {
         module(
             disableAutoScrolling(),
             initLocation({html5Mode: false, historyApi: false})
@@ -350,7 +350,7 @@ describe('$anchorScroll', function() {
       });
 
 
-      it('should scroll when called explicitly (even if auto-scrolling is disabled)', function() {
+      it('should scroll when called explicitly (even if auto-scrolling is disabled)', () => {
         module(
             disableAutoScrolling(),
             initLocation({html5Mode: false, historyApi: false})
@@ -365,7 +365,7 @@ describe('$anchorScroll', function() {
       });
     });
 
-    describe('when document has not completed loading', function() {
+    describe('when document has not completed loading', () => {
 
       beforeEach(spyOnJQLiteDocumentLoaded());
       afterEach(unspyOnJQLiteDocumentLoaded());
@@ -383,20 +383,20 @@ describe('$anchorScroll', function() {
   });
 
 
-  describe('yOffset', function() {
+  describe('yOffset', () => {
 
     beforeEach(simulateDocumentLoaded());
     afterEach(unspyOnJQLiteDocumentLoaded);
 
     function expectScrollingWithOffset(identifierCountMap, offsetList) {
-      let list = isArray(offsetList) ? offsetList : [offsetList];
+      const list = isArray(offsetList) ? offsetList : [offsetList];
 
       return function($rootScope, $window) {
         inject(expectScrollingTo(identifierCountMap));
         expect($window.scrollBy).toHaveBeenCalledTimes(list.length);
-        forEach(list, function(offset, idx) {
+        forEach(list, (offset, idx) => {
           // Due to sub-pixel rendering, there is a +/-1 error margin in the actual offset
-          let args = $window.scrollBy.calls.argsFor(idx);
+          const args = $window.scrollBy.calls.argsFor(idx);
           expect(args[0]).toBe(0);
           expect(Math.abs(offset + args[1])).toBeLessThan(1);
         });
@@ -409,11 +409,11 @@ describe('$anchorScroll', function() {
 
     function mockBoundingClientRect(childValuesMap) {
       return function($window) {
-        let children = $window.document.body.children;
-        forEach(childValuesMap, function(valuesList, childIdx) {
-          let elem = children[childIdx];
+        const {children} = $window.document.body;
+        forEach(childValuesMap, (valuesList, childIdx) => {
+          const elem = children[childIdx];
           elem.getBoundingClientRect = function() {
-            let val = valuesList.shift();
+            const val = valuesList.shift();
             return {
               top: val,
               bottom: val
@@ -432,11 +432,11 @@ describe('$anchorScroll', function() {
     beforeEach(createMockWindow());
 
 
-    describe('and body with no border/margin/padding', function() {
+    describe('and body with no border/margin/padding', () => {
 
-      describe('when set as a fixed number', function() {
+      describe('when set as a fixed number', () => {
 
-        let yOffsetNumber = 50;
+        const yOffsetNumber = 50;
 
         beforeEach(inject(setYOffset(yOffsetNumber)));
 
@@ -458,9 +458,9 @@ describe('$anchorScroll', function() {
           expectScrollingWithOffset({'id=some': 2}, [yOffsetNumber, yOffsetNumber - 10])));
 
 
-        it('should adjust the vertical offset for elements near the end of the page', function() {
+        it('should adjust the vertical offset for elements near the end of the page', () => {
 
-          let targetAdjustedOffset = 20;
+          const targetAdjustedOffset = 20;
 
           inject(
             addElements('id=some1', 'id=some2'),
@@ -471,12 +471,12 @@ describe('$anchorScroll', function() {
       });
 
 
-      describe('when set as a function', function() {
+      describe('when set as a function', () => {
 
-        it('should scroll with vertical offset', function() {
+        it('should scroll with vertical offset', () => {
 
           let val = 0;
-          let increment = 10;
+          const increment = 10;
 
           function yOffsetFunction() {
             val += increment;
@@ -507,12 +507,12 @@ describe('$anchorScroll', function() {
       });
 
 
-      describe('when set as a jqLite element', function() {
+      describe('when set as a jqLite element', () => {
 
-        let elemBottom = 50;
+        const elemBottom = 50;
 
         function createAndSetYOffsetElement(position) {
-          let jqElem = jqLite('<div></div>');
+          const jqElem = jqLite('<div></div>');
           jqElem[0].style.position = position;
 
           return function($anchorScroll, $window) {
@@ -537,13 +537,13 @@ describe('$anchorScroll', function() {
     });
 
 
-    describe('and body with border/margin/padding', function() {
+    describe('and body with border/margin/padding', () => {
 
-      let borderWidth = 4;
-      let marginWidth = 8;
-      let paddingWidth = 16;
-      let yOffsetNumber = 50;
-      let necessaryYOffset = yOffsetNumber - borderWidth - marginWidth - paddingWidth;
+      const borderWidth = 4;
+      const marginWidth = 8;
+      const paddingWidth = 16;
+      const yOffsetNumber = 50;
+      const necessaryYOffset = yOffsetNumber - borderWidth - marginWidth - paddingWidth;
 
       beforeEach(inject(setYOffset(yOffsetNumber)));
 
@@ -567,9 +567,9 @@ describe('$anchorScroll', function() {
         expectScrollingWithOffset({'id=some': 2}, [necessaryYOffset, necessaryYOffset - 10])));
 
 
-      it('should adjust the vertical offset for elements near the end of the page', function() {
+      it('should adjust the vertical offset for elements near the end of the page', () => {
 
-        let targetAdjustedOffset = 20;
+        const targetAdjustedOffset = 20;
 
         inject(
           addElements('id=some1', 'id=some2'),
@@ -580,13 +580,13 @@ describe('$anchorScroll', function() {
     });
 
 
-    describe('and body with border/margin/padding and boxSizing', function() {
+    describe('and body with border/margin/padding and boxSizing', () => {
 
-      let borderWidth = 4;
-      let marginWidth = 8;
-      let paddingWidth = 16;
-      let yOffsetNumber = 50;
-      let necessaryYOffset = yOffsetNumber - borderWidth - marginWidth - paddingWidth;
+      const borderWidth = 4;
+      const marginWidth = 8;
+      const paddingWidth = 16;
+      const yOffsetNumber = 50;
+      const necessaryYOffset = yOffsetNumber - borderWidth - marginWidth - paddingWidth;
 
       beforeEach(inject(setYOffset(yOffsetNumber)));
 
@@ -610,9 +610,9 @@ describe('$anchorScroll', function() {
         expectScrollingWithOffset({'id=some': 2}, [necessaryYOffset, necessaryYOffset - 10])));
 
 
-      it('should adjust the vertical offset for elements near the end of the page', function() {
+      it('should adjust the vertical offset for elements near the end of the page', () => {
 
-        let targetAdjustedOffset = 20;
+        const targetAdjustedOffset = 20;
 
         inject(
           addElements('id=some1', 'id=some2'),

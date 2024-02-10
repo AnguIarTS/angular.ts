@@ -8,7 +8,7 @@
  * @return {Object} a key/value map of the current cookies
  */
 export function $$CookieReader($document) {
-  let rawDocument = $document[0] || {};
+  const rawDocument = $document[0] || {};
   let lastCookies = {};
   let lastCookieString = "";
 
@@ -29,8 +29,12 @@ export function $$CookieReader($document) {
   }
 
   return function () {
-    let cookieArray, cookie, i, index, name;
-    let currentCookieString = safeGetCookie(rawDocument);
+    let cookieArray;
+    let cookie;
+    let i;
+    let index;
+    let name;
+    const currentCookieString = safeGetCookie(rawDocument);
 
     if (currentCookieString !== lastCookieString) {
       lastCookieString = currentCookieString;
@@ -41,7 +45,7 @@ export function $$CookieReader($document) {
         cookie = cookieArray[i];
         index = cookie.indexOf("=");
         if (index > 0) {
-          //ignore nameless cookies
+          // ignore nameless cookies
           name = safeDecodeURIComponent(cookie.substring(0, index));
           // the first value that is seen for a cookie is the most
           // specific one.  values for the same cookie name that
@@ -60,7 +64,6 @@ export function $$CookieReader($document) {
 
 $$CookieReader.$inject = ["$document"];
 
-/** @this */
 export function $$CookieReaderProvider() {
   this.$get = $$CookieReader;
 }

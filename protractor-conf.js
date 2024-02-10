@@ -1,6 +1,6 @@
 
 
-let config = require('./protractor-shared-conf').config;
+const {config} = require('./protractor-shared-conf');
 
 config.specs = [
   'test/e2e/tests/**/*.js',

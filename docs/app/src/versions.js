@@ -3,7 +3,7 @@
 
 angular.module('versions', ['currentVersionData', 'allVersionsData'])
 
-.directive('versionPicker', function() {
+.directive('versionPicker', () => {
   return {
     restrict: 'E',
     scope: true,
@@ -19,12 +19,10 @@ angular.module('versions', ['currentVersionData', 'allVersionsData'])
       }
 
       this.versions  = ALL_NG_VERSIONS;
-      this.selectedVersion = find(ALL_NG_VERSIONS, function(value) {
-        return value.version.version === versionStr;
-      });
+      this.selectedVersion = find(ALL_NG_VERSIONS, (value) => value.version.version === versionStr);
 
       this.jumpToDocsVersion = function(value) {
-        let currentPagePath = $location.path().replace(/\/$/, '');
+        const currentPagePath = $location.path().replace(/\/$/, '');
         $window.location = value.docsUrl + currentPagePath;
       };
     }],

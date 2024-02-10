@@ -1,33 +1,33 @@
 
 
-describe('ngStyle', function() {
+describe('ngStyle', () => {
   let element;
 
 
-  afterEach(function() {
+  afterEach(() => {
     dealoc(element);
   });
 
 
-  it('should set', inject(function($rootScope, $compile) {
+  it('should set', inject(($rootScope, $compile) => {
     element = $compile('<div ng-style="{height: \'40px\'}"></div>')($rootScope);
     $rootScope.$digest();
     expect(element.css('height')).toEqual('40px');
   }));
 
 
-  it('should silently ignore undefined style', inject(function($rootScope, $compile) {
+  it('should silently ignore undefined style', inject(($rootScope, $compile) => {
     element = $compile('<div ng-style="myStyle"></div>')($rootScope);
     $rootScope.$digest();
     expect(element.hasClass('ng-exception')).toBeFalsy();
   }));
 
 
-  it('should not deep watch objects', inject(function($rootScope, $compile) {
+  it('should not deep watch objects', inject(($rootScope, $compile) => {
     element = $compile('<div ng-style="{height: heightObj}"></div>')($rootScope);
     $rootScope.$digest();
     expect(parseInt(element.css('height') + 0, 10)).toEqual(0); // height could be '' or '0px'
-    $rootScope.heightObj = {toString: function() { return '40px'; }};
+    $rootScope.heightObj = {toString() { return '40px'; }};
     $rootScope.$digest();
     expect(element.css('height')).toBe('40px');
 
@@ -38,7 +38,7 @@ describe('ngStyle', function() {
   }));
 
 
-  it('should support binding for object literals', inject(function($rootScope, $compile) {
+  it('should support binding for object literals', inject(($rootScope, $compile) => {
     element = $compile('<div ng-style="{height: heightStr}"></div>')($rootScope);
     $rootScope.$digest();
     expect(parseInt(element.css('height') + 0, 10)).toEqual(0); // height could be '' or '0px'
@@ -50,7 +50,7 @@ describe('ngStyle', function() {
   }));
 
 
-  it('should support lazy one-time binding for object literals', inject(function($rootScope, $compile) {
+  it('should support lazy one-time binding for object literals', inject(($rootScope, $compile) => {
     element = $compile('<div ng-style="::{height: heightStr}"></div>')($rootScope);
     $rootScope.$digest();
     expect(parseInt(element.css('height') + 0, 10)).toEqual(0); // height could be '' or '0px'
@@ -59,10 +59,10 @@ describe('ngStyle', function() {
   }));
 
 
-  describe('preserving styles set before and after compilation', function() {
-    let scope, preCompStyle, preCompVal, postCompStyle, postCompVal, element;
+  describe('preserving styles set before and after compilation', () => {
+    let scope; let preCompStyle; let preCompVal; let postCompStyle; let postCompVal; let element;
 
-    beforeEach(inject(function($rootScope, $compile) {
+    beforeEach(inject(($rootScope, $compile) => {
       preCompStyle = 'width';
       preCompVal = '300px';
       postCompStyle = 'height';
@@ -77,12 +77,12 @@ describe('ngStyle', function() {
       element.css(postCompStyle, postCompVal);
     }));
 
-    afterEach(function() {
+    afterEach(() => {
       element.remove();
     });
 
 
-    it('should not mess up stuff after compilation', function() {
+    it('should not mess up stuff after compilation', () => {
       element.css('margin', '44px');
       expect(element.css(preCompStyle)).toBe(preCompVal);
       expect(element.css('margin-top')).toBe('44px');
@@ -90,7 +90,7 @@ describe('ngStyle', function() {
     });
 
 
-    it('should not mess up stuff after $apply with no model changes', function() {
+    it('should not mess up stuff after $apply with no model changes', () => {
       element.css('padding-top', '33px');
       scope.$apply();
       expect(element.css(preCompStyle)).toBe(preCompVal);
@@ -100,7 +100,7 @@ describe('ngStyle', function() {
     });
 
 
-    it('should not mess up stuff after $apply with non-colliding model changes', function() {
+    it('should not mess up stuff after $apply with non-colliding model changes', () => {
       scope.styleObj = {'padding-top': '99px'};
       scope.$apply();
       expect(element.css(preCompStyle)).toBe(preCompVal);
@@ -110,7 +110,7 @@ describe('ngStyle', function() {
     });
 
 
-    it('should overwrite original styles after a colliding model change', function() {
+    it('should overwrite original styles after a colliding model change', () => {
       scope.styleObj = {'height': '99px', 'width': '88px'};
       scope.$apply();
       expect(element.css(preCompStyle)).toBe('88px');
@@ -121,7 +121,7 @@ describe('ngStyle', function() {
       expect(element.css(postCompStyle)).not.toBe('99px');
     });
 
-    it('should clear style when the new model is null', function() {
+    it('should clear style when the new model is null', () => {
       scope.styleObj = {'height': '99px', 'width': '88px'};
       scope.$apply();
       expect(element.css(preCompStyle)).toBe('88px');
@@ -132,7 +132,7 @@ describe('ngStyle', function() {
       expect(element.css(postCompStyle)).not.toBe('99px');
     });
 
-    it('should clear style when the value is undefined or null', function() {
+    it('should clear style when the value is undefined or null', () => {
       scope.styleObj = {'height': '99px', 'width': '88px'};
       scope.$apply();
       expect(element.css(preCompStyle)).toBe('88px');
@@ -143,7 +143,7 @@ describe('ngStyle', function() {
       expect(element.css(postCompStyle)).not.toBe('99px');
     });
 
-    it('should clear style when the value is false', function() {
+    it('should clear style when the value is false', () => {
       scope.styleObj = {'height': '99px', 'width': '88px'};
       scope.$apply();
       expect(element.css(preCompStyle)).toBe('88px');
@@ -154,7 +154,7 @@ describe('ngStyle', function() {
       expect(element.css(postCompStyle)).not.toBe('99px');
     });
 
-    it('should set style when the value is zero', function() {
+    it('should set style when the value is zero', () => {
       scope.styleObj = {'height': '99px', 'width': '88px'};
       scope.$apply();
       expect(element.css(preCompStyle)).toBe('88px');

@@ -1,17 +1,17 @@
 
 
 
-describe('ngNonBindable', function() {
+describe('ngNonBindable', () => {
   let element;
 
 
-  afterEach(function() {
+  afterEach(() => {
     dealoc(element);
   });
 
 
   it('should prevent compilation of the owning element and its children',
-      inject(function($rootScope, $compile) {
+      inject(($rootScope, $compile) => {
     element = $compile('<div ng-non-bindable text="{{name}}"><span ng-bind="name"></span></div>')($rootScope);
     element = $compile('<div>' +
                        '  <span id="s1">{{a}}</span>' +
@@ -26,13 +26,13 @@ describe('ngNonBindable', function() {
     $rootScope.b = 'two';
     $rootScope.$digest();
     // Bindings not contained by ng-non-bindable should resolve.
-    let spans = element.find('span');
+    const spans = element.find('span');
     expect(spans.eq(0).text()).toEqual('one');
     expect(spans.eq(1).text()).toEqual('two');
     expect(spans.eq(3).text()).toEqual('one');
     expect(spans.eq(4).text()).toEqual('two');
     // Bindings contained by ng-non-bindable should be left alone.
-    let nonBindableDiv = element.find('div');
+    const nonBindableDiv = element.find('div');
     expect(nonBindableDiv.attr('foo')).toEqual('{{a}}');
     expect(trim(nonBindableDiv.text())).toEqual('{{b}}');
   }));

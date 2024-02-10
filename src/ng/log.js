@@ -53,8 +53,8 @@
  * Use the `$logProvider` to configure how the application logs messages
  */
 function $LogProvider() {
-  let debug = true,
-    self = this;
+  let debug = true;
+  const self = this;
 
   /**
    * @ngdoc method
@@ -67,9 +67,8 @@ function $LogProvider() {
     if (isDefined(flag)) {
       debug = flag;
       return this;
-    } else {
-      return debug;
     }
+    return debug;
   };
 
   this.$get = [
@@ -120,7 +119,7 @@ function $LogProvider() {
          * Write a debug message
          */
         debug: (function () {
-          let fn = consoleLog("debug");
+          const fn = consoleLog("debug");
 
           return function () {
             if (debug) {
@@ -135,22 +134,22 @@ function $LogProvider() {
           if (arg.stack && formatStackTrace) {
             arg =
               arg.message && arg.stack.indexOf(arg.message) === -1
-                ? "Error: " + arg.message + "\n" + arg.stack
+                ? `Error: ${arg.message}\n${arg.stack}`
                 : arg.stack;
           } else if (arg.sourceURL) {
-            arg = arg.message + "\n" + arg.sourceURL + ":" + arg.line;
+            arg = `${arg.message}\n${arg.sourceURL}:${arg.line}`;
           }
         }
         return arg;
       }
 
       function consoleLog(type) {
-        let console = $window.console || {},
-          logFn = console[type] || console.log || noop;
+        const console = $window.console || {};
+        const logFn = console[type] || console.log || noop;
 
         return function () {
-          let args = [];
-          forEach(arguments, function (arg) {
+          const args = [];
+          forEach(arguments, (arg) => {
             args.push(formatError(arg));
           });
           // Support: IE 9 only

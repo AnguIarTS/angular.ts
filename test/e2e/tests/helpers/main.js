@@ -1,7 +1,7 @@
 
 
-let helper = {
-  loadFixture: function(fixture) {
+const helper = {
+  loadFixture(fixture) {
     let i = 0;
     while (fixture[i] === '/') ++i;
     fixture = fixture.slice(i);
@@ -13,7 +13,7 @@ let helper = {
       fixture += '?jquery';
     }
 
-    browser.get('/e2e/fixtures/' + fixture);
+    browser.get(`/e2e/fixtures/${  fixture}`);
     return helper;
   }
 };

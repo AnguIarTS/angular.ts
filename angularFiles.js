@@ -1,6 +1,6 @@
 
 
-let angularFiles = {
+const angularFiles = {
   'angularSrc': [
     'src/minErr.js',
     'src/Angular.js',
@@ -271,38 +271,38 @@ let angularFiles = {
   ]
 };
 
-['2.1', '2.2'].forEach(function(jQueryVersion) {
-  angularFiles['karmaJquery' + jQueryVersion] = []
+['2.1', '2.2'].forEach((jQueryVersion) => {
+  angularFiles[`karmaJquery${  jQueryVersion}`] = []
     .concat(angularFiles.karmaJquery)
-    .map(function(path) {
+    .map((path) => {
       if (path.startsWith('node_modules/jquery')) {
-        return path.replace(/^node_modules\/jquery/, 'node_modules/jquery-' + jQueryVersion);
+        return path.replace(/^node_modules\/jquery/, `node_modules/jquery-${  jQueryVersion}`);
       }
       return path;
     });
 });
 
-angularFiles['angularSrcModuleNgAnimate'] = angularFiles['angularModules']['ngAnimate'];
-angularFiles['angularSrcModuleNgAria'] = angularFiles['angularModules']['ngAria'];
-angularFiles['angularSrcModuleNgCookies'] = angularFiles['angularModules']['ngCookies'];
-angularFiles['angularSrcModuleNgMessageFormat'] = angularFiles['angularModules']['ngMessageFormat'];
-angularFiles['angularSrcModuleNgMessages'] = angularFiles['angularModules']['ngMessages'];
-angularFiles['angularSrcModuleNgResource'] = angularFiles['angularModules']['ngResource'];
-angularFiles['angularSrcModuleNgRoute'] = angularFiles['angularModules']['ngRoute'];
-angularFiles['angularSrcModuleNgSanitize'] = angularFiles['angularModules']['ngSanitize'];
-angularFiles['angularSrcModuleNgTouch'] = angularFiles['angularModules']['ngTouch'];
+angularFiles.angularSrcModuleNgAnimate = angularFiles.angularModules.ngAnimate;
+angularFiles.angularSrcModuleNgAria = angularFiles.angularModules.ngAria;
+angularFiles.angularSrcModuleNgCookies = angularFiles.angularModules.ngCookies;
+angularFiles.angularSrcModuleNgMessageFormat = angularFiles.angularModules.ngMessageFormat;
+angularFiles.angularSrcModuleNgMessages = angularFiles.angularModules.ngMessages;
+angularFiles.angularSrcModuleNgResource = angularFiles.angularModules.ngResource;
+angularFiles.angularSrcModuleNgRoute = angularFiles.angularModules.ngRoute;
+angularFiles.angularSrcModuleNgSanitize = angularFiles.angularModules.ngSanitize;
+angularFiles.angularSrcModuleNgTouch = angularFiles.angularModules.ngTouch;
 
-angularFiles['angularSrcModules'] = [].concat(
-  angularFiles['angularModules']['ngAnimate'],
-  angularFiles['angularModules']['ngMessageFormat'],
-  angularFiles['angularModules']['ngMessages'],
-  angularFiles['angularModules']['ngCookies'],
-  angularFiles['angularModules']['ngResource'],
-  angularFiles['angularModules']['ngRoute'],
-  angularFiles['angularModules']['ngSanitize'],
-  angularFiles['angularModules']['ngMock'],
-  angularFiles['angularModules']['ngTouch'],
-  angularFiles['angularModules']['ngAria']
+angularFiles.angularSrcModules = [].concat(
+  angularFiles.angularModules.ngAnimate,
+  angularFiles.angularModules.ngMessageFormat,
+  angularFiles.angularModules.ngMessages,
+  angularFiles.angularModules.ngCookies,
+  angularFiles.angularModules.ngResource,
+  angularFiles.angularModules.ngRoute,
+  angularFiles.angularModules.ngSanitize,
+  angularFiles.angularModules.ngMock,
+  angularFiles.angularModules.ngTouch,
+  angularFiles.angularModules.ngAria
 );
 
 if (exports) {
@@ -310,10 +310,10 @@ if (exports) {
   exports.mergeFilesFor = function() {
     let files = [];
 
-    Array.prototype.slice.call(arguments, 0).forEach(function(filegroup) {
-      angularFiles[filegroup].forEach(function(file) {
+    Array.prototype.slice.call(arguments, 0).forEach((filegroup) => {
+      angularFiles[filegroup].forEach((file) => {
         // replace @ref
-        let match = file.match(/^@(.*)/);
+        const match = file.match(/^@(.*)/);
         if (match) {
           files = files.concat(angularFiles[match[1]]);
         } else {

@@ -1,4 +1,4 @@
-let $intervalMinErr = minErr("$interval");
+const $intervalMinErr = minErr("$interval");
 
 /** @this */
 export function $IntervalProvider() {
@@ -6,13 +6,13 @@ export function $IntervalProvider() {
     "$$intervalFactory",
     "$window",
     function ($$intervalFactory, $window) {
-      let intervals = {};
-      let setIntervalFn = function (tick, delay, deferred) {
-        let id = $window.setInterval(tick, delay);
+      const intervals = {};
+      const setIntervalFn = function (tick, delay, deferred) {
+        const id = $window.setInterval(tick, delay);
         intervals[id] = deferred;
         return id;
       };
-      let clearIntervalFn = function (id) {
+      const clearIntervalFn = function (id) {
         $window.clearInterval(id);
         delete intervals[id];
       };
@@ -143,7 +143,7 @@ export function $IntervalProvider() {
        * </file>
        * </example>
        */
-      let interval = $$intervalFactory(setIntervalFn, clearIntervalFn);
+      const interval = $$intervalFactory(setIntervalFn, clearIntervalFn);
 
       /**
        * @ngdoc method
@@ -167,8 +167,8 @@ export function $IntervalProvider() {
 
         if (!intervals.hasOwnProperty(promise.$$intervalId)) return false;
 
-        let id = promise.$$intervalId;
-        let deferred = intervals[id];
+        const id = promise.$$intervalId;
+        const deferred = intervals[id];
 
         // Interval cancels should not report an unhandled promise.
         markQExceptionHandled(deferred.promise);

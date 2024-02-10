@@ -85,7 +85,7 @@
  *  </file>
  * </example>
  */
-let ngAnimateSwapDirective = [
+const ngAnimateSwapDirective = [
   "$animate",
   function ($animate) {
     return {
@@ -94,27 +94,25 @@ let ngAnimateSwapDirective = [
       terminal: true,
       priority: 550, // We use 550 here to ensure that the directive is caught before others,
       // but after `ngIf` (at priority 600).
-      link: function (scope, $element, attrs, ctrl, $transclude) {
-        let previousElement, previousScope;
-        scope.$watchCollection(
-          attrs.ngAnimateSwap || attrs["for"],
-          function (value) {
-            if (previousElement) {
-              $animate.leave(previousElement);
-            }
-            if (previousScope) {
-              previousScope.$destroy();
-              previousScope = null;
-            }
-            if (value || value === 0) {
-              $transclude(function (clone, childScope) {
-                previousElement = clone;
-                previousScope = childScope;
-                $animate.enter(clone, null, $element);
-              });
-            }
-          },
-        );
+      link(scope, $element, attrs, ctrl, $transclude) {
+        let previousElement;
+        let previousScope;
+        scope.$watchCollection(attrs.ngAnimateSwap || attrs.for, (value) => {
+          if (previousElement) {
+            $animate.leave(previousElement);
+          }
+          if (previousScope) {
+            previousScope.$destroy();
+            previousScope = null;
+          }
+          if (value || value === 0) {
+            $transclude((clone, childScope) => {
+              previousElement = clone;
+              previousScope = childScope;
+              $animate.enter(clone, null, $element);
+            });
+          }
+        });
       },
     };
   },

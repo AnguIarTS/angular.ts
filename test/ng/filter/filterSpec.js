@@ -1,15 +1,15 @@
 
 
-describe('Filter: filter', function() {
+describe('Filter: filter', () => {
   let filter;
 
-  beforeEach(inject(function($filter) {
+  beforeEach(inject(($filter) => {
     filter = $filter('filter');
   }));
 
 
-  it('should filter by string', function() {
-    let items = ['MIsKO', {name: 'shyam'}, ['adam'], 1234];
+  it('should filter by string', () => {
+    const items = ['MIsKO', {name: 'shyam'}, ['adam'], 1234];
     expect(filter(items, '').length).toBe(4);
     expect(filter(items, undefined).length).toBe(4);
 
@@ -29,16 +29,16 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should not read $ properties', function() {
+  it('should not read $ properties', () => {
     expect(''.charAt(0)).toBe(''); // assumption
 
-    let items = [{$name: 'misko'}];
+    const items = [{$name: 'misko'}];
     expect(filter(items, 'misko').length).toBe(0);
   });
 
 
-  it('should filter on specific property', function() {
-    let items = [{ignore: 'a', name: 'a'}, {ignore: 'a', name: 'abc'}];
+  it('should filter on specific property', () => {
+    const items = [{ignore: 'a', name: 'a'}, {ignore: 'a', name: 'abc'}];
     expect(filter(items, {}).length).toBe(2);
 
     expect(filter(items, {name: 'a'}).length).toBe(2);
@@ -48,7 +48,7 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should ignore undefined properties of the expression object', function() {
+  it('should ignore undefined properties of the expression object', () => {
     let items = [{name: 'a'}, {name: 'abc'}];
     expect(filter(items, {name: undefined})).toEqual([{name: 'a'}, {name: 'abc'}]);
 
@@ -57,26 +57,24 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should take function as predicate', function() {
-    let items = [{name: 'a'}, {name: 'abc', done: true}];
-    expect(filter(items, function(i) {return i.done;}).length).toBe(1);
+  it('should take function as predicate', () => {
+    const items = [{name: 'a'}, {name: 'abc', done: true}];
+    expect(filter(items, (i) => i.done).length).toBe(1);
   });
 
 
-  it('should pass the index to a function predicate', function() {
-    let items = [0, 1, 2, 3];
+  it('should pass the index to a function predicate', () => {
+    const items = [0, 1, 2, 3];
 
-    let result = filter(items, function(value, index) {
-      return index % 2 === 0;
-    });
+    const result = filter(items, (value, index) => index % 2 === 0);
 
     expect(result).toEqual([0, 2]);
   });
 
 
   it('should match primitive array values against top-level `$` property in object expression',
-    function() {
-      let items, expr;
+    () => {
+      let items; let expr;
 
       items = ['something', 'something else', 'another thing'];
       expr = {$: 'some'};
@@ -101,8 +99,8 @@ describe('Filter: filter', function() {
   );
 
 
-  it('should match items with array properties containing one or more matching items', function() {
-      let items, expr;
+  it('should match items with array properties containing one or more matching items', () => {
+      let items; let expr;
 
       items = [
         {tags: ['web', 'html', 'css', 'js']},
@@ -134,8 +132,8 @@ describe('Filter: filter', function() {
   );
 
 
-  it('should take object as predicate', function() {
-    let items = [{first: 'misko', last: 'hevery'},
+  it('should take object as predicate', () => {
+    const items = [{first: 'misko', last: 'hevery'},
                  {first: 'adam', last: 'abrons'}];
 
     expect(filter(items, {first:'', last:''}).length).toBe(2);
@@ -146,8 +144,8 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should support predicate object with dots in the name', function() {
-    let items = [{'first.name': 'misko', 'last.name': 'hevery'},
+  it('should support predicate object with dots in the name', () => {
+    const items = [{'first.name': 'misko', 'last.name': 'hevery'},
                  {'first.name': 'adam', 'last.name': 'abrons'}];
 
     expect(filter(items, {'first.name':'', 'last.name':''}).length).toBe(2);
@@ -155,8 +153,8 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should support deep predicate objects', function() {
-    let items = [{person: {name: 'John'}},
+  it('should support deep predicate objects', () => {
+    const items = [{person: {name: 'John'}},
                  {person: {name: 'Rita'}},
                  {person: {name: 'Billy'}},
                  {person: {name: 'Joan'}}];
@@ -167,21 +165,21 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should support deep expression objects with multiple properties', function() {
-    let items = [{person: {name: 'Annet', email: 'annet@example.com'}},
+  it('should support deep expression objects with multiple properties', () => {
+    const items = [{person: {name: 'Annet', email: 'annet@example.com'}},
                  {person: {name: 'Billy', email: 'me@billy.com'}},
                  {person: {name: 'Joan', email: 'joan@example.net'}},
                  {person: {name: 'John', email: 'john@example.com'}},
                  {person: {name: 'Rita', email: 'rita@example.com'}}];
-    let expr = {person: {name: 'Jo', email: '!example.com'}};
+    const expr = {person: {name: 'Jo', email: '!example.com'}};
 
     expect(filter(items, expr).length).toBe(1);
     expect(filter(items, expr)).toEqual([items[2]]);
   });
 
 
-  it('should match any properties for given "$" property', function() {
-    let items = [{first: 'tom', last: 'hevery'},
+  it('should match any properties for given "$" property', () => {
+    const items = [{first: 'tom', last: 'hevery'},
                  {first: 'adam', last: 'hevery', alias: 'tom', done: false},
                  {first: 'john', last: 'clark', middle: 'tommy'}];
     expect(filter(items, {$: 'tom'}).length).toBe(3);
@@ -192,8 +190,8 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should allow specifying the special "match-all" property', function() {
-    let items = [
+  it('should allow specifying the special "match-all" property', () => {
+    const items = [
       {foo: 'baz'},
       {bar: 'baz'},
       {'%': 'no dollar'}
@@ -211,22 +209,22 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should match any properties in the nested object for given deep "$" property', function() {
-    let items = [{person: {name: 'Annet', email: 'annet@example.com'}},
+  it('should match any properties in the nested object for given deep "$" property', () => {
+    const items = [{person: {name: 'Annet', email: 'annet@example.com'}},
                  {person: {name: 'Billy', email: 'me@billy.com'}},
                  {person: {name: 'Joan', email: 'joan@example.net'}},
                  {person: {name: 'John', email: 'john@example.com'}},
                  {person: {name: 'Rita', email: 'rita@example.com'}}];
-    let expr = {person: {$: 'net'}};
+    const expr = {person: {$: 'net'}};
 
     expect(filter(items, expr).length).toBe(2);
     expect(filter(items, expr)).toEqual([items[0], items[2]]);
   });
 
 
-  it('should match named properties only against named properties on the same level', function() {
-    let expr = {person: {name: 'John'}};
-    let items = [{person: 'John'},                                  // No match (1 level higher)
+  it('should match named properties only against named properties on the same level', () => {
+    const expr = {person: {name: 'John'}};
+    const items = [{person: 'John'},                                  // No match (1 level higher)
                  {person: {name: 'John'}},                          // Match (same level)
                  {person: {name: {first: 'John', last: 'Doe'}}}];   // No match (1 level deeper)
 
@@ -235,8 +233,8 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should match any properties on same or deeper level for given "$" property', function() {
-    let items = [{level1: 'test', foo1: 'bar1'},
+  it('should match any properties on same or deeper level for given "$" property', () => {
+    const items = [{level1: 'test', foo1: 'bar1'},
                  {level1: {level2: 'test', foo2:'bar2'}, foo1: 'bar1'},
                  {level1: {level2: {level3: 'test', foo3: 'bar3'}, foo2: 'bar2'}, foo1: 'bar1'}];
 
@@ -251,21 +249,21 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should respect the nesting level of "$"', function() {
-    let items = [{supervisor: 'me', person: {name: 'Annet', email: 'annet@example.com'}},
+  it('should respect the nesting level of "$"', () => {
+    const items = [{supervisor: 'me', person: {name: 'Annet', email: 'annet@example.com'}},
                  {supervisor: 'me', person: {name: 'Billy', email: 'me@billy.com'}},
                  {supervisor: 'me', person: {name: 'Joan', email: 'joan@example.net'}},
                  {supervisor: 'me', person: {name: 'John', email: 'john@example.com'}},
                  {supervisor: 'me', person: {name: 'Rita', email: 'rita@example.com'}}];
-    let expr = {$: {$: 'me'}};
+    const expr = {$: {$: 'me'}};
 
     expect(filter(items, expr).length).toBe(1);
     expect(filter(items, expr)).toEqual([items[1]]);
   });
 
 
-  it('should support boolean properties', function() {
-    let items = [{name: 'tom', current: true},
+  it('should support boolean properties', () => {
+    const items = [{name: 'tom', current: true},
                  {name: 'demi', current: false},
                  {name: 'sofia'}];
 
@@ -276,15 +274,15 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should support negation operator', function() {
-    let items = ['misko', 'adam'];
+  it('should support negation operator', () => {
+    const items = ['misko', 'adam'];
 
     expect(filter(items, '!isk').length).toBe(1);
     expect(filter(items, '!isk')[0]).toEqual(items[1]);
   });
 
 
-  it('should ignore function properties in items', function() {
+  it('should ignore function properties in items', () => {
     // Own function properties
     let items = [
       {text: 'hello', func: noop},
@@ -292,7 +290,7 @@ describe('Filter: filter', function() {
       {text: 'kittens'},
       {text: 'puppies'}
     ];
-    let expr = {text: 'hello'};
+    const expr = {text: 'hello'};
 
     expect(filter(items, expr).length).toBe(1);
     expect(filter(items, expr)[0]).toBe(items[0]);
@@ -319,9 +317,9 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should ignore function properties in expression', function() {
+  it('should ignore function properties in expression', () => {
     // Own function properties
-    let items = [
+    const items = [
       {text: 'hello'},
       {text: 'goodbye'},
       {text: 'kittens'},
@@ -349,13 +347,13 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should consider inherited properties in items', function() {
+  it('should consider inherited properties in items', () => {
     function Item(text) {
       this.text = text;
     }
     Item.prototype.doubleL = 'maybe';
 
-    let items = [
+    const items = [
       new Item('hello'),
       new Item('goodbye'),
       new Item('kittens'),
@@ -375,13 +373,13 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should consider inherited properties in expression', function() {
+  it('should consider inherited properties in expression', () => {
     function Expr(text) {
       this.text = text;
     }
     Expr.prototype.doubleL = true;
 
-    let items = [
+    const items = [
       {text: 'hello', doubleL: true},
       {text: 'goodbye'},
       {text: 'kittens'},
@@ -399,11 +397,11 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should not be affected by `Object.prototype` when using a string expression', function() {
+  it('should not be affected by `Object.prototype` when using a string expression', () => {
     // eslint-disable-next-line no-extend-native
     Object.prototype.someProp = 'oo';
 
-    let items = [
+    const items = [
       createMap(),
       createMap(),
       createMap(),
@@ -428,31 +426,31 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should throw an error when is not used with an array', function() {
+  it('should throw an error when is not used with an array', () => {
     let item = {'not': 'array'};
-    expect(function() { filter(item, {}); }).
+    expect(() => { filter(item, {}); }).
       toThrowMinErr('filter', 'notarray', 'Expected array but received: {"not":"array"}');
 
     item = Object.create(null);
-    expect(function() { filter(item, {}); }).
+    expect(() => { filter(item, {}); }).
       toThrowMinErr('filter', 'notarray', 'Expected array but received: {}');
 
     item = {
       toString: null,
       valueOf: null
     };
-    expect(function() { filter(item, {}); }).
+    expect(() => { filter(item, {}); }).
       toThrowMinErr('filter', 'notarray', 'Expected array but received: {"toString":null,"valueOf":null}');
   });
 
 
-  it('should not throw an error if used with an array like object', function() {
+  it('should not throw an error if used with an array like object', () => {
     function getArguments() {
       return arguments;
     }
-    let argsObj = getArguments({name: 'Misko'}, {name: 'Igor'}, {name: 'Brad'});
+    const argsObj = getArguments({name: 'Misko'}, {name: 'Igor'}, {name: 'Brad'});
 
-    let nodeList = jqLite('<p><span>Misko</span><span>Igor</span><span>Brad</span></p>')[0].childNodes;
+    const nodeList = jqLite('<p><span>Misko</span><span>Igor</span><span>Brad</span></p>')[0].childNodes;
     function nodeFilterPredicate(node) {
       return node.innerHTML.indexOf('I') !== -1;
     }
@@ -463,19 +461,19 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should return undefined when the array is undefined', function() {
+  it('should return undefined when the array is undefined', () => {
     expect(filter(undefined, {})).toBeUndefined();
   });
 
 
-  it('should return null when the value of the array is null', function() {
-    let item = null;
+  it('should return null when the value of the array is null', () => {
+    const item = null;
     expect(filter(item, {})).toBe(null);
   });
 
 
-  it('should not throw an error if property is null when comparing object', function() {
-    let items = [
+  it('should not throw an error if property is null when comparing object', () => {
+    const items = [
         { office:1, people: {name:'john'}},
         { office:2, people: {name:'jane'}},
         { office:3, people: null}
@@ -500,8 +498,8 @@ describe('Filter: filter', function() {
   });
 
 
-  it('should match `null` against `null` only', function() {
-    let items = [
+  it('should match `null` against `null` only', () => {
+    const items = [
       {value: null},
       {value: undefined},
       {value: true},
@@ -540,63 +538,63 @@ describe('Filter: filter', function() {
   });
 
 
-  describe('should support comparator', function() {
+  describe('should support comparator', () => {
 
-    it('not convert `null` or `undefined` to string in non-strict comparison', function() {
-      let items = [
+    it('not convert `null` or `undefined` to string in non-strict comparison', () => {
+      const items = [
         {value: null},
         {value: undefined}
       ];
-      let flt = {value: 'u'};
+      const flt = {value: 'u'};
 
       expect(filter(items, flt).length).toBe(0);
     });
 
 
-    it('not consider objects without a custom `toString` in non-strict comparison', function() {
-      let items = [{test: {}}];
-      let expr = '[object';
+    it('not consider objects without a custom `toString` in non-strict comparison', () => {
+      const items = [{test: {}}];
+      const expr = '[object';
       expect(filter(items, expr).length).toBe(0);
     });
 
 
-    it('should consider objects with custom `toString()` in non-strict comparison', function() {
+    it('should consider objects with custom `toString()` in non-strict comparison', () => {
       let obj = new Date(1970, 1);
       let items = [{test: obj}];
       expect(filter(items, '1970').length).toBe(1);
       expect(filter(items, 1970).length).toBe(1);
 
       obj = {
-        toString: function() { return 'custom'; }
+        toString() { return 'custom'; }
       };
       items = [{test: obj}];
       expect(filter(items, 'custom').length).toBe(1);
     });
 
 
-    it('should cope with objects that have no `toString()` in non-strict comparison', function() {
-      let obj = Object.create(null);
-      let items = [{test: obj}];
-      expect(function() {
+    it('should cope with objects that have no `toString()` in non-strict comparison', () => {
+      const obj = Object.create(null);
+      const items = [{test: obj}];
+      expect(() => {
         filter(items, 'foo');
       }).not.toThrow();
       expect(filter(items, 'foo').length).toBe(0);
     });
 
 
-    it('should cope with objects where `toString` is not a function in non-strict comparison', function() {
-      let obj = {
+    it('should cope with objects where `toString` is not a function in non-strict comparison', () => {
+      const obj = {
         toString: 'moo'
       };
-      let items = [{test: obj}];
-      expect(function() {
+      const items = [{test: obj}];
+      expect(() => {
         filter(items, 'foo');
       }).not.toThrow();
       expect(filter(items, 'foo').length).toBe(0);
     });
 
 
-    it('as equality when true', function() {
+    it('as equality when true', () => {
       let items = ['misko', 'adam', 'adamson'];
       let expr = 'adam';
       expect(filter(items, expr, true)).toEqual([items[1]]);
@@ -626,15 +624,15 @@ describe('Filter: filter', function() {
     });
 
 
-    it('and use the function given to compare values', function() {
-      let items = [
+    it('and use the function given to compare values', () => {
+      const items = [
         {key: 1, nonkey: 1},
         {key: 2, nonkey: 2},
         {key: 12, nonkey: 3},
         {key: 1, nonkey: 14}
       ];
       let expr = {key: 10};
-      let comparator = function(obj, value) {
+      const comparator = function(obj, value) {
         return obj > value;
       };
       expect(filter(items, expr, comparator)).toEqual([items[2]]);
@@ -644,13 +642,13 @@ describe('Filter: filter', function() {
     });
 
 
-    it('and use it correctly with deep expression objects', function() {
-      let items = [
+    it('and use it correctly with deep expression objects', () => {
+      const items = [
         {id: 0, details: {email: 'admin@example.com', role: 'admin'}},
         {id: 1, details: {email: 'user1@example.com', role: 'user'}},
         {id: 2, details: {email: 'user2@example.com', role: 'user'}}
       ];
-      let expr, comp;
+      let expr; let comp;
 
       expr = {details: {email: 'user@example.com', role: 'adm'}};
       expect(filter(items, expr)).toEqual([]);

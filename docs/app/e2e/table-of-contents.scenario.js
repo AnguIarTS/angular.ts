@@ -5,20 +5,20 @@
  * The expectations are kept vague so that they can be easily adjusted when the docs change.
  */
 
-describe('table of contents', function() {
+describe('table of contents', () => {
 
-  it('on provider pages', function() {
+  it('on provider pages', () => {
     browser.get('build/docs/index.html#!/api/ng/provider/$controllerProvider');
 
-    let toc = element.all(by.css('toc-container > div > toc-tree'));
-    toc.getText().then(function(text) {
+    const toc = element.all(by.css('toc-container > div > toc-tree'));
+    toc.getText().then((text) => {
       expect(text.join('')).toContain('Overview');
       expect(text.join('')).toContain('Methods');
     });
 
-    let tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
+    const tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
 
-    tocFirstLevel.then(function(match) {
+    tocFirstLevel.then((match) => {
       expect(match.length).toBe(2);
 
       expect(match[1].all(by.css('li')).count()).toBe(2);
@@ -26,102 +26,102 @@ describe('table of contents', function() {
 
   });
 
-  it('on service pages', function() {
+  it('on service pages', () => {
     browser.get('build/docs/index.html#!/api/ng/service/$controller');
 
-    let toc = element.all(by.css('toc-container > div > toc-tree'));
-    toc.getText().then(function(text) {
+    const toc = element.all(by.css('toc-container > div > toc-tree'));
+    toc.getText().then((text) => {
       expect(text.join('')).toContain('Overview');
       expect(text.join('')).toContain('Usage');
     });
 
-    let tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
+    const tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
 
-    tocFirstLevel.then(function(match) {
+    tocFirstLevel.then((match) => {
       expect(match.length).toBe(3);
 
       expect(match[2].all(by.css('li')).count()).toBe(2);
     });
   });
 
-  it('on directive pages', function() {
+  it('on directive pages', () => {
     browser.get('build/docs/index.html#!/api/ng/directive/input');
 
-    let toc = element.all(by.css('toc-container > div > toc-tree'));
-    toc.getText().then(function(text) {
+    const toc = element.all(by.css('toc-container > div > toc-tree'));
+    toc.getText().then((text) => {
       expect(text.join('')).toContain('Overview');
       expect(text.join('')).toContain('Usage');
       expect(text.join('')).toContain('Directive Info');
     });
 
-    let tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
+    const tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
 
-    tocFirstLevel.then(function(match) {
+    tocFirstLevel.then((match) => {
       expect(match.length).toBe(4);
 
       expect(match[2].all(by.css('li')).count()).toBe(1);
     });
   });
 
-  it('on function pages', function() {
+  it('on function pages', () => {
     browser.get('build/docs/index.html#!/api/ng/function/angular.bind');
 
-    let toc = element.all(by.css('toc-container > div > toc-tree'));
-    toc.getText().then(function(text) {
+    const toc = element.all(by.css('toc-container > div > toc-tree'));
+    toc.getText().then((text) => {
       expect(text.join('')).toContain('Overview');
       expect(text.join('')).toContain('Usage');
     });
 
-    let tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
+    const tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
 
-    tocFirstLevel.then(function(match) {
+    tocFirstLevel.then((match) => {
       expect(match.length).toBe(2);
 
       expect(match[1].all(by.css('li')).count()).toBe(2);
     });
   });
 
-  it('on type pages', function() {
+  it('on type pages', () => {
     browser.get('build/docs/index.html#!/api/ng/type/ModelOptions');
 
-    let toc = element.all(by.css('toc-container > div > toc-tree'));
-    toc.getText().then(function(text) {
+    const toc = element.all(by.css('toc-container > div > toc-tree'));
+    toc.getText().then((text) => {
       expect(text.join('')).toContain('Overview');
       expect(text.join('')).toContain('Methods');
     });
 
-    let tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
+    const tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
 
-    tocFirstLevel.then(function(match) {
+    tocFirstLevel.then((match) => {
       expect(match.length).toBe(2);
 
       expect(match[1].all(by.css('li')).count()).toBe(2);
     });
   });
 
-  it('on filter pages', function() {
+  it('on filter pages', () => {
     browser.get('build/docs/index.html#!/api/ng/filter/date');
 
-    let toc = element.all(by.css('toc-container > div > toc-tree'));
-    toc.getText().then(function(text) {
+    const toc = element.all(by.css('toc-container > div > toc-tree'));
+    toc.getText().then((text) => {
       expect(text.join('')).toContain('Overview');
       expect(text.join('')).toContain('Usage');
     });
 
-    let tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
+    const tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
 
-    tocFirstLevel.then(function(match) {
+    tocFirstLevel.then((match) => {
       expect(match.length).toBe(3);
 
       expect(match[1].all(by.css('li')).count()).toBe(2);
     });
   });
 
-  it('on guide pages', function() {
+  it('on guide pages', () => {
     browser.get('build/docs/index.html#!/guide/services');
-    let tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
+    const tocFirstLevel = element.all(by.css('toc-container > div > toc-tree > ul > li'));
 
-    tocFirstLevel.then(function(match) {
+    tocFirstLevel.then((match) => {
       expect(match.length).toBe(5);
 
       expect(match[1].all(by.css('li')).count()).toBe(3);

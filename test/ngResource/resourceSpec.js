@@ -1,19 +1,19 @@
 
 
-describe('resource', function() {
-  let noop = angular.noop;
-  let extend = angular.extend;
+describe('resource', () => {
+  const {noop} = angular;
+  const {extend} = angular;
 
-describe('basic usage', function() {
-  let $resource, CreditCard, callback, $httpBackend, resourceProvider, $q;
+describe('basic usage', () => {
+  let $resource; let CreditCard; let callback; let $httpBackend; let resourceProvider; let $q;
 
   beforeEach(module('ngResource'));
 
-  beforeEach(module(function($resourceProvider) {
+  beforeEach(module(($resourceProvider) => {
     resourceProvider = $resourceProvider;
   }));
 
-  beforeEach(inject(function($injector) {
+  beforeEach(inject(($injector) => {
     $httpBackend = $injector.get('$httpBackend');
     $resource = $injector.get('$resource');
     $q = $injector.get('$q');
@@ -36,14 +36,14 @@ describe('basic usage', function() {
     callback = jasmine.createSpy('callback');
   }));
 
-  afterEach(function() {
+  afterEach(() => {
     $httpBackend.verifyNoOutstandingExpectation();
   });
 
 
-  describe('isValidDottedPath', function() {
+  describe('isValidDottedPath', () => {
     /* global isValidDottedPath: false */
-    it('should support arbitrary dotted names', function() {
+    it('should support arbitrary dotted names', () => {
       expect(isValidDottedPath('')).toBe(false);
       expect(isValidDottedPath('1')).toBe(false);
       expect(isValidDottedPath('1abc')).toBe(false);
@@ -64,18 +64,18 @@ describe('basic usage', function() {
     });
   });
 
-  describe('lookupDottedPath', function() {
+  describe('lookupDottedPath', () => {
     /* global lookupDottedPath: false */
-    let data = {a: {b: 'foo', c: null, '@d':'d-foo'},'@b':'b-foo'};
+    const data = {a: {b: 'foo', c: null, '@d':'d-foo'},'@b':'b-foo'};
 
-    it('should throw for invalid path', function() {
-      expect(function() {
+    it('should throw for invalid path', () => {
+      expect(() => {
         lookupDottedPath(data, '.ckck');
       }).toThrowMinErr('$resource', 'badmember',
                        'Dotted member path "@.ckck" is invalid.');
     });
 
-    it('should get dotted paths', function() {
+    it('should get dotted paths', () => {
       expect(lookupDottedPath(data, 'a')).toEqual({b: 'foo', c: null, '@d':'d-foo'});
       expect(lookupDottedPath(data, 'a.b')).toBe('foo');
       expect(lookupDottedPath(data, 'a.c')).toBeNull();
@@ -83,7 +83,7 @@ describe('basic usage', function() {
       expect(lookupDottedPath(data, '@b')).toBe('b-foo');
     });
 
-    it('should skip over null/undefined members', function() {
+    it('should skip over null/undefined members', () => {
       expect(lookupDottedPath(data, 'a.b.c')).toBeUndefined();
       expect(lookupDottedPath(data, 'a.c.c')).toBeUndefined();
       expect(lookupDottedPath(data, 'a.b.c.d')).toBeUndefined();
@@ -91,29 +91,29 @@ describe('basic usage', function() {
     });
   });
 
-  it('should not include a request body when calling $delete', function() {
+  it('should not include a request body when calling $delete', () => {
     $httpBackend.expect('DELETE', '/fooresource', null).respond({});
-    let Resource = $resource('/fooresource');
-    let resource = new Resource({ foo: 'bar' });
+    const Resource = $resource('/fooresource');
+    const resource = new Resource({ foo: 'bar' });
 
     resource.$delete();
     $httpBackend.flush();
   });
 
-  it('should include a request body when calling custom method with hasBody is true', function() {
-    let instant = {name: 'info.txt'};
-    let condition = {at: '2038-01-19 03:14:08'};
+  it('should include a request body when calling custom method with hasBody is true', () => {
+    const instant = {name: 'info.txt'};
+    const condition = {at: '2038-01-19 03:14:08'};
 
     $httpBackend.expect('CREATE', '/fooresource', instant).respond({fid: 42});
     $httpBackend.expect('DELETE', '/fooresource', condition).respond({});
 
-    let r = $resource('/fooresource', {}, {
+    const r = $resource('/fooresource', {}, {
       create: {method: 'CREATE', hasBody: true},
       delete: {method: 'DELETE', hasBody: true}
     });
 
-    let creationResponse = r.create(instant);
-    let deleteResponse = r.delete(condition);
+    const creationResponse = r.create(instant);
+    const deleteResponse = r.delete(condition);
 
     $httpBackend.flush();
 
@@ -121,7 +121,7 @@ describe('basic usage', function() {
     expect(deleteResponse.$resolved).toBe(true);
   });
 
-  it('should not include a request body if hasBody is false on POST, PUT and PATCH', function() {
+  it('should not include a request body if hasBody is false on POST, PUT and PATCH', () => {
     function verifyRequest(method, url, data) {
       expect(data).toBeUndefined();
       return [200, {id: 42}];
@@ -131,15 +131,15 @@ describe('basic usage', function() {
     $httpBackend.expect('PUT', '/foo').respond(verifyRequest);
     $httpBackend.expect('PATCH', '/foo').respond(verifyRequest);
 
-    let R = $resource('/foo', {}, {
+    const R = $resource('/foo', {}, {
       post: {method: 'POST', hasBody: false},
       put: {method: 'PUT', hasBody: false},
       patch: {method: 'PATCH', hasBody: false}
     });
 
-    let postResponse = R.post();
-    let putResponse = R.put();
-    let patchResponse = R.patch();
+    const postResponse = R.post();
+    const putResponse = R.put();
+    const patchResponse = R.patch();
 
     $httpBackend.flush();
 
@@ -148,22 +148,22 @@ describe('basic usage', function() {
     expect(patchResponse.id).toBe(42);
   });
 
-  it('should expect a body if hasBody is true', function() {
-    let username = 'yathos';
-    let loginRequest = {name: username, password: 'Smile'};
-    let user = {id: 1, name: username};
+  it('should expect a body if hasBody is true', () => {
+    const username = 'yathos';
+    const loginRequest = {name: username, password: 'Smile'};
+    const user = {id: 1, name: username};
 
     $httpBackend.expect('LOGIN', '/user/me', loginRequest).respond(user);
 
     $httpBackend.expect('LOGOUT', '/user/me', null).respond(null);
 
-    let UserService = $resource('/user/me', {}, {
+    const UserService = $resource('/user/me', {}, {
       login: {method: 'LOGIN', hasBody: true},
       logout: {method: 'LOGOUT', hasBody: false}
     });
 
-    let loginResponse = UserService.login(loginRequest);
-    let logoutResponse = UserService.logout();
+    const loginResponse = UserService.login(loginRequest);
+    const logoutResponse = UserService.logout();
 
     $httpBackend.flush();
 
@@ -171,29 +171,29 @@ describe('basic usage', function() {
     expect(logoutResponse.$resolved).toBe(true);
   });
 
-  it('should build resource', function() {
+  it('should build resource', () => {
     expect(typeof CreditCard).toBe('function');
     expect(typeof CreditCard.get).toBe('function');
     expect(typeof CreditCard.save).toBe('function');
     expect(typeof CreditCard.remove).toBe('function');
-    expect(typeof CreditCard['delete']).toBe('function');
+    expect(typeof CreditCard.delete).toBe('function');
     expect(typeof CreditCard.query).toBe('function');
   });
 
 
-  describe('shallow copy', function() {
+  describe('shallow copy', () => {
     /* global shallowClearAndCopy */
-    it('should make a copy', function() {
-      let original = {key:{}};
-      let copy = shallowClearAndCopy(original);
+    it('should make a copy', () => {
+      const original = {key:{}};
+      const copy = shallowClearAndCopy(original);
       expect(copy).toEqual(original);
       expect(copy.key).toBe(original.key);
     });
 
 
-    it('should omit "$$"-prefixed properties', function() {
-      let original = {$$some: true, $$: true};
-      let clone = {};
+    it('should omit "$$"-prefixed properties', () => {
+      const original = {$$some: true, $$: true};
+      const clone = {};
 
       expect(shallowClearAndCopy(original, clone)).toBe(clone);
       expect(clone.$$some).toBeUndefined();
@@ -201,17 +201,17 @@ describe('basic usage', function() {
     });
 
 
-    it('should copy "$"-prefixed properties from copy', function() {
-      let original = {$some: true};
-      let clone = {};
+    it('should copy "$"-prefixed properties from copy', () => {
+      const original = {$some: true};
+      const clone = {};
 
       expect(shallowClearAndCopy(original, clone)).toBe(clone);
       expect(clone.$some).toBe(original.$some);
     });
 
 
-    it('should omit properties from prototype chain', function() {
-      let original, clone = {};
+    it('should omit properties from prototype chain', () => {
+      let original; const clone = {};
       function Func() {}
       Func.prototype.hello = 'world';
 
@@ -225,11 +225,11 @@ describe('basic usage', function() {
   });
 
 
-  it('should not throw if response.data is the resource object', function() {
-    let data = {id:{key:123}, number:'9876'};
+  it('should not throw if response.data is the resource object', () => {
+    const data = {id:{key:123}, number:'9876'};
     $httpBackend.expect('GET', '/CreditCard/123').respond(data);
 
-    let cc = CreditCard.get({id:123});
+    const cc = CreditCard.get({id:123});
     $httpBackend.flush();
     expect(cc instanceof CreditCard).toBe(true);
 
@@ -242,14 +242,14 @@ describe('basic usage', function() {
   });
 
 
-  it('should default to empty parameters', function() {
+  it('should default to empty parameters', () => {
     $httpBackend.expect('GET', 'URL').respond({});
     $resource('URL').query();
   });
 
 
-  it('should ignore slashes of undefined parameters', function() {
-    let R = $resource('/Path/:a/:b/:c');
+  it('should ignore slashes of undefined parameters', () => {
+    const R = $resource('/Path/:a/:b/:c');
 
     $httpBackend.when('GET', '/Path').respond('{}');
     $httpBackend.when('GET', '/Path/0').respond('{}');
@@ -273,8 +273,8 @@ describe('basic usage', function() {
     R.get({a:6, b:7, c:8});
   });
 
-  it('should not ignore leading slashes of undefined parameters that have non-slash trailing sequence', function() {
-    let R = $resource('/Path/:a.foo/:b.bar/:c.baz');
+  it('should not ignore leading slashes of undefined parameters that have non-slash trailing sequence', () => {
+    const R = $resource('/Path/:a.foo/:b.bar/:c.baz');
 
     $httpBackend.when('GET', '/Path/.foo/.bar.baz').respond('{}');
     $httpBackend.when('GET', '/Path/0.foo/.bar.baz').respond('{}');
@@ -298,31 +298,31 @@ describe('basic usage', function() {
     R.get({a:6, b:7, c:8});
   });
 
-  it('should not collapsed the url into an empty string', function() {
-    let R = $resource('/:foo/:bar/');
+  it('should not collapsed the url into an empty string', () => {
+    const R = $resource('/:foo/:bar/');
 
     $httpBackend.when('GET', '/').respond('{}');
 
     R.get({});
   });
 
-  it('should support escaping colons in url template', function() {
-    let R = $resource('http://localhost\\:8080/Path/:a/\\:stillPath/:b');
+  it('should support escaping colons in url template', () => {
+    const R = $resource('http://localhost\\:8080/Path/:a/\\:stillPath/:b');
 
     $httpBackend.expect('GET', 'http://localhost:8080/Path/foo/:stillPath/bar').respond();
     R.get({a: 'foo', b: 'bar'});
   });
 
-  it('should support an unescaped url', function() {
-    let R = $resource('http://localhost:8080/Path/:a');
+  it('should support an unescaped url', () => {
+    const R = $resource('http://localhost:8080/Path/:a');
 
     $httpBackend.expect('GET', 'http://localhost:8080/Path/foo').respond();
     R.get({a: 'foo'});
   });
 
 
-  it('should correctly encode url params', function() {
-    let R = $resource('/Path/:a');
+  it('should correctly encode url params', () => {
+    const R = $resource('/Path/:a');
 
     $httpBackend.expect('GET', '/Path/foo%231').respond('{}');
     $httpBackend.expect('GET', '/Path/doh!@foo?bar=baz%231').respond('{}');
@@ -337,63 +337,63 @@ describe('basic usage', function() {
     R.get({a: 'foo', bar: 'baz;qux'});
   });
 
-  it('should not encode @ in url params', function() {
-    //encodeURIComponent is too aggressive and doesn't follow http://www.ietf.org/rfc/rfc3986.txt
-    //with regards to the character set (pchar) allowed in path segments
-    //so we need this test to make sure that we don't over-encode the params and break stuff like
-    //buzz api which uses @self
+  it('should not encode @ in url params', () => {
+    // encodeURIComponent is too aggressive and doesn't follow http://www.ietf.org/rfc/rfc3986.txt
+    // with regards to the character set (pchar) allowed in path segments
+    // so we need this test to make sure that we don't over-encode the params and break stuff like
+    // buzz api which uses @self
 
-    let R = $resource('/Path/:a');
+    const R = $resource('/Path/:a');
     $httpBackend.expect('GET', '/Path/doh@fo%20o?!do%26h=g%3Da+h&:bar=$baz@1').respond('{}');
     R.get({a: 'doh@fo o', ':bar': '$baz@1', '!do&h': 'g=a h'});
   });
 
-  it('should encode array params', function() {
-    let R = $resource('/Path/:a');
+  it('should encode array params', () => {
+    const R = $resource('/Path/:a');
     $httpBackend.expect('GET', '/Path/doh&foo?bar=baz1&bar=baz2').respond('{}');
     R.get({a: 'doh&foo', bar: ['baz1', 'baz2']});
   });
 
-  it('should not encode string "null" to "+" in url params', function() {
-    let R = $resource('/Path/:a');
+  it('should not encode string "null" to "+" in url params', () => {
+    const R = $resource('/Path/:a');
     $httpBackend.expect('GET', '/Path/null').respond('{}');
     R.get({a: 'null'});
   });
 
 
-  it('should implicitly strip trailing slashes from URLs by default', function() {
-    let R = $resource('http://localhost:8080/Path/:a/');
+  it('should implicitly strip trailing slashes from URLs by default', () => {
+    const R = $resource('http://localhost:8080/Path/:a/');
 
     $httpBackend.expect('GET', 'http://localhost:8080/Path/foo').respond();
     R.get({a: 'foo'});
   });
 
-  it('should support explicitly stripping trailing slashes from URLs', function() {
-    let R = $resource('http://localhost:8080/Path/:a/', {}, {}, {stripTrailingSlashes: true});
+  it('should support explicitly stripping trailing slashes from URLs', () => {
+    const R = $resource('http://localhost:8080/Path/:a/', {}, {}, {stripTrailingSlashes: true});
 
     $httpBackend.expect('GET', 'http://localhost:8080/Path/foo').respond();
     R.get({a: 'foo'});
   });
 
-  it('should support explicitly keeping trailing slashes in URLs', function() {
-    let R = $resource('http://localhost:8080/Path/:a/', {}, {}, {stripTrailingSlashes: false});
+  it('should support explicitly keeping trailing slashes in URLs', () => {
+    const R = $resource('http://localhost:8080/Path/:a/', {}, {}, {stripTrailingSlashes: false});
 
     $httpBackend.expect('GET', 'http://localhost:8080/Path/foo/').respond();
     R.get({a: 'foo'});
   });
 
-  it('should support provider-level configuration to strip trailing slashes in URLs', function() {
+  it('should support provider-level configuration to strip trailing slashes in URLs', () => {
     // Set the new behavior for all new resources created by overriding the
     // provider configuration
     resourceProvider.defaults.stripTrailingSlashes = false;
 
-    let R = $resource('http://localhost:8080/Path/:a/');
+    const R = $resource('http://localhost:8080/Path/:a/');
 
     $httpBackend.expect('GET', 'http://localhost:8080/Path/foo/').respond();
     R.get({a: 'foo'});
   });
 
-  it('should support IPv6 URLs', function() {
+  it('should support IPv6 URLs', () => {
     test('http://[2620:0:861:ed1a::1]',        {ed1a: 'foo'}, 'http://[2620:0:861:ed1a::1]');
     test('http://[2620:0:861:ed1a::1]/',       {ed1a: 'foo'}, 'http://[2620:0:861:ed1a::1]/');
     test('http://[2620:0:861:ed1a::1]/:ed1a',  {ed1a: 'foo'}, 'http://[2620:0:861:ed1a::1]/foo');
@@ -403,13 +403,13 @@ describe('basic usage', function() {
 
     // Helpers
     function test(templateUrl, params, actualUrl) {
-      let R = $resource(templateUrl, null, null, {stripTrailingSlashes: false});
+      const R = $resource(templateUrl, null, null, {stripTrailingSlashes: false});
       $httpBackend.expect('GET', actualUrl).respond(null);
       R.get(params);
     }
   });
 
-  it('should support params in the `hostname` part of the URL', function() {
+  it('should support params in the `hostname` part of the URL', () => {
     test('http://:hostname',            {hostname: 'foo.com'},              'http://foo.com');
     test('http://:hostname/',           {hostname: 'foo.com'},              'http://foo.com/');
     test('http://:l2Domain.:l1Domain',  {l1Domain: 'com', l2Domain: 'bar'}, 'http://bar.com');
@@ -419,67 +419,67 @@ describe('basic usage', function() {
 
     // Helpers
     function test(templateUrl, params, actualUrl) {
-      let R = $resource(templateUrl, null, null, {stripTrailingSlashes: false});
+      const R = $resource(templateUrl, null, null, {stripTrailingSlashes: false});
       $httpBackend.expect('GET', actualUrl).respond(null);
       R.get(params);
     }
   });
 
-  it('should support overriding provider default trailing-slash stripping configuration', function() {
+  it('should support overriding provider default trailing-slash stripping configuration', () => {
     // Set the new behavior for all new resources created by overriding the
     // provider configuration
     resourceProvider.defaults.stripTrailingSlashes = false;
 
     // Specific instances of $resource can still override the provider's default
-    let R = $resource('http://localhost:8080/Path/:a/', {}, {}, {stripTrailingSlashes: true});
+    const R = $resource('http://localhost:8080/Path/:a/', {}, {}, {stripTrailingSlashes: true});
 
     $httpBackend.expect('GET', 'http://localhost:8080/Path/foo').respond();
     R.get({a: 'foo'});
   });
 
 
-  it('should allow relative paths in resource url', function() {
-    let R = $resource(':relativePath');
+  it('should allow relative paths in resource url', () => {
+    const R = $resource(':relativePath');
     $httpBackend.expect('GET', 'data.json').respond('{}');
     R.get({ relativePath: 'data.json' });
   });
 
-  it('should handle + in url params', function() {
-    let R = $resource('/api/myapp/:myresource?from=:from&to=:to&histlen=:histlen');
+  it('should handle + in url params', () => {
+    const R = $resource('/api/myapp/:myresource?from=:from&to=:to&histlen=:histlen');
     $httpBackend.expect('GET', '/api/myapp/pear+apple?from=2012-04-01&to=2012-04-29&histlen=3').respond('{}');
     R.get({ myresource: 'pear+apple', from: '2012-04-01', to: '2012-04-29', histlen: 3  });
   });
 
 
-  it('should encode & in query params unless in query param value', function() {
-    let R1 = $resource('/Path/:a');
+  it('should encode & in query params unless in query param value', () => {
+    const R1 = $resource('/Path/:a');
     $httpBackend.expect('GET', '/Path/doh&foo?bar=baz%261').respond('{}');
     R1.get({a: 'doh&foo', bar: 'baz&1'});
 
-    let R2 = $resource('/api/myapp/resource?:query');
+    const R2 = $resource('/api/myapp/resource?:query');
     $httpBackend.expect('GET', '/api/myapp/resource?foo&bar').respond('{}');
     R2.get({query: 'foo&bar'});
 
-    let R3 = $resource('/api/myapp/resource?from=:from');
+    const R3 = $resource('/api/myapp/resource?from=:from');
     $httpBackend.expect('GET', '/api/myapp/resource?from=bar%20%26%20blanks').respond('{}');
     R3.get({from: 'bar & blanks'});
   });
 
 
-  it('should build resource with default param', function() {
+  it('should build resource with default param', () => {
     $httpBackend.expect('GET', '/Order/123/Line/456.visa?minimum=0.05').respond({id: 'abc'});
-    let LineItem = $resource('/Order/:orderId/Line/:id:verb',
+    const LineItem = $resource('/Order/:orderId/Line/:id:verb',
                                   {orderId: '123', id: '@id.key', verb:'.visa', minimum: 0.05});
-    let item = LineItem.get({id: 456});
+    const item = LineItem.get({id: 456});
     $httpBackend.flush();
     expect(item).toEqualData({id:'abc'});
   });
 
 
-  it('should support @_property lookups with underscores', function() {
+  it('should support @_property lookups with underscores', () => {
     $httpBackend.expect('GET', '/Order/123').respond({_id: {_key:'123'}, count: 0});
-    let LineItem = $resource('/Order/:_id', {_id: '@_id._key'});
-    let item = LineItem.get({_id: 123});
+    const LineItem = $resource('/Order/:_id', {_id: '@_id._key'});
+    const item = LineItem.get({_id: 123});
     $httpBackend.flush();
     expect(item).toEqualData({_id: {_key: '123'}, count: 0});
     $httpBackend.expect('POST', '/Order/123').respond({_id: {_key:'123'}, count: 1});
@@ -489,8 +489,8 @@ describe('basic usage', function() {
   });
 
 
-  it('should not pass default params between actions', function() {
-    let R = $resource('/Path', {}, {get: {method: 'GET', params: {objId: '1'}}, perform: {method: 'GET'}});
+  it('should not pass default params between actions', () => {
+    const R = $resource('/Path', {}, {get: {method: 'GET', params: {objId: '1'}}, perform: {method: 'GET'}});
 
     $httpBackend.expect('GET', '/Path?objId=1').respond('{}');
     $httpBackend.expect('GET', '/Path').respond('{}');
@@ -500,40 +500,40 @@ describe('basic usage', function() {
   });
 
 
-  it('should build resource with action default param overriding default param', function() {
+  it('should build resource with action default param overriding default param', () => {
     $httpBackend.expect('GET', '/Customer/123').respond({id: 'abc'});
-    let TypeItem = $resource('/:type/:typeId', {type: 'Order'},
+    const TypeItem = $resource('/:type/:typeId', {type: 'Order'},
                                   {get: {method: 'GET', params: {type: 'Customer'}}});
-    let item = TypeItem.get({typeId: 123});
+    const item = TypeItem.get({typeId: 123});
 
     $httpBackend.flush();
     expect(item).toEqualData({id: 'abc'});
   });
 
 
-  it('should build resource with action default param reading the value from instance', function() {
+  it('should build resource with action default param reading the value from instance', () => {
     $httpBackend.expect('POST', '/Customer/123').respond();
-    let R = $resource('/Customer/:id', {}, {post: {method: 'POST', params: {id: '@id'}}});
+    const R = $resource('/Customer/:id', {}, {post: {method: 'POST', params: {id: '@id'}}});
 
-    let inst = new R({id:123});
+    const inst = new R({id:123});
     expect(inst.id).toBe(123);
 
     inst.$post();
   });
 
 
-  it('should not throw TypeError on null default params', function() {
+  it('should not throw TypeError on null default params', () => {
     $httpBackend.expect('GET', '/Path').respond('{}');
-    let R = $resource('/Path', {param: null}, {get: {method: 'GET'}});
+    const R = $resource('/Path', {param: null}, {get: {method: 'GET'}});
 
-    expect(function() {
+    expect(() => {
       R.get({});
     }).not.toThrow();
   });
 
 
-  it('should handle multiple params with same name', function() {
-    let R = $resource('/:id/:id');
+  it('should handle multiple params with same name', () => {
+    const R = $resource('/:id/:id');
 
     $httpBackend.when('GET').respond('{}');
     $httpBackend.expect('GET', '/1/1');
@@ -542,17 +542,17 @@ describe('basic usage', function() {
   });
 
 
-  it('should throw an exception if a param is called "hasOwnProperty"', function() {
-    expect(function() {
+  it('should throw an exception if a param is called "hasOwnProperty"', () => {
+    expect(() => {
       $resource('/:hasOwnProperty').get();
     }).toThrowMinErr('$resource','badname', 'hasOwnProperty is not a valid parameter name');
   });
 
 
-  it('should create resource', function() {
+  it('should create resource', () => {
     $httpBackend.expect('POST', '/CreditCard', '{"name":"misko"}').respond({id: 123, name: 'misko'});
 
-    let cc = CreditCard.save({name: 'misko'}, callback);
+    const cc = CreditCard.save({name: 'misko'}, callback);
     expect(cc).toEqualData({name: 'misko'});
     expect(callback).not.toHaveBeenCalled();
 
@@ -564,9 +564,9 @@ describe('basic usage', function() {
   });
 
 
-  it('should read resource', function() {
+  it('should read resource', () => {
     $httpBackend.expect('GET', '/CreditCard/123').respond({id: 123, number: '9876'});
-    let cc = CreditCard.get({id: 123}, callback);
+    const cc = CreditCard.get({id: 123}, callback);
 
     expect(cc instanceof CreditCard).toBeTruthy();
     expect(cc).toEqualData({});
@@ -579,23 +579,21 @@ describe('basic usage', function() {
   });
 
 
-  it('should send correct headers', function() {
-    $httpBackend.expectPUT('/CreditCard/123', undefined, function(headers) {
-      return headers['If-None-Match'] === '*';
-    }).respond({id:123});
+  it('should send correct headers', () => {
+    $httpBackend.expectPUT('/CreditCard/123', undefined, (headers) => headers['If-None-Match'] === '*').respond({id:123});
 
     CreditCard.conditionalPut({id: {key:123}});
   });
 
 
-  it('should read partial resource', function() {
+  it('should read partial resource', () => {
     $httpBackend.expect('GET', '/CreditCard').respond([{id:{key:123}}]);
-    let ccs = CreditCard.query();
+    const ccs = CreditCard.query();
 
     $httpBackend.flush();
     expect(ccs.length).toEqual(1);
 
-    let cc = ccs[0];
+    const cc = ccs[0];
     expect(cc instanceof CreditCard).toBe(true);
     expect(cc.number).toBeUndefined();
 
@@ -608,21 +606,21 @@ describe('basic usage', function() {
   });
 
 
-  it('should update resource', function() {
+  it('should update resource', () => {
     $httpBackend.expect('POST', '/CreditCard/123', '{"id":{"key":123},"name":"misko"}').
                  respond({id: {key: 123}, name: 'rama'});
 
-    let cc = CreditCard.save({id: {key: 123}, name: 'misko'}, callback);
+    const cc = CreditCard.save({id: {key: 123}, name: 'misko'}, callback);
     expect(cc).toEqualData({id:{key:123}, name:'misko'});
     expect(callback).not.toHaveBeenCalled();
     $httpBackend.flush();
   });
 
 
-  it('should query resource', function() {
+  it('should query resource', () => {
     $httpBackend.expect('GET', '/CreditCard?key=value').respond([{id: 1}, {id: 2}]);
 
-    let ccs = CreditCard.query({key: 'value'}, callback);
+    const ccs = CreditCard.query({key: 'value'}, callback);
     expect(ccs).toEqualData([]);
     expect(callback).not.toHaveBeenCalled();
 
@@ -633,11 +631,11 @@ describe('basic usage', function() {
   });
 
 
-  it('should have all arguments optional', function() {
+  it('should have all arguments optional', () => {
     $httpBackend.expect('GET', '/CreditCard').respond([{id:1}]);
 
     let log = '';
-    let ccs = CreditCard.query(function() { log += 'cb;'; });
+    const ccs = CreditCard.query(() => { log += 'cb;'; });
 
     $httpBackend.flush();
     expect(ccs).toEqualData([{id:1}]);
@@ -645,7 +643,7 @@ describe('basic usage', function() {
   });
 
 
-  it('should delete resource and call callback', function() {
+  it('should delete resource and call callback', () => {
     $httpBackend.expect('DELETE', '/CreditCard/123').respond({});
     CreditCard.remove({id:123}, callback);
     expect(callback).not.toHaveBeenCalled();
@@ -665,26 +663,26 @@ describe('basic usage', function() {
   });
 
 
-  it('should post charge verb', function() {
+  it('should post charge verb', () => {
     $httpBackend.expect('POST', '/CreditCard/123!charge?amount=10', '{"auth":"abc"}').respond({success: 'ok'});
     CreditCard.charge({id:123, amount:10}, {auth:'abc'}, callback);
   });
 
 
-  it('should post charge verb on instance', function() {
+  it('should post charge verb on instance', () => {
     $httpBackend.expect('POST', '/CreditCard/123!charge?amount=10',
         '{"id":{"key":123},"name":"misko"}').respond({success: 'ok'});
 
-    let card = new CreditCard({id:{key:123}, name:'misko'});
+    const card = new CreditCard({id:{key:123}, name:'misko'});
     card.$charge({amount:10}, callback);
   });
 
 
-  it('should patch a resource', function() {
+  it('should patch a resource', () => {
     $httpBackend.expectPATCH('/CreditCard/123', '{"name":"igor"}').
                      respond({id: 123, name: 'rama'});
 
-    let card = CreditCard.patch({id: 123}, {name: 'igor'}, callback);
+    const card = CreditCard.patch({id: 123}, {name: 'igor'}, callback);
 
     expect(card).toEqualData({name: 'igor'});
     expect(callback).not.toHaveBeenCalled();
@@ -694,10 +692,10 @@ describe('basic usage', function() {
   });
 
 
-  it('should create on save', function() {
+  it('should create on save', () => {
     $httpBackend.expect('POST', '/CreditCard', '{"name":"misko"}').respond({id: 123}, {header1: 'a'});
 
-    let cc = new CreditCard();
+    const cc = new CreditCard();
     expect(cc.$get).toBeDefined();
     expect(cc.$query).toBeDefined();
     expect(cc.$remove).toBeDefined();
@@ -714,16 +712,16 @@ describe('basic usage', function() {
   });
 
 
-  it('should not mutate the resource object if response contains no body', function() {
-    let data = {id:{key:123}, number:'9876'};
+  it('should not mutate the resource object if response contains no body', () => {
+    const data = {id:{key:123}, number:'9876'};
     $httpBackend.expect('GET', '/CreditCard/123').respond(data);
 
-    let cc = CreditCard.get({id:123});
+    const cc = CreditCard.get({id:123});
     $httpBackend.flush();
     expect(cc instanceof CreditCard).toBe(true);
 
     $httpBackend.expect('POST', '/CreditCard/123', angular.toJson(data)).respond('');
-    let idBefore = cc.id;
+    const idBefore = cc.id;
 
     cc.$save();
     $httpBackend.flush();
@@ -731,22 +729,22 @@ describe('basic usage', function() {
   });
 
 
-  it('should support dynamic default parameters (global)', function() {
-    let currentGroup = 'students',
-        Person = $resource('/Person/:group/:id', { group: function() { return currentGroup; }});
+  it('should support dynamic default parameters (global)', () => {
+    const currentGroup = 'students';
+        const Person = $resource('/Person/:group/:id', { group() { return currentGroup; }});
 
     $httpBackend.expect('GET', '/Person/students/fedor').respond({id: 'fedor', email: 'f@f.com'});
 
-    let fedor = Person.get({id: 'fedor'});
+    const fedor = Person.get({id: 'fedor'});
     $httpBackend.flush();
 
     expect(fedor).toEqualData({id: 'fedor', email: 'f@f.com'});
   });
 
 
-  it('should pass resource object to dynamic default parameters', function() {
-    let Person = $resource('/Person/:id', {
-      id: function(data) {
+  it('should pass resource object to dynamic default parameters', () => {
+    const Person = $resource('/Person/:id', {
+      id(data) {
         return data ? data.id : 'fedor';
       }
     });
@@ -754,7 +752,7 @@ describe('basic usage', function() {
     $httpBackend.expect('GET', '/Person/fedor').respond(
         {id: 'fedor', email: 'f@f.com', count: 1});
 
-    let fedor = Person.get();
+    const fedor = Person.get();
     $httpBackend.flush();
 
     expect(fedor).toEqualData({id: 'fedor', email: 'f@f.com', count: 1});
@@ -770,49 +768,49 @@ describe('basic usage', function() {
   });
 
 
-  it('should support dynamic default parameters (action specific)', function() {
-    let currentGroup = 'students',
-      Person = $resource('/Person/:group/:id', {}, {
+  it('should support dynamic default parameters (action specific)', () => {
+    const currentGroup = 'students';
+      const Person = $resource('/Person/:group/:id', {}, {
         fetch: {
           method: 'GET',
-          params: {group: function() { return currentGroup; }}
+          params: {group() { return currentGroup; }}
         }
       });
 
     $httpBackend.expect('GET', '/Person/students/fedor').respond({id: 'fedor', email: 'f@f.com'});
 
-    let fedor = Person.fetch({id: 'fedor'});
+    const fedor = Person.fetch({id: 'fedor'});
     $httpBackend.flush();
 
     expect(fedor).toEqualData({id: 'fedor', email: 'f@f.com'});
   });
 
 
-  it('should exercise full stack', function() {
-    let Person = $resource('/Person/:id');
+  it('should exercise full stack', () => {
+    const Person = $resource('/Person/:id');
 
     $httpBackend.expect('GET', '/Person/123').respond('\n{\n"name":\n"misko"\n}\n');
-    let person = Person.get({id:123});
+    const person = Person.get({id:123});
     $httpBackend.flush();
     expect(person.name).toEqual('misko');
   });
 
-  it('should return a resource instance when calling a class method with a resource instance', function() {
+  it('should return a resource instance when calling a class method with a resource instance', () => {
     $httpBackend.expect('GET', '/Person/123').respond('{"name":"misko"}');
-    let Person = $resource('/Person/:id');
-    let person = Person.get({id:123});
+    const Person = $resource('/Person/:id');
+    const person = Person.get({id:123});
     $httpBackend.flush();
     $httpBackend.expect('POST', '/Person').respond('{"name":"misko2"}');
 
-    let person2 = Person.save(person);
+    const person2 = Person.save(person);
     $httpBackend.flush();
 
     expect(person2).toEqual(jasmine.any(Person));
   });
 
-  it('should not include $promise and $resolved when resource is toJson\'ed', function() {
+  it('should not include $promise and $resolved when resource is toJson\'ed', () => {
     $httpBackend.expect('GET', '/CreditCard/123').respond({id: 123, number: '9876'});
-    let cc = CreditCard.get({id: 123});
+    const cc = CreditCard.get({id: 123});
     $httpBackend.flush();
 
     cc.$myProp = 'still here';
@@ -820,45 +818,45 @@ describe('basic usage', function() {
     expect(cc.$promise).toBeDefined();
     expect(cc.$resolved).toBe(true);
 
-    let json = JSON.parse(angular.toJson(cc));
+    const json = JSON.parse(angular.toJson(cc));
     expect(json.$promise).not.toBeDefined();
     expect(json.$resolved).not.toBeDefined();
     expect(json).toEqual({id: 123, number: '9876', $myProp: 'still here'});
   });
 
-  it('should not include $cancelRequest when resource is toJson\'ed', function() {
+  it('should not include $cancelRequest when resource is toJson\'ed', () => {
     $httpBackend.whenGET('/CreditCard').respond({});
 
-    let CreditCard = $resource('/CreditCard', {}, {
+    const CreditCard = $resource('/CreditCard', {}, {
       get: {
         method: 'GET',
         cancellable: true
       }
     });
 
-    let card = CreditCard.get();
-    let json = card.toJSON();
+    const card = CreditCard.get();
+    const json = card.toJSON();
 
     expect(card.$cancelRequest).toBeDefined();
     expect(json.$cancelRequest).toBeUndefined();
   });
 
 
-  describe('promise api', function() {
+  describe('promise api', () => {
 
     let $rootScope;
 
 
-    beforeEach(inject(function(_$rootScope_) {
+    beforeEach(inject((_$rootScope_) => {
       $rootScope = _$rootScope_;
     }));
 
 
-    describe('single resource', function() {
+    describe('single resource', () => {
 
-      it('should add $promise to the result object', function() {
+      it('should add $promise to the result object', () => {
         $httpBackend.expect('GET', '/CreditCard/123').respond({id: 123, number: '9876'});
-        let cc = CreditCard.get({id: 123});
+        const cc = CreditCard.get({id: 123});
 
         cc.$promise.then(callback);
         expect(callback).not.toHaveBeenCalled();
@@ -870,9 +868,9 @@ describe('basic usage', function() {
       });
 
 
-      it('should keep $promise around after resolution', function() {
+      it('should keep $promise around after resolution', () => {
         $httpBackend.expect('GET', '/CreditCard/123').respond({id: 123, number: '9876'});
-        let cc = CreditCard.get({id: 123});
+        const cc = CreditCard.get({id: 123});
 
         cc.$promise.then(callback);
         $httpBackend.flush();
@@ -880,18 +878,18 @@ describe('basic usage', function() {
         callback.calls.reset();
 
         cc.$promise.then(callback);
-        $rootScope.$apply(); //flush async queue
+        $rootScope.$apply(); // flush async queue
 
         expect(callback).toHaveBeenCalledOnce();
       });
 
 
-      it('should keep the original promise after instance action', function() {
+      it('should keep the original promise after instance action', () => {
         $httpBackend.expect('GET', '/CreditCard/123').respond({id: 123, number: '9876'});
         $httpBackend.expect('POST', '/CreditCard/123').respond({id: 123, number: '9876'});
 
-        let cc = CreditCard.get({id: 123});
-        let originalPromise = cc.$promise;
+        const cc = CreditCard.get({id: 123});
+        const originalPromise = cc.$promise;
 
         cc.number = '666';
         cc.$save({id: 123});
@@ -900,34 +898,34 @@ describe('basic usage', function() {
       });
 
 
-      it('should allow promise chaining', function() {
+      it('should allow promise chaining', () => {
         $httpBackend.expect('GET', '/CreditCard/123').respond({id: 123, number: '9876'});
-        let cc = CreditCard.get({id: 123});
+        const cc = CreditCard.get({id: 123});
 
-        cc.$promise.then(function(value) { return 'new value'; }).then(callback);
+        cc.$promise.then((value) => 'new value').then(callback);
         $httpBackend.flush();
 
         expect(callback).toHaveBeenCalledOnceWith('new value');
       });
 
 
-      it('should allow $promise error callback registration', function() {
+      it('should allow $promise error callback registration', () => {
         $httpBackend.expect('GET', '/CreditCard/123').respond(404, 'resource not found');
-        let cc = CreditCard.get({id: 123});
+        const cc = CreditCard.get({id: 123});
 
         cc.$promise.then(null, callback);
         $httpBackend.flush();
 
-        let response = callback.calls.mostRecent().args[0];
+        const response = callback.calls.mostRecent().args[0];
 
         expect(response.data).toEqual('resource not found');
         expect(response.status).toEqual(404);
       });
 
 
-      it('should add $resolved boolean field to the result object', function() {
+      it('should add $resolved boolean field to the result object', () => {
         $httpBackend.expect('GET', '/CreditCard/123').respond({id: 123, number: '9876'});
-        let cc = CreditCard.get({id: 123});
+        const cc = CreditCard.get({id: 123});
 
         expect(cc.$resolved).toBe(false);
 
@@ -940,9 +938,9 @@ describe('basic usage', function() {
       });
 
 
-      it('should set $resolved field to true when an error occurs', function() {
+      it('should set $resolved field to true when an error occurs', () => {
         $httpBackend.expect('GET', '/CreditCard/123').respond(404, 'resource not found');
-        let cc = CreditCard.get({id: 123});
+        const cc = CreditCard.get({id: 123});
 
         cc.$promise.then(null, callback);
         $httpBackend.flush();
@@ -951,9 +949,9 @@ describe('basic usage', function() {
       });
 
 
-      it('should keep $resolved true in all subsequent interactions', function() {
+      it('should keep $resolved true in all subsequent interactions', () => {
         $httpBackend.expect('GET', '/CreditCard/123').respond({id: 123, number: '9876'});
-        let cc = CreditCard.get({id: 123});
+        const cc = CreditCard.get({id: 123});
         $httpBackend.flush();
         expect(cc.$resolved).toBe(true);
 
@@ -965,9 +963,9 @@ describe('basic usage', function() {
       });
 
 
-      it('should return promise from action method calls', function() {
+      it('should return promise from action method calls', () => {
         $httpBackend.expect('GET', '/CreditCard/123').respond({id: 123, number: '9876'});
-        let cc = new CreditCard({name: 'Mojo'});
+        const cc = new CreditCard({name: 'Mojo'});
 
         expect(cc).toEqualData({name: 'Mojo'});
 
@@ -988,24 +986,24 @@ describe('basic usage', function() {
       });
 
 
-      it('should allow parsing a value from headers', function() {
+      it('should allow parsing a value from headers', () => {
         // https://github.com/angular/angular.js/pull/2607#issuecomment-17759933
         $httpBackend.expect('POST', '/CreditCard').respond(201, '', {'Location': '/new-id'});
 
-        let parseUrlFromHeaders = function(response) {
-          let resource = response.resource;
+        const parseUrlFromHeaders = function(response) {
+          const {resource} = response;
           resource.url = response.headers('Location');
           return resource;
         };
 
-        let CreditCard = $resource('/CreditCard', {}, {
+        const CreditCard = $resource('/CreditCard', {}, {
           save: {
             method: 'post',
             interceptor: {response: parseUrlFromHeaders}
           }
         });
 
-        let cc = new CreditCard({name: 'Me'});
+        const cc = new CreditCard({name: 'Me'});
 
         cc.$save();
         $httpBackend.flush();
@@ -1014,29 +1012,29 @@ describe('basic usage', function() {
       });
 
 
-      it('should pass the same transformed value to success callbacks and to promises', function() {
+      it('should pass the same transformed value to success callbacks and to promises', () => {
         $httpBackend.expect('GET', '/CreditCard').respond(200, { value: 'original' });
 
-        let transformResponse = function(response) {
+        const transformResponse = function(response) {
           return { value: 'transformed' };
         };
 
-        let CreditCard = $resource('/CreditCard', {}, {
+        const CreditCard = $resource('/CreditCard', {}, {
           call: {
             method: 'get',
             interceptor: { response: transformResponse }
           }
         });
 
-        let successValue,
-            promiseValue;
+        let successValue;
+            let promiseValue;
 
-        let cc = new CreditCard({ name: 'Me' });
+        const cc = new CreditCard({ name: 'Me' });
 
-        let req = cc.$call({}, function(result) {
+        const req = cc.$call({}, (result) => {
           successValue = result;
         });
-        req.then(function(result) {
+        req.then((result) => {
           promiseValue = result;
         });
 
@@ -1048,11 +1046,11 @@ describe('basic usage', function() {
     });
 
 
-    describe('resource collection', function() {
+    describe('resource collection', () => {
 
-      it('should add $promise to the result object', function() {
+      it('should add $promise to the result object', () => {
         $httpBackend.expect('GET', '/CreditCard?key=value').respond([{id: 1}, {id: 2}]);
-        let ccs = CreditCard.query({key: 'value'});
+        const ccs = CreditCard.query({key: 'value'});
 
         ccs.$promise.then(callback);
         expect(callback).not.toHaveBeenCalled();
@@ -1064,9 +1062,9 @@ describe('basic usage', function() {
       });
 
 
-      it('should keep $promise around after resolution', function() {
+      it('should keep $promise around after resolution', () => {
         $httpBackend.expect('GET', '/CreditCard?key=value').respond([{id: 1}, {id: 2}]);
-        let ccs = CreditCard.query({key: 'value'});
+        const ccs = CreditCard.query({key: 'value'});
 
         ccs.$promise.then(callback);
         $httpBackend.flush();
@@ -1074,40 +1072,40 @@ describe('basic usage', function() {
         callback.calls.reset();
 
         ccs.$promise.then(callback);
-        $rootScope.$apply(); //flush async queue
+        $rootScope.$apply(); // flush async queue
 
         expect(callback).toHaveBeenCalledOnce();
       });
 
 
-      it('should allow promise chaining', function() {
+      it('should allow promise chaining', () => {
         $httpBackend.expect('GET', '/CreditCard?key=value').respond([{id: 1}, {id: 2}]);
-        let ccs = CreditCard.query({key: 'value'});
+        const ccs = CreditCard.query({key: 'value'});
 
-        ccs.$promise.then(function(value) { return 'new value'; }).then(callback);
+        ccs.$promise.then((value) => 'new value').then(callback);
         $httpBackend.flush();
 
         expect(callback).toHaveBeenCalledOnceWith('new value');
       });
 
 
-      it('should allow $promise error callback registration', function() {
+      it('should allow $promise error callback registration', () => {
         $httpBackend.expect('GET', '/CreditCard?key=value').respond(404, 'resource not found');
-        let ccs = CreditCard.query({key: 'value'});
+        const ccs = CreditCard.query({key: 'value'});
 
         ccs.$promise.then(null, callback);
         $httpBackend.flush();
 
-        let response = callback.calls.mostRecent().args[0];
+        const response = callback.calls.mostRecent().args[0];
 
         expect(response.data).toEqual('resource not found');
         expect(response.status).toEqual(404);
       });
 
 
-      it('should add $resolved boolean field to the result object', function() {
+      it('should add $resolved boolean field to the result object', () => {
         $httpBackend.expect('GET', '/CreditCard?key=value').respond([{id: 1}, {id: 2}]);
-        let ccs = CreditCard.query({key: 'value'}, callback);
+        const ccs = CreditCard.query({key: 'value'}, callback);
 
         expect(ccs.$resolved).toBe(false);
 
@@ -1120,9 +1118,9 @@ describe('basic usage', function() {
       });
 
 
-      it('should set $resolved field to true when an error occurs', function() {
+      it('should set $resolved field to true when an error occurs', () => {
         $httpBackend.expect('GET', '/CreditCard?key=value').respond(404, 'resource not found');
-        let ccs = CreditCard.query({key: 'value'});
+        const ccs = CreditCard.query({key: 'value'});
 
         ccs.$promise.then(null, callback);
         $httpBackend.flush();
@@ -1132,22 +1130,22 @@ describe('basic usage', function() {
     });
 
 
-    describe('requestInterceptor', function() {
-      let rejectReason = {'lol':'cat'};
-      let successSpy, failureSpy;
+    describe('requestInterceptor', () => {
+      const rejectReason = {'lol':'cat'};
+      let successSpy; let failureSpy;
 
-      beforeEach(function() {
+      beforeEach(() => {
         successSpy = jasmine.createSpy('successSpy');
         failureSpy = jasmine.createSpy('failureSpy');
       });
 
-      it('should allow per action request interceptor that gets full configuration', function() {
-        let CreditCard = $resource('/CreditCard', {}, {
+      it('should allow per action request interceptor that gets full configuration', () => {
+        const CreditCard = $resource('/CreditCard', {}, {
           query: {
             method: 'get',
             isArray: true,
             interceptor: {
-              request: function(httpConfig) {
+              request(httpConfig) {
                 callback(httpConfig);
                 return httpConfig;
               }
@@ -1157,7 +1155,7 @@ describe('basic usage', function() {
 
         $httpBackend.expect('GET', '/CreditCard').respond([{id: 1}]);
 
-        let resource = CreditCard.query();
+        const resource = CreditCard.query();
         resource.$promise.then(successSpy, failureSpy);
 
         $httpBackend.flush();
@@ -1171,13 +1169,13 @@ describe('basic usage', function() {
         });
       });
 
-      it('should call $http with the value returned from requestInterceptor', function() {
-        let CreditCard = $resource('/CreditCard', {}, {
+      it('should call $http with the value returned from requestInterceptor', () => {
+        const CreditCard = $resource('/CreditCard', {}, {
           query: {
             method: 'get',
             isArray: true,
             interceptor: {
-              request: function(httpConfig) {
+              request(httpConfig) {
                 httpConfig.url = '/DebitCard';
                 return httpConfig;
               }
@@ -1187,7 +1185,7 @@ describe('basic usage', function() {
 
         $httpBackend.expect('GET', '/DebitCard').respond([{id: 1}]);
 
-        let resource = CreditCard.query();
+        const resource = CreditCard.query();
         resource.$promise.then(successSpy, failureSpy);
 
         $httpBackend.flush();
@@ -1197,20 +1195,20 @@ describe('basic usage', function() {
         expect(failureSpy).not.toHaveBeenCalled();
       });
 
-      it('should abort the operation if the requestInterceptor rejects the operation', function() {
-        let CreditCard = $resource('/CreditCard', {}, {
+      it('should abort the operation if the requestInterceptor rejects the operation', () => {
+        const CreditCard = $resource('/CreditCard', {}, {
           query: {
             method: 'get',
             isArray: true,
             interceptor: {
-              request: function() {
+              request() {
                 return $q.reject(rejectReason);
               }
             }
           }
         });
 
-        let resource = CreditCard.query();
+        const resource = CreditCard.query();
         resource.$promise.then(successSpy, failureSpy);
 
         // Make sure all promises resolve.
@@ -1225,16 +1223,16 @@ describe('basic usage', function() {
         $httpBackend.verifyNoOutstandingRequest();
       });
 
-      it('should call requestErrorInterceptor if requestInterceptor rejects the operation', function() {
-        let CreditCard = $resource('/CreditCard', {}, {
+      it('should call requestErrorInterceptor if requestInterceptor rejects the operation', () => {
+        const CreditCard = $resource('/CreditCard', {}, {
           query: {
             method: 'get',
             isArray: true,
             interceptor: {
-              request: function() {
+              request() {
                 return $q.reject(rejectReason);
               },
-              requestError: function(rejection) {
+              requestError(rejection) {
                 callback(rejection);
                 return $q.reject(rejection);
               }
@@ -1242,7 +1240,7 @@ describe('basic usage', function() {
           }
         });
 
-        let resource = CreditCard.query();
+        const resource = CreditCard.query();
         resource.$promise.then(successSpy, failureSpy);
         $rootScope.$digest();
 
@@ -1254,23 +1252,23 @@ describe('basic usage', function() {
         $httpBackend.verifyNoOutstandingRequest();
       });
 
-      it('should abort the operation if a requestErrorInterceptor rejects the operation', function() {
-        let CreditCard = $resource('/CreditCard', {}, {
+      it('should abort the operation if a requestErrorInterceptor rejects the operation', () => {
+        const CreditCard = $resource('/CreditCard', {}, {
           query: {
             method: 'get',
             isArray: true,
             interceptor: {
-              request: function() {
+              request() {
                 return $q.reject(rejectReason);
               },
-              requestError: function(rejection) {
+              requestError(rejection) {
                 return $q.reject(rejection);
               }
             }
           }
         });
 
-        let resource = CreditCard.query();
+        const resource = CreditCard.query();
         resource.$promise.then(successSpy, failureSpy);
         $rootScope.$apply();
 
@@ -1282,16 +1280,16 @@ describe('basic usage', function() {
         $httpBackend.verifyNoOutstandingRequest();
       });
 
-      it('should continue the operation if a requestErrorInterceptor rescues it', function() {
-        let CreditCard = $resource('/CreditCard', {}, {
+      it('should continue the operation if a requestErrorInterceptor rescues it', () => {
+        const CreditCard = $resource('/CreditCard', {}, {
           query: {
             method: 'get',
             isArray: true,
             interceptor: {
-              request: function(httpConfig) {
+              request(httpConfig) {
                 return $q.reject(httpConfig);
               },
-              requestError: function(httpConfig) {
+              requestError(httpConfig) {
                 return $q.resolve(httpConfig);
               }
             }
@@ -1300,7 +1298,7 @@ describe('basic usage', function() {
 
         $httpBackend.expect('GET', '/CreditCard').respond([{id: 1}]);
 
-        let resource = CreditCard.query();
+        const resource = CreditCard.query();
         resource.$promise.then(successSpy, failureSpy);
         $httpBackend.flush();
 
@@ -1315,19 +1313,19 @@ describe('basic usage', function() {
     });
 
 
-    describe('responseInterceptor', function() {
-      it('should allow per action response interceptor that gets full response', function() {
+    describe('responseInterceptor', () => {
+      it('should allow per action response interceptor that gets full response', () => {
         let response;
 
         $httpBackend.expect('GET', '/CreditCard').respond(201, {id: 1}, {foo: 'bar'}, 'Ack');
         CreditCard = $resource('/CreditCard', {}, {
           get: {
             method: 'get',
-            interceptor: {response: function(resp) { response = resp; }}
+            interceptor: {response(resp) { response = resp; }}
           }
         });
 
-        let cc = CreditCard.get();
+        const cc = CreditCard.get();
         $httpBackend.flush();
 
         expect(response.resource).toBe(cc);
@@ -1338,18 +1336,18 @@ describe('basic usage', function() {
       });
 
 
-      it('should allow per action responseError interceptor that gets full response', function() {
+      it('should allow per action responseError interceptor that gets full response', () => {
         let response;
 
         $httpBackend.expect('GET', '/CreditCard').respond(404, {ignored: 'stuff'}, {foo: 'bar'}, 'Ack');
         CreditCard = $resource('/CreditCard', {}, {
           get: {
             method: 'get',
-            interceptor: {responseError: function(resp) { response = resp; }}
+            interceptor: {responseError(resp) { response = resp; }}
           }
         });
 
-        let cc = CreditCard.get();
+        const cc = CreditCard.get();
         $httpBackend.flush();
 
         expect(response.resource).toBe(cc);
@@ -1361,20 +1359,20 @@ describe('basic usage', function() {
 
 
       it('should fulfill the promise with the value returned by the response interceptor',
-        function() {
+        () => {
           $httpBackend.whenGET('/CreditCard').respond(200);
           CreditCard = $resource('/CreditCard', {}, {
             test1: {
               method: 'get',
-              interceptor: {response: function() { return 'foo'; }}
+              interceptor: {response() { return 'foo'; }}
             },
             test2: {
               method: 'get',
-              interceptor: {response: function() { return $q.resolve('bar'); }}
+              interceptor: {response() { return $q.resolve('bar'); }}
             },
             test3: {
               method: 'get',
-              interceptor: {response: function() { return $q.reject('baz'); }}
+              interceptor: {response() { return $q.reject('baz'); }}
             }
           });
 
@@ -1398,20 +1396,20 @@ describe('basic usage', function() {
 
 
       it('should fulfill the promise with the value returned by the responseError interceptor',
-        function() {
+        () => {
           $httpBackend.whenGET('/CreditCard').respond(404);
           CreditCard = $resource('/CreditCard', {}, {
             test1: {
               method: 'get',
-              interceptor: {responseError: function() { return 'foo'; }}
+              interceptor: {responseError() { return 'foo'; }}
             },
             test2: {
               method: 'get',
-              interceptor: {responseError: function() { return $q.resolve('bar'); }}
+              interceptor: {responseError() { return $q.resolve('bar'); }}
             },
             test3: {
               method: 'get',
-              interceptor: {responseError: function() { return $q.reject('baz'); }}
+              interceptor: {responseError() { return $q.reject('baz'); }}
             }
           });
 
@@ -1434,16 +1432,16 @@ describe('basic usage', function() {
       );
 
 
-      it('should call the success callback when response interceptor succeeds', function() {
+      it('should call the success callback when response interceptor succeeds', () => {
         $httpBackend.whenGET('/CreditCard').respond(200);
         CreditCard = $resource('/CreditCard', {}, {
           test1: {
             method: 'get',
-            interceptor: {response: function() { return 'foo'; }}
+            interceptor: {response() { return 'foo'; }}
           },
           test2: {
             method: 'get',
-            interceptor: {response: function() { return $q.resolve('bar'); }}
+            interceptor: {response() { return $q.resolve('bar'); }}
           }
         });
 
@@ -1459,16 +1457,16 @@ describe('basic usage', function() {
       });
 
 
-      it('should call the error callback when response interceptor fails', function() {
+      it('should call the error callback when response interceptor fails', () => {
         $httpBackend.whenGET('/CreditCard').respond(200);
         CreditCard = $resource('/CreditCard', {}, {
           test1: {
             method: 'get',
-            interceptor: {response: function() { throw 'foo'; }}
+            interceptor: {response() { throw 'foo'; }}
           },
           test2: {
             method: 'get',
-            interceptor: {response: function() { return $q.reject('bar'); }}
+            interceptor: {response() { return $q.reject('bar'); }}
           }
         });
 
@@ -1484,16 +1482,16 @@ describe('basic usage', function() {
       });
 
 
-      it('should call the success callback when responseError interceptor succeeds', function() {
+      it('should call the success callback when responseError interceptor succeeds', () => {
         $httpBackend.whenGET('/CreditCard').respond(404);
         CreditCard = $resource('/CreditCard', {}, {
           test1: {
             method: 'get',
-            interceptor: {responseError: function() { return 'foo'; }}
+            interceptor: {responseError() { return 'foo'; }}
           },
           test2: {
             method: 'get',
-            interceptor: {responseError: function() { return $q.resolve('bar'); }}
+            interceptor: {responseError() { return $q.resolve('bar'); }}
           }
         });
 
@@ -1509,16 +1507,16 @@ describe('basic usage', function() {
       });
 
 
-      it('should call the error callback when responseError interceptor fails', function() {
+      it('should call the error callback when responseError interceptor fails', () => {
         $httpBackend.whenGET('/CreditCard').respond(404);
         CreditCard = $resource('/CreditCard', {}, {
           test1: {
             method: 'get',
-            interceptor: {responseError: function() { throw 'foo'; }}
+            interceptor: {responseError() { throw 'foo'; }}
           },
           test2: {
             method: 'get',
-            interceptor: {responseError: function() { return $q.reject('bar'); }}
+            interceptor: {responseError() { return $q.reject('bar'); }}
           }
         });
 
@@ -1536,10 +1534,10 @@ describe('basic usage', function() {
   });
 
 
-  describe('success mode', function() {
-    it('should call the success callback (as 1st argument) on 2xx responses', function() {
-      let instance, headers, status, statusText;
-      let successCb = jasmine.createSpy('successCb').and.callFake(function(d, h, s, t) {
+  describe('success mode', () => {
+    it('should call the success callback (as 1st argument) on 2xx responses', () => {
+      let instance; let headers; let status; let statusText;
+      const successCb = jasmine.createSpy('successCb').and.callFake((d, h, s, t) => {
         expect(d).toBe(instance);
         expect(h()).toEqual(jasmine.objectContaining(headers));
         expect(s).toBe(status);
@@ -1566,9 +1564,9 @@ describe('basic usage', function() {
     });
 
 
-    it('should call the success callback (as 2nd argument) on 2xx responses', function() {
-      let instance, headers, status, statusText;
-      let successCb = jasmine.createSpy('successCb').and.callFake(function(d, h, s, t) {
+    it('should call the success callback (as 2nd argument) on 2xx responses', () => {
+      let instance; let headers; let status; let statusText;
+      const successCb = jasmine.createSpy('successCb').and.callFake((d, h, s, t) => {
         expect(d).toBe(instance);
         expect(h()).toEqual(jasmine.objectContaining(headers));
         expect(s).toBe(status);
@@ -1595,20 +1593,20 @@ describe('basic usage', function() {
     });
   });
 
-  describe('failure mode', function() {
-    let ERROR_CODE = 500,
-        ERROR_RESPONSE = 'Server Error',
-        errorCB;
+  describe('failure mode', () => {
+    const ERROR_CODE = 500;
+        const ERROR_RESPONSE = 'Server Error';
+        let errorCB;
 
-    beforeEach(function() {
-      errorCB = jasmine.createSpy('error').and.callFake(function(response) {
+    beforeEach(() => {
+      errorCB = jasmine.createSpy('error').and.callFake((response) => {
         expect(response.data).toBe(ERROR_RESPONSE);
         expect(response.status).toBe(ERROR_CODE);
       });
     });
 
 
-    it('should call the error callback if provided on non 2xx response', function() {
+    it('should call the error callback if provided on non 2xx response', () => {
       $httpBackend.expect('GET', '/CreditCard/123').respond(ERROR_CODE, ERROR_RESPONSE);
 
       CreditCard.get({id:123}, callback, errorCB);
@@ -1618,7 +1616,7 @@ describe('basic usage', function() {
     });
 
 
-    it('should call the error callback if provided on non 2xx response (without data)', function() {
+    it('should call the error callback if provided on non 2xx response (without data)', () => {
       $httpBackend.expect('GET', '/CreditCard').respond(ERROR_CODE, ERROR_RESPONSE);
 
       CreditCard.get(callback, errorCB);
@@ -1628,142 +1626,142 @@ describe('basic usage', function() {
     });
   });
 
-  it('should transform request/response', function() {
-    let Person = $resource('/Person/:id', {}, {
+  it('should transform request/response', () => {
+    const Person = $resource('/Person/:id', {}, {
       save: {
         method: 'POST',
         params: {id: '@id'},
-        transformRequest: function(data) {
+        transformRequest(data) {
           return angular.toJson({ __id: data.id });
         },
-        transformResponse: function(data) {
+        transformResponse(data) {
           return { id: data.__id };
         }
       }
     });
 
     $httpBackend.expect('POST', '/Person/123', { __id: 123 }).respond({ __id: 456 });
-    let person = new Person({id:123});
+    const person = new Person({id:123});
     person.$save();
     $httpBackend.flush();
     expect(person.id).toEqual(456);
   });
 
-  describe('suffix parameter', function() {
+  describe('suffix parameter', () => {
 
-    describe('query', function() {
-      it('should add a suffix', function() {
+    describe('query', () => {
+      it('should add a suffix', () => {
         $httpBackend.expect('GET', '/users.json').respond([{id: 1, name: 'user1'}]);
-        let UserService = $resource('/users/:id.json', {id: '@id'});
-        let user = UserService.query();
+        const UserService = $resource('/users/:id.json', {id: '@id'});
+        const user = UserService.query();
         $httpBackend.flush();
         expect(user).toEqualData([{id: 1, name: 'user1'}]);
       });
 
-      it('should not require it if not provided', function() {
+      it('should not require it if not provided', () => {
         $httpBackend.expect('GET', '/users.json').respond([{id: 1, name: 'user1'}]);
-        let UserService = $resource('/users.json');
-        let user = UserService.query();
+        const UserService = $resource('/users.json');
+        const user = UserService.query();
         $httpBackend.flush();
         expect(user).toEqualData([{id: 1, name: 'user1'}]);
       });
 
-      it('should work when query parameters are supplied', function() {
+      it('should work when query parameters are supplied', () => {
         $httpBackend.expect('GET', '/users.json?red=blue').respond([{id: 1, name: 'user1'}]);
-        let UserService = $resource('/users/:user_id.json', {user_id: '@id'});
-        let user = UserService.query({red: 'blue'});
+        const UserService = $resource('/users/:user_id.json', {user_id: '@id'});
+        const user = UserService.query({red: 'blue'});
         $httpBackend.flush();
         expect(user).toEqualData([{id: 1, name: 'user1'}]);
       });
 
-      it('should work when query parameters are supplied and the format is a resource parameter', function() {
+      it('should work when query parameters are supplied and the format is a resource parameter', () => {
         $httpBackend.expect('GET', '/users.json?red=blue').respond([{id: 1, name: 'user1'}]);
-        let UserService = $resource('/users/:user_id.:format', {user_id: '@id', format: 'json'});
-        let user = UserService.query({red: 'blue'});
+        const UserService = $resource('/users/:user_id.:format', {user_id: '@id', format: 'json'});
+        const user = UserService.query({red: 'blue'});
         $httpBackend.flush();
         expect(user).toEqualData([{id: 1, name: 'user1'}]);
       });
 
-      it('should work with the action is overridden', function() {
+      it('should work with the action is overridden', () => {
         $httpBackend.expect('GET', '/users.json').respond([{id: 1, name: 'user1'}]);
-        let UserService = $resource('/users/:user_id', {user_id: '@id'}, {
+        const UserService = $resource('/users/:user_id', {user_id: '@id'}, {
           query: {
             method: 'GET',
             url: '/users/:user_id.json',
             isArray: true
           }
         });
-        let user = UserService.query();
+        const user = UserService.query();
         $httpBackend.flush();
         expect(user).toEqualData([{id: 1, name: 'user1'}]);
       });
 
-      it('should not convert string literals in array into Resource objects', function() {
+      it('should not convert string literals in array into Resource objects', () => {
         $httpBackend.expect('GET', '/names.json').respond(['mary', 'jane']);
-        let strings = $resource('/names.json').query();
+        const strings = $resource('/names.json').query();
         $httpBackend.flush();
         expect(strings).toEqualData(['mary', 'jane']);
       });
 
-      it('should not convert number literals in array into Resource objects', function() {
+      it('should not convert number literals in array into Resource objects', () => {
         $httpBackend.expect('GET', '/names.json').respond([213, 456]);
-        let numbers = $resource('/names.json').query();
+        const numbers = $resource('/names.json').query();
         $httpBackend.flush();
         expect(numbers).toEqualData([213, 456]);
       });
 
-      it('should not convert boolean literals in array into Resource objects', function() {
+      it('should not convert boolean literals in array into Resource objects', () => {
         $httpBackend.expect('GET', '/names.json').respond([true, false]);
-        let bools = $resource('/names.json').query();
+        const bools = $resource('/names.json').query();
         $httpBackend.flush();
         expect(bools).toEqualData([true, false]);
       });
     });
 
-    describe('get', function() {
-      it('should add them to the id', function() {
+    describe('get', () => {
+      it('should add them to the id', () => {
         $httpBackend.expect('GET', '/users/1.json').respond({id: 1, name: 'user1'});
-        let UserService = $resource('/users/:user_id.json', {user_id: '@id'});
-        let user = UserService.get({user_id: 1});
+        const UserService = $resource('/users/:user_id.json', {user_id: '@id'});
+        const user = UserService.get({user_id: 1});
         $httpBackend.flush();
         expect(user).toEqualData({id: 1, name: 'user1'});
       });
 
-      it('should work when an id and query parameters are supplied', function() {
+      it('should work when an id and query parameters are supplied', () => {
         $httpBackend.expect('GET', '/users/1.json?red=blue').respond({id: 1, name: 'user1'});
-        let UserService = $resource('/users/:user_id.json', {user_id: '@id'});
-        let user = UserService.get({user_id: 1, red: 'blue'});
+        const UserService = $resource('/users/:user_id.json', {user_id: '@id'});
+        const user = UserService.get({user_id: 1, red: 'blue'});
         $httpBackend.flush();
         expect(user).toEqualData({id: 1, name: 'user1'});
       });
 
-      it('should work when the format is a parameter', function() {
+      it('should work when the format is a parameter', () => {
         $httpBackend.expect('GET', '/users/1.json?red=blue').respond({id: 1, name: 'user1'});
-        let UserService = $resource('/users/:user_id.:format', {user_id: '@id', format: 'json'});
-        let user = UserService.get({user_id: 1, red: 'blue'});
+        const UserService = $resource('/users/:user_id.:format', {user_id: '@id', format: 'json'});
+        const user = UserService.get({user_id: 1, red: 'blue'});
         $httpBackend.flush();
         expect(user).toEqualData({id: 1, name: 'user1'});
       });
 
-      it('should work with the action is overridden', function() {
+      it('should work with the action is overridden', () => {
         $httpBackend.expect('GET', '/users/1.json').respond({id: 1, name: 'user1'});
-        let UserService = $resource('/users/:user_id', {user_id: '@id'}, {
+        const UserService = $resource('/users/:user_id', {user_id: '@id'}, {
           get: {
             method: 'GET',
             url: '/users/:user_id.json'
           }
         });
-        let user = UserService.get({user_id: 1});
+        const user = UserService.get({user_id: 1});
         $httpBackend.flush();
         expect(user).toEqualData({id: 1, name: 'user1'});
       });
     });
 
-    describe('save', function() {
-      it('should append the suffix', function() {
+    describe('save', () => {
+      it('should append the suffix', () => {
         $httpBackend.expect('POST', '/users.json', '{"name":"user1"}').respond({id: 123, name: 'user1'});
-        let UserService = $resource('/users/:user_id.json', {user_id: '@id'});
-        let user = UserService.save({name: 'user1'}, callback);
+        const UserService = $resource('/users/:user_id.json', {user_id: '@id'});
+        const user = UserService.save({name: 'user1'}, callback);
         expect(user).toEqualData({name: 'user1'});
         expect(callback).not.toHaveBeenCalled();
         $httpBackend.flush();
@@ -1773,10 +1771,10 @@ describe('basic usage', function() {
         expect(callback.calls.mostRecent().args[1]()).toEqual(Object.create(null));
       });
 
-      it('should append when an id is supplied', function() {
+      it('should append when an id is supplied', () => {
         $httpBackend.expect('POST', '/users/123.json', '{"id":123,"name":"newName"}').respond({id: 123, name: 'newName'});
-        let UserService = $resource('/users/:user_id.json', {user_id: '@id'});
-        let user = UserService.save({id: 123, name: 'newName'}, callback);
+        const UserService = $resource('/users/:user_id.json', {user_id: '@id'});
+        const user = UserService.save({id: 123, name: 'newName'}, callback);
         expect(callback).not.toHaveBeenCalled();
         $httpBackend.flush();
         expect(user).toEqualData({id: 123, name: 'newName'});
@@ -1785,10 +1783,10 @@ describe('basic usage', function() {
         expect(callback.calls.mostRecent().args[1]()).toEqual(Object.create(null));
       });
 
-      it('should append when an id is supplied and the format is a parameter', function() {
+      it('should append when an id is supplied and the format is a parameter', () => {
         $httpBackend.expect('POST', '/users/123.json', '{"id":123,"name":"newName"}').respond({id: 123, name: 'newName'});
-        let UserService = $resource('/users/:user_id.:format', {user_id: '@id', format: 'json'});
-        let user = UserService.save({id: 123, name: 'newName'}, callback);
+        const UserService = $resource('/users/:user_id.:format', {user_id: '@id', format: 'json'});
+        const user = UserService.save({id: 123, name: 'newName'}, callback);
         expect(callback).not.toHaveBeenCalled();
         $httpBackend.flush();
         expect(user).toEqualData({id: 123, name: 'newName'});
@@ -1798,52 +1796,52 @@ describe('basic usage', function() {
       });
     });
 
-    describe('escaping /. with /\\.', function() {
-      it('should work with query()', function() {
+    describe('escaping /. with /\\.', () => {
+      it('should work with query()', () => {
         $httpBackend.expect('GET', '/users/.json').respond();
         $resource('/users/\\.json').query();
       });
-      it('should work with get()', function() {
+      it('should work with get()', () => {
         $httpBackend.expect('GET', '/users/.json').respond();
         $resource('/users/\\.json').get();
       });
-      it('should work with save()', function() {
+      it('should work with save()', () => {
         $httpBackend.expect('POST', '/users/.json').respond();
         $resource('/users/\\.json').save({});
       });
-      it('should work with save() if dynamic params', function() {
+      it('should work with save() if dynamic params', () => {
         $httpBackend.expect('POST', '/users/.json').respond();
         $resource('/users/:json', {json: '\\.json'}).save({});
       });
-      it('should work with query() if dynamic params', function() {
+      it('should work with query() if dynamic params', () => {
         $httpBackend.expect('GET', '/users/.json').respond();
         $resource('/users/:json', {json: '\\.json'}).query();
       });
-      it('should work with get() if dynamic params', function() {
+      it('should work with get() if dynamic params', () => {
         $httpBackend.expect('GET', '/users/.json').respond();
         $resource('/users/:json', {json: '\\.json'}).get();
       });
     });
   });
 
-  describe('action-level url override', function() {
+  describe('action-level url override', () => {
 
-    it('should support overriding url template with static url', function() {
+    it('should support overriding url template with static url', () => {
       $httpBackend.expect('GET', '/override-url?type=Customer&typeId=123').respond({id: 'abc'});
-      let TypeItem = $resource('/:type/:typeId', {type: 'Order'}, {
+      const TypeItem = $resource('/:type/:typeId', {type: 'Order'}, {
         get: {
           method: 'GET',
           params: {type: 'Customer'},
           url: '/override-url'
         }
       });
-      let item = TypeItem.get({typeId: 123});
+      const item = TypeItem.get({typeId: 123});
       $httpBackend.flush();
       expect(item).toEqualData({id: 'abc'});
     });
 
 
-    it('should support overriding url template with a new template ending in param', function() {
+    it('should support overriding url template with a new template ending in param', () => {
       //    url parameter in action, parameter ending the string
       $httpBackend.expect('GET', '/Customer/123').respond({id: 'abc'});
       let TypeItem = $resource('/foo/:type', {type: 'Order'}, {
@@ -1872,23 +1870,23 @@ describe('basic usage', function() {
     });
 
 
-    it('should support overriding url template with a new template ending in string', function() {
+    it('should support overriding url template with a new template ending in string', () => {
       $httpBackend.expect('GET', '/Customer/123/pay').respond({id: 'abc'});
-      let TypeItem = $resource('/foo/:type', {type: 'Order'}, {
+      const TypeItem = $resource('/foo/:type', {type: 'Order'}, {
         get: {
           method: 'GET',
           params: {type: 'Customer'},
           url: '/:type/:typeId/pay'
         }
       });
-      let item = TypeItem.get({typeId: 123});
+      const item = TypeItem.get({typeId: 123});
       $httpBackend.flush();
       expect(item).toEqualData({id: 'abc'});
     });
   });
 });
 
-describe('extra params', function() {
+describe('extra params', () => {
   let $http;
   let $httpBackend;
   let $resource;
@@ -1896,28 +1894,26 @@ describe('extra params', function() {
 
   beforeEach(module('ngResource'));
 
-  beforeEach(module(function($provide) {
-    $provide.decorator('$http', function($delegate) {
-      return jasmine.createSpy('$http').and.callFake($delegate);
-    });
+  beforeEach(module(($provide) => {
+    $provide.decorator('$http', ($delegate) => jasmine.createSpy('$http').and.callFake($delegate));
   }));
 
-  beforeEach(inject(function(_$http_, _$httpBackend_, _$resource_, _$rootScope_) {
+  beforeEach(inject((_$http_, _$httpBackend_, _$resource_, _$rootScope_) => {
     $http = _$http_;
     $httpBackend = _$httpBackend_;
     $resource = _$resource_;
     $rootScope = _$rootScope_;
   }));
 
-  afterEach(function() {
+  afterEach(() => {
     $httpBackend.verifyNoOutstandingExpectation();
   });
 
 
-  it('should pass extra params to `$http` as `config.params`', function() {
+  it('should pass extra params to `$http` as `config.params`', () => {
     $httpBackend.expectGET('/bar?baz=qux').respond('{}');
 
-    let R = $resource('/:foo');
+    const R = $resource('/:foo');
     R.get({foo: 'bar', baz: 'qux'});
 
     $rootScope.$digest();
@@ -1925,38 +1921,38 @@ describe('extra params', function() {
   });
 
   it('should pass extra params even if `Object.prototype` has properties with the same name',
-    function() {
+    () => {
       $httpBackend.expectGET('/foo?toString=bar').respond('{}');
 
-      let R = $resource('/foo');
+      const R = $resource('/foo');
       R.get({toString: 'bar'});
     }
   );
 });
 
-describe('errors', function() {
-  let $httpBackend, $resource;
+describe('errors', () => {
+  let $httpBackend; let $resource;
 
-  beforeEach(module(function($exceptionHandlerProvider) {
+  beforeEach(module(($exceptionHandlerProvider) => {
     $exceptionHandlerProvider.mode('log');
   }));
 
   beforeEach(module('ngResource'));
 
-  beforeEach(inject(function($injector) {
+  beforeEach(inject(($injector) => {
     $httpBackend = $injector.get('$httpBackend');
     $resource = $injector.get('$resource');
   }));
 
 
-  it('should fail if action expects an object but response is an array', function() {
-    let successSpy = jasmine.createSpy('successSpy');
-    let failureSpy = jasmine.createSpy('failureSpy');
+  it('should fail if action expects an object but response is an array', () => {
+    const successSpy = jasmine.createSpy('successSpy');
+    const failureSpy = jasmine.createSpy('failureSpy');
 
     $httpBackend.expect('GET', '/Customer/123').respond({id: 'abc'});
 
     $resource('/Customer/123').query()
-      .$promise.then(successSpy, function(e) { failureSpy(e.message); });
+      .$promise.then(successSpy, (e) => { failureSpy(e.message); });
     $httpBackend.flush();
 
     expect(successSpy).not.toHaveBeenCalled();
@@ -1966,14 +1962,14 @@ describe('errors', function() {
         'Expected response to contain an array but got an object (Request: GET /Customer/123)');
   });
 
-  it('should fail if action expects an array but response is an object', function() {
-    let successSpy = jasmine.createSpy('successSpy');
-    let failureSpy = jasmine.createSpy('failureSpy');
+  it('should fail if action expects an array but response is an object', () => {
+    const successSpy = jasmine.createSpy('successSpy');
+    const failureSpy = jasmine.createSpy('failureSpy');
 
     $httpBackend.expect('GET', '/Customer/123').respond([1,2,3]);
 
     $resource('/Customer/123').get()
-      .$promise.then(successSpy, function(e) { failureSpy(e.message); });
+      .$promise.then(successSpy, (e) => { failureSpy(e.message); });
     $httpBackend.flush();
 
     expect(successSpy).not.toHaveBeenCalled();
@@ -1984,17 +1980,17 @@ describe('errors', function() {
   });
 });
 
-describe('handling rejections', function() {
+describe('handling rejections', () => {
   let $exceptionHandler;
   let $httpBackend;
   let $resource;
 
   beforeEach(module('ngResource'));
-  beforeEach(module(function($exceptionHandlerProvider) {
+  beforeEach(module(($exceptionHandlerProvider) => {
     $exceptionHandlerProvider.mode('log');
   }));
 
-  beforeEach(inject(function(_$exceptionHandler_, _$httpBackend_, _$resource_) {
+  beforeEach(inject((_$exceptionHandler_, _$httpBackend_, _$resource_) => {
     $exceptionHandler = _$exceptionHandler_;
     $httpBackend = _$httpBackend_;
     $resource = _$resource_;
@@ -2003,10 +1999,10 @@ describe('handling rejections', function() {
   }));
 
 
-  it('should reject the promise even when there is an error callback', function() {
-    let errorCb1 = jasmine.createSpy('errorCb1');
-    let errorCb2 = jasmine.createSpy('errorCb2');
-    let CreditCard = $resource('/CreditCard');
+  it('should reject the promise even when there is an error callback', () => {
+    const errorCb1 = jasmine.createSpy('errorCb1');
+    const errorCb2 = jasmine.createSpy('errorCb2');
+    const CreditCard = $resource('/CreditCard');
 
     CreditCard.get(noop, errorCb1).$promise.catch(errorCb2);
     $httpBackend.flush();
@@ -2017,8 +2013,8 @@ describe('handling rejections', function() {
 
 
   it('should report a PUR when no error callback or responseError interceptor is provided',
-    function() {
-      let CreditCard = $resource('/CreditCard');
+    () => {
+      const CreditCard = $resource('/CreditCard');
 
       CreditCard.get();
       $httpBackend.flush();
@@ -2030,14 +2026,14 @@ describe('handling rejections', function() {
 
 
   it('should not report a PUR when an error callback or responseError interceptor is provided',
-    function() {
-      let CreditCard = $resource('/CreditCard', {}, {
+    () => {
+      const CreditCard = $resource('/CreditCard', {}, {
         test1: {
           method: 'GET'
         },
         test2: {
           method: 'GET',
-          interceptor: {responseError: function() { return {}; }}
+          interceptor: {responseError() { return {}; }}
         }
       });
 
@@ -2063,11 +2059,11 @@ describe('handling rejections', function() {
 
 
   it('should report a PUR when the responseError interceptor returns a rejected promise',
-    inject(function($q) {
-      let CreditCard = $resource('/CreditCard', {}, {
+    inject(($q) => {
+      const CreditCard = $resource('/CreditCard', {}, {
         test: {
           method: 'GET',
-          interceptor: {responseError: function() { return $q.reject({}); }}
+          interceptor: {responseError() { return $q.reject({}); }}
         }
       });
 
@@ -2081,12 +2077,12 @@ describe('handling rejections', function() {
 
 
   it('should not swallow exceptions in success callback when error callback is provided',
-    function() {
+    () => {
       $httpBackend.expectGET('/CreditCard/123').respond(null);
-      let CreditCard = $resource('/CreditCard/:id');
+      const CreditCard = $resource('/CreditCard/:id');
       CreditCard.get({id: 123},
-          function(res) { throw new Error('should be caught'); },
-          function() {});
+          (res) => { throw new Error('should be caught'); },
+          () => {});
 
       $httpBackend.flush();
       expect($exceptionHandler.errors.length).toBe(1);
@@ -2096,11 +2092,11 @@ describe('handling rejections', function() {
 
 
   it('should not swallow exceptions in success callback when error callback is not provided',
-    function() {
+    () => {
       $httpBackend.expectGET('/CreditCard/123').respond(null);
-      let CreditCard = $resource('/CreditCard/:id');
+      const CreditCard = $resource('/CreditCard/:id');
       CreditCard.get({id: 123},
-          function(res) { throw new Error('should be caught'); });
+          (res) => { throw new Error('should be caught'); });
 
       $httpBackend.flush();
       expect($exceptionHandler.errors.length).toBe(1);
@@ -2110,18 +2106,18 @@ describe('handling rejections', function() {
 
 
   it('should not swallow exceptions in success callback when error callback is provided and has responseError interceptor',
-    function() {
+    () => {
       $httpBackend.expectGET('/CreditCard/123').respond(null);
-      let CreditCard = $resource('/CreditCard/:id', null, {
+      const CreditCard = $resource('/CreditCard/:id', null, {
         get: {
           method: 'GET',
-          interceptor: {responseError: function() {}}
+          interceptor: {responseError() {}}
         }
       });
 
       CreditCard.get({id: 123},
-          function(res) { throw new Error('should be caught'); },
-          function() {});
+          (res) => { throw new Error('should be caught'); },
+          () => {});
 
       $httpBackend.flush();
       expect($exceptionHandler.errors.length).toBe(1);
@@ -2131,17 +2127,17 @@ describe('handling rejections', function() {
 
 
   it('should not swallow exceptions in success callback when error callback is not provided and has responseError interceptor',
-    function() {
+    () => {
       $httpBackend.expectGET('/CreditCard/123').respond(null);
-      let CreditCard = $resource('/CreditCard/:id', null, {
+      const CreditCard = $resource('/CreditCard/:id', null, {
         get: {
           method: 'GET',
-          interceptor: {responseError: function() {}}
+          interceptor: {responseError() {}}
         }
       });
 
       CreditCard.get({id: 123},
-          function(res) { throw new Error('should be caught'); });
+          (res) => { throw new Error('should be caught'); });
 
       $httpBackend.flush();
       expect($exceptionHandler.errors.length).toBe(1);
@@ -2150,13 +2146,13 @@ describe('handling rejections', function() {
   );
 
 
-  it('should not propagate exceptions in success callback to the returned promise', function() {
-    let successCallbackSpy = jasmine.createSpy('successCallback').and.throwError('error');
-    let promiseResolveSpy = jasmine.createSpy('promiseResolve');
-    let promiseRejectSpy = jasmine.createSpy('promiseReject');
+  it('should not propagate exceptions in success callback to the returned promise', () => {
+    const successCallbackSpy = jasmine.createSpy('successCallback').and.throwError('error');
+    const promiseResolveSpy = jasmine.createSpy('promiseResolve');
+    const promiseRejectSpy = jasmine.createSpy('promiseReject');
 
     $httpBackend.expectGET('/CreditCard/123').respond(null);
-    let CreditCard = $resource('/CreditCard/:id');
+    const CreditCard = $resource('/CreditCard/:id');
     CreditCard.get({id: 123}, successCallbackSpy).
       $promise.then(promiseResolveSpy, promiseRejectSpy);
 
@@ -2167,13 +2163,13 @@ describe('handling rejections', function() {
   });
 
 
-  it('should not be able to recover from inside the error callback', function() {
-    let errorCallbackSpy = jasmine.createSpy('errorCallback').and.returnValue({id: 123});
-    let promiseResolveSpy = jasmine.createSpy('promiseResolve');
-    let promiseRejectSpy = jasmine.createSpy('promiseReject');
+  it('should not be able to recover from inside the error callback', () => {
+    const errorCallbackSpy = jasmine.createSpy('errorCallback').and.returnValue({id: 123});
+    const promiseResolveSpy = jasmine.createSpy('promiseResolve');
+    const promiseRejectSpy = jasmine.createSpy('promiseReject');
 
     $httpBackend.expectGET('/CreditCard/123').respond(404);
-    let CreditCard = $resource('/CreditCard/:id');
+    const CreditCard = $resource('/CreditCard/:id');
     CreditCard.get({id: 123}, noop, errorCallbackSpy).
       $promise.then(promiseResolveSpy, promiseRejectSpy);
 
@@ -2184,12 +2180,12 @@ describe('handling rejections', function() {
   });
 
 
-  describe('requestInterceptor', function() {
-    let rejectReason = {'lol':'cat'};
-    let $q, $rootScope;
-    let successSpy, failureSpy, callback;
+  describe('requestInterceptor', () => {
+    const rejectReason = {'lol':'cat'};
+    let $q; let $rootScope;
+    let successSpy; let failureSpy; let callback;
 
-    beforeEach(inject(function(_$q_, _$rootScope_) {
+    beforeEach(inject((_$q_, _$rootScope_) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
 
@@ -2198,16 +2194,16 @@ describe('handling rejections', function() {
       callback = jasmine.createSpy();
     }));
 
-    it('should call requestErrorInterceptor if requestInterceptor throws an error', function() {
-      let CreditCard = $resource('/CreditCard', {}, {
+    it('should call requestErrorInterceptor if requestInterceptor throws an error', () => {
+      const CreditCard = $resource('/CreditCard', {}, {
         query: {
           method: 'get',
           isArray: true,
           interceptor: {
-            request: function() {
+            request() {
               throw rejectReason;
             },
-            requestError: function(rejection) {
+            requestError(rejection) {
               callback(rejection);
               return $q.reject(rejection);
             }
@@ -2215,7 +2211,7 @@ describe('handling rejections', function() {
         }
       });
 
-      let resource = CreditCard.query();
+      const resource = CreditCard.query();
       resource.$promise.then(successSpy, failureSpy);
       $rootScope.$apply();
 
@@ -2229,23 +2225,23 @@ describe('handling rejections', function() {
       $httpBackend.verifyNoOutstandingRequest();
     });
 
-    it('should abort the operation if a requestErrorInterceptor throws an exception', function() {
-      let CreditCard = $resource('/CreditCard', {}, {
+    it('should abort the operation if a requestErrorInterceptor throws an exception', () => {
+      const CreditCard = $resource('/CreditCard', {}, {
         query: {
           method: 'get',
           isArray: true,
           interceptor: {
-            request: function() {
+            request() {
               return $q.reject();
             },
-            requestError: function() {
+            requestError() {
               throw rejectReason;
             }
           }
         }
       });
 
-      let resource = CreditCard.query();
+      const resource = CreditCard.query();
       resource.$promise.then(successSpy, failureSpy);
       $rootScope.$apply();
 
@@ -2260,29 +2256,29 @@ describe('handling rejections', function() {
   });
 });
 
-describe('cancelling requests', function() {
+describe('cancelling requests', () => {
   let httpSpy;
   let $httpBackend;
   let $resource;
   let $timeout;
 
-  beforeEach(module('ngResource', function($provide) {
-    $provide.decorator('$http', function($delegate) {
+  beforeEach(module('ngResource', ($provide) => {
+    $provide.decorator('$http', ($delegate) => {
       httpSpy = jasmine.createSpy('$http').and.callFake($delegate);
       return httpSpy;
     });
   }));
 
-  beforeEach(inject(function(_$httpBackend_, _$resource_, _$timeout_) {
+  beforeEach(inject((_$httpBackend_, _$resource_, _$timeout_) => {
     $httpBackend = _$httpBackend_;
     $resource = _$resource_;
     $timeout = _$timeout_;
   }));
 
-  it('should accept numeric timeouts in actions and pass them to $http', function() {
+  it('should accept numeric timeouts in actions and pass them to $http', () => {
     $httpBackend.whenGET('/CreditCard').respond({});
 
-    let CreditCard = $resource('/CreditCard', {}, {
+    const CreditCard = $resource('/CreditCard', {}, {
       get: {
         method: 'GET',
         timeout: 10000
@@ -2297,11 +2293,11 @@ describe('cancelling requests', function() {
   });
 
   it('should delete non-numeric timeouts in actions and log a $debug message',
-    inject(function($log, $q) {
+    inject(($log, $q) => {
       spyOn($log, 'debug');
       $httpBackend.whenGET('/CreditCard').respond({});
 
-      let CreditCard = $resource('/CreditCard', {}, {
+      const CreditCard = $resource('/CreditCard', {}, {
         get: {
           method: 'GET',
           timeout: $q.defer().promise
@@ -2322,11 +2318,11 @@ describe('cancelling requests', function() {
   );
 
   it('should use `cancellable` value if passed a non-numeric `timeout` in an action',
-    inject(function($log, $q, $rootScope) {
+    inject(($log, $q, $rootScope) => {
       spyOn($log, 'debug');
       $httpBackend.whenGET('/CreditCard').respond({});
 
-      let CreditCard = $resource('/CreditCard', {}, {
+      const CreditCard = $resource('/CreditCard', {}, {
         get: {
           method: 'GET',
           timeout: $q.defer().promise,
@@ -2334,7 +2330,7 @@ describe('cancelling requests', function() {
         }
       });
 
-      let creditCard = CreditCard.get();
+      const creditCard = CreditCard.get();
       $rootScope.$digest();
       expect(creditCard.$cancelRequest).toBeDefined();
       expect(httpSpy.calls.argsFor(0)[0].timeout).toEqual(jasmine.any($q));
@@ -2348,10 +2344,10 @@ describe('cancelling requests', function() {
     })
   );
 
-  it('should not create a `$cancelRequest` method for instance calls', function() {
+  it('should not create a `$cancelRequest` method for instance calls', () => {
     $httpBackend.whenPOST('/CreditCard').respond({});
 
-    let CreditCard = $resource('/CreditCard', {}, {
+    const CreditCard = $resource('/CreditCard', {}, {
       save1: {
         method: 'POST',
         cancellable: false
@@ -2362,13 +2358,13 @@ describe('cancelling requests', function() {
       }
     });
 
-    let creditCard = new CreditCard();
+    const creditCard = new CreditCard();
 
-    let promise1 = creditCard.$save1();
+    const promise1 = creditCard.$save1();
     expect(promise1.$cancelRequest).toBeUndefined();
     expect(creditCard.$cancelRequest).toBeUndefined();
 
-    let promise2 = creditCard.$save2();
+    const promise2 = creditCard.$save2();
     expect(promise2.$cancelRequest).toBeUndefined();
     expect(creditCard.$cancelRequest).toBeUndefined();
 
@@ -2378,20 +2374,20 @@ describe('cancelling requests', function() {
     expect(creditCard.$cancelRequest).toBeUndefined();
   });
 
-  it('should not create a `$cancelRequest` method for non-cancellable calls', function() {
-    let CreditCard = $resource('/CreditCard', {}, {
+  it('should not create a `$cancelRequest` method for non-cancellable calls', () => {
+    const CreditCard = $resource('/CreditCard', {}, {
       get: {
         method: 'GET',
         cancellable: false
       }
     });
 
-    let creditCard = CreditCard.get();
+    const creditCard = CreditCard.get();
 
     expect(creditCard.$cancelRequest).toBeUndefined();
   });
 
-  it('should also take into account `options.cancellable`', function() {
+  it('should also take into account `options.cancellable`', () => {
     let options = {cancellable: true};
     let CreditCard = $resource('/CreditCard', {}, {
       get1: {method: 'GET', cancellable: false},
@@ -2423,10 +2419,10 @@ describe('cancelling requests', function() {
     expect(creditCard3.$cancelRequest).toBeUndefined();
   });
 
-  it('should accept numeric timeouts in cancellable actions and cancel the request when timeout occurs', function() {
+  it('should accept numeric timeouts in cancellable actions and cancel the request when timeout occurs', () => {
     $httpBackend.whenGET('/CreditCard').respond({});
 
-    let CreditCard = $resource('/CreditCard', {}, {
+    const CreditCard = $resource('/CreditCard', {}, {
       get: {
         method: 'GET',
         timeout: 10000,
@@ -2434,7 +2430,7 @@ describe('cancelling requests', function() {
       }
     });
 
-    let ccs = CreditCard.get();
+    const ccs = CreditCard.get();
     ccs.$promise.catch(noop);
     $timeout.flush();
     expect($httpBackend.flush).toThrow(new Error('No pending request to flush !'));
@@ -2444,17 +2440,17 @@ describe('cancelling requests', function() {
 
   });
 
-  it('should cancel the request (if cancellable), when calling `$cancelRequest`', function() {
+  it('should cancel the request (if cancellable), when calling `$cancelRequest`', () => {
     $httpBackend.whenGET('/CreditCard').respond({});
 
-    let CreditCard = $resource('/CreditCard', {}, {
+    const CreditCard = $resource('/CreditCard', {}, {
       get: {
         method: 'GET',
         cancellable: true
       }
     });
 
-    let ccs = CreditCard.get();
+    const ccs = CreditCard.get();
     ccs.$cancelRequest();
     expect($httpBackend.flush).toThrow(new Error('No pending request to flush !'));
 
@@ -2462,10 +2458,10 @@ describe('cancelling requests', function() {
     expect($httpBackend.flush).not.toThrow();
   });
 
-  it('should cancel the request, when calling `$cancelRequest` in cancellable actions with timeout defined', function() {
+  it('should cancel the request, when calling `$cancelRequest` in cancellable actions with timeout defined', () => {
     $httpBackend.whenGET('/CreditCard').respond({});
 
-    let CreditCard = $resource('/CreditCard', {}, {
+    const CreditCard = $resource('/CreditCard', {}, {
       get: {
         method: 'GET',
         timeout: 10000,
@@ -2473,7 +2469,7 @@ describe('cancelling requests', function() {
       }
     });
 
-    let ccs = CreditCard.get();
+    const ccs = CreditCard.get();
     ccs.$cancelRequest();
     expect($httpBackend.flush).toThrow(new Error('No pending request to flush !'));
 
@@ -2481,17 +2477,17 @@ describe('cancelling requests', function() {
     expect($httpBackend.flush).not.toThrow();
   });
 
-  it('should reset `$cancelRequest` after the response arrives', function() {
+  it('should reset `$cancelRequest` after the response arrives', () => {
     $httpBackend.whenGET('/CreditCard').respond({});
 
-    let CreditCard = $resource('/CreditCard', {}, {
+    const CreditCard = $resource('/CreditCard', {}, {
       get: {
         method: 'GET',
         cancellable: true
       }
     });
 
-    let creditCard = CreditCard.get();
+    const creditCard = CreditCard.get();
 
     expect(creditCard.$cancelRequest).not.toBe(noop);
 
@@ -2500,18 +2496,18 @@ describe('cancelling requests', function() {
     expect(creditCard.$cancelRequest).toBe(noop);
   });
 
-  it('should not break when calling old `$cancelRequest` after the response arrives', function() {
+  it('should not break when calling old `$cancelRequest` after the response arrives', () => {
     $httpBackend.whenGET('/CreditCard').respond({});
 
-    let CreditCard = $resource('/CreditCard', {}, {
+    const CreditCard = $resource('/CreditCard', {}, {
       get: {
         method: 'GET',
         cancellable: true
       }
     });
 
-    let creditCard = CreditCard.get();
-    let cancelRequest = creditCard.$cancelRequest;
+    const creditCard = CreditCard.get();
+    const cancelRequest = creditCard.$cancelRequest;
 
     $httpBackend.flush();
 
@@ -2520,27 +2516,27 @@ describe('cancelling requests', function() {
   });
 });
 
-describe('configuring `cancellable` on the provider', function() {
+describe('configuring `cancellable` on the provider', () => {
   let $resource;
 
-  beforeEach(module('ngResource', function($resourceProvider) {
+  beforeEach(module('ngResource', ($resourceProvider) => {
     $resourceProvider.defaults.cancellable = true;
   }));
 
-  beforeEach(inject(function(_$resource_) {
+  beforeEach(inject((_$resource_) => {
     $resource = _$resource_;
   }));
 
-  it('should also take into account `$resourceProvider.defaults.cancellable`', function() {
-    let CreditCard = $resource('/CreditCard', {}, {
+  it('should also take into account `$resourceProvider.defaults.cancellable`', () => {
+    const CreditCard = $resource('/CreditCard', {}, {
       get1: {method: 'GET', cancellable: false},
       get2: {method: 'GET', cancellable: true},
       get3: {method: 'GET'}
     });
 
-    let creditCard1 = CreditCard.get1();
-    let creditCard2 = CreditCard.get2();
-    let creditCard3 = CreditCard.get3();
+    const creditCard1 = CreditCard.get1();
+    const creditCard2 = CreditCard.get2();
+    const creditCard3 = CreditCard.get3();
 
     expect(creditCard1.$cancelRequest).toBeUndefined();
     expect(creditCard2.$cancelRequest).toBeDefined();

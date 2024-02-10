@@ -140,17 +140,16 @@ function filterFilter() {
     if (!isArrayLike(array)) {
       if (array == null) {
         return array;
-      } else {
-        throw minErr("filter")(
-          "notarray",
-          "Expected array but received: {0}",
-          array,
-        );
       }
+      throw minErr("filter")(
+        "notarray",
+        "Expected array but received: {0}",
+        array,
+      );
     }
 
     anyPropertyKey = anyPropertyKey || "$";
-    let expressionType = getTypeForFilter(expression);
+    const expressionType = getTypeForFilter(expression);
     let predicateFn;
     let matchAgainstAnyProp;
 
@@ -187,7 +186,7 @@ function createPredicateFn(
   anyPropertyKey,
   matchAgainstAnyProp,
 ) {
-  let shouldMatchPrimitives =
+  const shouldMatchPrimitives =
     isObject(expression) && anyPropertyKey in expression;
   let predicateFn;
 
@@ -211,8 +210,8 @@ function createPredicateFn(
         return false;
       }
 
-      actual = lowercase("" + actual);
-      expected = lowercase("" + expected);
+      actual = lowercase(`${actual}`);
+      expected = lowercase(`${expected}`);
       return actual.indexOf(expected) !== -1;
     };
   }
@@ -247,8 +246,8 @@ function deepCompare(
   matchAgainstAnyProp,
   dontMatchWholeObject,
 ) {
-  let actualType = getTypeForFilter(actual);
-  let expectedType = getTypeForFilter(expected);
+  const actualType = getTypeForFilter(actual);
+  const expectedType = getTypeForFilter(expected);
 
   if (expectedType === "string" && expected.charAt(0) === "!") {
     return !deepCompare(
@@ -258,18 +257,19 @@ function deepCompare(
       anyPropertyKey,
       matchAgainstAnyProp,
     );
-  } else if (isArray(actual)) {
+  }
+  if (isArray(actual)) {
     // In case `actual` is an array, consider it a match
     // if ANY of it's items matches `expected`
-    return actual.some(function (item) {
-      return deepCompare(
+    return actual.some((item) =>
+      deepCompare(
         item,
         expected,
         comparator,
         anyPropertyKey,
         matchAgainstAnyProp,
-      );
-    });
+      ),
+    );
   }
 
   switch (actualType) {
@@ -290,15 +290,16 @@ function deepCompare(
         return dontMatchWholeObject
           ? false
           : deepCompare(actual, expected, comparator, anyPropertyKey, false);
-      } else if (expectedType === "object") {
+      }
+      if (expectedType === "object") {
         for (key in expected) {
-          let expectedVal = expected[key];
+          const expectedVal = expected[key];
           if (isFunction(expectedVal) || isUndefined(expectedVal)) {
             continue;
           }
 
-          let matchAnyProperty = key === anyPropertyKey;
-          let actualVal = matchAnyProperty ? actual : actual[key];
+          const matchAnyProperty = key === anyPropertyKey;
+          const actualVal = matchAnyProperty ? actual : actual[key];
           if (
             !deepCompare(
               actualVal,
@@ -313,9 +314,9 @@ function deepCompare(
           }
         }
         return true;
-      } else {
-        return comparator(actual, expected);
       }
+      return comparator(actual, expected);
+
     case "function":
       return false;
     default:

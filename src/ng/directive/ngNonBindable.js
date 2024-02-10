@@ -29,4 +29,4 @@
     </file>
   </example>
  */
-let ngNonBindableDirective = ngDirective({ terminal: true, priority: 1000 });
+const ngNonBindableDirective = ngDirective({ terminal: true, priority: 1000 });

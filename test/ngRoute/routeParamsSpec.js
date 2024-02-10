@@ -1,17 +1,17 @@
 
 
-describe('$routeParams', function() {
+describe('$routeParams', () => {
 
   beforeEach(module('ngRoute'));
 
 
-  it('should publish the params into a service',  function() {
-    module(function($routeProvider) {
+  it('should publish the params into a service',  () => {
+    module(($routeProvider) => {
       $routeProvider.when('/foo', {});
       $routeProvider.when('/bar/:barId', {});
     });
 
-    inject(function($rootScope, $route, $location, $routeParams) {
+    inject(($rootScope, $route, $location, $routeParams) => {
       $location.path('/foo').search('a=b');
       $rootScope.$digest();
       expect($routeParams).toEqual({a:'b'});
@@ -22,38 +22,38 @@ describe('$routeParams', function() {
     });
   });
 
-  it('should correctly extract the params when a param name is part of the route',  function() {
-    module(function($routeProvider) {
+  it('should correctly extract the params when a param name is part of the route',  () => {
+    module(($routeProvider) => {
       $routeProvider.when('/bar/:foo/:bar', {});
     });
 
-    inject(function($rootScope, $route, $location, $routeParams) {
+    inject(($rootScope, $route, $location, $routeParams) => {
       $location.path('/bar/foovalue/barvalue');
       $rootScope.$digest();
       expect($routeParams).toEqual({bar:'barvalue', foo:'foovalue'});
     });
   });
 
-  it('should support route params not preceded by slashes', function() {
-    module(function($routeProvider) {
+  it('should support route params not preceded by slashes', () => {
+    module(($routeProvider) => {
       $routeProvider.when('/bar:barId/foo:fooId/', {});
     });
 
-    inject(function($rootScope, $route, $location, $routeParams) {
+    inject(($rootScope, $route, $location, $routeParams) => {
       $location.path('/barbarvalue/foofoovalue/');
       $rootScope.$digest();
       expect($routeParams).toEqual({barId: 'barvalue', fooId: 'foovalue'});
     });
   });
 
-  it('should correctly extract the params when an optional param name is part of the route',  function() {
-    module(function($routeProvider) {
+  it('should correctly extract the params when an optional param name is part of the route',  () => {
+    module(($routeProvider) => {
       $routeProvider.when('/bar/:foo?', {});
       $routeProvider.when('/baz/:foo?/edit', {});
       $routeProvider.when('/qux/:bar?/:baz?', {});
     });
 
-    inject(function($rootScope, $route, $location, $routeParams) {
+    inject(($rootScope, $route, $location, $routeParams) => {
       $location.path('/bar');
       $rootScope.$digest();
       expect($routeParams).toEqual({});
@@ -77,13 +77,13 @@ describe('$routeParams', function() {
     });
   });
 
-  it('should correctly extract path params containing hashes and/or question marks', function() {
-    module(function($routeProvider) {
+  it('should correctly extract path params containing hashes and/or question marks', () => {
+    module(($routeProvider) => {
       $routeProvider.when('/foo/:bar', {});
       $routeProvider.when('/zoo/:bar/:baz/:qux', {});
     });
 
-    inject(function($location, $rootScope, $routeParams) {
+    inject(($location, $rootScope, $routeParams) => {
       $location.path('/foo/bar?baz');
       $rootScope.$digest();
       expect($routeParams).toEqual({bar: 'bar?baz'});

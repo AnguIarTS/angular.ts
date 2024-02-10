@@ -67,7 +67,7 @@
  */
 export function $RootScopeProvider() {
   let TTL = 10;
-  let $rootScopeMinErr = minErr("$rootScope");
+  const $rootScopeMinErr = minErr("$rootScope");
   let lastDirtyWatch = null;
   let applyAsyncId = null;
 
@@ -237,7 +237,7 @@ export function $RootScopeProvider() {
          * @returns {Object} The newly created child scope.
          *
          */
-        $new: function (isolate, parent) {
+        $new(isolate, parent) {
           let child;
 
           parent = parent || this;
@@ -391,27 +391,22 @@ export function $RootScopeProvider() {
        *     comparing for reference equality.
        * @returns {function()} Returns a deregistration function for this listener.
        */
-        $watch: function (
-          watchExp,
-          listener,
-          objectEquality,
-          prettyPrintExpression,
-        ) {
-          let get = $parse(watchExp);
-          let fn = isFunction(listener) ? listener : noop;
+        $watch(watchExp, listener, objectEquality, prettyPrintExpression) {
+          const get = $parse(watchExp);
+          const fn = isFunction(listener) ? listener : noop;
 
           if (get.$$watchDelegate) {
             return get.$$watchDelegate(this, fn, objectEquality, get, watchExp);
           }
-          let scope = this,
-            array = scope.$$watchers,
-            watcher = {
-              fn: fn,
-              last: initWatchVal,
-              get: get,
-              exp: prettyPrintExpression || watchExp,
-              eq: !!objectEquality,
-            };
+          const scope = this;
+          let array = scope.$$watchers;
+          const watcher = {
+            fn,
+            last: initWatchVal,
+            get,
+            exp: prettyPrintExpression || watchExp,
+            eq: !!objectEquality,
+          };
 
           lastDirtyWatch = null;
 
@@ -426,7 +421,7 @@ export function $RootScopeProvider() {
           incrementWatchersCount(this, 1);
 
           return function deregisterWatch() {
-            let index = arrayRemove(array, watcher);
+            const index = arrayRemove(array, watcher);
             if (index >= 0) {
               incrementWatchersCount(scope, -1);
               if (index < array.$$digestWatchIndex) {
@@ -462,18 +457,18 @@ export function $RootScopeProvider() {
          *    The `scope` refers to the current scope.
          * @returns {function()} Returns a de-registration function for all listeners.
          */
-        $watchGroup: function (watchExpressions, listener) {
-          let oldValues = new Array(watchExpressions.length);
-          let newValues = new Array(watchExpressions.length);
-          let deregisterFns = [];
-          let self = this;
+        $watchGroup(watchExpressions, listener) {
+          const oldValues = new Array(watchExpressions.length);
+          const newValues = new Array(watchExpressions.length);
+          const deregisterFns = [];
+          const self = this;
           let changeReactionScheduled = false;
           let firstRun = true;
 
           if (!watchExpressions.length) {
             // No expressions means we call the listener ASAP
             let shouldCall = true;
-            self.$evalAsync(function () {
+            self.$evalAsync(() => {
               if (shouldCall) listener(newValues, newValues, self);
             });
             return function deregisterWatchGroup() {
@@ -485,7 +480,7 @@ export function $RootScopeProvider() {
             // Special case size of one
             return this.$watch(
               watchExpressions[0],
-              function watchGroupAction(value, oldValue, scope) {
+              (value, oldValue, scope) => {
                 newValues[0] = value;
                 oldValues[0] = oldValue;
                 listener(
@@ -497,17 +492,14 @@ export function $RootScopeProvider() {
             );
           }
 
-          forEach(watchExpressions, function (expr, i) {
-            let unwatchFn = self.$watch(
-              expr,
-              function watchGroupSubAction(value) {
-                newValues[i] = value;
-                if (!changeReactionScheduled) {
-                  changeReactionScheduled = true;
-                  self.$evalAsync(watchGroupAction);
-                }
-              },
-            );
+          forEach(watchExpressions, (expr, i) => {
+            const unwatchFn = self.$watch(expr, (value) => {
+              newValues[i] = value;
+              if (!changeReactionScheduled) {
+                changeReactionScheduled = true;
+                self.$evalAsync(watchGroupAction);
+              }
+            });
             deregisterFns.push(unwatchFn);
           });
 
@@ -590,7 +582,7 @@ export function $RootScopeProvider() {
        * @returns {function()} Returns a de-registration function for this listener. When the
        *    de-registration function is executed, the internal watch operation is terminated.
        */
-        $watchCollection: function (obj, listener) {
+        $watchCollection(obj, listener) {
           // Mark the interceptor as
           // ... $$pure when literal since the instance will change when any input changes
           $watchCollectionInterceptor.$$pure = $parse(obj).literal;
@@ -598,7 +590,7 @@ export function $RootScopeProvider() {
           $watchCollectionInterceptor.$stateful =
             !$watchCollectionInterceptor.$$pure;
 
-          let self = this;
+          const self = this;
           // the current value, updated on each dirty-check run
           let newValue;
           // a shallow copy of the newValue from the last dirty-check run,
@@ -607,17 +599,21 @@ export function $RootScopeProvider() {
           // a shallow copy of the newValue from when the last change happened
           let veryOldValue;
           // only track veryOldValue if the listener is asking for it
-          let trackVeryOldValue = listener.length > 1;
+          const trackVeryOldValue = listener.length > 1;
           let changeDetected = 0;
-          let changeDetector = $parse(obj, $watchCollectionInterceptor);
-          let internalArray = [];
+          const changeDetector = $parse(obj, $watchCollectionInterceptor);
+          const internalArray = [];
           let internalObject = {};
           let initRun = true;
           let oldLength = 0;
 
           function $watchCollectionInterceptor(_value) {
             newValue = _value;
-            let newLength, key, bothNaN, newItem, oldItem;
+            let newLength;
+            let key;
+            let bothNaN;
+            let newItem;
+            let oldItem;
 
             // If the new value is undefined, then return undefined as the watch may be a one-time watch
             if (isUndefined(newValue)) return;
@@ -709,7 +705,7 @@ export function $RootScopeProvider() {
             // make a copy for the next time a collection is changed
             if (trackVeryOldValue) {
               if (!isObject(newValue)) {
-                //primitive
+                // primitive
                 veryOldValue = newValue;
               } else if (isArrayLike(newValue)) {
                 veryOldValue = new Array(newValue.length);
@@ -719,7 +715,7 @@ export function $RootScopeProvider() {
               } else {
                 // if object
                 veryOldValue = {};
-                for (let key in newValue) {
+                for (const key in newValue) {
                   if (hasOwnProperty.call(newValue, key)) {
                     veryOldValue[key] = newValue[key];
                   }
@@ -782,21 +778,21 @@ export function $RootScopeProvider() {
        * ```
        *
        */
-        $digest: function () {
-          let watch,
-            value,
-            last,
-            fn,
-            get,
-            watchers,
-            dirty,
-            ttl = TTL,
-            next,
-            current,
-            target = asyncQueue.length ? $rootScope : this,
-            watchLog = [],
-            logIdx,
-            asyncTask;
+        $digest() {
+          let watch;
+          let value;
+          let last;
+          let fn;
+          let get;
+          let watchers;
+          let dirty;
+          let ttl = TTL;
+          let next;
+          let current;
+          const target = asyncQueue.length ? $rootScope : this;
+          const watchLog = [];
+          let logIdx;
+          let asyncTask;
 
           beginPhase("$digest");
           // Check for changes to browser url that happened in sync before the call to $digest
@@ -867,8 +863,7 @@ export function $RootScopeProvider() {
                           if (!watchLog[logIdx]) watchLog[logIdx] = [];
                           watchLog[logIdx].push({
                             msg: isFunction(watch.exp)
-                              ? "fn: " +
-                                (watch.exp.name || watch.exp.toString())
+                              ? `fn: ${watch.exp.name || watch.exp.toString()}`
                               : watch.exp,
                             newVal: value,
                             oldVal: last,
@@ -979,7 +974,7 @@ export function $RootScopeProvider() {
          *   against the `$rootScope` and so will still trigger a global digest even if the promise was
          *   initiated by a component that lives on a suspended scope.
          */
-        $suspend: function () {
+        $suspend() {
           this.$$suspended = true;
         },
 
@@ -1008,7 +1003,7 @@ export function $RootScopeProvider() {
          *
          * @returns true if the current scope has been suspended.
          */
-        $isSuspended: function () {
+        $isSuspended() {
           return this.$$suspended;
         },
 
@@ -1022,7 +1017,7 @@ export function $RootScopeProvider() {
          *
          * See {@link $rootScope.Scope#$suspend} for information about the dangers of using this approach.
          */
-        $resume: function () {
+        $resume() {
           this.$$suspended = false;
         },
 
@@ -1060,21 +1055,21 @@ export function $RootScopeProvider() {
          * Note that, in AngularJS, there is also a `$destroy` jQuery event, which can be used to
          * clean up DOM bindings before an element is removed from the DOM.
          */
-        $destroy: function () {
+        $destroy() {
           // We can't destroy a scope that has been already destroyed.
           if (this.$$destroyed) return;
-          let parent = this.$parent;
+          const parent = this.$parent;
 
           this.$broadcast("$destroy");
           this.$$destroyed = true;
 
           if (this === $rootScope) {
-            //Remove handlers attached to window when $rootScope is removed
+            // Remove handlers attached to window when $rootScope is removed
             $browser.$$applicationDestroyed();
           }
 
           incrementWatchersCount(this, -this.$$watchersCount);
-          for (let eventName in this.$$listenerCount) {
+          for (const eventName in this.$$listenerCount) {
             decrementListenerCount(
               this,
               this.$$listenerCount[eventName],
@@ -1141,7 +1136,7 @@ export function $RootScopeProvider() {
        * @param {(object)=} locals Local variables object, useful for overriding values in scope.
        * @returns {*} The result of evaluating the expression.
        */
-        $eval: function (expr, locals) {
+        $eval(expr, locals) {
           return $parse(expr)(this, locals);
         },
 
@@ -1175,12 +1170,12 @@ export function $RootScopeProvider() {
          *
          * @param {(object)=} locals Local variables object, useful for overriding values in scope.
          */
-        $evalAsync: function (expr, locals) {
+        $evalAsync(expr, locals) {
           // if we are outside of an $digest loop and this is the first time we are scheduling async
           // task also schedule async auto-flush
           if (!$rootScope.$$phase && !asyncQueue.length) {
             $browser.defer(
-              function () {
+              () => {
                 if (asyncQueue.length) {
                   $rootScope.$digest();
                 }
@@ -1190,10 +1185,10 @@ export function $RootScopeProvider() {
             );
           }
 
-          asyncQueue.push({ scope: this, fn: $parse(expr), locals: locals });
+          asyncQueue.push({ scope: this, fn: $parse(expr), locals });
         },
 
-        $$postDigest: function (fn) {
+        $$postDigest(fn) {
           postDigestQueue.push(fn);
         },
 
@@ -1241,7 +1236,7 @@ export function $RootScopeProvider() {
        *
        * @returns {*} The result of evaluating the expression.
        */
-        $apply: function (expr) {
+        $apply(expr) {
           try {
             beginPhase("$apply");
             try {
@@ -1279,8 +1274,8 @@ export function $RootScopeProvider() {
          *    - `string`: execute using the rules as defined in {@link guide/expression expression}.
          *    - `function(scope)`: execute the function with current `scope` parameter.
          */
-        $applyAsync: function (expr) {
-          let scope = this;
+        $applyAsync(expr) {
+          const scope = this;
           if (expr) {
             applyAsyncQueue.push($applyAsyncExpression);
           }
@@ -1319,7 +1314,7 @@ export function $RootScopeProvider() {
          * @param {function(event, ...args)} listener Function to call when the event is emitted.
          * @returns {function()} Returns a deregistration function for this listener.
          */
-        $on: function (name, listener) {
+        $on(name, listener) {
           let namedListeners = this.$$listeners[name];
           if (!namedListeners) {
             this.$$listeners[name] = namedListeners = [];
@@ -1334,9 +1329,9 @@ export function $RootScopeProvider() {
             current.$$listenerCount[name]++;
           } while ((current = current.$parent));
 
-          let self = this;
+          const self = this;
           return function () {
-            let indexOfListener = namedListeners.indexOf(listener);
+            const indexOfListener = namedListeners.indexOf(listener);
             if (indexOfListener !== -1) {
               // Use delete in the hope of the browser deallocating the memory for the array entry,
               // while not shifting the array indexes of other listeners.
@@ -1369,25 +1364,25 @@ export function $RootScopeProvider() {
          * @param {...*} args Optional one or more arguments which will be passed onto the event listeners.
          * @return {Object} Event object (see {@link ng.$rootScope.Scope#$on}).
          */
-        $emit: function (name, args) {
-          let empty = [],
-            namedListeners,
-            scope = this,
-            stopPropagation = false,
-            event = {
-              name: name,
-              targetScope: scope,
-              stopPropagation: function () {
-                stopPropagation = true;
-              },
-              preventDefault: function () {
-                event.defaultPrevented = true;
-              },
-              defaultPrevented: false,
+        $emit(name, args) {
+          const empty = [];
+          let namedListeners;
+          let scope = this;
+          let stopPropagation = false;
+          const event = {
+            name,
+            targetScope: scope,
+            stopPropagation() {
+              stopPropagation = true;
             },
-            listenerArgs = concat([event], arguments, 1),
-            i,
-            length;
+            preventDefault() {
+              event.defaultPrevented = true;
+            },
+            defaultPrevented: false,
+          };
+          const listenerArgs = concat([event], arguments, 1);
+          let i;
+          let length;
 
           do {
             namedListeners = scope.$$listeners[name] || empty;
@@ -1401,17 +1396,17 @@ export function $RootScopeProvider() {
                 continue;
               }
               try {
-                //allow all listeners attached to the current scope to run
+                // allow all listeners attached to the current scope to run
                 namedListeners[i].apply(null, listenerArgs);
               } catch (e) {
                 $exceptionHandler(e);
               }
             }
-            //if any listener on the current scope stops propagation, prevent bubbling
+            // if any listener on the current scope stops propagation, prevent bubbling
             if (stopPropagation) {
               break;
             }
-            //traverse upwards
+            // traverse upwards
             scope = scope.$parent;
           } while (scope);
 
@@ -1441,27 +1436,27 @@ export function $RootScopeProvider() {
          * @param {...*} args Optional one or more arguments which will be passed onto the event listeners.
          * @return {Object} Event object, see {@link ng.$rootScope.Scope#$on}
          */
-        $broadcast: function (name, args) {
-          let target = this,
-            current = target,
-            next = target,
-            event = {
-              name: name,
-              targetScope: target,
-              preventDefault: function () {
-                event.defaultPrevented = true;
-              },
-              defaultPrevented: false,
-            };
+        $broadcast(name, args) {
+          const target = this;
+          let current = target;
+          let next = target;
+          const event = {
+            name,
+            targetScope: target,
+            preventDefault() {
+              event.defaultPrevented = true;
+            },
+            defaultPrevented: false,
+          };
 
           if (!target.$$listenerCount[name]) return event;
 
-          let listenerArgs = concat([event], arguments, 1),
-            listeners,
-            i,
-            length;
+          const listenerArgs = concat([event], arguments, 1);
+          let listeners;
+          let i;
+          let length;
 
-          //down while you can, then up and next sibling or up and next sibling until back at root
+          // down while you can, then up and next sibling or up and next sibling until back at root
           while ((current = next)) {
             event.currentScope = current;
             listeners = current.$$listeners[name] || [];
@@ -1504,7 +1499,7 @@ export function $RootScopeProvider() {
 
       let $rootScope = new Scope();
 
-      //The internal queues. Expose them on the $rootScope for debugging/testing purposes.
+      // The internal queues. Expose them on the $rootScope for debugging/testing purposes.
       let asyncQueue = ($rootScope.$$asyncQueue = []);
       let postDigestQueue = ($rootScope.$$postDigestQueue = []);
       let applyAsyncQueue = ($rootScope.$$applyAsyncQueue = []);
@@ -1565,7 +1560,7 @@ export function $RootScopeProvider() {
       function scheduleApplyAsync() {
         if (applyAsyncId === null) {
           applyAsyncId = $browser.defer(
-            function () {
+            () => {
               $rootScope.$apply(flushApplyAsync);
             },
             null,

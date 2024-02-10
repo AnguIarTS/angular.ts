@@ -31,7 +31,7 @@ angular.module('ui.bootstrap.dropdown', [])
 })
 
 .service('dropdownService', ['$document', function($document) {
-  let self = this, openScope = null;
+  const self = this; let openScope = null;
 
   this.open = function( dropdownScope ) {
     if ( !openScope ) {
@@ -57,7 +57,7 @@ angular.module('ui.bootstrap.dropdown', [])
   let closeDropdown = function(evt) {
     if (evt && evt.which === 3) return;
 
-    openScope.$apply(function() {
+    openScope.$apply(() => {
       openScope.isOpen = false;
     });
   };
@@ -70,7 +70,7 @@ angular.module('ui.bootstrap.dropdown', [])
 }])
 
 .controller('DropdownController', ['$scope', '$attrs', 'dropdownConfig', 'dropdownService', '$animate', function($scope, $attrs, dropdownConfig, dropdownService, $animate) {
-  let self = this, openClass = dropdownConfig.openClass;
+  const self = this; const {openClass} = dropdownConfig;
 
   this.init = function( element ) {
     self.$element = element;
@@ -86,7 +86,7 @@ angular.module('ui.bootstrap.dropdown', [])
     return $scope.isOpen;
   };
 
-  $scope.$watch('isOpen', function( value ) {
+  $scope.$watch('isOpen', ( value ) => {
     $animate[value ? 'addClass' : 'removeClass'](self.$element, openClass);
 
     if ( value ) {
@@ -98,40 +98,37 @@ angular.module('ui.bootstrap.dropdown', [])
     $scope.onToggle({ open: !!value });
   });
 
-  $scope.$on('$locationChangeSuccess', function() {
+  $scope.$on('$locationChangeSuccess', () => {
     $scope.isOpen = false;
   });
 }])
 
-.directive('dropdown', function() {
-  return {
+.directive('dropdown', () => ({
     restrict: 'CA',
     controller: 'DropdownController',
     scope: {
       isOpen: '=?',
       onToggle: '&'
     },
-    link: function(scope, element, attrs, dropdownCtrl) {
+    link(scope, element, attrs, dropdownCtrl) {
       dropdownCtrl.init( element );
     }
-  };
-})
+  }))
 
-.directive('dropdownToggle', function() {
-  return {
+.directive('dropdownToggle', () => ({
     restrict: 'CA',
     require: '?^dropdown',
-    link: function(scope, element, attrs, dropdownCtrl) {
+    link(scope, element, attrs, dropdownCtrl) {
       if ( !dropdownCtrl ) {
         return;
       }
 
-      element.on('click', function(event) {
+      element.on('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
 
         if ( !element.hasClass('disabled') && !element.prop('disabled') ) {
-          scope.$apply(function() {
+          scope.$apply(() => {
             dropdownCtrl.toggle();
           });
         }
@@ -139,9 +136,8 @@ angular.module('ui.bootstrap.dropdown', [])
 
       // WAI-ARIA
       element.attr({ 'aria-haspopup': true, 'aria-expanded': false });
-      scope.$watch(dropdownCtrl.isOpen, function( isOpen ) {
+      scope.$watch(dropdownCtrl.isOpen, ( isOpen ) => {
         element.attr('aria-expanded', !!isOpen);
       });
     }
-  };
-});
+  }));

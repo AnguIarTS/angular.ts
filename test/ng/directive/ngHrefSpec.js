@@ -1,26 +1,26 @@
 
 
-describe('ngHref', function() {
+describe('ngHref', () => {
   let element;
 
-  afterEach(function() {
+  afterEach(() => {
     dealoc(element);
   });
 
 
-  it('should interpolate the expression and bind to href', inject(function($compile, $rootScope) {
+  it('should interpolate the expression and bind to href', inject(($compile, $rootScope) => {
     element = $compile('<a ng-href="some/{{id}}"></div>')($rootScope);
     $rootScope.$digest();
     expect(element.attr('href')).toEqual('some/');
 
-    $rootScope.$apply(function() {
+    $rootScope.$apply(() => {
       $rootScope.id = 1;
     });
     expect(element.attr('href')).toEqual('some/1');
   }));
 
 
-  it('should bind href and merge with other attrs', inject(function($rootScope, $compile) {
+  it('should bind href and merge with other attrs', inject(($rootScope, $compile) => {
     element = $compile('<a ng-href="{{url}}" rel="{{rel}}"></a>')($rootScope);
     $rootScope.url = 'http://server';
     $rootScope.rel = 'REL';
@@ -30,20 +30,20 @@ describe('ngHref', function() {
   }));
 
 
-  it('should bind href even if no interpolation', inject(function($rootScope, $compile) {
+  it('should bind href even if no interpolation', inject(($rootScope, $compile) => {
     element = $compile('<a ng-href="http://server"></a>')($rootScope);
     $rootScope.$digest();
     expect(element.attr('href')).toEqual('http://server');
   }));
 
-  it('should not set the href if ng-href is empty', inject(function($rootScope, $compile) {
+  it('should not set the href if ng-href is empty', inject(($rootScope, $compile) => {
     $rootScope.url = null;
     element = $compile('<a ng-href="{{url}}">')($rootScope);
     $rootScope.$digest();
     expect(element.attr('href')).toEqual(undefined);
   }));
 
-  it('should remove the href if ng-href changes to empty', inject(function($rootScope, $compile) {
+  it('should remove the href if ng-href changes to empty', inject(($rootScope, $compile) => {
     $rootScope.url = 'http://www.google.com/';
     element = $compile('<a ng-href="{{url}}">')($rootScope);
     $rootScope.$digest();
@@ -53,7 +53,7 @@ describe('ngHref', function() {
     expect(element.attr('href')).toEqual(undefined);
   }));
 
-  it('should sanitize interpolated url', inject(function($rootScope, $compile) {
+  it('should sanitize interpolated url', inject(($rootScope, $compile) => {
     /* eslint no-script-url: "off" */
     $rootScope.imageUrl = 'javascript:alert(1);';
     element = $compile('<a ng-href="{{imageUrl}}">')($rootScope);
@@ -61,7 +61,7 @@ describe('ngHref', function() {
     expect(element.attr('href')).toBe('unsafe:javascript:alert(1);');
   }));
 
-  it('should sanitize non-interpolated url', inject(function($rootScope, $compile) {
+  it('should sanitize non-interpolated url', inject(($rootScope, $compile) => {
     element = $compile('<a ng-href="javascript:alert(1);">')($rootScope);
     $rootScope.$digest();
     expect(element.attr('href')).toBe('unsafe:javascript:alert(1);');
@@ -72,22 +72,22 @@ describe('ngHref', function() {
   if (msie || /\bEdge\/1[2-7]\.[\d.]+\b/.test(window.navigator.userAgent)) {
     // IE/Edge fail when setting a href to a URL containing a % that isn't a valid escape sequence
     // See https://github.com/angular/angular.js/issues/13388
-    it('should throw error if ng-href contains a non-escaped percent symbol', inject(function($rootScope, $compile) {
-      expect(function() {
+    it('should throw error if ng-href contains a non-escaped percent symbol', inject(($rootScope, $compile) => {
+      expect(() => {
         element = $compile('<a ng-href="http://www.google.com/{{\'a%link\'}}">')($rootScope);
       }).toThrow();
     }));
   }
 
 
-  it('should bind numbers', inject(function($rootScope, $compile) {
+  it('should bind numbers', inject(($rootScope, $compile) => {
     element = $compile('<a ng-href="{{1234}}"></a>')($rootScope);
     $rootScope.$digest();
     expect(element.attr('href')).toEqual('1234');
   }));
 
 
-  it('should bind and sanitize the result of a (custom) toString() function', inject(function($rootScope, $compile) {
+  it('should bind and sanitize the result of a (custom) toString() function', inject(($rootScope, $compile) => {
     $rootScope.value = {};
     element = $compile('<a ng-href="{{value}}"></a>')($rootScope);
     $rootScope.$digest();
@@ -116,23 +116,23 @@ describe('ngHref', function() {
 
 
   if (isDefined(window.SVGElement)) {
-    describe('SVGAElement', function() {
-      it('should interpolate the expression and bind to xlink:href', inject(function($compile, $rootScope) {
+    describe('SVGAElement', () => {
+      it('should interpolate the expression and bind to xlink:href', inject(($compile, $rootScope) => {
         element = $compile('<svg><a ng-href="some/{{id}}"></a></svg>')($rootScope);
-        let child = element.children('a');
+        const child = element.children('a');
         $rootScope.$digest();
         expect(child.attr('xlink:href')).toEqual('some/');
 
-        $rootScope.$apply(function() {
+        $rootScope.$apply(() => {
           $rootScope.id = 1;
         });
         expect(child.attr('xlink:href')).toEqual('some/1');
       }));
 
 
-      it('should bind xlink:href even if no interpolation', inject(function($rootScope, $compile) {
+      it('should bind xlink:href even if no interpolation', inject(($rootScope, $compile) => {
         element = $compile('<svg><a ng-href="http://server"></a></svg>')($rootScope);
-        let child = element.children('a');
+        const child = element.children('a');
         $rootScope.$digest();
         expect(child.attr('xlink:href')).toEqual('http://server');
       }));

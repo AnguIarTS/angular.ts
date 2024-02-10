@@ -1,4 +1,4 @@
-let $$AnimateJsDriverProvider = [
+const $$AnimateJsDriverProvider = [
   "$$animationProvider",
   /** @this */ function ($$animationProvider) {
     $$animationProvider.drivers.push("$$animateJsDriver");
@@ -8,13 +8,13 @@ let $$AnimateJsDriverProvider = [
       function ($$animateJs, $$AnimateRunner) {
         return function initDriverFn(animationDetails) {
           if (animationDetails.from && animationDetails.to) {
-            let fromAnimation = prepareAnimation(animationDetails.from);
-            let toAnimation = prepareAnimation(animationDetails.to);
+            const fromAnimation = prepareAnimation(animationDetails.from);
+            const toAnimation = prepareAnimation(animationDetails.to);
             if (!fromAnimation && !toAnimation) return;
 
             return {
-              start: function () {
-                let animationRunners = [];
+              start() {
+                const animationRunners = [];
 
                 if (fromAnimation) {
                   animationRunners.push(fromAnimation.start());
@@ -26,7 +26,7 @@ let $$AnimateJsDriverProvider = [
 
                 $$AnimateRunner.all(animationRunners, done);
 
-                let runner = new $$AnimateRunner({
+                const runner = new $$AnimateRunner({
                   end: endFnFactory(),
                   cancel: endFnFactory(),
                 });
@@ -35,7 +35,7 @@ let $$AnimateJsDriverProvider = [
 
                 function endFnFactory() {
                   return function () {
-                    forEach(animationRunners, function (runner) {
+                    forEach(animationRunners, (runner) => {
                       // at this point we cannot cancel animations for groups just yet. 1.5+
                       runner.end();
                     });
@@ -47,17 +47,16 @@ let $$AnimateJsDriverProvider = [
                 }
               },
             };
-          } else {
-            return prepareAnimation(animationDetails);
           }
+          return prepareAnimation(animationDetails);
         };
 
         function prepareAnimation(animationDetails) {
           // TODO(matsko): make sure to check for grouped animations and delegate down to normal animations
-          let element = animationDetails.element;
-          let event = animationDetails.event;
-          let options = animationDetails.options;
-          let classes = animationDetails.classes;
+          const { element } = animationDetails;
+          const { event } = animationDetails;
+          const { options } = animationDetails;
+          const { classes } = animationDetails;
           return $$animateJs(element, event, classes, options);
         }
       },

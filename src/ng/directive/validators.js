@@ -61,13 +61,13 @@
  *   </file>
  * </example>
  */
-let requiredDirective = [
+const requiredDirective = [
   "$parse",
   function ($parse) {
     return {
       restrict: "A",
       require: "?ngModel",
-      link: function (scope, elm, attr, ctrl) {
+      link(scope, elm, attr, ctrl) {
         if (!ctrl) return;
         // For boolean attributes like required, presence means true
         let value =
@@ -83,7 +83,7 @@ let requiredDirective = [
           return !value || !ctrl.$isEmpty(viewValue);
         };
 
-        attr.$observe("required", function (newVal) {
+        attr.$observe("required", (newVal) => {
           if (value !== newVal) {
             value = newVal;
             ctrl.$validate();
@@ -175,13 +175,13 @@ let requiredDirective = [
  *   </file>
  * </example>
  */
-let patternDirective = [
+const patternDirective = [
   "$parse",
   function ($parse) {
     return {
       restrict: "A",
       require: "?ngModel",
-      compile: function (tElm, tAttr) {
+      compile(tElm, tAttr) {
         let patternExp;
         let parseFn;
 
@@ -216,8 +216,8 @@ let patternDirective = [
 
           let regexp = parsePatternAttr(attrVal, patternExp, elm);
 
-          attr.$observe("pattern", function (newVal) {
-            let oldRegexp = regexp;
+          attr.$observe("pattern", (newVal) => {
+            const oldRegexp = regexp;
 
             regexp = parsePatternAttr(newVal, patternExp, elm);
 
@@ -314,19 +314,19 @@ let patternDirective = [
  *   </file>
  * </example>
  */
-let maxlengthDirective = [
+const maxlengthDirective = [
   "$parse",
   function ($parse) {
     return {
       restrict: "A",
       require: "?ngModel",
-      link: function (scope, elm, attr, ctrl) {
+      link(scope, elm, attr, ctrl) {
         if (!ctrl) return;
 
         let maxlength = attr.maxlength || $parse(attr.ngMaxlength)(scope);
         let maxlengthParsed = parseLength(maxlength);
 
-        attr.$observe("maxlength", function (value) {
+        attr.$observe("maxlength", (value) => {
           if (maxlength !== value) {
             maxlengthParsed = parseLength(value);
             maxlength = value;
@@ -414,19 +414,19 @@ let maxlengthDirective = [
  *   </file>
  * </example>
  */
-let minlengthDirective = [
+const minlengthDirective = [
   "$parse",
   function ($parse) {
     return {
       restrict: "A",
       require: "?ngModel",
-      link: function (scope, elm, attr, ctrl) {
+      link(scope, elm, attr, ctrl) {
         if (!ctrl) return;
 
         let minlength = attr.minlength || $parse(attr.ngMinlength)(scope);
         let minlengthParsed = parseLength(minlength) || -1;
 
-        attr.$observe("minlength", function (value) {
+        attr.$observe("minlength", (value) => {
           if (minlength !== value) {
             minlengthParsed = parseLength(value) || -1;
             minlength = value;
@@ -447,7 +447,7 @@ function parsePatternAttr(regex, patternExp, elm) {
   if (!regex) return undefined;
 
   if (isString(regex)) {
-    regex = new RegExp("^" + regex + "$");
+    regex = new RegExp(`^${regex}$`);
   }
 
   if (!regex.test) {
@@ -464,6 +464,6 @@ function parsePatternAttr(regex, patternExp, elm) {
 }
 
 function parseLength(val) {
-  let intVal = toInt(val);
+  const intVal = toInt(val);
   return isNumberNaN(intVal) ? -1 : intVal;
 }

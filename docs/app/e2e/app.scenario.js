@@ -1,24 +1,22 @@
 
 
-let webdriver = require('selenium-webdriver');
+const webdriver = require('selenium-webdriver');
 
-describe('docs.angularjs.org', function() {
+describe('docs.angularjs.org', () => {
 
-  beforeEach(function() {
+  beforeEach(() => {
     // read and clear logs from previous tests
     browser.manage().logs().get('browser');
   });
 
 
-  afterEach(function() {
+  afterEach(() => {
     // verify that there were no console errors in the browser
-    browser.manage().logs().get('browser').then(function(browserLog) {
-      let filteredLog = browserLog.filter(function(logEntry) {
-        return logEntry.level.value > webdriver.logging.Level.WARNING.value;
-      });
+    browser.manage().logs().get('browser').then((browserLog) => {
+      const filteredLog = browserLog.filter((logEntry) => logEntry.level.value > webdriver.logging.Level.WARNING.value);
       expect(filteredLog.length).toEqual(0);
       if (filteredLog.length) {
-        console.log('browser console errors: ' + require('util').inspect(filteredLog));
+        console.log(`browser console errors: ${  require('util').inspect(filteredLog)}`);
       }
     });
 
@@ -27,7 +25,7 @@ describe('docs.angularjs.org', function() {
   });
 
 
-  describe('App', function() {
+  describe('App', () => {
     // it('should filter the module list when searching', function () {
     //   browser.get();
     //   browser.waitForAngular();
@@ -41,23 +39,23 @@ describe('docs.angularjs.org', function() {
     // });
 
 
-    it('should change the page content when clicking a link to a service', function() {
+    it('should change the page content when clicking a link to a service', () => {
       browser.get('build/docs/index-production.html');
 
-      let ngBindLink = element(by.css('.definition-table td a[href="api/ng/directive/ngClick"]'));
+      const ngBindLink = element(by.css('.definition-table td a[href="api/ng/directive/ngClick"]'));
       ngBindLink.click();
 
-      let mainHeader = element(by.css('.main-body h1 '));
+      const mainHeader = element(by.css('.main-body h1 '));
       expect(mainHeader.getText()).toEqual('ngClick');
     });
 
 
-    it('should include the files for the embedded examples from the same domain', function() {
+    it('should include the files for the embedded examples from the same domain', () => {
       browser.get('build/docs/index-production.html#!api/ng/directive/ngClick');
 
-      let origin = browser.executeScript('return document.location.origin;');
+      const origin = browser.executeScript('return document.location.origin;');
 
-      let exampleIFrame = element(by.name('example-ng-click'));
+      const exampleIFrame = element(by.name('example-ng-click'));
 
       // This is technically an implementation detail, but if this changes, then there's a good
       // chance the deployment process changed
@@ -65,65 +63,65 @@ describe('docs.angularjs.org', function() {
 
       browser.switchTo().frame('example-ng-click');
 
-      let scriptEl = element(by.tagName('script'));
+      const scriptEl = element(by.tagName('script'));
 
       // Ensure the included file is from the same domain
       expect(scriptEl.getAttribute('src')).toContain(origin);
     });
 
 
-    it('should be resilient to trailing slashes', function() {
+    it('should be resilient to trailing slashes', () => {
       browser.get('build/docs/index-production.html#!/api/ng/function/angular.noop/');
 
-      let mainHeader = element(by.css('.main-body h1 '));
+      const mainHeader = element(by.css('.main-body h1 '));
       expect(mainHeader.getText()).toEqual('angular.noop');
     });
 
 
-    it('should be resilient to trailing "index"', function() {
+    it('should be resilient to trailing "index"', () => {
       browser.get('build/docs/index-production.html#!/api/ng/function/angular.noop/index');
-      let mainHeader = element(by.css('.main-body h1 '));
+      const mainHeader = element(by.css('.main-body h1 '));
       expect(mainHeader.getText()).toEqual('angular.noop');
     });
 
 
-    it('should be resilient to trailing "index/"', function() {
+    it('should be resilient to trailing "index/"', () => {
       browser.get('build/docs/index-production.html#!/api/ng/function/angular.noop/index/');
-      let mainHeader = element(by.css('.main-body h1 '));
+      const mainHeader = element(by.css('.main-body h1 '));
       expect(mainHeader.getText()).toEqual('angular.noop');
     });
 
 
-    it('should display formatted error messages on error doc pages', function() {
+    it('should display formatted error messages on error doc pages', () => {
       browser.get('build/docs/index-production.html#!error/ng/areq?p0=Missing&p1=not%20a%20function,%20got%20undefined');
       expect(element(by.css('.minerr-errmsg')).getText()).toEqual('Argument \'Missing\' is not a function, got undefined');
     });
 
-    it('should display an error if the page does not exist', function() {
+    it('should display an error if the page does not exist', () => {
       browser.get('build/docs/index-production.html#!/api/does/not/exist');
-      let mainHeader = element(by.css('.main-body h1 '));
+      const mainHeader = element(by.css('.main-body h1 '));
       expect(mainHeader.getText()).toEqual('Oops!');
     });
 
-    it('should set "noindex" if the page does not exist', function() {
+    it('should set "noindex" if the page does not exist', () => {
       browser.get('build/docs/index-production.html#!/api/does/not/exist');
-      let robots = element(by.css('meta[name="robots"][content="noindex"]'));
-      let googleBot = element(by.css('meta[name="googlebot"][content="noindex"]'));
+      const robots = element(by.css('meta[name="robots"][content="noindex"]'));
+      const googleBot = element(by.css('meta[name="googlebot"][content="noindex"]'));
       expect(robots.isPresent()).toBe(true);
       expect(googleBot.isPresent()).toBe(true);
     });
 
-    it('should remove "noindex" if the page exists', function() {
+    it('should remove "noindex" if the page exists', () => {
       browser.get('build/docs/index-production.html#!/api');
-      let robots = element(by.css('meta[name="robots"][content="noindex"]'));
-      let googleBot = element(by.css('meta[name="googlebot"][content="noindex"]'));
+      const robots = element(by.css('meta[name="robots"][content="noindex"]'));
+      const googleBot = element(by.css('meta[name="googlebot"][content="noindex"]'));
       expect(robots.isPresent()).toBe(false);
       expect(googleBot.isPresent()).toBe(false);
     });
 
-    describe('template request error', function() {
-      beforeEach(function() {
-        browser.addMockModule('httpMocker', function() {
+    describe('template request error', () => {
+      beforeEach(() => {
+        browser.addMockModule('httpMocker', () => {
           angular.module('httpMocker', ['ngMock'])
             .run(['$httpBackend', function($httpBackend) {
               $httpBackend.whenGET('localhost:8000/build/docs/partials/api.html').respond(500, '');
@@ -131,32 +129,32 @@ describe('docs.angularjs.org', function() {
           });
       });
 
-      it('should set "noindex" for robots if the request fails', function() {
+      it('should set "noindex" for robots if the request fails', () => {
         // index-test includes ngMock
         browser.get('build/docs/index-test.html#!/api');
-        let robots = element(by.css('meta[name="robots"][content="noindex"]'));
-        let googleBot = element(by.css('meta[name="googlebot"][content="noindex"]'));
+        const robots = element(by.css('meta[name="robots"][content="noindex"]'));
+        const googleBot = element(by.css('meta[name="googlebot"][content="noindex"]'));
         expect(robots.isPresent()).toBe(true);
         expect(googleBot.isPresent()).toBe(true);
       });
     });
 
 
-    describe('page bootstrap error', function() {
-      beforeEach(function() {
-        browser.addMockModule('httpMocker', function() {
+    describe('page bootstrap error', () => {
+      beforeEach(() => {
+        browser.addMockModule('httpMocker', () => {
           // Require a module that does not exist to break the bootstrapping
           angular.module('httpMocker', ['doesNotExist']);
         });
     });
 
-      it('should have "noindex" for robots if bootstrapping fails', function() {
-        browser.get('build/docs/index.html#!/api').catch(function() {
+      it('should have "noindex" for robots if bootstrapping fails', () => {
+        browser.get('build/docs/index.html#!/api').catch(() => {
           // get() will fail on AngularJS bootstrap, but if we continue here, protractor
           // will assume the app is ready
           browser.ignoreSynchronization = true;
-          let robots = element(by.css('meta[name="robots"][content="noindex"]'));
-          let googleBot = element(by.css('meta[name="googlebot"][content="noindex"]'));
+          const robots = element(by.css('meta[name="robots"][content="noindex"]'));
+          const googleBot = element(by.css('meta[name="googlebot"][content="noindex"]'));
           expect(robots.isPresent()).toBe(true);
           expect(googleBot.isPresent()).toBe(true);
         });

@@ -61,11 +61,11 @@
      </file>
    </example>
  */
-let ngInitDirective = ngDirective({
+const ngInitDirective = ngDirective({
   priority: 450,
-  compile: function () {
+  compile() {
     return {
-      pre: function (scope, element, attrs) {
+      pre(scope, element, attrs) {
         scope.$eval(attrs.ngInit);
       },
     };

@@ -1,15 +1,15 @@
 
 
-describe('ngSwitch', function() {
+describe('ngSwitch', () => {
   let element;
 
 
-  afterEach(function() {
+  afterEach(() => {
     dealoc(element);
   });
 
 
-  it('should switch on value change', inject(function($rootScope, $compile) {
+  it('should switch on value change', inject(($rootScope, $compile) => {
     element = $compile(
       '<div ng-switch="select">' +
         '<div ng-switch-when="1">first:{{name}}</div>' +
@@ -36,7 +36,7 @@ describe('ngSwitch', function() {
   }));
 
 
-  it('should show all switch-whens that match the current value', inject(function($rootScope, $compile) {
+  it('should show all switch-whens that match the current value', inject(($rootScope, $compile) => {
     element = $compile(
       '<ul ng-switch="select">' +
         '<li ng-switch-when="1">first:{{name}}</li>' +
@@ -69,7 +69,7 @@ describe('ngSwitch', function() {
 
 
   it('should show all elements between start and end markers that match the current value',
-      inject(function($rootScope, $compile) {
+      inject(($rootScope, $compile) => {
     element = $compile(
       '<ul ng-switch="select">' +
         '<li ng-switch-when-start="1">A</li>' +
@@ -94,7 +94,7 @@ describe('ngSwitch', function() {
   }));
 
 
-  it('should switch on switch-when-default', inject(function($rootScope, $compile) {
+  it('should switch on switch-when-default', inject(($rootScope, $compile) => {
     element = $compile(
       '<ng:switch on="select">' +
         '<div ng:switch-when="1">one</div>' +
@@ -109,7 +109,7 @@ describe('ngSwitch', function() {
 
 
   it('should show all default elements between start and end markers when no match',
-      inject(function($rootScope, $compile) {
+      inject(($rootScope, $compile) => {
     element = $compile(
       '<ul ng-switch="select">' +
         '<li ng-switch-when-start="1">A</li>' +
@@ -134,7 +134,7 @@ describe('ngSwitch', function() {
   }));
 
 
-  it('should show all switch-when-default', inject(function($rootScope, $compile) {
+  it('should show all switch-when-default', inject(($rootScope, $compile) => {
     element = $compile(
       '<ul ng-switch="select">' +
         '<li ng-switch-when="1">one</li>' +
@@ -150,7 +150,7 @@ describe('ngSwitch', function() {
 
 
   it('should always display the elements that do not match a switch',
-      inject(function($rootScope, $compile) {
+      inject(($rootScope, $compile) => {
     element = $compile(
       '<ul ng-switch="select">' +
         '<li>always </li>' +
@@ -170,7 +170,7 @@ describe('ngSwitch', function() {
   it('should display the elements that do not have ngSwitchWhen nor ' +
      'ngSwitchDefault at the position specified in the template, when the ' +
      'first and last elements in the ngSwitch body do not have a ngSwitch* ' +
-     'directive', inject(function($rootScope, $compile) {
+     'directive', inject(($rootScope, $compile) => {
     element = $compile(
       '<ul ng-switch="select">' +
         '<li>1</li>' +
@@ -193,7 +193,7 @@ describe('ngSwitch', function() {
   it('should display the elements that do not have ngSwitchWhen nor ' +
      'ngSwitchDefault at the position specified in the template when the ' +
      'first and last elements in the ngSwitch have a ngSwitch* directive',
-      inject(function($rootScope, $compile) {
+      inject(($rootScope, $compile) => {
     element = $compile(
       '<ul ng-switch="select">' +
         '<li ng-switch-when="1">2</li>' +
@@ -210,20 +210,20 @@ describe('ngSwitch', function() {
     expect(element.text()).toEqual('236');
   }));
 
-  it('should properly create and destroy child scopes', inject(function($rootScope, $compile) {
+  it('should properly create and destroy child scopes', inject(($rootScope, $compile) => {
     element = $compile(
       '<ng:switch on="url">' +
         '<div ng-switch-when="a">{{name}}</div>' +
       '</ng:switch>')($rootScope);
     $rootScope.$apply();
 
-    let getChildScope = function() { return element.find('div').scope(); };
+    const getChildScope = function() { return element.find('div').scope(); };
 
     expect(getChildScope()).toBeUndefined();
 
     $rootScope.url = 'a';
     $rootScope.$apply();
-    let child1 = getChildScope();
+    const child1 = getChildScope();
     expect(child1).toBeDefined();
     spyOn(child1, '$destroy');
 
@@ -234,13 +234,13 @@ describe('ngSwitch', function() {
 
     $rootScope.url = 'a';
     $rootScope.$apply();
-    let child2 = getChildScope();
+    const child2 = getChildScope();
     expect(child2).toBeDefined();
     expect(child2).not.toBe(child1);
   }));
 
 
-  it('should interoperate with other transclusion directives like ngRepeat', inject(function($rootScope, $compile) {
+  it('should interoperate with other transclusion directives like ngRepeat', inject(($rootScope, $compile) => {
     element = $compile(
       '<div ng-switch="value">' +
           '<div ng-switch-when="foo" ng-repeat="foo in foos">{{value}}:{{foo}}|</div>' +
@@ -266,7 +266,7 @@ describe('ngSwitch', function() {
 
 
   it('should not leak jq data when compiled but not attached to parent when parent is destroyed',
-      inject(function($rootScope, $compile) {
+      inject(($rootScope, $compile) => {
     element = $compile(
       '<div ng-repeat="i in []">' +
         '<ng-switch on="url">' +
@@ -280,7 +280,7 @@ describe('ngSwitch', function() {
   }));
 
 
-  it('should properly support case labels with different numbers of transclude fns', inject(function($rootScope, $compile) {
+  it('should properly support case labels with different numbers of transclude fns', inject(($rootScope, $compile) => {
     element = $compile(
       '<div ng-switch="mode">' +
         '<p ng-switch-when="a">Block1</p>' +
@@ -303,8 +303,8 @@ describe('ngSwitch', function() {
   }));
 
 
-  it('should not trigger a digest after an element is removed', inject(function($$rAF, $compile, $rootScope, $timeout) {
-    let spy = spyOn($rootScope, '$digest').and.callThrough();
+  it('should not trigger a digest after an element is removed', inject(($$rAF, $compile, $rootScope, $timeout) => {
+    const spy = spyOn($rootScope, '$digest').and.callThrough();
 
     $rootScope.select = 1;
     element = $compile(
@@ -332,13 +332,13 @@ describe('ngSwitch', function() {
 
 
   it('should handle changes to the switch value in a digest loop with multiple value matches',
-    inject(function($compile, $rootScope) {
-      let scope = $rootScope.$new();
+    inject(($compile, $rootScope) => {
+      const scope = $rootScope.$new();
       scope.value = 'foo';
 
-      scope.$watch('value', function() {
+      scope.$watch('value', () => {
         if (scope.value === 'bar') {
-          scope.$evalAsync(function() {
+          scope.$evalAsync(() => {
             scope.value = 'baz';
           });
         }
@@ -361,9 +361,9 @@ describe('ngSwitch', function() {
   );
 
 
-  describe('ngSwitchWhen separator', function() {
+  describe('ngSwitchWhen separator', () => {
 
-    it('should be possible to define a separator', inject(function($rootScope, $compile) {
+    it('should be possible to define a separator', inject(($rootScope, $compile) => {
       element = $compile(
         '<div ng-switch="mode">' +
           '<p ng-switch-when="a|b" ng-switch-when-separator="|">Block1|</p>' +
@@ -386,7 +386,7 @@ describe('ngSwitch', function() {
     }));
 
 
-    it('should be possible to use a separator at the end of the value', inject(function($rootScope, $compile) {
+    it('should be possible to use a separator at the end of the value', inject(($rootScope, $compile) => {
       element = $compile(
         '<div ng-switch="mode">' +
           '<p ng-switch-when="a|b|" ng-switch-when-separator="|">Block1|</p>' +
@@ -409,7 +409,7 @@ describe('ngSwitch', function() {
     }));
 
 
-    it('should be possible to use the empty string as a separator', inject(function($rootScope, $compile) {
+    it('should be possible to use the empty string as a separator', inject(($rootScope, $compile) => {
       element = $compile(
         '<div ng-switch="mode">' +
           '<p ng-switch-when="ab" ng-switch-when-separator="">Block1|</p>' +
@@ -432,7 +432,7 @@ describe('ngSwitch', function() {
     }));
 
 
-    it('should be possible to use separators that are multiple characters long', inject(function($rootScope, $compile) {
+    it('should be possible to use separators that are multiple characters long', inject(($rootScope, $compile) => {
       element = $compile(
         '<div ng-switch="mode">' +
           '<p ng-switch-when="a||b|a" ng-switch-when-separator="||">Block1|</p>' +
@@ -455,7 +455,7 @@ describe('ngSwitch', function() {
     }));
 
 
-    it('should ignore multiple appearances of the same item', inject(function($rootScope, $compile) {
+    it('should ignore multiple appearances of the same item', inject(($rootScope, $compile) => {
       element = $compile(
         '<div ng-switch="mode">' +
           '<p ng-switch-when="a|b|a" ng-switch-when-separator="|">Block1|</p>' +
@@ -479,8 +479,8 @@ describe('ngSwitch', function() {
   });
 });
 
-describe('ngSwitch animation', function() {
-  let body, element, $rootElement;
+describe('ngSwitch animation', () => {
+  let body; let element; let $rootElement;
 
   function html(content) {
     $rootElement.html(content);
@@ -488,35 +488,33 @@ describe('ngSwitch animation', function() {
     return element;
   }
 
-  beforeEach(module(function() {
+  beforeEach(module(() => 
     // we need to run animation on attached elements;
-    return function(_$rootElement_) {
+     function(_$rootElement_) {
       $rootElement = _$rootElement_;
       body = jqLite(window.document.body);
       body.append($rootElement);
-    };
-  }));
+    }
+  ));
 
-  afterEach(function() {
+  afterEach(() => {
     dealoc(body);
     dealoc(element);
   });
 
-  describe('behavior', function() {
-    it('should destroy the previous leave animation if a new one takes place', function() {
+  describe('behavior', () => {
+    it('should destroy the previous leave animation if a new one takes place', () => {
       module('ngAnimate');
-      module(function($animateProvider) {
-        $animateProvider.register('.long-leave', function() {
-          return {
-            leave: function(element, done) {
-              //do nothing at all
+      module(($animateProvider) => {
+        $animateProvider.register('.long-leave', () => ({
+            leave(element, done) {
+              // do nothing at all
             }
-          };
-        });
+          }));
       });
-      inject(function($compile, $rootScope, $animate, $templateCache) {
+      inject(($compile, $rootScope, $animate, $templateCache) => {
         let item;
-        let $scope = $rootScope.$new();
+        const $scope = $rootScope.$new();
         element = $compile(html(
           '<div ng-switch="inc">' +
             '<div ng-switch-when="one">one</div>' +
@@ -526,8 +524,8 @@ describe('ngSwitch animation', function() {
 
         $scope.$apply('inc = "one"');
 
-        let destroyed, inner = element.children(0);
-        inner.on('$destroy', function() {
+        let destroyed; const inner = element.children(0);
+        inner.on('$destroy', () => {
           destroyed = true;
         });
 
@@ -540,13 +538,13 @@ describe('ngSwitch animation', function() {
     });
   });
 
-  describe('events', function() {
+  describe('events', () => {
     beforeEach(module('ngAnimateMock'));
 
     it('should fire off the enter animation',
-      inject(function($compile, $rootScope, $animate) {
+      inject(($compile, $rootScope, $animate) => {
         let item;
-        let $scope = $rootScope.$new();
+        const $scope = $rootScope.$new();
         element = $compile(html(
           '<div ng-switch on="val">' +
             '<div ng-switch-when="one">one</div>' +
@@ -567,9 +565,9 @@ describe('ngSwitch animation', function() {
 
 
     it('should fire off the leave animation',
-      inject(function($compile, $rootScope, $animate) {
+      inject(($compile, $rootScope, $animate) => {
         let item;
-        let $scope = $rootScope.$new();
+        const $scope = $rootScope.$new();
         element = $compile(html(
           '<div ng-switch on="val">' +
             '<div ng-switch-when="one">one</div>' +
@@ -599,23 +597,21 @@ describe('ngSwitch animation', function() {
       })
     );
 
-    it('should work with svg elements when the svg container is transcluded', function() {
-      module(function($compileProvider) {
-        $compileProvider.directive('svgContainer', function() {
-          return {
+    it('should work with svg elements when the svg container is transcluded', () => {
+      module(($compileProvider) => {
+        $compileProvider.directive('svgContainer', () => ({
             template: '<svg ng-transclude></svg>',
             replace: true,
             transclude: true
-          };
-        });
+          }));
       });
-      inject(function($compile, $rootScope) {
+      inject(($compile, $rootScope) => {
         element = $compile('<svg-container ng-switch="inc"><circle ng-switch-when="one"></circle>' +
           '</svg-container>')($rootScope);
         $rootScope.inc = 'one';
         $rootScope.$apply();
 
-        let circle = element.find('circle');
+        const circle = element.find('circle');
         expect(circle[0].toString()).toMatch(/SVG/);
       });
     });

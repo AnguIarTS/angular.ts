@@ -20,7 +20,7 @@
 
 // define ngTouch module
 /* global ngTouch */
-let ngTouch = angular.module("ngTouch", []);
+const ngTouch = angular.module("ngTouch", []);
 
 ngTouch.info({ angularVersion: '"NG_VERSION_FULL"' });
 

@@ -1,99 +1,99 @@
 
 
-describe('HTML', function() {
-  let ua = window.navigator.userAgent;
-  let isChrome = /Chrome/.test(ua) && !/Edge/.test(ua);
+describe('HTML', () => {
+  const ua = window.navigator.userAgent;
+  const isChrome = /Chrome/.test(ua) && !/Edge/.test(ua);
 
   let expectHTML;
 
   beforeEach(module('ngSanitize'));
-  beforeEach(function() {
+  beforeEach(() => {
     expectHTML = function(html) {
       let sanitize;
-      inject(function($sanitize) {
+      inject(($sanitize) => {
         sanitize = $sanitize;
       });
       return expect(sanitize(html));
     };
   });
 
-  describe('htmlParser', function() {
+  describe('htmlParser', () => {
     /* global htmlParser */
 
-    let handler, start, text, comment;
-    beforeEach(function() {
+    let handler; let start; let text; let comment;
+    beforeEach(() => {
       text = '';
       start = null;
       handler = {
-        start: function(tag, attrs) {
+        start(tag, attrs) {
           start = {
-            tag: tag,
-            attrs: attrs
+            tag,
+            attrs
           };
           // Since different browsers handle newlines differently we trim
           // so that it is easier to write tests.
           for (let i = 0, ii = attrs.length; i < ii; i++) {
-            let keyValue = attrs[i];
-            let key = keyValue.key;
-            let value = keyValue.value;
+            const keyValue = attrs[i];
+            const {key} = keyValue;
+            const {value} = keyValue;
             attrs[key] = value.replace(/^\s*/, '').replace(/\s*$/, '');
           }
         },
-        chars: function(text_) {
+        chars(text_) {
           text += text_;
         },
-        end:function(tag) {
+        end(tag) {
           expect(tag).toEqual(start.tag);
         },
-        comment:function(comment_) {
+        comment(comment_) {
           comment = comment_;
         }
       };
       // Trigger the $sanitizer provider to execute, which initializes the `htmlParser` function.
-      inject(function($sanitize) {});
+      inject(($sanitize) => {});
     });
 
-    it('should not parse comments', function() {
+    it('should not parse comments', () => {
       htmlParser('<!--FOOBAR-->', handler);
       expect(comment).not.toBeDefined();
     });
 
-    it('should parse basic format', function() {
+    it('should parse basic format', () => {
       htmlParser('<tag attr="value">text</tag>', handler);
       expect(start).toEqual({tag:'tag', attrs:{attr:'value'}});
       expect(text).toEqual('text');
     });
 
-    it('should not treat "<" followed by a non-/ or non-letter as a tag', function() {
+    it('should not treat "<" followed by a non-/ or non-letter as a tag', () => {
       expectHTML('<- text1 text2 <1 text1 text2 <{', handler).
         toBe('&lt;- text1 text2 &lt;1 text1 text2 &lt;{');
     });
 
-    it('should accept tag delimiters such as "<" inside real tags', function() {
+    it('should accept tag delimiters such as "<" inside real tags', () => {
       // Assert that the < is part of the text node content, and not part of a tag name.
       htmlParser('<p> 10 < 100 </p>', handler);
       expect(text).toEqual(' 10 < 100 ');
     });
 
-    it('should parse newlines in tags', function() {
+    it('should parse newlines in tags', () => {
       htmlParser('<tag\n attr="value"\n>text</\ntag\n>', handler);
       expect(start).toEqual({tag:'tag', attrs:{attr:'value'}});
       expect(text).toEqual('text');
     });
 
-    it('should parse newlines in attributes', function() {
+    it('should parse newlines in attributes', () => {
       htmlParser('<tag attr="\nvalue\n">text</tag>', handler);
       expect(start).toEqual({tag:'tag', attrs:{attr:'\nvalue\n'}});
       expect(text).toEqual('text');
     });
 
-    it('should parse namespace', function() {
+    it('should parse namespace', () => {
       htmlParser('<ns:t-a-g ns:a-t-t-r="\nvalue\n">text</ns:t-a-g>', handler);
       expect(start).toEqual({tag:'ns:t-a-g', attrs:{'ns:a-t-t-r':'\nvalue\n'}});
       expect(text).toEqual('text');
     });
 
-    it('should parse empty value attribute of node', function() {
+    it('should parse empty value attribute of node', () => {
       htmlParser('<test-foo selected value="">abc</test-foo>', handler);
       expect(start).toEqual({tag:'test-foo', attrs:{selected:'', value:''}});
       expect(text).toEqual('abc');
@@ -101,127 +101,127 @@ describe('HTML', function() {
   });
 
   // THESE TESTS ARE EXECUTED WITH COMPILED ANGULAR
-  it('should echo html', function() {
+  it('should echo html', () => {
     expectHTML('hello<b class="1\'23" align=\'""\'>world</b>.').
        toBeOneOf('hello<b class="1\'23" align="&#34;&#34;">world</b>.',
                  'hello<b align="&#34;&#34;" class="1\'23">world</b>.');
   });
 
-  it('should remove script', function() {
+  it('should remove script', () => {
     expectHTML('a<SCRIPT>evil< / scrIpt >c.').toEqual('a');
     expectHTML('a<SCRIPT>evil</scrIpt>c.').toEqual('ac.');
   });
 
-  it('should remove script that has newline characters', function() {
+  it('should remove script that has newline characters', () => {
     expectHTML('a<SCRIPT\n>\n\revil\n\r</scrIpt\n >c.').toEqual('ac.');
   });
 
-  it('should remove DOCTYPE header', function() {
+  it('should remove DOCTYPE header', () => {
     expectHTML('<!DOCTYPE html>').toEqual('');
     expectHTML('<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"\n"http://www.w3.org/TR/html4/strict.dtd">').toEqual('');
     expectHTML('a<!DOCTYPE html>c.').toEqual('ac.');
     expectHTML('a<!DocTyPe html>c.').toEqual('ac.');
   });
 
-  it('should escape non-start tags', function() {
+  it('should escape non-start tags', () => {
     expectHTML('a< SCRIPT >A< SCRIPT >evil< / scrIpt >B< / scrIpt >c.').
       toBe('a&lt; SCRIPT &gt;A&lt; SCRIPT &gt;evil&lt; / scrIpt &gt;B&lt; / scrIpt &gt;c.');
   });
 
-  it('should remove attrs', function() {
+  it('should remove attrs', () => {
     expectHTML('a<div style="abc">b</div>c').toEqual('a<div>b</div>c');
   });
 
-  it('should handle large datasets', function() {
+  it('should handle large datasets', () => {
     // Large is non-trivial to quantify, but handling ~100,000 should be sufficient for most purposes.
-    let largeNumber = 17; // 2^17 = 131,072
+    const largeNumber = 17; // 2^17 = 131,072
     let result = '<div>b</div>';
     // Ideally we would use repeat, but that isn't supported in IE.
     for (let i = 0; i < largeNumber; i++) {
       result += result;
     }
-    expectHTML('a' + result + 'c').toEqual('a' + result + 'c');
+    expectHTML(`a${  result  }c`).toEqual(`a${  result  }c`);
   });
 
-  it('should remove style', function() {
+  it('should remove style', () => {
     expectHTML('a<STyle>evil</stYle>c.').toEqual('ac.');
   });
 
-  it('should remove style that has newline characters', function() {
+  it('should remove style that has newline characters', () => {
     expectHTML('a<STyle \n>\n\revil\n\r</stYle\n>c.').toEqual('ac.');
   });
 
-  it('should remove script and style', function() {
+  it('should remove script and style', () => {
     expectHTML('a<STyle>evil<script></script></stYle>c.').toEqual('ac.');
   });
 
-  it('should remove double nested script', function() {
+  it('should remove double nested script', () => {
     expectHTML('a<SCRIPT>ev<script>evil</sCript>il</scrIpt>c.').toEqual('ailc.');
   });
 
-  it('should remove unknown  names', function() {
+  it('should remove unknown  names', () => {
     expectHTML('a<xxx><B>b</B></xxx>c').toEqual('a<b>b</b>c');
   });
 
-  it('should remove unsafe value', function() {
+  it('should remove unsafe value', () => {
     expectHTML('<a href="javascript:alert()">').toEqual('<a></a>');
     expectHTML('<img src="foo.gif" usemap="#foomap">').toEqual('<img src="foo.gif">');
   });
 
-  it('should handle self closed elements', function() {
+  it('should handle self closed elements', () => {
     expectHTML('a<hr/>c').toEqual('a<hr>c');
   });
 
-  it('should handle namespace', function() {
+  it('should handle namespace', () => {
     expectHTML('a<my:hr/><my:div>b</my:div>c').toEqual('abc');
   });
 
-  it('should handle entities', function() {
-    let everything = '<div rel="!@#$%^&amp;*()_+-={}[]:&#34;;\'&lt;&gt;?,./`~ &#295;">' +
+  it('should handle entities', () => {
+    const everything = '<div rel="!@#$%^&amp;*()_+-={}[]:&#34;;\'&lt;&gt;?,./`~ &#295;">' +
     '!@#$%^&amp;*()_+-={}[]:&#34;;\'&lt;&gt;?,./`~ &#295;</div>';
     expectHTML(everything).toEqual(everything);
   });
 
-  it('should mangle improper html', function() {
+  it('should mangle improper html', () => {
     // This text is encoded more than a real HTML parser would, but it should render the same.
     expectHTML('< div rel="</div>" alt=abc dir=\'"\' >text< /div>').
       toBe('&lt; div rel=&#34;&#34; alt=abc dir=\'&#34;\' &gt;text&lt; /div&gt;');
   });
 
-  it('should mangle improper html2', function() {
+  it('should mangle improper html2', () => {
     // A proper HTML parser would clobber this more in most cases, but it looks reasonable.
     expectHTML('< div rel="</div>" / >').
       toBe('&lt; div rel=&#34;&#34; / &gt;');
   });
 
-  it('should ignore back slash as escape', function() {
+  it('should ignore back slash as escape', () => {
     expectHTML('<img alt="xxx\\" title="><script>....">').
       toBeOneOf('<img alt="xxx\\" title="&gt;&lt;script&gt;....">',
                 '<img title="&gt;&lt;script&gt;...." alt="xxx\\">');
   });
 
-  it('should ignore object attributes', function() {
+  it('should ignore object attributes', () => {
     expectHTML('<a constructor="hola">:)</a>').
       toEqual('<a>:)</a>');
     expectHTML('<constructor constructor="hola">:)</constructor>').
       toEqual('');
   });
 
-  it('should keep spaces as prefix/postfix', function() {
+  it('should keep spaces as prefix/postfix', () => {
     expectHTML(' a ').toEqual(' a ');
   });
 
-  it('should allow multiline strings', function() {
+  it('should allow multiline strings', () => {
     expectHTML('\na\n').toEqual('&#10;a&#10;');
   });
 
-  it('should accept tag delimiters such as "<" inside real tags (with nesting)', function() {
-    //this is an integrated version of the 'should accept tag delimiters such as "<" inside real tags' test
+  it('should accept tag delimiters such as "<" inside real tags (with nesting)', () => {
+    // this is an integrated version of the 'should accept tag delimiters such as "<" inside real tags' test
     expectHTML('<p> 10 < <span>100</span> </p>')
     .toEqual('<p> 10 &lt; <span>100</span> </p>');
   });
 
-  it('should accept non-string arguments', function() {
+  it('should accept non-string arguments', () => {
     expectHTML(null).toBe('');
     expectHTML(undefined).toBe('');
     expectHTML(42).toBe('42');
@@ -232,30 +232,30 @@ describe('HTML', function() {
   });
 
 
-  it('should strip svg elements if not enabled via provider', function() {
+  it('should strip svg elements if not enabled via provider', () => {
     expectHTML('<svg width="400px" height="150px" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red"></svg>')
       .toEqual('');
   });
 
-  it('should prevent mXSS attacks', function() {
+  it('should prevent mXSS attacks', () => {
     expectHTML('<a href="&#x3000;javascript:alert(1)">CLICKME</a>').toBe('<a>CLICKME</a>');
   });
 
-  it('should strip html comments', function() {
+  it('should strip html comments', () => {
     expectHTML('<!-- comment 1 --><p>text1<!-- comment 2 -->text2</p><!-- comment 3 -->')
       .toEqual('<p>text1text2</p>');
   });
 
-  describe('clobbered elements', function() {
+  describe('clobbered elements', () => {
 
-    it('should throw on a form with an input named "parentNode"', function() {
-      inject(function($sanitize) {
+    it('should throw on a form with an input named "parentNode"', () => {
+      inject(($sanitize) => {
 
-        expect(function() {
+        expect(() => {
           $sanitize('<form><input name="parentNode" /></form>');
         }).toThrowMinErr('$sanitize', 'elclob');
 
-        expect(function() {
+        expect(() => {
           $sanitize('<form><div><div><input name="parentNode" /></div></div></form>');
         }).toThrowMinErr('$sanitize', 'elclob');
       });
@@ -263,14 +263,14 @@ describe('HTML', function() {
 
     if (!/Edge\/\d{2,}/.test(window.navigator.userAgent)) {
       // Skip test on Edge due to a browser bug.
-      it('should throw on a form with an input named "nextSibling"', function() {
-        inject(function($sanitize) {
+      it('should throw on a form with an input named "nextSibling"', () => {
+        inject(($sanitize) => {
 
-          expect(function() {
+          expect(() => {
             $sanitize('<form><input name="nextSibling" /></form>');
           }).toThrowMinErr('$sanitize', 'elclob');
 
-          expect(function() {
+          expect(() => {
             $sanitize('<form><div><div><input name="nextSibling" /></div></div></form>');
           }).toThrowMinErr('$sanitize', 'elclob');
 
@@ -280,7 +280,7 @@ describe('HTML', function() {
   });
 
   // See https://github.com/cure53/DOMPurify/blob/a992d3a75031cb8bb032e5ea8399ba972bdf9a65/src/purify.js#L439-L449
-  it('should not allow JavaScript execution when creating inert document', inject(function($sanitize) {
+  it('should not allow JavaScript execution when creating inert document', inject(($sanitize) => {
     $sanitize('<svg><g onload="window.xxx = 100"></g></svg>');
 
     expect(window.xxx).toBe(undefined);
@@ -288,15 +288,15 @@ describe('HTML', function() {
   }));
 
   // See https://github.com/cure53/DOMPurify/releases/tag/0.6.7
-  it('should not allow JavaScript hidden in badly formed HTML to get through sanitization (Firefox bug)', inject(function($sanitize) {
-    let doc = $sanitize('<svg><p><style><img src="</style><img src=x onerror=alert(1)//">');
+  it('should not allow JavaScript hidden in badly formed HTML to get through sanitization (Firefox bug)', inject(($sanitize) => {
+    const doc = $sanitize('<svg><p><style><img src="</style><img src=x onerror=alert(1)//">');
     expect(doc).toEqual('<p><img src="x"></p>');
   }));
 
-  describe('Custom white-list support', function() {
+  describe('Custom white-list support', () => {
 
     let $sanitizeProvider;
-    beforeEach(module(function(_$sanitizeProvider_) {
+    beforeEach(module((_$sanitizeProvider_) => {
       $sanitizeProvider = _$sanitizeProvider_;
 
       $sanitizeProvider.addValidElements(['foo']);
@@ -308,44 +308,44 @@ describe('HTML', function() {
       $sanitizeProvider.addValidAttrs(['foo']);
     }));
 
-    it('should allow custom white-listed element', function() {
+    it('should allow custom white-listed element', () => {
       expectHTML('<foo></foo>').toEqual('<foo></foo>');
       expectHTML('<foo-button></foo-button>').toEqual('<foo-button></foo-button>');
       expectHTML('<foo-video></foo-video>').toEqual('<foo-video></foo-video>');
     });
 
-    it('should allow custom white-listed void element', function() {
+    it('should allow custom white-listed void element', () => {
       expectHTML('<foo-input/>').toEqual('<foo-input>');
     });
 
-    it('should allow custom white-listed void element to be used with closing tag', function() {
+    it('should allow custom white-listed void element to be used with closing tag', () => {
       expectHTML('<foo-input></foo-input>').toEqual('<foo-input>');
     });
 
-    it('should allow custom white-listed attribute', function() {
+    it('should allow custom white-listed attribute', () => {
       expectHTML('<foo-input foo="foo"/>').toEqual('<foo-input foo="foo">');
     });
 
-    it('should ignore custom white-listed SVG element if SVG disabled', function() {
+    it('should ignore custom white-listed SVG element if SVG disabled', () => {
       expectHTML('<foo-svg></foo-svg>').toEqual('');
     });
 
-    it('should not allow add custom element after service has been instantiated', inject(function($sanitize) {
+    it('should not allow add custom element after service has been instantiated', inject(($sanitize) => {
       $sanitizeProvider.addValidElements(['bar']);
       expectHTML('<bar></bar>').toEqual('');
     }));
   });
 
-  describe('SVG support', function() {
+  describe('SVG support', () => {
 
-    beforeEach(module(function($sanitizeProvider) {
+    beforeEach(module(($sanitizeProvider) => {
       $sanitizeProvider.enableSvg(true);
       $sanitizeProvider.addValidElements({
         svgElements: ['font-face-uri']
       });
     }));
 
-    it('should accept SVG tags', function() {
+    it('should accept SVG tags', () => {
       expectHTML('<svg width="400px" height="150px" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red"></svg>')
         .toBeOneOf('<svg width="400px" height="150px" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red"></circle></svg>',
                    '<svg xmlns="http://www.w3.org/2000/svg" height="150px" width="400px"><circle fill="red" stroke-width="3" stroke="black" r="40" cy="50" cx="50"></circle></svg>',
@@ -353,18 +353,18 @@ describe('HTML', function() {
                    '<svg width="400px" height="150px" xmlns="http://www.w3.org/2000/svg"><circle FILL="red" STROKE="black" STROKE-WIDTH="3" cx="50" cy="50" r="40"></circle></svg>');
     });
 
-    it('should not ignore white-listed svg camelCased attributes', function() {
+    it('should not ignore white-listed svg camelCased attributes', () => {
       expectHTML('<svg preserveAspectRatio="true"></svg>')
         .toBeOneOf('<svg preserveAspectRatio="true"></svg>',
                    '<svg preserveAspectRatio="true" xmlns="http://www.w3.org/2000/svg"></svg>');
 
     });
 
-    it('should allow custom white-listed SVG element', function() {
+    it('should allow custom white-listed SVG element', () => {
       expectHTML('<font-face-uri></font-face-uri>').toEqual('<font-face-uri></font-face-uri>');
     });
 
-    it('should sanitize SVG xlink:href attribute values', function() {
+    it('should sanitize SVG xlink:href attribute values', () => {
       expectHTML('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><a xlink:href="javascript:alert()"></a></svg>')
         .toBeOneOf('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><a></a></svg>',
                    '<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><a></a></svg>',
@@ -377,7 +377,7 @@ describe('HTML', function() {
                    '<svg xmlns="http://www.w3.org/2000/svg"><a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://example.com"></a></svg>');
     });
 
-    it('should sanitize SVG xml:base attribute values', function() {
+    it('should sanitize SVG xml:base attribute values', () => {
       expectHTML('<svg xmlns="http://www.w3.org/2000/svg"><a xml:base="javascript:alert(1)//" href="#"></a></svg>')
         .toEqual('<svg xmlns="http://www.w3.org/2000/svg"><a href="#"></a></svg>');
 
@@ -386,7 +386,7 @@ describe('HTML', function() {
 
     });
 
-    it('should sanitize unknown namespaced SVG attributes', function() {
+    it('should sanitize unknown namespaced SVG attributes', () => {
       expectHTML('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><a xlink:foo="javascript:alert()"></a></svg>')
         .toBeOneOf('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><a></a></svg>',
                    '<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><a></a></svg>',
@@ -398,7 +398,7 @@ describe('HTML', function() {
                    '<svg xmlns="http://www.w3.org/2000/svg"><a></a></svg>');
     });
 
-    it('should not accept SVG animation tags', function() {
+    it('should not accept SVG animation tags', () => {
       expectHTML('<svg xmlns:xlink="http://www.w3.org/1999/xlink"><a><text y="1em">Click me</text><animate attributeName="xlink:href" values="javascript:alert(1)"/></a></svg>')
         .toBeOneOf('<svg xmlns:xlink="http://www.w3.org/1999/xlink"><a><text y="1em">Click me</text></a></svg>',
                    '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><a><text y="1em">Click me</text></a></svg>',
@@ -412,7 +412,7 @@ describe('HTML', function() {
                    '<svg xmlns="http://www.w3.org/2000/svg"><a xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="?"><circle r="400"></circle></a></svg>');
     });
 
-    it('should not accept SVG `use` tags', function() {
+    it('should not accept SVG `use` tags', () => {
       expectHTML('<svg><use xlink:href="test.svg#xss" /></svg>')
         .toBeOneOf('<svg></svg>',
                    '<svg xmlns:xlink="http://www.w3.org/1999/xlink"></svg>',
@@ -421,17 +421,17 @@ describe('HTML', function() {
   });
 
 
-  describe('htmlSanitizerWriter', function() {
+  describe('htmlSanitizerWriter', () => {
     /* global htmlSanitizeWriter: false */
 
-    let writer, html, uriValidator;
-    beforeEach(function() {
+    let writer; let html; let uriValidator;
+    beforeEach(() => {
       html = '';
       uriValidator = jasmine.createSpy('uriValidator');
-      writer = htmlSanitizeWriter({push:function(text) {html += text;}}, uriValidator);
+      writer = htmlSanitizeWriter({push(text) {html += text;}}, uriValidator);
     });
 
-    it('should write basic HTML', function() {
+    it('should write basic HTML', () => {
       writer.chars('before');
       writer.start('div', {rel:'123'}, false);
       writer.chars('in');
@@ -441,43 +441,43 @@ describe('HTML', function() {
       expect(html).toEqual('before<div rel="123">in</div>after');
     });
 
-    it('should escape text nodes', function() {
+    it('should escape text nodes', () => {
       writer.chars('a<div>&</div>c');
       expect(html).toEqual('a&lt;div&gt;&amp;&lt;/div&gt;c');
     });
 
-    it('should escape IE script', function() {
+    it('should escape IE script', () => {
       writer.chars('&<>{}');
       expect(html).toEqual('&amp;&lt;&gt;{}');
     });
 
-    it('should escape attributes', function() {
+    it('should escape attributes', () => {
       writer.start('div', {rel:'!@#$%^&*()_+-={}[]:";\'<>?,./`~ \n\0\r\u0127'});
       expect(html).toEqual('<div rel="!@#$%^&amp;*()_+-={}[]:&#34;;\'&lt;&gt;?,./`~ &#10;&#0;&#13;&#295;">');
     });
 
-    it('should ignore misformed elements', function() {
+    it('should ignore misformed elements', () => {
       writer.start('d>i&v', {});
       expect(html).toEqual('');
     });
 
-    it('should ignore unknown attributes', function() {
+    it('should ignore unknown attributes', () => {
       writer.start('div', {unknown:''});
       expect(html).toEqual('<div>');
     });
 
-    it('should handle surrogate pair', function() {
+    it('should handle surrogate pair', () => {
       writer.chars(String.fromCharCode(55357, 56374));
       expect(html).toEqual('&#128054;');
     });
 
-    describe('explicitly disallow', function() {
-      it('should not allow attributes', function() {
+    describe('explicitly disallow', () => {
+      it('should not allow attributes', () => {
         writer.start('div', {id:'a', name:'a', style:'a'});
         expect(html).toEqual('<div>');
       });
 
-      it('should not allow tags', function() {
+      it('should not allow tags', () => {
         function tag(name) {
           writer.start(name, {});
           writer.end(name);
@@ -502,8 +502,8 @@ describe('HTML', function() {
       });
     });
 
-    describe('uri validation', function() {
-      it('should call the uri validator', function() {
+    describe('uri validation', () => {
+      it('should call the uri validator', () => {
         writer.start('a', {href:'someUrl'}, false);
         expect(uriValidator).toHaveBeenCalledWith('someUrl', false);
         uriValidator.calls.reset();
@@ -514,7 +514,7 @@ describe('HTML', function() {
         expect(uriValidator).not.toHaveBeenCalled();
       });
 
-      it('should drop non valid uri attributes', function() {
+      it('should drop non valid uri attributes', () => {
         uriValidator.and.returnValue(false);
         writer.start('a', {href:'someUrl'}, false);
         expect(html).toEqual('<a>');
@@ -527,17 +527,17 @@ describe('HTML', function() {
     });
   });
 
-  describe('uri checking', function() {
-    beforeEach(function() {
+  describe('uri checking', () => {
+    beforeEach(() => {
       jasmine.addMatchers({
-        toBeValidUrl: function() {
+        toBeValidUrl() {
           return {
-            compare: function(actual) {
+            compare(actual) {
               let sanitize;
-              inject(function($sanitize) {
+              inject(($sanitize) => {
                 sanitize = $sanitize;
               });
-              let input = '<a href="' + actual + '"></a>';
+              const input = `<a href="${  actual  }"></a>`;
               return { pass: sanitize(input) === input };
             }
           };
@@ -545,12 +545,12 @@ describe('HTML', function() {
       });
     });
 
-    it('should use $$sanitizeUri for a[href] links', function() {
-      let $$sanitizeUri = jasmine.createSpy('$$sanitizeUri');
-      module(function($provide) {
+    it('should use $$sanitizeUri for a[href] links', () => {
+      const $$sanitizeUri = jasmine.createSpy('$$sanitizeUri');
+      module(($provide) => {
         $provide.value('$$sanitizeUri', $$sanitizeUri);
       });
-      inject(function() {
+      inject(() => {
         $$sanitizeUri.and.returnValue('someUri');
 
         expectHTML('<a href="someUri"></a>').toEqual('<a href="someUri"></a>');
@@ -561,12 +561,12 @@ describe('HTML', function() {
       });
     });
 
-    it('should use $$sanitizeUri for img[src] links', function() {
-      let $$sanitizeUri = jasmine.createSpy('$$sanitizeUri');
-      module(function($provide) {
+    it('should use $$sanitizeUri for img[src] links', () => {
+      const $$sanitizeUri = jasmine.createSpy('$$sanitizeUri');
+      module(($provide) => {
         $provide.value('$$sanitizeUri', $$sanitizeUri);
       });
-      inject(function() {
+      inject(() => {
         $$sanitizeUri.and.returnValue('someUri');
 
         expectHTML('<img src="someUri"/>').toEqual('<img src="someUri">');
@@ -577,7 +577,7 @@ describe('HTML', function() {
       });
     });
 
-    it('should be URI', function() {
+    it('should be URI', () => {
       expect('').toBeValidUrl();
       expect('http://abc').toBeValidUrl();
       expect('HTTP://abc').toBeValidUrl();
@@ -593,38 +593,38 @@ describe('HTML', function() {
       expect('/page1.md').toBeValidUrl();
     });
 
-    it('should not be URI', function() {
+    it('should not be URI', () => {
       // eslint-disable-next-line no-script-url
       expect('javascript:alert').not.toBeValidUrl();
     });
 
-    describe('javascript URLs', function() {
-      it('should ignore javascript:', function() {
+    describe('javascript URLs', () => {
+      it('should ignore javascript:', () => {
         // eslint-disable-next-line no-script-url
         expect('JavaScript:abc').not.toBeValidUrl();
         expect(' \n Java\n Script:abc').not.toBeValidUrl();
         expect('http://JavaScript/my.js').toBeValidUrl();
       });
 
-      it('should ignore dec encoded javascript:', function() {
+      it('should ignore dec encoded javascript:', () => {
         expect('&#106;&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;').not.toBeValidUrl();
         expect('&#106&#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;').not.toBeValidUrl();
         expect('&#106 &#97;&#118;&#97;&#115;&#99;&#114;&#105;&#112;&#116;&#58;').not.toBeValidUrl();
       });
 
-      it('should ignore decimal with leading 0 encoded javascript:', function() {
+      it('should ignore decimal with leading 0 encoded javascript:', () => {
         expect('&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058').not.toBeValidUrl();
         expect('&#0000106 &#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058').not.toBeValidUrl();
         expect('&#0000106; &#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058').not.toBeValidUrl();
       });
 
-      it('should ignore hex encoded javascript:', function() {
+      it('should ignore hex encoded javascript:', () => {
         expect('&#x6A&#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70&#x74&#x3A;').not.toBeValidUrl();
         expect('&#x6A;&#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70&#x74&#x3A;').not.toBeValidUrl();
         expect('&#x6A &#x61&#x76&#x61&#x73&#x63&#x72&#x69&#x70&#x74&#x3A;').not.toBeValidUrl();
       });
 
-      it('should ignore hex encoded whitespace javascript:', function() {
+      it('should ignore hex encoded whitespace javascript:', () => {
         expect('jav&#x09;ascript:alert();').not.toBeValidUrl();
         expect('jav&#x0A;ascript:alert();').not.toBeValidUrl();
         expect('jav&#x0A ascript:alert();').not.toBeValidUrl();
@@ -635,36 +635,36 @@ describe('HTML', function() {
     });
   });
 
-  describe('sanitizeText', function() {
+  describe('sanitizeText', () => {
     /* global sanitizeText: false */
-    it('should escape text', function() {
+    it('should escape text', () => {
       expect(sanitizeText('a<div>&</div>c')).toEqual('a&lt;div&gt;&amp;&lt;/div&gt;c');
     });
   });
 });
 
-describe('decodeEntities', function() {
-  let handler, text;
+describe('decodeEntities', () => {
+  let handler; let text;
 
-  beforeEach(function() {
+  beforeEach(() => {
     text = '';
     handler = {
-      start: function() {},
-      chars: function(text_) {
+      start() {},
+      chars(text_) {
         text = text_;
       },
-      end: function() {},
-      comment: function() {}
+      end() {},
+      comment() {}
     };
     module('ngSanitize');
   });
 
-  it('should unescape text', function() {
+  it('should unescape text', () => {
     htmlParser('a&lt;div&gt;&amp;&lt;/div&gt;c', handler);
     expect(text).toEqual('a<div>&</div>c');
   });
 
-  it('should preserve whitespace', function() {
+  it('should preserve whitespace', () => {
     htmlParser('  a&amp;b ', handler);
     expect(text).toEqual('  a&b ');
   });

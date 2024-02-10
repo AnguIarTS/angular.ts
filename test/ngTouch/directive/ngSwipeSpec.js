@@ -1,28 +1,28 @@
 
 
 // Wrapper to abstract over using touch events or mouse events.
-let swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, endEvent) {
-  describe('ngSwipe with ' + description + ' events', function() {
+const swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, endEvent) {
+  describe(`ngSwipe with ${  description  } events`, () => {
     let element;
 
     if (restrictBrowsers) {
       // TODO(braden): Once we have other touch-friendly browsers on CI, allow them here.
       // Currently Firefox and IE refuse to fire touch events.
-      let chrome = /chrome/.test(window.navigator.userAgent.toLowerCase());
+      const chrome = /chrome/.test(window.navigator.userAgent.toLowerCase());
       if (!chrome) {
         return;
       }
     }
 
-    beforeEach(function() {
+    beforeEach(() => {
       module('ngTouch');
     });
 
-    afterEach(function() {
+    afterEach(() => {
       dealoc(element);
     });
 
-    it('should swipe to the left', inject(function($rootScope, $compile) {
+    it('should swipe to the left', inject(($rootScope, $compile) => {
       element = $compile('<div ng-swipe-left="swiped = true"></div>')($rootScope);
       $rootScope.$digest();
       expect($rootScope.swiped).toBeUndefined();
@@ -40,7 +40,7 @@ let swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, 
       expect($rootScope.swiped).toBe(true);
     }));
 
-    it('should swipe to the right', inject(function($rootScope, $compile) {
+    it('should swipe to the right', inject(($rootScope, $compile) => {
       element = $compile('<div ng-swipe-right="swiped = true"></div>')($rootScope);
       $rootScope.$digest();
       expect($rootScope.swiped).toBeUndefined();
@@ -58,7 +58,7 @@ let swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, 
       expect($rootScope.swiped).toBe(true);
     }));
 
-    it('should only swipe given ng-swipe-disable-mouse attribute for touch events', inject(function($rootScope, $compile) {
+    it('should only swipe given ng-swipe-disable-mouse attribute for touch events', inject(($rootScope, $compile) => {
       element = $compile('<div ng-swipe-left="swiped = true" ng-swipe-disable-mouse></div>')($rootScope);
       $rootScope.$digest();
       expect($rootScope.swiped).toBeUndefined();
@@ -76,7 +76,7 @@ let swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, 
       expect(!!$rootScope.swiped).toBe(description !== 'mouse');
     }));
 
-    it('should pass event object', inject(function($rootScope, $compile) {
+    it('should pass event object', inject(($rootScope, $compile) => {
       element = $compile('<div ng-swipe-left="event = $event"></div>')($rootScope);
       $rootScope.$digest();
 
@@ -93,7 +93,7 @@ let swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, 
       expect($rootScope.event).toBeDefined();
     }));
 
-    it('should not swipe if you move too far vertically', inject(function($rootScope, $compile, $rootElement) {
+    it('should not swipe if you move too far vertically', inject(($rootScope, $compile, $rootElement) => {
       element = $compile('<div ng-swipe-left="swiped = true"></div>')($rootScope);
       $rootElement.append(element);
       $rootScope.$digest();
@@ -119,7 +119,7 @@ let swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, 
       expect($rootScope.swiped).toBeUndefined();
     }));
 
-    it('should not swipe if you slide only a short distance', inject(function($rootScope, $compile, $rootElement) {
+    it('should not swipe if you slide only a short distance', inject(($rootScope, $compile, $rootElement) => {
       element = $compile('<div ng-swipe-left="swiped = true"></div>')($rootScope);
       $rootElement.append(element);
       $rootScope.$digest();
@@ -140,7 +140,7 @@ let swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, 
       expect($rootScope.swiped).toBeUndefined();
     }));
 
-    it('should not swipe if the swipe leaves the element', inject(function($rootScope, $compile, $rootElement) {
+    it('should not swipe if the swipe leaves the element', inject(($rootScope, $compile, $rootElement) => {
       element = $compile('<div ng-swipe-right="swiped = true"></div>')($rootScope);
       $rootElement.append(element);
       $rootScope.$digest();
@@ -161,7 +161,7 @@ let swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, 
       expect($rootScope.swiped).toBeUndefined();
     }));
 
-    it('should not swipe if the swipe starts outside the element', inject(function($rootScope, $compile, $rootElement) {
+    it('should not swipe if the swipe starts outside the element', inject(($rootScope, $compile, $rootElement) => {
       element = $compile('<div ng-swipe-right="swiped = true"></div>')($rootScope);
       $rootElement.append(element);
       $rootScope.$digest();
@@ -182,14 +182,14 @@ let swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, 
       expect($rootScope.swiped).toBeUndefined();
     }));
 
-    it('should emit "swipeleft" events for left swipes', inject(function($rootScope, $compile, $rootElement) {
+    it('should emit "swipeleft" events for left swipes', inject(($rootScope, $compile, $rootElement) => {
       element = $compile('<div ng-swipe-left="swiped = true"></div>')($rootScope);
       $rootElement.append(element);
       $rootScope.$digest();
 
       expect($rootScope.swiped).toBeUndefined();
       let eventFired = false;
-      element.on('swipeleft', function() {
+      element.on('swipeleft', () => {
         eventFired = true;
       });
 
@@ -206,14 +206,14 @@ let swipeTests = function(description, restrictBrowsers, startEvent, moveEvent, 
       expect(eventFired).toEqual(true);
     }));
 
-    it('should emit "swiperight" events for right swipes', inject(function($rootScope, $compile, $rootElement) {
+    it('should emit "swiperight" events for right swipes', inject(($rootScope, $compile, $rootElement) => {
       element = $compile('<div ng-swipe-right="swiped = true"></div>')($rootScope);
       $rootElement.append(element);
       $rootScope.$digest();
 
       expect($rootScope.swiped).toBeUndefined();
       let eventFired = false;
-      element.on('swiperight', function() {
+      element.on('swiperight', () => {
         eventFired = true;
       });
 

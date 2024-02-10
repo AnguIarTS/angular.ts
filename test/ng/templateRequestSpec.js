@@ -1,20 +1,20 @@
 
 
-describe('$templateRequest', function() {
+describe('$templateRequest', () => {
 
-  describe('provider', function() {
+  describe('provider', () => {
 
-    describe('httpOptions', function() {
+    describe('httpOptions', () => {
 
-      it('should default to undefined and fallback to default $http options', function() {
+      it('should default to undefined and fallback to default $http options', () => {
 
         let defaultHeader;
 
-        module(function($templateRequestProvider) {
+        module(($templateRequestProvider) => {
           expect($templateRequestProvider.httpOptions()).toBeUndefined();
         });
 
-        inject(function($templateRequest, $http, $templateCache) {
+        inject(($templateRequest, $http, $templateCache) => {
           spyOn($http, 'get').and.callThrough();
 
           $templateRequest('tpl.html');
@@ -27,11 +27,11 @@ describe('$templateRequest', function() {
 
       });
 
-      it('should be configurable', function() {
+      it('should be configurable', () => {
 
         function someTransform() {}
 
-        module(function($templateRequestProvider) {
+        module(($templateRequestProvider) => {
 
           // Configure the template request service to provide  specific headers and transforms
           $templateRequestProvider.httpOptions({
@@ -40,7 +40,7 @@ describe('$templateRequest', function() {
           });
         });
 
-        inject(function($templateRequest, $http, $templateCache) {
+        inject(($templateRequest, $http, $templateCache) => {
           spyOn($http, 'get').and.callThrough();
 
           $templateRequest('tpl.html');
@@ -54,18 +54,18 @@ describe('$templateRequest', function() {
       });
 
 
-      it('should be allow you to override the cache', function() {
+      it('should be allow you to override the cache', () => {
 
-        let httpOptions = {};
+        const httpOptions = {};
 
-        module(function($templateRequestProvider) {
+        module(($templateRequestProvider) => {
           $templateRequestProvider.httpOptions(httpOptions);
         });
 
-        inject(function($templateRequest, $http, $cacheFactory) {
+        inject(($templateRequest, $http, $cacheFactory) => {
           spyOn($http, 'get').and.callThrough();
 
-          let customCache = $cacheFactory('customCache');
+          const customCache = $cacheFactory('customCache');
           httpOptions.cache = customCache;
 
           $templateRequest('tpl.html');
@@ -80,12 +80,12 @@ describe('$templateRequest', function() {
   });
 
   it('should download the provided template file',
-    inject(function($rootScope, $templateRequest, $httpBackend) {
+    inject(($rootScope, $templateRequest, $httpBackend) => {
 
     $httpBackend.expectGET('tpl.html').respond('<div>abc</div>');
 
     let content;
-    $templateRequest('tpl.html').then(function(html) { content = html; });
+    $templateRequest('tpl.html').then((html) => { content = html; });
 
     $rootScope.$digest();
     $httpBackend.flush();
@@ -94,11 +94,11 @@ describe('$templateRequest', function() {
   }));
 
   it('should cache the request to prevent extra downloads',
-    inject(function($rootScope, $templateRequest, $templateCache, $httpBackend) {
+    inject(($rootScope, $templateRequest, $templateCache, $httpBackend) => {
 
     $httpBackend.expectGET('tpl.html').respond('matias');
 
-    let content = [];
+    const content = [];
     function tplRequestCb(html) {
       content.push(html);
     }
@@ -115,12 +115,12 @@ describe('$templateRequest', function() {
   }));
 
   it('should return the cached value on the first request',
-    inject(function($rootScope, $templateRequest, $templateCache, $httpBackend) {
+    inject(($rootScope, $templateRequest, $templateCache, $httpBackend) => {
 
       $httpBackend.expectGET('tpl.html').respond('matias');
       spyOn($templateCache, 'put').and.returnValue('_matias');
 
-      let content = [];
+      const content = [];
       function tplRequestCb(html) {
         content.push(html);
       }
@@ -132,16 +132,16 @@ describe('$templateRequest', function() {
       expect(content[0]).toBe('_matias');
     }));
 
-  it('should call `$exceptionHandler` on request error', function() {
-    module(function($exceptionHandlerProvider) {
+  it('should call `$exceptionHandler` on request error', () => {
+    module(($exceptionHandlerProvider) => {
       $exceptionHandlerProvider.mode('log');
     });
 
-    inject(function($exceptionHandler, $httpBackend, $templateRequest) {
+    inject(($exceptionHandler, $httpBackend, $templateRequest) => {
       $httpBackend.expectGET('tpl.html').respond(404, '', {}, 'Not Found');
 
       let err;
-      $templateRequest('tpl.html').catch(function(reason) { err = reason; });
+      $templateRequest('tpl.html').catch((reason) => { err = reason; });
       $httpBackend.flush();
 
       expect(err).toEqualMinErr('$templateRequest', 'tpload',
@@ -152,16 +152,16 @@ describe('$templateRequest', function() {
   });
 
   it('should not call `$exceptionHandler` on request error when `ignoreRequestError` is true',
-    function() {
-      module(function($exceptionHandlerProvider) {
+    () => {
+      module(($exceptionHandlerProvider) => {
         $exceptionHandlerProvider.mode('log');
       });
 
-      inject(function($exceptionHandler, $httpBackend, $templateRequest) {
+      inject(($exceptionHandler, $httpBackend, $templateRequest) => {
         $httpBackend.expectGET('tpl.html').respond(404);
 
         let err;
-        $templateRequest('tpl.html', true).catch(function(reason) { err = reason; });
+        $templateRequest('tpl.html', true).catch((reason) => { err = reason; });
         $httpBackend.flush();
 
         expect(err.status).toBe(404);
@@ -171,10 +171,10 @@ describe('$templateRequest', function() {
   );
 
   it('should not call `$exceptionHandler` when the template is empty',
-    inject(function($exceptionHandler, $httpBackend, $rootScope, $templateRequest) {
+    inject(($exceptionHandler, $httpBackend, $rootScope, $templateRequest) => {
       $httpBackend.expectGET('tpl.html').respond('');
 
-      let onError = jasmine.createSpy('onError');
+      const onError = jasmine.createSpy('onError');
       $templateRequest('tpl.html').catch(onError);
       $rootScope.$digest();
       $httpBackend.flush();
@@ -185,32 +185,32 @@ describe('$templateRequest', function() {
   );
 
   it('should accept empty templates and refuse null or undefined templates in cache',
-    inject(function($rootScope, $templateRequest, $templateCache, $sce) {
+    inject(($rootScope, $templateRequest, $templateCache, $sce) => {
 
     // Will throw on any template not in cache.
     spyOn($sce, 'getTrustedResourceUrl').and.returnValue(false);
 
-    expect(function() {
+    expect(() => {
       $templateRequest('tpl.html'); // should go through $sce
       $rootScope.$digest();
     }).toThrow();
 
     $templateCache.put('tpl.html'); // is a no-op, so $sce check as well.
-    expect(function() {
+    expect(() => {
       $templateRequest('tpl.html');
       $rootScope.$digest();
     }).toThrow();
     $templateCache.removeAll();
 
     $templateCache.put('tpl.html', null); // makes no sense, but it's been added, so trust it.
-    expect(function() {
+    expect(() => {
       $templateRequest('tpl.html');
       $rootScope.$digest();
     }).not.toThrow();
     $templateCache.removeAll();
 
     $templateCache.put('tpl.html', ''); // should work (empty template)
-    expect(function() {
+    expect(() => {
       $templateRequest('tpl.html');
       $rootScope.$digest();
     }).not.toThrow();
@@ -218,7 +218,7 @@ describe('$templateRequest', function() {
   }));
 
   it('should keep track of how many requests are going on',
-    inject(function($rootScope, $templateRequest, $httpBackend) {
+    inject(($rootScope, $templateRequest, $httpBackend) => {
 
     $httpBackend.expectGET('a.html').respond('a');
     $httpBackend.expectGET('b.html').respond('c');
@@ -246,8 +246,8 @@ describe('$templateRequest', function() {
   }));
 
   it('should not try to parse a response as JSON',
-    inject(function($templateRequest, $httpBackend) {
-      let spy = jasmine.createSpy('success');
+    inject(($templateRequest, $httpBackend) => {
+      const spy = jasmine.createSpy('success');
       $httpBackend.expectGET('a.html').respond('{{text}}', {
         'Content-Type': 'application/json'
       });
@@ -256,14 +256,12 @@ describe('$templateRequest', function() {
       expect(spy).toHaveBeenCalledOnceWith('{{text}}');
   }));
 
-  it('should use custom response transformers (array)', function() {
-    module(function($httpProvider) {
-      $httpProvider.defaults.transformResponse.push(function(data) {
-        return data + '!!';
-      });
+  it('should use custom response transformers (array)', () => {
+    module(($httpProvider) => {
+      $httpProvider.defaults.transformResponse.push((data) => `${data  }!!`);
     });
-    inject(function($templateRequest, $httpBackend) {
-      let spy = jasmine.createSpy('success');
+    inject(($templateRequest, $httpBackend) => {
+      const spy = jasmine.createSpy('success');
       $httpBackend.expectGET('a.html').respond('{{text}}', {
         'Content-Type': 'application/json'
       });
@@ -273,14 +271,14 @@ describe('$templateRequest', function() {
     });
   });
 
-  it('should use custom response transformers (function)', function() {
-    module(function($httpProvider) {
+  it('should use custom response transformers (function)', () => {
+    module(($httpProvider) => {
       $httpProvider.defaults.transformResponse = function(data) {
-        return data + '!!';
+        return `${data  }!!`;
       };
     });
-    inject(function($templateRequest, $httpBackend) {
-      let spy = jasmine.createSpy('success');
+    inject(($templateRequest, $httpBackend) => {
+      const spy = jasmine.createSpy('success');
       $httpBackend.expectGET('a.html').respond('{{text}}', {
         'Content-Type': 'application/json'
       });

@@ -1,4 +1,4 @@
-let $templateRequestMinErr = minErr("$templateRequest");
+const $templateRequestMinErr = minErr("$templateRequest");
 
 /**
  * @ngdoc provider
@@ -86,9 +86,9 @@ function $TemplateRequestProvider() {
           $http.defaults && $http.defaults.transformResponse;
 
         if (isArray(transformResponse)) {
-          transformResponse = transformResponse.filter(function (transformer) {
-            return transformer !== defaultHttpResponseTransform;
-          });
+          transformResponse = transformResponse.filter(
+            (transformer) => transformer !== defaultHttpResponseTransform,
+          );
         } else if (transformResponse === defaultHttpResponseTransform) {
           transformResponse = null;
         }
@@ -99,17 +99,18 @@ function $TemplateRequestProvider() {
             extend(
               {
                 cache: $templateCache,
-                transformResponse: transformResponse,
+                transformResponse,
               },
               httpOptions,
             ),
           )
-          .finally(function () {
+          .finally(() => {
             handleRequestFn.totalPendingRequests--;
           })
-          .then(function (response) {
-            return $templateCache.put(tpl, response.data);
-          }, handleError);
+          .then(
+            (response) => $templateCache.put(tpl, response.data),
+            handleError,
+          );
 
         function handleError(resp) {
           if (!ignoreRequestError) {

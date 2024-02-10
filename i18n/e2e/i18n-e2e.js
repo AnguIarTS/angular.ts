@@ -1,12 +1,12 @@
 
 
-describe('localized filters', function() {
-  describe('es locale', function() {
-    beforeEach(function() {
+describe('localized filters', () => {
+  describe('es locale', () => {
+    beforeEach(() => {
       browser().navigateTo('localeTest_es.html');
     });
 
-    it('should check filters for es locale', function() {
+    it('should check filters for es locale', () => {
       expect(binding('input | date:"medium"')).toBe('03/06/1977 18:07:23');
       expect(binding('input | date:"longDate"')).toBe('3 de junio de 1977');
       expect(binding('input | number')).toBe('234.234.443.432');
@@ -14,12 +14,12 @@ describe('localized filters', function() {
     });
   });
 
-  describe('cs locale', function() {
-    beforeEach(function() {
+  describe('cs locale', () => {
+    beforeEach(() => {
       browser().navigateTo('localeTest_cs.html');
     });
 
-    it('should check filters for cs locale', function() {
+    it('should check filters for cs locale', () => {
       expect(binding('input | date:"medium"')).toBe('3.6.1977 18:07:23');
       expect(binding('input | date:"longDate"')).toBe('3. června 1977');
       expect(binding('input | number')).toBe('234\u00a0234\u00a0443\u00a0432');
@@ -27,12 +27,12 @@ describe('localized filters', function() {
     });
   });
 
-  describe('de locale', function() {
-    beforeEach(function() {
+  describe('de locale', () => {
+    beforeEach(() => {
       browser().navigateTo('localeTest_de.html');
     });
 
-    it('should check filters for de locale', function() {
+    it('should check filters for de locale', () => {
       expect(binding('input | date:"medium"')).toBe('03.06.1977 18:07:23');
       expect(binding('input | date:"longDate"')).toBe('3. Juni 1977');
       expect(binding('input | number')).toBe('234.234.443.432');
@@ -40,12 +40,12 @@ describe('localized filters', function() {
     });
   });
 
-  describe('en locale', function() {
-    beforeEach(function() {
+  describe('en locale', () => {
+    beforeEach(() => {
       browser().navigateTo('localeTest_en.html');
     });
 
-    it('should check filters for en locale', function() {
+    it('should check filters for en locale', () => {
       expect(binding('input | date:"medium"')).toBe('Jun 3, 1977 6:07:23 PM');
       expect(binding('input | date:"longDate"')).toBe('June 3, 1977');
       expect(binding('input | number')).toBe('234,234,443,432');
@@ -53,8 +53,8 @@ describe('localized filters', function() {
     });
 
 
-    describe('ng:pluralize for en locale', function() {
-      it('should show pluralized strings', function() {
+    describe('ng:pluralize for en locale', () => {
+      it('should show pluralized strings', () => {
         expect(element('ng-pluralize:first').html()).toBe('You have one email!');
 
         input('plInput').enter('0');
@@ -64,7 +64,7 @@ describe('localized filters', function() {
         expect(element('ng-pluralize:first').html()).toBe('You have 3 emails!');
       });
 
-      it('should show pluralized strings with offsets', function() {
+      it('should show pluralized strings with offsets', () => {
         expect(element('ng-pluralize:last').html()).toBe('Shanjian is viewing!');
 
         input('plInput2').enter('0');
@@ -82,7 +82,7 @@ describe('localized filters', function() {
             toBe('Shanjian, Di and 2 other people are viewing!');
       });
 
-      it('should show pluralized strings with correct data-binding', function() {
+      it('should show pluralized strings with correct data-binding', () => {
         input('plInput2').enter('2');
         expect(element('ng-pluralize:last').html()).toBe('Shanjian and Di are viewing!');
 
@@ -95,12 +95,12 @@ describe('localized filters', function() {
     });
   });
 
-  describe('sk locale', function() {
-    beforeEach(function() {
+  describe('sk locale', () => {
+    beforeEach(() => {
       browser().navigateTo('localeTest_sk.html');
     });
 
-    it('should check filters for sk locale', function() {
+    it('should check filters for sk locale', () => {
       expect(binding('input | date:"medium"')).toBe('3.6.1977 18:07:23');
       expect(binding('input | date:"longDate"')).toBe('3. júna 1977');
       expect(binding('input | number')).toBe('234\u00a0234\u00a0443\u00a0432');
@@ -108,8 +108,8 @@ describe('localized filters', function() {
     });
 
 
-    describe('ng:pluralize for sk locale', function() {
-      it('should show pluralized strings', function() {
+    describe('ng:pluralize for sk locale', () => {
+      it('should show pluralized strings', () => {
         expect(element('ng-pluralize').html()).toBe('Mas jeden email!');
 
         input('plInput').enter('0');
@@ -125,21 +125,21 @@ describe('localized filters', function() {
         expect(element('ng-pluralize:first').html()).toBe('Mas 6 emailov!');
       });
 
-      it('should show pluralized strings with offsets', function() {
-        //TODO(Igor): add offsets for sk
+      it('should show pluralized strings with offsets', () => {
+        // TODO(Igor): add offsets for sk
       });
 
-      it('should show pluralized strings with correct data-binding', function() {
+      it('should show pluralized strings with correct data-binding', () => {
       });
     });
   });
 
-  describe('zh locale', function() {
-    beforeEach(function() {
+  describe('zh locale', () => {
+    beforeEach(() => {
       browser().navigateTo('localeTest_zh.html');
     });
 
-    it('should check filters for zh locale', function() {
+    it('should check filters for zh locale', () => {
       expect(binding('input | date:"medium"')).toBe('1977-6-3 下午6:07:23');
       expect(binding('input | date:"longDate"')).toBe('1977年6月3日');
       expect(binding('input | number')).toBe('234,234,443,432');
@@ -147,8 +147,8 @@ describe('localized filters', function() {
     });
 
 
-    describe('ng:pluralize for zh locale', function() {
-      it('should show pluralized strings', function() {
+    describe('ng:pluralize for zh locale', () => {
+      it('should show pluralized strings', () => {
         expect(element('ng-pluralize:first').html()).toBe('1人在浏览该文件!');
 
         input('plInput').enter('0');
@@ -158,7 +158,7 @@ describe('localized filters', function() {
         expect(element('ng-pluralize:first').html()).toBe('3人在浏览该文件!');
       });
 
-      it('should show pluralized strings with offsets', function() {
+      it('should show pluralized strings with offsets', () => {
         expect(element('ng-pluralize:last').html()).toBe('Shanjian 在浏览该文件!');
 
         input('plInput2').enter('0');
@@ -172,7 +172,7 @@ describe('localized filters', function() {
             toBe('Shanjian, Di 还有其他1 人在浏览该文件!');
       });
 
-      it('should show pluralized strings with correct data-binding', function() {
+      it('should show pluralized strings with correct data-binding', () => {
         input('plInput2').enter('2');
         expect(element('ng-pluralize:last').html()).toBe('Shanjian 和 Di 在浏览该文件!');
 

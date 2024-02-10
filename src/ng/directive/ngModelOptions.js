@@ -1,6 +1,6 @@
 /* exported defaultModelOptions */
 let defaultModelOptions;
-let DEFAULT_REGEXP = /(\s+|^)default(\s+|$)/;
+const DEFAULT_REGEXP = /(\s+|^)default(\s+|$)/;
 
 /**
  * @ngdoc type
@@ -21,7 +21,7 @@ ModelOptions.prototype = {
    * @description
    * Returns the value of the given option
    */
-  getOption: function (name) {
+  getOption(name) {
     return this.$$options[name];
   },
 
@@ -31,7 +31,7 @@ ModelOptions.prototype = {
    * @param {Object} options a hash of options for the new child that will override the parent's options
    * @return {ModelOptions} a new `ModelOptions` object initialized with the given options.
    */
-  createChild: function (options) {
+  createChild(options) {
     let inheritAll = false;
 
     // make a shallow copy
@@ -51,18 +51,16 @@ ModelOptions.prototype = {
               options.updateOnDefault = this.$$options.updateOnDefault;
             }
           }
-        } else {
-          if (key === "updateOn") {
-            // If the `updateOn` property contains the `default` event then we have to remove
-            // it from the event list and set the `updateOnDefault` flag.
-            options.updateOnDefault = false;
-            options[key] = trim(
-              option.replace(DEFAULT_REGEXP, function () {
-                options.updateOnDefault = true;
-                return " ";
-              }),
-            );
-          }
+        } else if (key === "updateOn") {
+          // If the `updateOn` property contains the `default` event then we have to remove
+          // it from the event list and set the `updateOnDefault` flag.
+          options.updateOnDefault = false;
+          options[key] = trim(
+            option.replace(DEFAULT_REGEXP, () => {
+              options.updateOnDefault = true;
+              return " ";
+            }),
+          );
         }
       },
       this,
@@ -545,18 +543,18 @@ defaultModelOptions = new ModelOptions({
  *     {@link ngModelOptions#formatting-the-value-of-time-and-datetime-local- See the example}.
  *
  */
-let ngModelOptionsDirective = function () {
+const ngModelOptionsDirective = function () {
   NgModelOptionsController.$inject = ["$attrs", "$scope"];
   function NgModelOptionsController($attrs, $scope) {
     this.$$attrs = $attrs;
     this.$$scope = $scope;
   }
   NgModelOptionsController.prototype = {
-    $onInit: function () {
-      let parentOptions = this.parentCtrl
+    $onInit() {
+      const parentOptions = this.parentCtrl
         ? this.parentCtrl.$options
         : defaultModelOptions;
-      let modelOptionsDefinition = this.$$scope.$eval(
+      const modelOptionsDefinition = this.$$scope.$eval(
         this.$$attrs.ngModelOptions,
       );
 
@@ -576,7 +574,7 @@ let ngModelOptionsDirective = function () {
 
 // shallow copy over values from `src` that are not already specified on `dst`
 function defaults(dst, src) {
-  forEach(src, function (value, key) {
+  forEach(src, (value, key) => {
     if (!isDefined(dst[key])) {
       dst[key] = value;
     }

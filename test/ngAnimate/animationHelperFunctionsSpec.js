@@ -1,20 +1,20 @@
 
 
-describe('animation option helper functions', function() {
+describe('animation option helper functions', () => {
 
   beforeEach(module('ngAnimate'));
 
-  let element, applyAnimationClasses;
-  beforeEach(inject(function($$jqLite) {
+  let element; let applyAnimationClasses;
+  beforeEach(inject(($$jqLite) => {
     applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
     element = jqLite('<div></div>');
   }));
 
-  describe('prepareAnimationOptions', function() {
+  describe('prepareAnimationOptions', () => {
     it('should construct an options wrapper from the provided options',
-      inject(function() {
+      inject(() => {
 
-      let options = prepareAnimationOptions({
+      const options = prepareAnimationOptions({
         value: 'hello'
       });
 
@@ -22,19 +22,19 @@ describe('animation option helper functions', function() {
     }));
 
     it('should return the same instance it already instantiated as an options object with the given element',
-      inject(function() {
+      inject(() => {
 
-      let options = prepareAnimationOptions({});
+      const options = prepareAnimationOptions({});
       expect(prepareAnimationOptions(options)).toBe(options);
 
-      let options2 = {};
+      const options2 = {};
       expect(prepareAnimationOptions(options2)).not.toBe(options);
     }));
   });
 
-  describe('applyAnimationStyles', function() {
-    it('should apply the provided `from` styles', inject(function() {
-      let options = prepareAnimationOptions({
+  describe('applyAnimationStyles', () => {
+    it('should apply the provided `from` styles', inject(() => {
+      const options = prepareAnimationOptions({
         from: { color: 'maroon' },
         to: { color: 'blue' }
       });
@@ -43,8 +43,8 @@ describe('animation option helper functions', function() {
       expect(element.attr('style')).toContain('maroon');
     }));
 
-    it('should apply the provided `to` styles', inject(function() {
-      let options = prepareAnimationOptions({
+    it('should apply the provided `to` styles', inject(() => {
+      const options = prepareAnimationOptions({
         from: { color: 'red' },
         to: { color: 'black' }
       });
@@ -53,8 +53,8 @@ describe('animation option helper functions', function() {
       expect(element.attr('style')).toContain('black');
     }));
 
-    it('should apply the both provided `from` and `to` styles', inject(function() {
-      let options = prepareAnimationOptions({
+    it('should apply the both provided `from` and `to` styles', inject(() => {
+      const options = prepareAnimationOptions({
         from: { color: 'red', 'font-size':'50px' },
         to: { color: 'green' }
       });
@@ -64,8 +64,8 @@ describe('animation option helper functions', function() {
       expect(element.css('font-size')).toBe('50px');
     }));
 
-    it('should only apply the options once', inject(function() {
-      let options = prepareAnimationOptions({
+    it('should only apply the options once', inject(() => {
+      const options = prepareAnimationOptions({
         from: { color: 'red', 'font-size':'50px' },
         to: { color: 'blue' }
       });
@@ -80,10 +80,10 @@ describe('animation option helper functions', function() {
     }));
   });
 
-  describe('applyAnimationClasses', function() {
-    it('should add/remove the provided CSS classes', inject(function() {
+  describe('applyAnimationClasses', () => {
+    it('should add/remove the provided CSS classes', inject(() => {
       element.addClass('four six');
-      let options = prepareAnimationOptions({
+      const options = prepareAnimationOptions({
         addClass: 'one two three',
         removeClass: 'four'
       });
@@ -94,9 +94,9 @@ describe('animation option helper functions', function() {
       expect(element).not.toHaveClass('four');
     }));
 
-    it('should add/remove the provided CSS classes only once', inject(function() {
+    it('should add/remove the provided CSS classes only once', inject(() => {
       element.attr('class', 'blue');
-      let options = prepareAnimationOptions({
+      const options = prepareAnimationOptions({
         addClass: 'black',
         removeClass: 'blue'
       });
@@ -110,18 +110,18 @@ describe('animation option helper functions', function() {
     }));
   });
 
-  describe('mergeAnimationDetails', function() {
-    it('should merge in new options', inject(function() {
+  describe('mergeAnimationDetails', () => {
+    it('should merge in new options', inject(() => {
       element.attr('class', 'blue');
-      let options = prepareAnimationOptions({
+      const options = prepareAnimationOptions({
         name: 'matias',
         age: 28,
         addClass: 'black',
         removeClass: 'blue gold'
       });
 
-      let animation1 = { options: options };
-      let animation2 = {
+      const animation1 = { options };
+      const animation2 = {
         options: {
           age: 29,
           addClass: 'gold brown',

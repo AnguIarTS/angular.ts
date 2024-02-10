@@ -1,4 +1,9 @@
+const NODE_TYPE_ELEMENT = 1;
+const NODE_TYPE_ATTRIBUTE = 2;
 const NODE_TYPE_TEXT = 3;
+const NODE_TYPE_COMMENT = 8;
+const NODE_TYPE_DOCUMENT = 9;
+const NODE_TYPE_DOCUMENT_FRAGMENT = 11;
 
 /**
  *
@@ -48,6 +53,20 @@ function isArrayLike(obj) {
  */
 function isUndefined$1(value) {
   return typeof value === "undefined";
+}
+
+/**
+ * @module angular
+ * @function isDefined
+ *
+ * @description
+ * Determines if a reference is defined.
+ *
+ * @param {*} value Reference to check.
+ * @returns {boolean} True if `value` is defined.
+ */
+function isDefined(value) {
+  return typeof value !== "undefined";
 }
 
 /**
@@ -209,6 +228,14 @@ function isArrayBuffer(obj) {
 }
 
 /**
+ * @param {*} value
+ * @returns {string | *}
+ */
+function trim(value) {
+  return isString$1(value) ? value.trim() : value;
+}
+
+/**
  * @module angular
  * @function forEach
  *
@@ -241,7 +268,8 @@ function isArrayBuffer(obj) {
  * @returns {Object|Array} Reference to `obj`.
  */
 function forEach$1(obj, iterator, context) {
-  let key, length;
+  let key;
+  let length;
   if (obj) {
     if (isFunction$1(obj)) {
       for (key in obj) {
@@ -255,7 +283,7 @@ function forEach$1(obj, iterator, context) {
         }
       }
     } else if (isArray$1(obj) || isArrayLike(obj)) {
-      let isPrimitive = typeof obj !== "object";
+      const isPrimitive = typeof obj !== "object";
       for (key = 0, length = obj.length; key < length; key++) {
         if (isPrimitive || key in obj) {
           iterator.call(context, obj[key], key, obj);
@@ -294,15 +322,15 @@ function setHashKey(obj, h) {
 }
 
 function baseExtend(dst, objs, deep) {
-  let h = dst.$$hashKey;
+  const h = dst.$$hashKey;
 
   for (let i = 0, ii = objs.length; i < ii; ++i) {
-    let obj = objs[i];
+    const obj = objs[i];
     if (!isObject$1(obj) && !isFunction$1(obj)) continue;
-    let keys = Object.keys(obj);
+    const keys = Object.keys(obj);
     for (let j = 0, jj = keys.length; j < jj; j++) {
-      let key = keys[j];
-      let src = obj[key];
+      const key = keys[j];
+      const src = obj[key];
 
       if (deep && isObject$1(src)) {
         if (isDate(src)) {
@@ -313,11 +341,9 @@ function baseExtend(dst, objs, deep) {
           dst[key] = src.cloneNode(true);
         } else if (isElement(src)) {
           dst[key] = src.clone();
-        } else {
-          if (key !== "__proto__") {
-            if (!isObject$1(dst[key])) dst[key] = isArray$1(src) ? [] : {};
-            baseExtend(dst[key], [src], true);
-          }
+        } else if (key !== "__proto__") {
+          if (!isObject$1(dst[key])) dst[key] = isArray$1(src) ? [] : {};
+          baseExtend(dst[key], [src], true);
         }
       } else {
         dst[key] = src;
@@ -353,6 +379,22 @@ function extend(dst) {
 
 /**
  * @module angular
+ * @function noop
+ *
+ * @description
+ * A function that performs no operations. This function can be useful when writing code in the
+ * functional style.
+   ```js
+     function foo(callback) {
+       let result = calculateResult();
+       (callback || angular.noop)(result);
+     }
+   ```
+ */
+function noop() {}
+
+/**
+ * @module angular
  * @function isElement
 
  * @function
@@ -369,6 +411,18 @@ function isElement(node) {
     (node.nodeName || // We are a direct element.
       (node.prop && node.attr && node.find))
   ); // We have an on and find method part of jQuery API.
+}
+
+function nodeName_(element) {
+  return lowercase(element.nodeName || (element[0] && element[0].nodeName));
+}
+
+function arrayRemove(array, value) {
+  const index = array.indexOf(value);
+  if (index >= 0) {
+    array.splice(index, 1);
+  }
+  return index;
 }
 
 /**
@@ -459,8 +513,8 @@ function isElement(node) {
   </example>
  */
 function copy(source, destination, maxDepth) {
-  let stackSource = [];
-  let stackDest = [];
+  const stackSource = [];
+  const stackDest = [];
   maxDepth = isValidObjectMaxDepth(maxDepth) ? maxDepth : NaN;
 
   if (destination) {
@@ -475,7 +529,7 @@ function copy(source, destination, maxDepth) {
     if (isArray$1(destination)) {
       destination.length = 0;
     } else {
-      forEach$1(destination, function (value, key) {
+      forEach$1(destination, (value, key) => {
         if (key !== "$$hashKey") {
           delete destination[key];
         }
@@ -494,7 +548,7 @@ function copy(source, destination, maxDepth) {
     if (maxDepth < 0) {
       return "...";
     }
-    let h = destination.$$hashKey;
+    const h = destination.$$hashKey;
     let key;
     if (isArray$1(source)) {
       for (let i = 0, ii = source.length; i < ii; i++) {
@@ -524,7 +578,7 @@ function copy(source, destination, maxDepth) {
     }
 
     // Already copied values
-    let index = stackSource.indexOf(source);
+    const index = stackSource.indexOf(source);
     if (index !== -1) {
       return stackDest[index];
     }
@@ -573,7 +627,7 @@ function copy(source, destination, maxDepth) {
         if (!source.slice) {
           // If we're in this case we know the environment supports ArrayBuffer
           /* eslint-disable no-undef */
-          let copied = new ArrayBuffer(source.byteLength);
+          const copied = new ArrayBuffer(source.byteLength);
           new Uint8Array(copied).set(new Uint8Array(source));
           /* eslint-enable */
           return copied;
@@ -587,7 +641,7 @@ function copy(source, destination, maxDepth) {
         return new source.constructor(source.valueOf());
 
       case "[object RegExp]":
-        let re = new RegExp(
+        const re = new RegExp(
           source.source,
           source.toString().match(/[^/]*$/)[0],
         );
@@ -644,19 +698,20 @@ function startingTag(element) {
   while (clonedElement.firstChild) {
     clonedElement.removeChild(clonedElement.firstChild);
   }
-  const tempDiv = document.createElement('div');
-  
+  const tempDiv = document.createElement("div");
+
   // Append the cloned element to the temp div and get its HTML
   tempDiv.appendChild(clonedElement);
-  let elemHtml = tempDiv.innerHTML;
+  const elemHtml = tempDiv.innerHTML;
   try {
     return element[0].nodeType === NODE_TYPE_TEXT
       ? lowercase(elemHtml)
       : elemHtml
           .match(/^(<[^>]+>)/)[1]
-          .replace(/^<([\w-]+)/, function (match, nodeName) {
-            return "<" + lowercase(nodeName);
-          });
+          .replace(
+            /^<([\w-]+)/,
+            (match, nodeName) => `<${lowercase(nodeName)}`,
+          );
   } catch (e) {
     return lowercase(elemHtml);
   }
@@ -665,9 +720,9 @@ function startingTag(element) {
 const ngAttrPrefixes = ["ng-", "data-ng-", "ng:", "x-ng-"];
 
 function getNgAttribute(element, ngAttr) {
-  let attr,
-    i,
-    ii = ngAttrPrefixes.length;
+  let attr;
+  let i;
+  const ii = ngAttrPrefixes.length;
   for (i = 0; i < ii; ++i) {
     attr = ngAttrPrefixes[i] + ngAttr;
     if (isString$1((attr = element.getAttribute(attr)))) {
@@ -681,45 +736,65 @@ function ngMinErr$1(arg0, arg1) {
   throw new Error("Function not implemented.");
 }
 
-function serializeObject(obj, maxDepth) {
-  let seen = [];
+/**
+ * Creates a shallow copy of an object, an array or a primitive.
+ *
+ * Assumes that there are no proto properties for objects.
+ */
+function shallowCopy(src, dst) {
+  if (isArray$1(src)) {
+    dst = dst || [];
 
+    for (let i = 0, ii = src.length; i < ii; i++) {
+      dst[i] = src[i];
+    }
+  } else if (isObject$1(src)) {
+    dst = dst || {};
+
+    for (const key in src) {
+      if (!(key.startsWith("$") && key.charAt(1) === "$")) {
+        dst[key] = src[key];
+      }
+    }
+  }
+
+  return dst || src;
+}
+
+function serializeObject(obj, maxDepth) {
+  const seen = [];
+  let copyObj = obj;
   // There is no direct way to stringify object until reaching a specific depth
   // and a very deep object can cause a performance issue, so we copy the object
   // based on this specific depth and then stringify it.
   if (isValidObjectMaxDepth(maxDepth)) {
     // This file is also included in `angular-loader`, so `copy()` might not always be available in
     // the closure. Therefore, it is lazily retrieved as `angular.copy()` when needed.
-    obj = copy(obj, null, maxDepth);
+    copyObj = copy(obj, null, maxDepth);
   }
-  return JSON.stringify(obj, function (key, val) {
-    val = toJsonReplacer(key, val);
-    if (isObject$1(val)) {
-      if (seen.indexOf(val) >= 0) return "...";
+  return JSON.stringify(copyObj, (key, val) => {
+    const replace = toJsonReplacer(key, val);
+    if (isObject$1(replace)) {
+      if (seen.indexOf(replace) >= 0) return "...";
 
-      seen.push(val);
+      seen.push(replace);
     }
-    return val;
+    return replace;
   });
 }
 
 function toDebugString(obj, maxDepth) {
   if (typeof obj === "function") {
     return obj.toString().replace(/ \{[\s\S]*$/, "");
-  } else if (isUndefined$1(obj)) {
+  }
+  if (isUndefined$1(obj)) {
     return "undefined";
-  } else if (typeof obj !== "string") {
+  }
+  if (typeof obj !== "string") {
     return serializeObject(obj, maxDepth);
   }
   return obj;
 }
-
-/* exported
-  minErrConfig,
-  errorHandlingConfig,
-  isValidObjectMaxDepth
-*/
-
 
 const minErrConfig = {
   objectMaxDepth: 5,
@@ -755,28 +830,27 @@ const minErrConfig = {
  */
 
 function minErr$1(module) {
-
-  let url = 'https://errors.angularjs.org/"NG_VERSION_FULL"/';
-  let regex = url.replace(".", "\\.") + "[\\s\\S]*";
-  let errRegExp = new RegExp(regex, "g");
+  const url = 'https://errors.angularjs.org/"NG_VERSION_FULL"/';
+  const regex = `${url.replace(".", "\\.")}[\\s\\S]*`;
+  const errRegExp = new RegExp(regex, "g");
 
   return function () {
-    let code = arguments[0],
-      template = arguments[1],
-      message = "[" + (module ? module + ":" : "") + code + "] ",
-      templateArgs = sliceArgs(arguments, 2).map(function (arg) {
-        return toDebugString(arg, minErrConfig.objectMaxDepth);
-      }),
-      paramPrefix,
-      i;
+    const code = arguments[0];
+    const template = arguments[1];
+    let message = `[${module ? `${module}:` : ""}${code}] `;
+    const templateArgs = sliceArgs(arguments, 2).map((arg) =>
+      toDebugString(arg, minErrConfig.objectMaxDepth),
+    );
+    let paramPrefix;
+    let i;
 
     // A minErr message has two parts: the message itself and the url that contains the
     // encoded message.
     // The message's parameters can contain other error messages which also include error urls.
     // To prevent the messages from getting too long, we strip the error urls from the parameters.
 
-    message += template.replace(/\{\d+\}/g, function (match) {
-      let index = +match.slice(1, -1);
+    message += template.replace(/\{\d+\}/g, (match) => {
+      const index = +match.slice(1, -1);
 
       if (index < templateArgs.length) {
         return templateArgs[index].replace(errRegExp, "");
@@ -785,7 +859,7 @@ function minErr$1(module) {
       return match;
     });
 
-    message += "\n" + url + (module ? module + "/" : "") + code;
+    message += `\n${url}${module ? `${module}/` : ""}${code}`;
 
     {
       for (
@@ -793,14 +867,1121 @@ function minErr$1(module) {
         i < templateArgs.length;
         i++, paramPrefix = "&"
       ) {
-        message +=
-          paramPrefix + "p" + i + "=" + encodeURIComponent(templateArgs[i]);
+        message += `${paramPrefix}p${i}=${encodeURIComponent(templateArgs[i])}`;
       }
     }
 
     return Error(message);
   };
 }
+
+/* eslint-disable class-methods-use-this */
+
+/// ///////////////////////////////
+// JQLite
+/// ///////////////////////////////
+
+/**
+ * @ngdoc function
+ * @name angular.element
+ * @module ng
+ * @kind function
+ *
+ * @description
+ * Wraps a raw DOM element or HTML string as a [jQuery](http://jquery.com) element.
+ *
+ * If jQuery is available, `angular.element` is an alias for the
+ * [jQuery](http://api.jquery.com/jQuery/) function. If jQuery is not available, `angular.element`
+ * delegates to AngularJS's built-in subset of jQuery, called "jQuery lite" or **jqLite**.
+ *
+ * jqLite is a tiny, API-compatible subset of jQuery that allows
+ * AngularJS to manipulate the DOM in a cross-browser compatible way. jqLite implements only the most
+ * commonly needed functionality with the goal of having a very small footprint.
+ *
+ * To use `jQuery`, simply ensure it is loaded before the `angular.js` file. You can also use the
+ * {@link ngJq `ngJq`} directive to specify that jqlite should be used over jQuery, or to use a
+ * specific version of jQuery if multiple versions exist on the page.
+ *
+ * <div class="alert alert-info">**Note:** All element references in AngularJS are always wrapped with jQuery or
+ * jqLite (such as the element argument in a directive's compile / link function). They are never raw DOM references.</div>
+ *
+ * <div class="alert alert-warning">**Note:** Keep in mind that this function will not find elements
+ * by tag name / CSS selector. For lookups by tag name, try instead `angular.element(document).find(...)`
+ * or `$document.find()`, or use the standard DOM APIs, e.g. `document.querySelectorAll()`.</div>
+ *
+ * ## AngularJS's jqLite
+ * jqLite provides only the following jQuery methods:
+ *
+ * - [`addClass()`](http://api.jquery.com/addClass/) - Does not support a function as first argument
+ * - [`after()`](http://api.jquery.com/after/)
+ * - [`append()`](http://api.jquery.com/append/) - Contrary to jQuery, this doesn't clone elements
+ *   so will not work correctly when invoked on a jqLite object containing more than one DOM node
+ * - [`attr()`](http://api.jquery.com/attr/) - Does not support functions as parameters
+ * - [`bind()`](http://api.jquery.com/bind/) (_deprecated_, use [`on()`](http://api.jquery.com/on/)) - Does not support namespaces, selectors or eventData
+ * - [`children()`](http://api.jquery.com/children/) - Does not support selectors
+ * - [`clone()`](http://api.jquery.com/clone/)
+ * - [`contents()`](http://api.jquery.com/contents/)
+ * - [`css()`](http://api.jquery.com/css/) - Only retrieves inline-styles, does not call `getComputedStyle()`.
+ *   As a setter, does not convert numbers to strings or append 'px', and also does not have automatic property prefixing.
+ * - [`data()`](http://api.jquery.com/data/)
+ * - [`detach()`](http://api.jquery.com/detach/)
+ * - [`empty()`](http://api.jquery.com/empty/)
+ * - [`eq()`](http://api.jquery.com/eq/)
+ * - [`find()`](http://api.jquery.com/find/) - Limited to lookups by tag name
+ * - [`hasClass()`](http://api.jquery.com/hasClass/)
+ * - [`html()`](http://api.jquery.com/html/)
+ * - [`next()`](http://api.jquery.com/next/) - Does not support selectors
+ * - [`on()`](http://api.jquery.com/on/) - Does not support namespaces, selectors or eventData
+ * - [`off()`](http://api.jquery.com/off/) - Does not support namespaces, selectors or event object as parameter
+ * - [`one()`](http://api.jquery.com/one/) - Does not support namespaces or selectors
+ * - [`parent()`](http://api.jquery.com/parent/) - Does not support selectors
+ * - [`prepend()`](http://api.jquery.com/prepend/)
+ * - [`prop()`](http://api.jquery.com/prop/)
+ * - [`ready()`](http://api.jquery.com/ready/) (_deprecated_, use `angular.element(callback)` instead of `angular.element(document).ready(callback)`)
+ * - [`remove()`](http://api.jquery.com/remove/)
+ * - [`removeAttr()`](http://api.jquery.com/removeAttr/) - Does not support multiple attributes
+ * - [`removeClass()`](http://api.jquery.com/removeClass/) - Does not support a function as first argument
+ * - [`removeData()`](http://api.jquery.com/removeData/)
+ * - [`replaceWith()`](http://api.jquery.com/replaceWith/)
+ * - [`text()`](http://api.jquery.com/text/)
+ * - [`toggleClass()`](http://api.jquery.com/toggleClass/) - Does not support a function as first argument
+ * - [`triggerHandler()`](http://api.jquery.com/triggerHandler/) - Passes a dummy event object to handlers
+ * - [`unbind()`](http://api.jquery.com/unbind/) (_deprecated_, use [`off()`](http://api.jquery.com/off/)) - Does not support namespaces or event object as parameter
+ * - [`val()`](http://api.jquery.com/val/)
+ * - [`wrap()`](http://api.jquery.com/wrap/)
+ *
+ * jqLite also provides a method restoring pre-1.8 insecure treatment of XHTML-like tags.
+ * This legacy behavior turns input like `<div /><span />` to `<div></div><span></span>`
+ * instead of `<div><span></span></div>` like version 1.8 & newer do. To restore it, invoke:
+ * ```js
+ * angular.UNSAFE_restoreLegacyJqLiteXHTMLReplacement();
+ * ```
+ * Note that this only patches jqLite. If you use jQuery 3.5.0 or newer, please read the
+ * [jQuery 3.5 upgrade guide](https://jquery.com/upgrade-guide/3.5/) for more details
+ * about the workarounds.
+ *
+ * ## jQuery/jqLite Extras
+ * AngularJS also provides the following additional methods and events to both jQuery and jqLite:
+ *
+ * ### Events
+ * - `$destroy` - AngularJS intercepts all jqLite/jQuery's DOM destruction apis and fires this event
+ *    on all DOM nodes being removed.  This can be used to clean up any 3rd party bindings to the DOM
+ *    element before it is removed.
+ *
+ * ### Methods
+ * - `controller(name)` - retrieves the controller of the current element or its parent. By default
+ *   retrieves controller associated with the `ngController` directive. If `name` is provided as
+ *   camelCase directive name, then the controller for this directive will be retrieved (e.g.
+ *   `'ngModel'`).
+ * - `injector()` - retrieves the injector of the current element or its parent.
+ * - `scope()` - retrieves the {@link ng.$rootScope.Scope scope} of the current
+ *   element or its parent. Requires {@link guide/production#disabling-debug-data Debug Data} to
+ *   be enabled.
+ * - `isolateScope()` - retrieves an isolate {@link ng.$rootScope.Scope scope} if one is attached directly to the
+ *   current element. This getter should be used only on elements that contain a directive which starts a new isolate
+ *   scope. Calling `scope()` on this element always returns the original non-isolate scope.
+ *   Requires {@link guide/production#disabling-debug-data Debug Data} to be enabled.
+ * - `inheritedData()` - same as `data()`, but walks up the DOM until a value is found or the top
+ *   parent element is reached.
+ *
+ * @knownIssue You cannot spy on `angular.element` if you are using Jasmine version 1.x. See
+ * https://github.com/angular/angular.js/issues/14251 for more information.
+ *
+ * @param {string|HTMLElement} element HTML string or DOMElement to be wrapped into jQuery.
+ * @returns {Object} jQuery object.
+ */
+
+const jqCache = (JQLite.cache = {});
+let jqId = 1;
+
+/*
+ * !!! This is an undocumented "private" function !!!
+ */
+JQLite._data = function (node) {
+  // jQuery always returns an object on cache miss
+  return this.cache[node.ng339] || {};
+};
+
+function jqNextId() {
+  return ++jqId;
+}
+
+const DASH_LOWERCASE_REGEXP = /-([a-z])/g;
+const MS_HACK_REGEXP = /^-ms-/;
+const MOUSE_EVENT_MAP = { mouseleave: "mouseout", mouseenter: "mouseover" };
+const jqLiteMinErr = minErr$1("jqLite");
+
+/**
+ * Converts kebab-case to camelCase.
+ * There is also a special case for the ms prefix starting with a lowercase letter.
+ * @param name Name to normalize
+ */
+function cssKebabToCamel(name) {
+  return kebabToCamel(name.replace(MS_HACK_REGEXP, "ms-"));
+}
+
+function fnCamelCaseReplace(all, letter) {
+  return letter.toUpperCase();
+}
+
+/**
+ * Converts kebab-case to camelCase.
+ * @param name Name to normalize
+ */
+function kebabToCamel(name) {
+  return name.replace(DASH_LOWERCASE_REGEXP, fnCamelCaseReplace);
+}
+
+// Table parts need to be wrapped with `<table>` or they're
+// stripped to their contents when put in a div.
+// XHTML parsers do not magically insert elements in the
+// same way that tag soup parsers do, so we cannot shorten
+// this by omitting <tbody> or other required elements.
+const wrapMap = {
+  thead: ["table"],
+  col: ["colgroup", "table"],
+  tr: ["tbody", "table"],
+  td: ["tr", "tbody", "table"],
+};
+
+wrapMap.tbody =
+  wrapMap.tfoot =
+  wrapMap.colgroup =
+  wrapMap.caption =
+    wrapMap.thead;
+wrapMap.th = wrapMap.td;
+
+for (const key in wrapMap) {
+  const wrapMapValueClosing = wrapMap[key];
+  const wrapMapValue = wrapMapValueClosing.slice().reverse();
+  [
+    wrapMapValue.length,
+    `<${wrapMapValue.join("><")}>`,
+    `</${wrapMapValueClosing.join("></")}>`,
+  ];
+}
+
+function jqLiteAcceptsData(node) {
+  // The window object can accept data but has no nodeType
+  // Otherwise we are only interested in elements (1) and documents (9)
+  const { nodeType } = node;
+  return (
+    nodeType === NODE_TYPE_ELEMENT ||
+    !nodeType ||
+    nodeType === NODE_TYPE_DOCUMENT
+  );
+}
+
+function jqLiteHasData(node) {
+  for (const key in jqCache[node.ng339]) {
+    return true;
+  }
+  return false;
+}
+
+function jqLiteWrapNode(node, wrapper) {
+  const parent = node.parentNode;
+
+  if (parent) {
+    parent.replaceChild(wrapper, node);
+  }
+
+  wrapper.appendChild(node);
+}
+
+const jqLiteContains = window.Node.prototype.contains;
+
+/**
+ *
+ * @param {Node} element
+ * @returns
+ */
+function jqLite(element) {
+  return new JQLite(element);
+}
+
+/// //////////////////////////////////////////
+class JQLite {
+  /**
+   * @param {Node} element
+   */
+  constructor(element) {
+    this.element = element;
+    this.length = 0;
+  }
+
+  splice() {
+    return [].splice;
+  }
+
+  sort() {
+    return [].sort;
+  }
+
+  clone() {
+    return jqLite(this.element.cloneNode(true));
+  }
+
+  ready(fn) {
+    function trigger() {
+      window.document.removeEventListener("DOMContentLoaded", trigger);
+      window.removeEventListener("load", trigger);
+      fn();
+    }
+
+    // check if document is already loaded
+    if (window.document.readyState === "complete") {
+      window.setTimeout(fn);
+    } else {
+      // We can not use jqLite since we are not done loading and jQuery could be loaded later.
+
+      // Works for modern browsers and IE9
+      window.document.addEventListener("DOMContentLoaded", trigger);
+
+      // Fallback to window.onload for others
+      window.addEventListener("load", trigger);
+    }
+  }
+
+  toString() {
+    const value = [];
+    forEach$1(this, (e) => {
+      value.push(`${e}`);
+    });
+    return `[${value.join(", ")}]`;
+  }
+
+  eq(index) {
+    return index >= 0 ? jqLite(this[index]) : jqLite(this[this.length + index]);
+  }
+
+  cleanData(nodes) {
+    for (let i = 0, ii = nodes.length; i < ii; i++) {
+      jqLiteRemoveData(nodes[i]);
+      jqLiteOff(nodes[i]);
+    }
+  }
+
+  removeData(element, name) {
+    const expandoId = element.ng339;
+    const expandoStore = expandoId && jqCache[expandoId];
+
+    if (expandoStore) {
+      if (name) {
+        delete expandoStore.data[name];
+      } else {
+        expandoStore.data = {};
+      }
+
+      removeIfEmptyData(element);
+    }
+  }
+
+  on(element, type, fn, unsupported) {
+    if (isDefined(unsupported))
+      throw jqLiteMinErr(
+        "onargs",
+        "jqLite#on() does not support the `selector` or `eventData` parameters",
+      );
+
+    // Do not add event handlers to non-elements because they will not be cleaned up.
+    if (!jqLiteAcceptsData(element)) {
+      return;
+    }
+
+    const expandoStore = jqLiteExpandoStore(element, true);
+    const { events } = expandoStore;
+    let { handle } = expandoStore;
+
+    if (!handle) {
+      handle = expandoStore.handle = createEventHandler(element, events);
+    }
+
+    // http://jsperf.com/string-indexof-vs-split
+    const types = type.indexOf(" ") >= 0 ? type.split(" ") : [type];
+    let i = types.length;
+
+    const addHandler = function (type, specialHandlerWrapper, noEventListener) {
+      let eventFns = events[type];
+
+      if (!eventFns) {
+        eventFns = events[type] = [];
+        eventFns.specialHandlerWrapper = specialHandlerWrapper;
+        if (type !== "$destroy" && !noEventListener) {
+          element.addEventListener(type, handle);
+        }
+      }
+
+      eventFns.push(fn);
+    };
+
+    while (i--) {
+      type = types[i];
+      if (MOUSE_EVENT_MAP[type]) {
+        addHandler(MOUSE_EVENT_MAP[type], specialMouseHandlerWrapper);
+        addHandler(type, undefined, true);
+      } else {
+        addHandler(type);
+      }
+    }
+  }
+
+  injector(element) {
+    return jqLiteInheritedData(element, "$injector");
+  }
+}
+
+JQLite._data = undefined;
+
+JQLite.cache = undefined;
+
+function jqLiteDealoc(element, onlyDescendants) {
+  if (!onlyDescendants && jqLiteAcceptsData(element))
+    jqLite.cleanData([element]);
+
+  if (element.querySelectorAll) {
+    jqLite.cleanData(element.querySelectorAll("*"));
+  }
+}
+
+function isEmptyObject(obj) {
+  let name;
+
+  for (name in obj) {
+    return false;
+  }
+  return true;
+}
+
+function removeIfEmptyData(element) {
+  const expandoId = element.ng339;
+  const expandoStore = expandoId && jqCache[expandoId];
+
+  const events = expandoStore && expandoStore.events;
+  const data = expandoStore && expandoStore.data;
+
+  if ((!data || isEmptyObject(data)) && (!events || isEmptyObject(events))) {
+    delete jqCache[expandoId];
+    element.ng339 = undefined; // don't delete DOM expandos. IE and Chrome don't like it
+  }
+}
+
+function jqLiteOff(element, type, fn, unsupported) {
+  if (isDefined(unsupported))
+    throw jqLiteMinErr(
+      "offargs",
+      "jqLite#off() does not support the `selector` argument",
+    );
+
+  const expandoStore = jqLiteExpandoStore(element);
+  const events = expandoStore && expandoStore.events;
+  const handle = expandoStore && expandoStore.handle;
+
+  if (!handle) return; // no listeners registered
+
+  if (!type) {
+    for (type in events) {
+      if (type !== "$destroy") {
+        element.removeEventListener(type, handle);
+      }
+      delete events[type];
+    }
+  } else {
+    const removeHandler = function (type) {
+      const listenerFns = events[type];
+      if (isDefined(fn)) {
+        arrayRemove(listenerFns || [], fn);
+      }
+      if (!(isDefined(fn) && listenerFns && listenerFns.length > 0)) {
+        element.removeEventListener(type, handle);
+        delete events[type];
+      }
+    };
+
+    forEach$1(type.split(" "), (type) => {
+      removeHandler(type);
+      if (MOUSE_EVENT_MAP[type]) {
+        removeHandler(MOUSE_EVENT_MAP[type]);
+      }
+    });
+  }
+
+  removeIfEmptyData(element);
+}
+
+function jqLiteRemoveData(element, name) {
+  const expandoId = element.ng339;
+  const expandoStore = expandoId && jqCache[expandoId];
+
+  if (expandoStore) {
+    if (name) {
+      delete expandoStore.data[name];
+    } else {
+      expandoStore.data = {};
+    }
+
+    removeIfEmptyData(element);
+  }
+}
+
+function jqLiteExpandoStore(element, createIfNecessary) {
+  let expandoId = element.ng339;
+  let expandoStore = expandoId && jqCache[expandoId];
+
+  if (createIfNecessary && !expandoStore) {
+    element.ng339 = expandoId = jqNextId();
+    expandoStore = jqCache[expandoId] = {
+      events: {},
+      data: {},
+      handle: undefined,
+    };
+  }
+
+  return expandoStore;
+}
+
+function jqLiteData(element, key, value) {
+  if (jqLiteAcceptsData(element)) {
+    let prop;
+
+    const isSimpleSetter = isDefined(value);
+    const isSimpleGetter = !isSimpleSetter && key && !isObject$1(key);
+    const massGetter = !key;
+    const expandoStore = jqLiteExpandoStore(element, !isSimpleGetter);
+    const data = expandoStore && expandoStore.data;
+
+    if (isSimpleSetter) {
+      // data('key', value)
+      data[kebabToCamel(key)] = value;
+    } else {
+      if (massGetter) {
+        // data()
+        return data;
+      }
+      if (isSimpleGetter) {
+        // data('key')
+        // don't force creation of expandoStore if it doesn't exist yet
+        return data && data[kebabToCamel(key)];
+      }
+      // mass-setter: data({key1: val1, key2: val2})
+      for (prop in key) {
+        data[kebabToCamel(prop)] = key[prop];
+      }
+    }
+  }
+}
+
+function jqLiteHasClass(element, selector) {
+  if (!element.getAttribute) return false;
+  return (
+    ` ${element.getAttribute("class") || ""} `
+      .replace(/[\n\t]/g, " ")
+      .indexOf(` ${selector} `) > -1
+  );
+}
+
+function jqLiteRemoveClass(element, cssClasses) {
+  if (cssClasses && element.setAttribute) {
+    const existingClasses = ` ${element.getAttribute("class") || ""} `.replace(
+      /[\n\t]/g,
+      " ",
+    );
+    let newClasses = existingClasses;
+
+    forEach$1(cssClasses.split(" "), (cssClass) => {
+      cssClass = trim(cssClass);
+      newClasses = newClasses.replace(` ${cssClass} `, " ");
+    });
+
+    if (newClasses !== existingClasses) {
+      element.setAttribute("class", trim(newClasses));
+    }
+  }
+}
+
+function jqLiteAddClass(element, cssClasses) {
+  if (cssClasses && element.setAttribute) {
+    const existingClasses = ` ${element.getAttribute("class") || ""} `.replace(
+      /[\n\t]/g,
+      " ",
+    );
+    let newClasses = existingClasses;
+
+    forEach$1(cssClasses.split(" "), (cssClass) => {
+      cssClass = trim(cssClass);
+      if (newClasses.indexOf(` ${cssClass} `) === -1) {
+        newClasses += `${cssClass} `;
+      }
+    });
+
+    if (newClasses !== existingClasses) {
+      element.setAttribute("class", trim(newClasses));
+    }
+  }
+}
+
+function jqLiteAddNodes(root, elements) {
+  // THIS CODE IS VERY HOT. Don't make changes without benchmarking.
+
+  if (elements) {
+    // if a Node (the most common case)
+    if (elements.nodeType) {
+      root[root.length++] = elements;
+    } else {
+      const { length } = elements;
+
+      // if an Array or NodeList and not a Window
+      if (typeof length === "number" && elements.window !== elements) {
+        if (length) {
+          for (let i = 0; i < length; i++) {
+            root[root.length++] = elements[i];
+          }
+        }
+      } else {
+        root[root.length++] = elements;
+      }
+    }
+  }
+}
+
+function jqLiteController(element, name) {
+  return jqLiteInheritedData(element, `$${name || "ngController"}Controller`);
+}
+
+function jqLiteInheritedData(element, name, value) {
+  // if element is the document object work with the html element instead
+  // this makes $(document).scope() possible
+  if (element.nodeType === NODE_TYPE_DOCUMENT) {
+    // eslint-disable-next-line no-param-reassign
+    element = element.documentElement;
+  }
+  const names = isArray$1(name) ? name : [name];
+
+  while (element) {
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0, ii = names.length; i < ii; i++) {
+      // eslint-disable-next-line no-cond-assign, no-param-reassign
+      if (isDefined((value = jqLite.data(element, names[i])))) return value;
+    }
+
+    // If dealing with a document fragment node with a host element, and no parent, use the host
+    // element as the parent. This enables directives within a Shadow DOM or polyfilled Shadow DOM
+    // to lookup parent controllers.
+    // eslint-disable-next-line no-param-reassign
+    element =
+      element.parentNode ||
+      (element.nodeType === NODE_TYPE_DOCUMENT_FRAGMENT && element.host);
+  }
+}
+
+function jqLiteEmpty(element) {
+  jqLiteDealoc(element, true);
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
+}
+
+function jqLiteRemove(element, keepData) {
+  if (!keepData) jqLiteDealoc(element);
+  const parent = element.parentNode;
+  if (parent) parent.removeChild(element);
+}
+
+/// ///////////////////////////////////////
+// Functions iterating getter/setters.
+// these functions return self on setter and
+// value on get.
+/// ///////////////////////////////////////
+const BOOLEAN_ATTR = {};
+forEach$1(
+  "multiple,selected,checked,disabled,readOnly,required,open".split(","),
+  (value) => {
+    BOOLEAN_ATTR[lowercase(value)] = value;
+  },
+);
+forEach$1(
+  "input,select,option,textarea,button,form,details".split(","),
+  (value) => {
+  },
+);
+
+forEach$1(
+  {
+    data: jqLiteData,
+    hasData: jqLiteHasData,
+  },
+  (fn, name) => {
+    JQLite[name] = fn;
+  },
+);
+
+forEach$1(
+  {
+    data: jqLiteData,
+    inheritedData: jqLiteInheritedData,
+
+    scope(element) {
+      // Can't use jqLiteData here directly so we stay compatible with jQuery!
+      return (
+        jqLite.data(element, "$scope") ||
+        jqLiteInheritedData(element.parentNode || element, [
+          "$isolateScope",
+          "$scope",
+        ])
+      );
+    },
+
+    isolateScope(element) {
+      // Can't use jqLiteData here directly so we stay compatible with jQuery!
+      return (
+        jqLite.data(element, "$isolateScope") ||
+        jqLite.data(element, "$isolateScopeNoTemplate")
+      );
+    },
+
+    controller: jqLiteController,
+
+    removeAttr(element, name) {
+      element.removeAttribute(name);
+    },
+
+    hasClass: jqLiteHasClass,
+
+    css(element, name, value) {
+      name = cssKebabToCamel(name);
+
+      if (isDefined(value)) {
+        element.style[name] = value;
+      } else {
+        return element.style[name];
+      }
+    },
+
+    attr(element, name, value) {
+      let ret;
+      const { nodeType } = element;
+      if (
+        nodeType === NODE_TYPE_TEXT ||
+        nodeType === NODE_TYPE_ATTRIBUTE ||
+        nodeType === NODE_TYPE_COMMENT ||
+        !element.getAttribute
+      ) {
+        return;
+      }
+
+      const lowercasedName = lowercase(name);
+      const isBooleanAttr = BOOLEAN_ATTR[lowercasedName];
+
+      if (isDefined(value)) {
+        // setter
+
+        if (value === null || (value === false && isBooleanAttr)) {
+          element.removeAttribute(name);
+        } else {
+          element.setAttribute(name, isBooleanAttr ? lowercasedName : value);
+        }
+      } else {
+        // getter
+
+        ret = element.getAttribute(name);
+
+        if (isBooleanAttr && ret !== null) {
+          ret = lowercasedName;
+        }
+        // Normalize non-existing attributes to undefined (as jQuery).
+        return ret === null ? undefined : ret;
+      }
+    },
+
+    prop(element, name, value) {
+      if (isDefined(value)) {
+        element[name] = value;
+      } else {
+        return element[name];
+      }
+    },
+
+    text: (function () {
+      getText.$dv = "";
+      return getText;
+
+      function getText(element, value) {
+        if (isUndefined$1(value)) {
+          const { nodeType } = element;
+          return nodeType === NODE_TYPE_ELEMENT || nodeType === NODE_TYPE_TEXT
+            ? element.textContent
+            : "";
+        }
+        element.textContent = value;
+      }
+    })(),
+
+    val(element, value) {
+      if (isUndefined$1(value)) {
+        if (element.multiple && nodeName_(element) === "select") {
+          const result = [];
+          forEach$1(element.options, (option) => {
+            if (option.selected) {
+              result.push(option.value || option.text);
+            }
+          });
+          return result;
+        }
+        return element.value;
+      }
+      element.value = value;
+    },
+
+    html(element, value) {
+      if (isUndefined$1(value)) {
+        return element.innerHTML;
+      }
+      jqLiteDealoc(element, true);
+      element.innerHTML = value;
+    },
+
+    empty: jqLiteEmpty,
+  },
+  (fn, name) => {
+    /**
+     * Properties: writes return selection, reads return first value
+     */
+    JQLite.prototype[name] = function (arg1, arg2) {
+      let i;
+      let key;
+      const nodeCount = this.length;
+
+      // jqLiteHasClass has only two arguments, but is a getter-only fn, so we need to special-case it
+      // in a way that survives minification.
+      // jqLiteEmpty takes no arguments but is a setter.
+      if (
+        fn !== jqLiteEmpty &&
+        isUndefined$1(
+          fn.length === 2 && fn !== jqLiteHasClass && fn !== jqLiteController
+            ? arg1
+            : arg2,
+        )
+      ) {
+        if (isObject$1(arg1)) {
+          // we are a write, but the object properties are the key/values
+          for (i = 0; i < nodeCount; i++) {
+            if (fn === jqLiteData) {
+              // data() takes the whole object in jQuery
+              fn(this[i], arg1);
+            } else {
+              for (key in arg1) {
+                fn(this[i], key, arg1[key]);
+              }
+            }
+          }
+          // return self for chaining
+          return this;
+        }
+        // we are a read, so read the first child.
+        // TODO: do we still need this?
+        let value = fn.$dv;
+        // Only if we have $dv do we iterate over all, otherwise it is just the first element.
+        const jj = isUndefined$1(value) ? Math.min(nodeCount, 1) : nodeCount;
+        for (let j = 0; j < jj; j++) {
+          const nodeValue = fn(this[j], arg1, arg2);
+          value = value ? value + nodeValue : nodeValue;
+        }
+        return value;
+      }
+      // we are a write, so apply to all children
+      for (i = 0; i < nodeCount; i++) {
+        fn(this[i], arg1, arg2);
+      }
+      // return self for chaining
+      return this;
+    };
+  },
+);
+
+function createEventHandler(element, events) {
+  const eventHandler = function (event, type) {
+    // jQuery specific api
+    event.isDefaultPrevented = function () {
+      return event.defaultPrevented;
+    };
+
+    let eventFns = events[type || event.type];
+    const eventFnsLength = eventFns ? eventFns.length : 0;
+
+    if (!eventFnsLength) return;
+
+    if (isUndefined$1(event.immediatePropagationStopped)) {
+      const originalStopImmediatePropagation = event.stopImmediatePropagation;
+      event.stopImmediatePropagation = function () {
+        event.immediatePropagationStopped = true;
+
+        if (event.stopPropagation) {
+          event.stopPropagation();
+        }
+
+        if (originalStopImmediatePropagation) {
+          originalStopImmediatePropagation.call(event);
+        }
+      };
+    }
+
+    event.isImmediatePropagationStopped = function () {
+      return event.immediatePropagationStopped === true;
+    };
+
+    // Some events have special handlers that wrap the real handler
+    const handlerWrapper =
+      eventFns.specialHandlerWrapper || defaultHandlerWrapper;
+
+    // Copy event handlers in case event handlers array is modified during execution.
+    if (eventFnsLength > 1) {
+      eventFns = shallowCopy(eventFns);
+    }
+
+    for (let i = 0; i < eventFnsLength; i++) {
+      if (!event.isImmediatePropagationStopped()) {
+        handlerWrapper(element, event, eventFns[i]);
+      }
+    }
+  };
+
+  // TODO: this is a hack for angularMocks/clearDataCache that makes it possible to deregister all
+  //       events on `element`
+  eventHandler.elem = element;
+  return eventHandler;
+}
+
+function defaultHandlerWrapper(element, event, handler) {
+  handler.call(element, event);
+}
+
+function specialMouseHandlerWrapper(target, event, handler) {
+  // Refer to jQuery's implementation of mouseenter & mouseleave
+  // Read about mouseenter and mouseleave:
+  // http://www.quirksmode.org/js/events_mouse.html#link8
+  const related = event.relatedTarget;
+  // For mousenter/leave call the handler if related is outside the target.
+  // NB: No relatedTarget if the mouse left/entered the browser window
+  if (
+    !related ||
+    (related !== target && !jqLiteContains.call(target, related))
+  ) {
+    handler.call(target, event);
+  }
+}
+
+/// ///////////////////////////////////////
+// Functions iterating traversal.
+// These functions chain results into a single
+// selector.
+/// ///////////////////////////////////////
+forEach$1(
+  {
+    removeData: jqLiteRemoveData,
+
+    off: jqLiteOff,
+
+    one(element, type, fn) {
+      element = jqLite(element);
+
+      // add the listener twice so that when it is called
+      // you can remove the original function and still be
+      // able to call element.off(ev, fn) normally
+      element.on(type, function onFn() {
+        element.off(type, fn);
+        element.off(type, onFn);
+      });
+      element.on(type, fn);
+    },
+
+    replaceWith(element, replaceNode) {
+      let index;
+      const parent = element.parentNode;
+      jqLiteDealoc(element);
+      forEach$1(new JQLite(replaceNode), (node) => {
+        if (index) {
+          parent.insertBefore(node, index.nextSibling);
+        } else {
+          parent.replaceChild(node, element);
+        }
+        index = node;
+      });
+    },
+
+    children(element) {
+      const children = [];
+      forEach$1(element.childNodes, (element) => {
+        if (element.nodeType === NODE_TYPE_ELEMENT) {
+          children.push(element);
+        }
+      });
+      return children;
+    },
+
+    contents(element) {
+      return element.contentDocument || element.childNodes || [];
+    },
+
+    append(element, node) {
+      const { nodeType } = element;
+      if (
+        nodeType !== NODE_TYPE_ELEMENT &&
+        nodeType !== NODE_TYPE_DOCUMENT_FRAGMENT
+      )
+        return;
+
+      node = new JQLite(node);
+
+      for (let i = 0, ii = node.length; i < ii; i++) {
+        const child = node[i];
+        element.appendChild(child);
+      }
+    },
+
+    prepend(element, node) {
+      if (element.nodeType === NODE_TYPE_ELEMENT) {
+        const index = element.firstChild;
+        forEach$1(new JQLite(node), (child) => {
+          element.insertBefore(child, index);
+        });
+      }
+    },
+
+    wrap(element, wrapNode) {
+      jqLiteWrapNode(element, jqLite(wrapNode).eq(0).clone()[0]);
+    },
+
+    remove: jqLiteRemove,
+
+    detach(element) {
+      jqLiteRemove(element, true);
+    },
+
+    after(element, newElement) {
+      let index = element;
+      const parent = element.parentNode;
+
+      if (parent) {
+        newElement = new JQLite(newElement);
+
+        for (let i = 0, ii = newElement.length; i < ii; i++) {
+          const node = newElement[i];
+          parent.insertBefore(node, index.nextSibling);
+          index = node;
+        }
+      }
+    },
+
+    addClass: jqLiteAddClass,
+    removeClass: jqLiteRemoveClass,
+
+    toggleClass(element, selector, condition) {
+      if (selector) {
+        forEach$1(selector.split(" "), (className) => {
+          let classCondition = condition;
+          if (isUndefined$1(classCondition)) {
+            classCondition = !jqLiteHasClass(element, className);
+          }
+          (classCondition ? jqLiteAddClass : jqLiteRemoveClass)(
+            element,
+            className,
+          );
+        });
+      }
+    },
+
+    parent(element) {
+      const parent = element.parentNode;
+      return parent && parent.nodeType !== NODE_TYPE_DOCUMENT_FRAGMENT
+        ? parent
+        : null;
+    },
+
+    next(element) {
+      return element.nextElementSibling;
+    },
+
+    find(element, selector) {
+      if (element.getElementsByTagName) {
+        return element.getElementsByTagName(selector);
+      }
+      return [];
+    },
+
+    triggerHandler(element, event, extraParameters) {
+      let dummyEvent;
+      let eventFnsCopy;
+      let handlerArgs;
+      const eventName = event.type || event;
+      const expandoStore = jqLiteExpandoStore(element);
+      const events = expandoStore && expandoStore.events;
+      const eventFns = events && events[eventName];
+
+      if (eventFns) {
+        // Create a dummy event to pass to the handlers
+        dummyEvent = {
+          preventDefault() {
+            this.defaultPrevented = true;
+          },
+          isDefaultPrevented() {
+            return this.defaultPrevented === true;
+          },
+          stopImmediatePropagation() {
+            this.immediatePropagationStopped = true;
+          },
+          isImmediatePropagationStopped() {
+            return this.immediatePropagationStopped === true;
+          },
+          stopPropagation: noop,
+          type: eventName,
+          target: element,
+        };
+
+        // If a custom event was provided then extend our dummy event with it
+        if (event.type) {
+          dummyEvent = extend(dummyEvent, event);
+        }
+
+        // Copy event handlers in case event handlers array is modified during execution.
+        eventFnsCopy = shallowCopy(eventFns);
+        handlerArgs = extraParameters
+          ? [dummyEvent].concat(extraParameters)
+          : [dummyEvent];
+
+        forEach$1(eventFnsCopy, (fn) => {
+          if (!dummyEvent.isImmediatePropagationStopped()) {
+            fn.apply(element, handlerArgs);
+          }
+        });
+      }
+    },
+  },
+  (fn, name) => {
+    /**
+     * chaining functions
+     */
+    JQLite.prototype[name] = function (arg1, arg2, arg3) {
+      let value;
+
+      for (let i = 0, ii = this.length; i < ii; i++) {
+        if (isUndefined$1(value)) {
+          value = fn(this[i], arg1, arg2, arg3);
+          if (isDefined(value)) {
+            // any function which returns a value needs to be wrapped
+            value = jqLite(value);
+          }
+        } else {
+          jqLiteAddNodes(value, fn(this[i], arg1, arg2, arg3));
+        }
+      }
+      return isDefined(value) ? value : this;
+    };
+  },
+);
+
+// bind legacy bind/unbind to on/off
+JQLite.prototype.bind = JQLite.prototype.on;
+JQLite.prototype.unbind = JQLite.prototype.off;
 
 /**
  * @ngdoc function
@@ -864,35 +2045,37 @@ function minErr$1(module) {
  * Implicit module which gets automatically added to each {@link auto.$injector $injector}.
  */
 
-let ARROW_ARG = /^([^(]+?)=>/;
-let FN_ARGS = /^[^(]*\(\s*([^)]*)\)/m;
-let FN_ARG_SPLIT = /,/;
-let FN_ARG = /^\s*(_?)(\S+?)\1\s*$/;
-let STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
-let $injectorMinErr = minErr("$injector");
+const ARROW_ARG = /^([^(]+?)=>/;
+const FN_ARGS = /^[^(]*\(\s*([^)]*)\)/m;
+const FN_ARG_SPLIT = /,/;
+const FN_ARG = /^\s*(_?)(\S+?)\1\s*$/;
+const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
+const $injectorMinErr = minErr("$injector");
 
 function stringifyFn(fn) {
   return Function.prototype.toString.call(fn);
 }
 
 function extractArgs(fn) {
-  let fnText = stringifyFn(fn).replace(STRIP_COMMENTS, ""),
-    args = fnText.match(ARROW_ARG) || fnText.match(FN_ARGS);
+  const fnText = stringifyFn(fn).replace(STRIP_COMMENTS, "");
+  const args = fnText.match(ARROW_ARG) || fnText.match(FN_ARGS);
   return args;
 }
 
 function anonFn(fn) {
   // For anonymous functions, showing at the very least the function signature can help in
   // debugging.
-  let args = extractArgs(fn);
+  const args = extractArgs(fn);
   if (args) {
-    return "function(" + (args[1] || "").replace(/[\s\r\n]+/, " ") + ")";
+    return `function(${(args[1] || "").replace(/[\s\r\n]+/, " ")})`;
   }
   return "fn";
 }
 
 function annotate(fn, strictDi, name) {
-  let $inject, argDecl, last;
+  let $inject;
+  let argDecl;
+  let last;
 
   if (typeof fn === "function") {
     if (!($inject = fn.$inject)) {
@@ -909,8 +2092,8 @@ function annotate(fn, strictDi, name) {
           );
         }
         argDecl = extractArgs(fn);
-        forEach(argDecl[1].split(FN_ARG_SPLIT), function (arg) {
-          arg.replace(FN_ARG, function (all, underscore, name) {
+        forEach(argDecl[1].split(FN_ARG_SPLIT), (arg) => {
+          arg.replace(FN_ARG, (all, underscore, name) => {
             $inject.push(name);
           });
         });
@@ -927,7 +2110,7 @@ function annotate(fn, strictDi, name) {
   return $inject;
 }
 
-///////////////////////////////////////
+/// ////////////////////////////////////
 
 /**
  * @ngdoc service
@@ -1500,73 +2683,69 @@ function annotate(fn, strictDi, name) {
 
 function createInjector(modulesToLoad, strictDi) {
   strictDi = strictDi === true;
-  let INSTANTIATING = {},
-    providerSuffix = "Provider",
-    path = [],
-    loadedModules = new NgMap(),
-    providerCache = {
-      $provide: {
-        provider: supportObject(provider),
-        factory: supportObject(factory),
-        service: supportObject(service),
-        value: supportObject(value),
-        constant: supportObject(constant),
-        decorator: decorator,
-      },
+  const INSTANTIATING = {};
+  const providerSuffix = "Provider";
+  const path = [];
+  const loadedModules = new NgMap();
+  const providerCache = {
+    $provide: {
+      provider: supportObject(provider),
+      factory: supportObject(factory),
+      service: supportObject(service),
+      value: supportObject(value),
+      constant: supportObject(constant),
+      decorator,
     },
-    providerInjector = (providerCache.$injector = createInternalInjector(
-      providerCache,
-      function (serviceName, caller) {
-        if (angular.isString(caller)) {
-          path.push(caller);
-        }
-        throw $injectorMinErr(
-          "unpr",
-          "Unknown provider: {0}",
-          path.join(" <- "),
-        );
-      },
-    )),
-    instanceCache = {},
-    protoInstanceInjector = createInternalInjector(
-      instanceCache,
-      function (serviceName, caller) {
-        let provider = providerInjector.get(
-          serviceName + providerSuffix,
-          caller,
-        );
-        return instanceInjector.invoke(
-          provider.$get,
-          provider,
-          undefined,
-          serviceName,
-        );
-      },
-    ),
-    instanceInjector = protoInstanceInjector;
+  };
+  const providerInjector = (providerCache.$injector = createInternalInjector(
+    providerCache,
+    (serviceName, caller) => {
+      if (angular.isString(caller)) {
+        path.push(caller);
+      }
+      throw $injectorMinErr("unpr", "Unknown provider: {0}", path.join(" <- "));
+    },
+  ));
+  const instanceCache = {};
+  const protoInstanceInjector = createInternalInjector(
+    instanceCache,
+    (serviceName, caller) => {
+      const provider = providerInjector.get(
+        serviceName + providerSuffix,
+        caller,
+      );
+      return instanceInjector.invoke(
+        provider.$get,
+        provider,
+        undefined,
+        serviceName,
+      );
+    },
+  );
+  let instanceInjector = protoInstanceInjector;
 
-  providerCache["$injector" + providerSuffix] = {
+  providerCache[`$injector${providerSuffix}`] = {
     $get: valueFn(protoInstanceInjector),
   };
   instanceInjector.modules = providerInjector.modules = createMap();
-  let runBlocks = loadModules(modulesToLoad);
+  const runBlocks = loadModules(modulesToLoad);
   instanceInjector = protoInstanceInjector.get("$injector");
   instanceInjector.strictDi = strictDi;
-  forEach(runBlocks, function (fn) {
+  forEach(runBlocks, (fn) => {
     if (fn) instanceInjector.invoke(fn);
   });
 
   instanceInjector.loadNewModules = function (mods) {
-    forEach(loadModules(mods), function (fn) {
+    forEach(loadModules(mods), (fn) => {
       if (fn) instanceInjector.invoke(fn);
     });
   };
 
   return instanceInjector;
 
-  ////////////////////////////////////
+  /// /////////////////////////////////
   // $provider
-  ////////////////////////////////////
+  /// /////////////////////////////////
 
   function supportObject(delegate) {
     return function (key, value) {
@@ -1595,7 +2774,7 @@ function createInjector(modulesToLoad, strictDi) {
 
   function enforceReturnValue(name, factory) {
     return /** @this */ function enforcedReturnValue() {
-      let result = instanceInjector.invoke(factory, this);
+      const result = instanceInjector.invoke(factory, this);
       if (isUndefined(result)) {
         throw $injectorMinErr(
           "undef",
@@ -1633,37 +2812,38 @@ function createInjector(modulesToLoad, strictDi) {
   }
 
   function decorator(serviceName, decorFn) {
-    let origProvider = providerInjector.get(serviceName + providerSuffix),
-      orig$get = origProvider.$get;
+    const origProvider = providerInjector.get(serviceName + providerSuffix);
+    const orig$get = origProvider.$get;
 
     origProvider.$get = function () {
-      let origInstance = instanceInjector.invoke(orig$get, origProvider);
+      const origInstance = instanceInjector.invoke(orig$get, origProvider);
       return instanceInjector.invoke(decorFn, null, {
         $delegate: origInstance,
       });
     };
   }
 
-  ////////////////////////////////////
+  /// /////////////////////////////////
   // Module Loading
-  ////////////////////////////////////
+  /// /////////////////////////////////
   function loadModules(modulesToLoad) {
     assertArg(
       isUndefined(modulesToLoad) || isArray(modulesToLoad),
       "modulesToLoad",
       "not an array",
     );
-    let runBlocks = [],
-      moduleFn;
-    forEach(modulesToLoad, function (module) {
+    let runBlocks = [];
+    let moduleFn;
+    forEach(modulesToLoad, (module) => {
       if (loadedModules.get(module)) return;
       loadedModules.set(module, true);
 
       function runInvokeQueue(queue) {
-        let i, ii;
+        let i;
+        let ii;
         for (i = 0, ii = queue.length; i < ii; i++) {
-          let invokeArgs = queue[i],
-            provider = providerInjector.get(invokeArgs[0]);
+          const invokeArgs = queue[i];
+          const provider = providerInjector.get(invokeArgs[0]);
 
           provider[invokeArgs[1]].apply(provider, invokeArgs[2]);
         }
@@ -1695,7 +2875,7 @@ function createInjector(modulesToLoad, strictDi) {
           // So if stack doesn't contain message, we create a new string that contains both.
           // Since error.stack is read-only in Safari, I'm overriding e and not e.stack here.
           // eslint-disable-next-line no-ex-assign
-          e = e.message + "\n" + e.stack;
+          e = `${e.message}\n${e.stack}`;
         }
         throw $injectorMinErr(
           "modulerr",
@@ -1708,9 +2888,9 @@ function createInjector(modulesToLoad, strictDi) {
     return runBlocks;
   }
 
-  ////////////////////////////////////
+  /// /////////////////////////////////
   // internal Injector
-  ////////////////////////////////////
+  /// /////////////////////////////////
 
   function createInternalInjector(cache, factory) {
     function getService(serviceName, caller) {
@@ -1719,33 +2899,32 @@ function createInjector(modulesToLoad, strictDi) {
           throw $injectorMinErr(
             "cdep",
             "Circular dependency found: {0}",
-            serviceName + " <- " + path.join(" <- "),
+            `${serviceName} <- ${path.join(" <- ")}`,
           );
         }
         return cache[serviceName];
-      } else {
-        try {
-          path.unshift(serviceName);
-          cache[serviceName] = INSTANTIATING;
-          cache[serviceName] = factory(serviceName, caller);
-          return cache[serviceName];
-        } catch (err) {
-          if (cache[serviceName] === INSTANTIATING) {
-            delete cache[serviceName];
-          }
-          throw err;
-        } finally {
-          path.shift();
+      }
+      try {
+        path.unshift(serviceName);
+        cache[serviceName] = INSTANTIATING;
+        cache[serviceName] = factory(serviceName, caller);
+        return cache[serviceName];
+      } catch (err) {
+        if (cache[serviceName] === INSTANTIATING) {
+          delete cache[serviceName];
         }
+        throw err;
+      } finally {
+        path.shift();
       }
     }
 
     function injectionArgs(fn, locals, serviceName) {
-      let args = [],
-        $inject = createInjector.$$annotate(fn, strictDi, serviceName);
+      const args = [];
+      const $inject = createInjector.$$annotate(fn, strictDi, serviceName);
 
-      for (let i = 0, length = $inject.length; i < length; i++) {
-        let key = $inject[i];
+      for (let i = 0, { length } = $inject; i < length; i++) {
+        const key = $inject[i];
         if (typeof key !== "string") {
           throw $injectorMinErr(
             "itkn",
@@ -1776,7 +2955,7 @@ function createInjector(modulesToLoad, strictDi) {
         locals = null;
       }
 
-      let args = injectionArgs(fn, locals, serviceName);
+      const args = injectionArgs(fn, locals, serviceName);
       if (isArray(fn)) {
         fn = fn[fn.length - 1];
       }
@@ -1785,28 +2964,27 @@ function createInjector(modulesToLoad, strictDi) {
         // http://jsperf.com/angularjs-invoke-apply-vs-switch
         // #5388
         return fn.apply(self, args);
-      } else {
-        args.unshift(null);
-        return new (Function.prototype.bind.apply(fn, args))();
       }
+      args.unshift(null);
+      return new (Function.prototype.bind.apply(fn, args))();
     }
 
     function instantiate(Type, locals, serviceName) {
       // Check if Type is annotated and use just the given function at n-1 as parameter
       // e.g. someModule.factory('greeter', ['$window', function(renamed$window) {}]);
-      let ctor = isArray(Type) ? Type[Type.length - 1] : Type;
-      let args = injectionArgs(Type, locals, serviceName);
+      const ctor = isArray(Type) ? Type[Type.length - 1] : Type;
+      const args = injectionArgs(Type, locals, serviceName);
       // Empty object at position 0 is ignored for invocation with `new`, but required.
       args.unshift(null);
       return new (Function.prototype.bind.apply(ctor, args))();
     }
 
     return {
-      invoke: invoke,
-      instantiate: instantiate,
+      invoke,
+      instantiate,
       get: getService,
       annotate: createInjector.$$annotate,
-      has: function (name) {
+      has(name) {
         return (
           providerCache.hasOwnProperty(name + providerSuffix) ||
           cache.hasOwnProperty(name)
@@ -1838,15 +3016,14 @@ const REGEX_STRING_REGEXP = /^\/(.+)\/([a-z]*)$/;
 // This is used so that it's possible for internal tests to create mock ValidityStates.
 const VALIDITY_STATE_PROPERTY = "validity";
 
-let jqLite, // delay binding since jQuery could be loaded after us.
-  ngMinErr = minErr$1("ng"),
-  /** @name angular */
-  angular$1 = window["angular"] || (window["angular"] = {});
+const ngMinErr = minErr$1("ng");
+/** @name angular */
+const angular$1 = window.angular || (window.angular = {});
 
-/////////////////////////////////////////////////
+/// //////////////////////////////////////////////
 
 function allowAutoBootstrap(document) {
-  let script = document.currentScript;
+  const script = document.currentScript;
 
   // If the `currentScript` property has been clobbered just return false, since this indicates a probable attack
   if (
@@ -1858,14 +3035,14 @@ function allowAutoBootstrap(document) {
     return false;
   }
 
-  let attributes = script.attributes;
-  let srcs = [
+  const { attributes } = script;
+  const srcs = [
     attributes.getNamedItem("src"),
     attributes.getNamedItem("href"),
     attributes.getNamedItem("xlink:href"),
   ];
 
-  return srcs.every(function (src) {
+  return srcs.every((src) => {
     if (!src) {
       return true;
     }
@@ -1873,7 +3050,7 @@ function allowAutoBootstrap(document) {
       return false;
     }
 
-    let link = document.createElement("a");
+    const link = document.createElement("a");
     link.href = src.value;
 
     if (document.location.origin === link.origin) {
@@ -2042,26 +3219,26 @@ const isAutoBootstrapAllowed = allowAutoBootstrap(window.document);
  </example>
  */
 function angularInit(element, bootstrap) {
-  let appElement,
-    module,
-    config = {};
+  let appElement;
+  let module;
+  const config = {};
 
   // The element `element` has priority over any other element.
-  forEach$1(ngAttrPrefixes, function (prefix) {
-    let name = prefix + "app";
+  forEach$1(ngAttrPrefixes, (prefix) => {
+    const name = `${prefix}app`;
 
     if (!appElement && element.hasAttribute && element.hasAttribute(name)) {
       appElement = element;
       module = element.getAttribute(name);
     }
   });
-  forEach$1(ngAttrPrefixes, function (prefix) {
-    let name = prefix + "app";
+  forEach$1(ngAttrPrefixes, (prefix) => {
+    const name = `${prefix}app`;
     let candidate;
 
     if (
       !appElement &&
-      (candidate = element.querySelector("[" + name.replace(":", "\\:") + "]"))
+      (candidate = element.querySelector(`[${name.replace(":", "\\:")}]`))
     ) {
       appElement = candidate;
       module = candidate.getAttribute(name);
@@ -2141,15 +3318,15 @@ function angularInit(element, bootstrap) {
  */
 function bootstrap(element, modules, config) {
   if (!isObject$1(config)) config = {};
-  let defaultConfig = {
+  const defaultConfig = {
     strictDi: false,
   };
   config = extend(defaultConfig, config);
-  let doBootstrap = function () {
+  const doBootstrap = function () {
     element = jqLite(element);
 
     if (element.injector()) {
-      let tag =
+      const tag =
         element[0] === window.document ? "document" : startingTag(element);
       // Encode angle brackets to prevent input from being sanitized to empty string #8683.
       throw ngMinErr(
@@ -2178,14 +3355,14 @@ function bootstrap(element, modules, config) {
     }
 
     modules.unshift("ng");
-    let injector = createInjector(modules, config.strictDi);
+    const injector = createInjector(modules, config.strictDi);
     injector.invoke([
       "$rootScope",
       "$rootElement",
       "$compile",
       "$injector",
       function bootstrapApply(scope, element, compile, injector) {
-        scope.$apply(function () {
+        scope.$apply(() => {
           element.data("$injector", injector);
           compile(element)(scope);
         });
@@ -2208,13 +3385,13 @@ function bootstrap(element, modules, config) {
 
   window.name = window.name.replace(NG_DEFER_BOOTSTRAP, "");
   angular$1.resumeBootstrap = function (extraModules) {
-    forEach$1(extraModules, function (module) {
+    forEach$1(extraModules, (module) => {
       modules.push(module);
     });
     return doBootstrap();
   };
 
-  if (isFunction(angular$1.resumeDeferredBootstrap)) {
+  if (isFunction$1(angular$1.resumeDeferredBootstrap)) {
     angular$1.resumeDeferredBootstrap();
   }
 }
@@ -2230,7 +3407,7 @@ function bootstrap(element, modules, config) {
  * See {@link ng.$compileProvider#debugInfoEnabled} for more.
  */
 function reloadWithDebugInfo() {
-  window.name = "NG_ENABLE_DEBUG_INFO!" + window.name;
+  window.name = `NG_ENABLE_DEBUG_INFO!${window.name}`;
   window.location.reload();
 }
 
@@ -2243,7 +3420,7 @@ function reloadWithDebugInfo() {
  * @param {DOMElement} element DOM element which is the root of AngularJS application.
  */
 function getTestability(rootElement) {
-  let injector = angular$1.element(rootElement).injector();
+  const injector = jqLite(rootElement).injector();
   if (!injector) {
     throw ngMinErr(
       "test",
@@ -2274,12 +3451,13 @@ function assertArgFn$1(arg, name, acceptArrayAnnotation) {
   }
 
   assertArg$1(
-    isFunction(arg),
+    isFunction$1(arg),
     name,
-    "not a function, got " +
-      (arg && typeof arg === "object"
+    `not a function, got ${
+      arg && typeof arg === "object"
         ? arg.constructor.name || "Object"
-        : typeof arg),
+        : typeof arg
+    }`,
   );
   return arg;
 }

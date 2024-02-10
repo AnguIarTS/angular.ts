@@ -173,14 +173,14 @@ export function $AnchorScrollProvider() {
     "$location",
     "$rootScope",
     function ($window, $location, $rootScope) {
-      let document = $window.document;
+      const { document } = $window;
 
       // Helper function to get first anchor from a NodeList
       // (using `Array#some()` instead of `angular#forEach()` since it's more performant
       //  and working in all supported browsers.)
       function getFirstAnchor(list) {
         let result = null;
-        Array.prototype.some.call(list, function (element) {
+        Array.prototype.some.call(list, (element) => {
           if (nodeName_(element) === "a") {
             result = element;
             return true;
@@ -195,8 +195,8 @@ export function $AnchorScrollProvider() {
         if (isFunction(offset)) {
           offset = offset();
         } else if (isElement(offset)) {
-          let elem = offset[0];
-          let style = $window.getComputedStyle(elem);
+          const elem = offset[0];
+          const style = $window.getComputedStyle(elem);
           if (style.position !== "fixed") {
             offset = 0;
           } else {
@@ -213,7 +213,7 @@ export function $AnchorScrollProvider() {
         if (elem) {
           elem.scrollIntoView();
 
-          let offset = getYOffset();
+          const offset = getYOffset();
 
           if (offset) {
             // `offset` is the number of pixels we should scroll UP in order to align `elem` properly.
@@ -229,7 +229,7 @@ export function $AnchorScrollProvider() {
             // In such cases we do not need to scroll the whole `offset` up, just the difference between
             // the top of the element and the offset, which is enough to align the top of `elem` at the
             // desired position.
-            let elemTop = elem.getBoundingClientRect().top;
+            const elemTop = elem.getBoundingClientRect().top;
             $window.scrollBy(0, elemTop - offset);
           }
         } else {
@@ -261,14 +261,12 @@ export function $AnchorScrollProvider() {
       // (no url change, no $location.hash() change), browser native does scroll
       if (autoScrollingEnabled) {
         $rootScope.$watch(
-          function autoScrollWatch() {
-            return $location.hash();
-          },
-          function autoScrollWatchAction(newVal, oldVal) {
+          () => $location.hash(),
+          (newVal, oldVal) => {
             // skip the initial scroll if $location.hash is empty
             if (newVal === oldVal && newVal === "") return;
 
-            jqLiteDocumentLoaded(function () {
+            jqLiteDocumentLoaded(() => {
               $rootScope.$evalAsync(scroll);
             });
           },

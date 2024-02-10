@@ -9,11 +9,11 @@
  */
 export function $jsonpCallbacksProvider() {
   this.$get = function () {
-    let callbacks = angular.callbacks;
-    let callbackMap = {};
+    const { callbacks } = angular;
+    const callbackMap = {};
 
     function createCallback(callbackId) {
-      let callback = function (data) {
+      const callback = function (data) {
         callback.data = data;
         callback.called = true;
       };
@@ -31,10 +31,10 @@ export function $jsonpCallbacksProvider() {
        * {@link $httpBackend} calls this method to create a callback and get hold of the path to the callback
        * to pass to the server, which will be used to call the callback with its payload in the JSONP response.
        */
-      createCallback: function (url) {
-        let callbackId = "_" + (callbacks.$$counter++).toString(36);
-        let callbackPath = "angular.callbacks." + callbackId;
-        let callback = createCallback(callbackId);
+      createCallback(url) {
+        const callbackId = `_${(callbacks.$$counter++).toString(36)}`;
+        const callbackPath = `angular.callbacks.${callbackId}`;
+        const callback = createCallback(callbackId);
         callbackMap[callbackPath] = callbacks[callbackId] = callback;
         return callbackPath;
       },
@@ -47,7 +47,7 @@ export function $jsonpCallbacksProvider() {
        * {@link $httpBackend} calls this method to find out whether the JSONP response actually called the
        * callback that was passed in the request.
        */
-      wasCalled: function (callbackPath) {
+      wasCalled(callbackPath) {
         return callbackMap[callbackPath].called;
       },
       /**
@@ -59,7 +59,7 @@ export function $jsonpCallbacksProvider() {
        * {@link $httpBackend} calls this method to get hold of the data that was provided to the callback
        * in the JSONP response.
        */
-      getResponse: function (callbackPath) {
+      getResponse(callbackPath) {
         return callbackMap[callbackPath].data;
       },
       /**
@@ -70,8 +70,8 @@ export function $jsonpCallbacksProvider() {
        * {@link $httpBackend} calls this method to remove the callback after the JSONP request has
        * completed or timed-out.
        */
-      removeCallback: function (callbackPath) {
-        let callback = callbackMap[callbackPath];
+      removeCallback(callbackPath) {
+        const callback = callbackMap[callbackPath];
         delete callbacks[callback.id];
         delete callbackMap[callbackPath];
       },

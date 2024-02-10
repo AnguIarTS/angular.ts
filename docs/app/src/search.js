@@ -10,11 +10,11 @@ angular.module('search', [])
   }
 
   $scope.search = function(q) {
-    let MIN_SEARCH_LENGTH = 2;
+    const MIN_SEARCH_LENGTH = 2;
     if (q.length >= MIN_SEARCH_LENGTH) {
-      docsSearch(q).then(function(hits) {
+      docsSearch(q).then((hits) => {
         // Make sure the areas are always in the same order
-        let results = {
+        const results = {
           api: [],
           guide: [],
           tutorial: [],
@@ -22,19 +22,19 @@ angular.module('search', [])
           misc: []
         };
 
-        angular.forEach(hits, function(hit) {
-          let area = hit.area;
+        angular.forEach(hits, (hit) => {
+          const {area} = hit;
 
-          let limit = (area === 'api') ? 40 : 14;
+          const limit = (area === 'api') ? 40 : 14;
           results[area] = results[area] || [];
           if (results[area].length < limit) {
             results[area].push(hit);
           }
         });
 
-        let totalAreas = Object.keys(results).length;
+        const totalAreas = Object.keys(results).length;
         if (totalAreas > 0) {
-          $scope.colClassName = 'cols-' + totalAreas;
+          $scope.colClassName = `cols-${  totalAreas}`;
         }
         $scope.hasResults = totalAreas > 0;
         $scope.results = results;
@@ -50,7 +50,7 @@ angular.module('search', [])
     if ($scope.results.api) {
       result = $scope.results.api[0];
     } else {
-      for (let i in $scope.results) {
+      for (const i in $scope.results) {
         result = $scope.results[i][0];
         if (result) {
           break;
@@ -78,10 +78,10 @@ angular.module('search', [])
 
 .controller('Error404SearchCtrl', ['$scope', '$location', 'docsSearch',
         function($scope, $location, docsSearch) {
-  docsSearch($location.path().split(/[/.:]/).pop()).then(function(results) {
+  docsSearch($location.path().split(/[/.:]/).pop()).then((results) => {
     $scope.results = {};
-    angular.forEach(results, function(result) {
-      let area = $scope.results[result.area] || [];
+    angular.forEach(results, (result) => {
+      const area = $scope.results[result.area] || [];
       area.push(result);
       $scope.results[result.area] = area;
     });
@@ -89,7 +89,7 @@ angular.module('search', [])
 }])
 
 
-.provider('docsSearch', function() {
+.provider('docsSearch', () => {
 
   // This version of the service builds the index in the current thread,
   // which blocks rendering and other browser activities.
@@ -101,7 +101,7 @@ angular.module('search', [])
     }
 
     // Create the lunr index
-    let index = lunr(/** @this */ function() {
+    const index = lunr(/** @this */ function() {
       this.ref('path');
       this.field('titleWords', {boost: 50});
       this.field('members', { boost: 40});
@@ -109,12 +109,12 @@ angular.module('search', [])
     });
 
     // Delay building the index by loading the data asynchronously
-    let indexReadyPromise = $http.get('js/search-data.json').then(function(response) {
-      let searchData = response.data;
+    const indexReadyPromise = $http.get('js/search-data.json').then((response) => {
+      const searchData = response.data;
       // Delay building the index for 500ms to allow the page to render
-      return $timeout(function() {
+      return $timeout(() => {
         // load the page data into the index
-        angular.forEach(searchData, function(page) {
+        angular.forEach(searchData, (page) => {
           index.add(page);
         });
       }, 500);
@@ -125,10 +125,10 @@ angular.module('search', [])
     // (In this case we just resolve the promise immediately as it is not
     // inherently an async process)
     return function(q) {
-      return indexReadyPromise.then(function() {
-        let hits = index.search(q);
-        let results = [];
-        angular.forEach(hits, function(hit) {
+      return indexReadyPromise.then(() => {
+        const hits = index.search(q);
+        const results = [];
+        angular.forEach(hits, (hit) => {
           results.push(NG_PAGES[hit.ref]);
         });
         return results;
@@ -146,25 +146,23 @@ angular.module('search', [])
       window.console.log('Using WebWorker Search Index');
     }
 
-    let searchIndex = $q.defer();
+    const searchIndex = $q.defer();
     let results;
 
-    let worker = new window.Worker('js/search-worker.js');
+    const worker = new window.Worker('js/search-worker.js');
 
     // The worker will send us a message in two situations:
     // - when the index has been built, ready to run a query
     // - when it has completed a search query and the results are available
     worker.onmessage = function(oEvent) {
-      $rootScope.$apply(function() {
+      $rootScope.$apply(() => {
 
         switch (oEvent.data.e) {
           case 'index-ready':
             searchIndex.resolve();
             break;
           case 'query-ready':
-            let pages = oEvent.data.d.map(function(path) {
-              return NG_PAGES[path];
-            });
+            const pages = oEvent.data.d.map((path) => NG_PAGES[path]);
             results.resolve(pages);
             break;
         }
@@ -176,10 +174,10 @@ angular.module('search', [])
     return function(q) {
 
       // We only run the query once the index is ready
-      return searchIndex.promise.then(function() {
+      return searchIndex.promise.then(() => {
 
         results = $q.defer();
-        worker.postMessage({ q: q });
+        worker.postMessage({ q });
         return results.promise;
       });
     };
@@ -191,29 +189,27 @@ angular.module('search', [])
   };
 })
 
-.directive('focused', function($timeout) {
-  return function(scope, element, attrs) {
+.directive('focused', ($timeout) => function(scope, element, attrs) {
     element[0].focus();
-    element.on('focus', function() {
-      scope.$apply(attrs.focused + '=true');
+    element.on('focus', () => {
+      scope.$apply(`${attrs.focused  }=true`);
     });
-    element.on('blur', function() {
+    element.on('blur', () => {
       // have to use $timeout, so that we close the drop-down after the user clicks,
       // otherwise when the user clicks we process the closing before we process the click.
-      $timeout(function() {
-        scope.$eval(attrs.focused + '=false');
+      $timeout(() => {
+        scope.$eval(`${attrs.focused  }=false`);
       });
     });
-    scope.$eval(attrs.focused + '=true');
-  };
-})
+    scope.$eval(`${attrs.focused  }=true`);
+  })
 
 .directive('docsSearchInput', ['$document', function($document) {
   return function(scope, element, attrs) {
-    let ESCAPE_KEY_KEYCODE = 27,
-        FORWARD_SLASH_KEYCODE = 191;
-    angular.element($document[0].body).on('keydown', function(event) {
-      let input = element[0];
+    const ESCAPE_KEY_KEYCODE = 27;
+        const FORWARD_SLASH_KEYCODE = 191;
+    angular.element($document[0].body).on('keydown', (event) => {
+      const input = element[0];
       if (event.keyCode === FORWARD_SLASH_KEYCODE && $document[0].activeElement !== input) {
         event.stopPropagation();
         event.preventDefault();
@@ -221,11 +217,11 @@ angular.module('search', [])
       }
     });
 
-    element.on('keydown', function(event) {
+    element.on('keydown', (event) => {
       if (event.keyCode === ESCAPE_KEY_KEYCODE) {
         event.stopPropagation();
         event.preventDefault();
-        scope.$apply(function() {
+        scope.$apply(() => {
           scope.hideResults();
         });
       }

@@ -1,52 +1,48 @@
 
 
-describe('ngView', function() {
+describe('ngView', () => {
 
-  describe('basics', function() {
+  describe('basics', () => {
     let element;
 
     beforeEach(module('ngRoute'));
 
-    beforeEach(module(function($provide) {
-      return function($rootScope, $compile, $animate) {
+    beforeEach(module(($provide) => function($rootScope, $compile, $animate) {
         element = $compile('<div><ng:view onload="load()"></ng:view></div>')($rootScope);
-      };
-    }));
+      }));
 
 
-    afterEach(function() {
+    afterEach(() => {
       dealoc(element);
     });
 
 
     it('should do nothing when no routes are defined',
-        inject(function($rootScope, $compile, $location) {
+        inject(($rootScope, $compile, $location) => {
       $location.path('/unknown');
       $rootScope.$digest();
       expect(element.text()).toEqual('');
     }));
 
 
-    it('should instantiate controller after compiling the content', function() {
-      let log = [], controllerScope,
-          Ctrl = function($scope) {
+    it('should instantiate controller after compiling the content', () => {
+      const log = []; let controllerScope;
+          const Ctrl = function($scope) {
             controllerScope = $scope;
             log.push('ctrl-init');
           };
 
-      module(function($compileProvider, $routeProvider) {
-        $compileProvider.directive('compileLog', function() {
-          return {
-            compile: function() {
+      module(($compileProvider, $routeProvider) => {
+        $compileProvider.directive('compileLog', () => ({
+            compile() {
               log.push('compile');
             }
-          };
-        });
+          }));
 
         $routeProvider.when('/some', {templateUrl: '/tpl.html', controller: Ctrl});
       });
 
-      inject(function($route, $rootScope, $templateCache, $location) {
+      inject(($route, $rootScope, $templateCache, $location) => {
         $templateCache.put('/tpl.html', [200, '<div compile-log>partial</div>', {}]);
         $location.path('/some');
         $rootScope.$digest();
@@ -58,22 +54,22 @@ describe('ngView', function() {
     });
 
 
-    it('should instantiate the associated controller when an empty template is downloaded', function() {
-      let log = [], controllerScope,
-          Ctrl = function($scope) {
+    it('should instantiate the associated controller when an empty template is downloaded', () => {
+      const log = []; let controllerScope;
+          const Ctrl = function($scope) {
             controllerScope = $scope;
             log.push('ctrl-init');
           };
 
-      module(function($routeProvider) {
+      module(($routeProvider) => {
         $routeProvider.when('/some', {templateUrl: '/tpl.html', controller: Ctrl});
       });
 
-      inject(function($route, $rootScope, $templateCache, $location) {
+      inject(($route, $rootScope, $templateCache, $location) => {
         $templateCache.put('/tpl.html', [200, '', {}]);
         $location.path('/some');
 
-        expect(function() {
+        expect(() => {
           $rootScope.$digest();
         }).not.toThrow();
 
@@ -82,19 +78,19 @@ describe('ngView', function() {
     });
 
 
-    it('should instantiate controller with an alias', function() {
-      let log = [], controllerScope;
+    it('should instantiate controller with an alias', () => {
+      const log = []; let controllerScope;
 
       function Ctrl($scope) {
         this.name = 'alias';
         controllerScope = $scope;
       }
 
-      module(function($compileProvider, $routeProvider) {
+      module(($compileProvider, $routeProvider) => {
         $routeProvider.when('/some', {templateUrl: '/tpl.html', controller: Ctrl, controllerAs: 'ctrl'});
       });
 
-      inject(function($route, $rootScope, $templateCache, $location) {
+      inject(($route, $rootScope, $templateCache, $location) => {
         $templateCache.put('/tpl.html', [200, '<div></div>', {}]);
         $location.path('/some');
         $rootScope.$digest();
@@ -104,15 +100,15 @@ describe('ngView', function() {
     });
 
 
-    it('should support string controller declaration', function() {
-      let MyCtrl = jasmine.createSpy('MyCtrl');
+    it('should support string controller declaration', () => {
+      const MyCtrl = jasmine.createSpy('MyCtrl');
 
-      module(function($controllerProvider, $routeProvider) {
+      module(($controllerProvider, $routeProvider) => {
         $controllerProvider.register('MyCtrl', ['$scope', MyCtrl]);
         $routeProvider.when('/foo', {controller: 'MyCtrl', templateUrl: '/tpl.html'});
       });
 
-      inject(function($route, $location, $rootScope, $templateCache) {
+      inject(($route, $location, $rootScope, $templateCache) => {
         $templateCache.put('/tpl.html', [200, '<div></div>', {}]);
         $location.path('/foo');
         $rootScope.$digest();
@@ -123,11 +119,11 @@ describe('ngView', function() {
     });
 
 
-    it('should reference resolved locals in scope', function() {
-      module(function($routeProvider) {
+    it('should reference resolved locals in scope', () => {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {
           resolve: {
-            name: function() {
+            name() {
               return 'shahar';
             }
           },
@@ -135,7 +131,7 @@ describe('ngView', function() {
         });
       });
 
-      inject(function($location, $rootScope) {
+      inject(($location, $rootScope) => {
         $location.path('/foo');
         $rootScope.$digest();
         expect(element.text()).toEqual('shahar');
@@ -143,12 +139,12 @@ describe('ngView', function() {
     });
 
 
-    it('should allow to provide an alias for resolved locals using resolveAs', function() {
-      module(function($routeProvider) {
+    it('should allow to provide an alias for resolved locals using resolveAs', () => {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {
           resolveAs: 'myResolve',
           resolve: {
-            name: function() {
+            name() {
               return 'shahar';
             }
           },
@@ -156,7 +152,7 @@ describe('ngView', function() {
         });
       });
 
-      inject(function($location, $rootScope) {
+      inject(($location, $rootScope) => {
         $location.path('/foo');
         $rootScope.$digest();
         expect(element.text()).toEqual('shahar');
@@ -164,13 +160,13 @@ describe('ngView', function() {
     });
 
 
-    it('should load content via xhr when route changes', function() {
-      module(function($routeProvider) {
+    it('should load content via xhr when route changes', () => {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {templateUrl: 'myUrl1'});
         $routeProvider.when('/bar', {templateUrl: 'myUrl2'});
       });
 
-      inject(function($rootScope, $compile, $httpBackend, $location, $route) {
+      inject(($rootScope, $compile, $httpBackend, $location, $route) => {
         expect(element.text()).toEqual('');
 
         $location.path('/foo');
@@ -188,14 +184,14 @@ describe('ngView', function() {
     });
 
 
-    it('should use inline content route changes', function() {
-      module(function($routeProvider) {
+    it('should use inline content route changes', () => {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {template: '<div>{{1+3}}</div>'});
         $routeProvider.when('/bar', {template: 'AngularJS is da best'});
         $routeProvider.when('/blank', {template: ''});
       });
 
-      inject(function($rootScope, $compile, $location, $route) {
+      inject(($rootScope, $compile, $location, $route) => {
         expect(element.text()).toEqual('');
 
         $location.path('/foo');
@@ -213,12 +209,12 @@ describe('ngView', function() {
     });
 
 
-    it('should remove all content when location changes to an unknown route', function() {
-      module(function($routeProvider) {
+    it('should remove all content when location changes to an unknown route', () => {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {templateUrl: 'myUrl1'});
       });
 
-      inject(function($rootScope, $compile, $location, $httpBackend, $route) {
+      inject(($rootScope, $compile, $location, $httpBackend, $route) => {
         $location.path('/foo');
         $httpBackend.expect('GET', 'myUrl1').respond('<div>{{1+3}}</div>');
         $rootScope.$digest();
@@ -232,12 +228,12 @@ describe('ngView', function() {
     });
 
 
-    it('should chain scopes and propagate evals to the child scope', function() {
-      module(function($routeProvider) {
+    it('should chain scopes and propagate evals to the child scope', () => {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {templateUrl: 'myUrl1'});
       });
 
-      inject(function($rootScope, $compile, $location, $httpBackend, $route) {
+      inject(($rootScope, $compile, $location, $httpBackend, $route) => {
         $rootScope.parentVar = 'parent';
 
         $location.path('/foo');
@@ -253,18 +249,18 @@ describe('ngView', function() {
     });
 
 
-    it('should be possible to nest ngView in ngInclude', function() {
+    it('should be possible to nest ngView in ngInclude', () => {
 
-      module(function($routeProvider) {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {templateUrl: 'viewPartial.html'});
       });
 
-      inject(function($httpBackend, $location, $route, $compile, $rootScope) {
+      inject(($httpBackend, $location, $route, $compile, $rootScope) => {
         $httpBackend.whenGET('includePartial.html').respond('view: <ng:view></ng:view>');
         $httpBackend.whenGET('viewPartial.html').respond('content');
         $location.path('/foo');
 
-        let elm = $compile(
+        const elm = $compile(
           '<div>' +
             'include: <ng:include src="\'includePartial.html\'"> </ng:include>' +
           '</div>')($rootScope);
@@ -279,18 +275,18 @@ describe('ngView', function() {
 
 
     it('should initialize view template after the view controller was initialized even when ' +
-      'templates were cached', function() {
-      //this is a test for a regression that was introduced by making the ng-view cache sync
+      'templates were cached', () => {
+      // this is a test for a regression that was introduced by making the ng-view cache sync
       function ParentCtrl($scope) {
         $scope.log.push('parent');
       }
 
-      module(function($routeProvider) {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {controller: ParentCtrl, templateUrl: 'viewPartial.html'});
       });
 
 
-      inject(function($rootScope, $compile, $location, $httpBackend, $route) {
+      inject(($rootScope, $compile, $location, $httpBackend, $route) => {
         $rootScope.log = [];
 
         $rootScope.ChildCtrl = function($scope) {
@@ -321,15 +317,15 @@ describe('ngView', function() {
 
 
     it('should discard pending xhr callbacks if a new route is requested before the current ' +
-        'finished loading',  function() {
+        'finished loading',  () => {
       // this is a test for a bad race condition that affected feedback
 
-      module(function($routeProvider) {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {templateUrl: 'myUrl1'});
         $routeProvider.when('/bar', {templateUrl: 'myUrl2'});
       });
 
-      inject(function($route, $rootScope, $location, $httpBackend) {
+      inject(($route, $rootScope, $location, $httpBackend) => {
         expect(element.text()).toEqual('');
 
         $location.path('/foo');
@@ -345,18 +341,18 @@ describe('ngView', function() {
     });
 
 
-    it('should be async even if served from cache', function() {
-      module(function($routeProvider) {
+    it('should be async even if served from cache', () => {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {controller: angular.noop, templateUrl: 'myUrl1'});
       });
 
-      inject(function($route, $rootScope, $location, $templateCache) {
+      inject(($route, $rootScope, $location, $templateCache) => {
         $templateCache.put('myUrl1', [200, 'my partial', {}]);
         $location.path('/foo');
 
         let called = 0;
         // we want to assert only during first watch
-        $rootScope.$watch(function() {
+        $rootScope.$watch(() => {
           if (!called) expect(element.text()).toBe('');
           called++;
         });
@@ -366,23 +362,23 @@ describe('ngView', function() {
       });
     });
 
-    it('should fire $contentLoaded event when content compiled and linked', function() {
-      let log = [];
-      let logger = function(name) {
+    it('should fire $contentLoaded event when content compiled and linked', () => {
+      const log = [];
+      const logger = function(name) {
         return function() {
           log.push(name);
         };
       };
-      let Ctrl = function($scope) {
+      const Ctrl = function($scope) {
         $scope.value = 'bound-value';
         log.push('init-ctrl');
       };
 
-      module(function($routeProvider) {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {templateUrl: 'tpl.html', controller: Ctrl});
       });
 
-      inject(function($templateCache, $rootScope, $location) {
+      inject(($templateCache, $rootScope, $location) => {
         $rootScope.$on('$routeChangeStart', logger('$routeChangeStart'));
         $rootScope.$on('$routeChangeSuccess', logger('$routeChangeSuccess'));
         $rootScope.$on('$viewContentLoaded', logger('$viewContentLoaded'));
@@ -398,12 +394,12 @@ describe('ngView', function() {
       });
     });
 
-    it('should destroy previous scope', function() {
-      module(function($routeProvider) {
+    it('should destroy previous scope', () => {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {templateUrl: 'tpl.html'});
       });
 
-      inject(function($templateCache, $rootScope, $location) {
+      inject(($templateCache, $rootScope, $location) => {
         $templateCache.put('tpl.html', [200, 'partial', {}]);
 
         expect($rootScope.$$childHead).toBeNull();
@@ -427,21 +423,21 @@ describe('ngView', function() {
 
 
     it('should destroy previous scope if multiple route changes occur before server responds',
-        function() {
-      let log = [];
-      let createCtrl = function(name) {
+        () => {
+      const log = [];
+      const createCtrl = function(name) {
         return function($scope) {
-          log.push('init-' + name);
-          $scope.$on('$destroy', function() {log.push('destroy-' + name);});
+          log.push(`init-${  name}`);
+          $scope.$on('$destroy', () => {log.push(`destroy-${  name}`);});
         };
       };
 
-      module(function($routeProvider) {
+      module(($routeProvider) => {
         $routeProvider.when('/one', {templateUrl: 'one.html', controller: createCtrl('ctrl1')});
         $routeProvider.when('/two', {templateUrl: 'two.html', controller: createCtrl('ctrl2')});
       });
 
-      inject(function($httpBackend, $rootScope, $location) {
+      inject(($httpBackend, $rootScope, $location) => {
         $httpBackend.whenGET('one.html').respond('content 1');
         $httpBackend.whenGET('two.html').respond('content 2');
 
@@ -466,10 +462,10 @@ describe('ngView', function() {
     });
 
 
-    it('should $destroy scope after update and reload',  function() {
+    it('should $destroy scope after update and reload',  () => {
       // this is a regression of bug, where $route doesn't copy scope when only updating
 
-      let log = [];
+      const log = [];
 
       function logger(msg) {
         return function() {
@@ -479,13 +475,13 @@ describe('ngView', function() {
 
       function createController(name) {
         return function($scope) {
-          log.push('init-' + name);
-          $scope.$on('$destroy', logger('destroy-' + name));
+          log.push(`init-${  name}`);
+          $scope.$on('$destroy', logger(`destroy-${  name}`));
           $scope.$on('$routeUpdate', logger('route-update'));
         };
       }
 
-      module(function($routeProvider) {
+      module(($routeProvider) => {
         $routeProvider.when('/bar', {templateUrl: 'tpl.html', controller: createController('bar')});
         $routeProvider.when('/foo', {
           templateUrl: 'tpl.html',
@@ -494,7 +490,7 @@ describe('ngView', function() {
         });
       });
 
-      inject(function($templateCache, $location, $rootScope) {
+      inject(($templateCache, $location, $rootScope) => {
         $templateCache.put('tpl.html', [200, 'partial', {}]);
 
         $location.url('/foo');
@@ -512,12 +508,12 @@ describe('ngView', function() {
     });
 
 
-    it('should evaluate onload expression after linking the content', function() {
-      module(function($routeProvider) {
+    it('should evaluate onload expression after linking the content', () => {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {templateUrl: 'tpl.html'});
       });
 
-      inject(function($templateCache, $location, $rootScope) {
+      inject(($templateCache, $location, $rootScope) => {
         $templateCache.put('tpl.html', [200, '{{1+1}}', {}]);
         $rootScope.load = jasmine.createSpy('onload');
 
@@ -528,17 +524,17 @@ describe('ngView', function() {
     });
 
 
-    it('should set $scope and $controllerController on the view elements (except for non-element nodes)', function() {
+    it('should set $scope and $controllerController on the view elements (except for non-element nodes)', () => {
       function MyCtrl($scope) {
         $scope.state = 'WORKS';
         $scope.ctrl = this;
       }
 
-      module(function($routeProvider) {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {templateUrl: 'tpl.html', controller: MyCtrl});
       });
 
-      inject(function($templateCache, $location, $rootScope, $route) {
+      inject(($templateCache, $location, $rootScope, $route) => {
         // in the template the white-space before the div is an intentional non-element node,
         // a text might get wrapped into span so it's safer to just use white space
         $templateCache.put('tpl.html', [200, '   \n   <div>{{state}}</div>', {}]);
@@ -547,7 +543,7 @@ describe('ngView', function() {
         $rootScope.$digest();
         expect(element.text()).toEqual('   \n   WORKS');
 
-        let div = element.find('div');
+        const div = element.find('div');
         expect(div.parent()[0].nodeName.toUpperCase()).toBeOneOf('NG:VIEW', 'VIEW');
 
         expect(div.scope()).toBe($route.current.scope);
@@ -558,19 +554,19 @@ describe('ngView', function() {
       });
     });
 
-    it('should not set $scope or $controllerController on top level text elements in the view', function() {
+    it('should not set $scope or $controllerController on top level text elements in the view', () => {
       function MyCtrl($scope) {}
 
-      module(function($routeProvider) {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {templateUrl: 'tpl.html', controller: MyCtrl});
       });
 
-      inject(function($templateCache, $location, $rootScope, $route) {
+      inject(($templateCache, $location, $rootScope, $route) => {
         $templateCache.put('tpl.html', '<div></div>  ');
         $location.url('/foo');
         $rootScope.$digest();
 
-        angular.forEach(element.contents(), function(node) {
+        angular.forEach(element.contents(), (node) => {
           if (node.nodeType === 3 /* text node */) {
             expect(angular.element(node).scope()).not.toBe($route.current.scope);
             expect(angular.element(node).controller()).not.toBeDefined();
@@ -586,14 +582,14 @@ describe('ngView', function() {
     });
 
 
-    it('should not trigger a digest when the view is changed', function() {
-      module(function($routeProvider) {
+    it('should not trigger a digest when the view is changed', () => {
+      module(($routeProvider) => {
         $routeProvider.when('/foo', {templateUrl: 'myUrl1'});
         $routeProvider.when('/bar', {templateUrl: 'myUrl2'});
       });
 
-      inject(function($$rAF, $templateCache, $rootScope, $compile, $timeout, $location, $httpBackend) {
-        let spy = spyOn($rootScope, '$digest').and.callThrough();
+      inject(($$rAF, $templateCache, $rootScope, $compile, $timeout, $location, $httpBackend) => {
+        const spy = spyOn($rootScope, '$digest').and.callThrough();
 
         $templateCache.put('myUrl1', 'my template content');
         $templateCache.put('myUrl2', 'my other template content');
@@ -620,44 +616,40 @@ describe('ngView', function() {
 
   });
 
-  describe('and transcludes', function() {
-    let element, directive;
+  describe('and transcludes', () => {
+    let element; let directive;
 
-    beforeEach(module('ngRoute', function($compileProvider) {
+    beforeEach(module('ngRoute', ($compileProvider) => {
       element = null;
       directive = $compileProvider.directive;
     }));
 
-    afterEach(function() {
+    afterEach(() => {
       if (element) {
         dealoc(element);
       }
     });
 
-    it('should allow access to directive controller from children when used in a replace template', function() {
+    it('should allow access to directive controller from children when used in a replace template', () => {
       let controller;
-      module(function($routeProvider) {
+      module(($routeProvider) => {
         $routeProvider.when('/view', {templateUrl: 'view.html'});
-        directive('template', function() {
-          return {
+        directive('template', () => ({
             template: '<div ng-view></div>',
             replace: true,
-            controller: function() {
+            controller() {
               this.flag = true;
             }
-          };
-        });
+          }));
 
-        directive('test', function() {
-          return {
+        directive('test', () => ({
             require: '^template',
-            link: function(scope, el, attr, ctrl) {
+            link(scope, el, attr, ctrl) {
               controller = ctrl;
             }
-          };
-        });
+          }));
       });
-      inject(function($compile, $rootScope, $httpBackend, $location) {
+      inject(($compile, $rootScope, $httpBackend, $location) => {
         $httpBackend.expectGET('view.html').respond('<div><div test></div></div>');
         element = $compile('<div><div template></div></div>')($rootScope);
         $location.url('/view');
@@ -667,20 +659,18 @@ describe('ngView', function() {
       });
     });
 
-    it('should compile its content correctly (although we remove it later)', function() {
+    it('should compile its content correctly (although we remove it later)', () => {
       let testElement;
-      module(function($compileProvider, $routeProvider) {
+      module(($compileProvider, $routeProvider) => {
         $routeProvider.when('/view', {template: ' '});
-        let directive = $compileProvider.directive;
-        directive('test', function() {
-          return {
-            link: function(scope, element) {
+        const {directive} = $compileProvider;
+        directive('test', () => ({
+            link(scope, element) {
               testElement = element;
             }
-          };
-        });
+          }));
       });
-      inject(function($compile, $rootScope, $location) {
+      inject(($compile, $rootScope, $location) => {
         element = $compile('<div><div ng-view><div test someAttr></div></div></div>')($rootScope);
         $location.url('/view');
         $rootScope.$apply();
@@ -689,19 +679,17 @@ describe('ngView', function() {
 
     });
 
-    it('should link directives on the same element after the content has been loaded', function() {
+    it('should link directives on the same element after the content has been loaded', () => {
       let contentOnLink;
-      module(function($compileProvider, $routeProvider) {
+      module(($compileProvider, $routeProvider) => {
         $routeProvider.when('/view', {template: 'someContent'});
-        $compileProvider.directive('test', function() {
-          return {
-            link: function(scope, element) {
+        $compileProvider.directive('test', () => ({
+            link(scope, element) {
               contentOnLink = element.text();
             }
-          };
-        });
+          }));
       });
-      inject(function($compile, $rootScope, $location) {
+      inject(($compile, $rootScope, $location) => {
         element = $compile('<div><div ng-view test></div>')($rootScope);
         $location.url('/view');
         $rootScope.$apply();
@@ -709,19 +697,17 @@ describe('ngView', function() {
       });
     });
 
-    it('should add the content to the element before compiling it', function() {
+    it('should add the content to the element before compiling it', () => {
       let root;
-      module(function($compileProvider, $routeProvider) {
+      module(($compileProvider, $routeProvider) => {
         $routeProvider.when('/view', {template: '<span test></span>'});
-        $compileProvider.directive('test', function() {
-          return {
-            link: function(scope, element) {
+        $compileProvider.directive('test', () => ({
+            link(scope, element) {
               root = element.parent().parent();
             }
-          };
-        });
+          }));
       });
-      inject(function($compile, $rootScope, $location) {
+      inject(($compile, $rootScope, $location) => {
         element = $compile('<div><div ng-view></div>')($rootScope);
         $location.url('/view');
         $rootScope.$apply();
@@ -730,8 +716,8 @@ describe('ngView', function() {
     });
   });
 
-  describe('animations', function() {
-    let body, element, $rootElement;
+  describe('animations', () => {
+    let body; let element; let $rootElement;
 
     beforeEach(module('ngRoute'));
 
@@ -742,21 +728,21 @@ describe('ngView', function() {
       return element;
     }
 
-    beforeEach(module(function() {
+    beforeEach(module(() => 
       // we need to run animation on attached elements;
-      return function(_$rootElement_) {
+       function(_$rootElement_) {
         $rootElement = _$rootElement_;
         body = angular.element(window.document.body);
-      };
-    }));
+      }
+    ));
 
-    afterEach(function() {
+    afterEach(() => {
       dealoc(body);
       dealoc(element);
     });
 
 
-    beforeEach(module(function($provide, $routeProvider) {
+    beforeEach(module(($provide, $routeProvider) => {
       $routeProvider.when('/foo', {controller: angular.noop, templateUrl: '/foo.html'});
       $routeProvider.when('/bar', {controller: angular.noop, templateUrl: '/bar.html'});
       return function($templateCache) {
@@ -765,23 +751,23 @@ describe('ngView', function() {
       };
     }));
 
-    describe('hooks', function() {
+    describe('hooks', () => {
       beforeEach(module('ngAnimate'));
       beforeEach(module('ngAnimateMock'));
 
       it('should fire off the enter animation',
-          inject(function($compile, $rootScope, $location, $timeout, $animate) {
+          inject(($compile, $rootScope, $location, $timeout, $animate) => {
             element = $compile(html('<div ng-view></div>'))($rootScope);
 
             $location.path('/foo');
             $rootScope.$digest();
 
-            let animation = $animate.queue.pop();
+            const animation = $animate.queue.pop();
             expect(animation.event).toBe('enter');
           }));
 
       it('should fire off the leave animation',
-          inject(function($compile, $rootScope, $location, $templateCache, $timeout, $animate) {
+          inject(($compile, $rootScope, $location, $templateCache, $timeout, $animate) => {
 
         let item;
         $templateCache.put('/foo.html', [200, '<div>foo</div>', {}]);
@@ -794,12 +780,12 @@ describe('ngView', function() {
         $location.path('/');
         $rootScope.$digest();
 
-        let animation = $animate.queue.pop();
+        const animation = $animate.queue.pop();
         expect(animation.event).toBe('leave');
       }));
 
       it('should animate two separate ngView elements',
-        inject(function($compile, $rootScope, $templateCache, $location, $animate) {
+        inject(($compile, $rootScope, $templateCache, $location, $animate) => {
           let item;
           $rootScope.tpl = 'one';
           element = $compile(html('<div ng-view></div>'))($rootScope);
@@ -808,26 +794,26 @@ describe('ngView', function() {
           $location.path('/foo');
           $rootScope.$digest();
 
-          //we don't care about the enter animation for the first element
+          // we don't care about the enter animation for the first element
           $animate.queue.pop();
 
           $location.path('/bar');
           $rootScope.$digest();
 
-          let animationB = $animate.queue.pop();
+          const animationB = $animate.queue.pop();
           expect(animationB.event).toBe('leave');
-          let itemB = animationB.args[0];
+          const itemB = animationB.args[0];
 
-          let animationA = $animate.queue.pop();
+          const animationA = $animate.queue.pop();
           expect(animationA.event).toBe('enter');
-          let itemA = animationA.args[0];
+          const itemA = animationA.args[0];
 
           expect(itemA).not.toEqual(itemB);
         })
       );
 
       it('should render ngClass on ngView',
-        inject(function($compile, $rootScope, $templateCache, $animate, $location) {
+        inject(($compile, $rootScope, $templateCache, $animate, $location) => {
 
           let item;
           $rootScope.tpl = 'one';
@@ -839,7 +825,7 @@ describe('ngView', function() {
           $rootScope.$digest();
           $animate.flush();
 
-          //we don't care about the enter animation
+          // we don't care about the enter animation
           $animate.queue.shift();
 
           let animation = $animate.queue.shift();
@@ -862,7 +848,7 @@ describe('ngView', function() {
           $location.path('/bar');
           $rootScope.$digest();
 
-          //we don't care about the enter animation
+          // we don't care about the enter animation
           $animate.queue.shift();
 
           animation = $animate.queue.shift();
@@ -875,44 +861,42 @@ describe('ngView', function() {
         })
       );
 
-      it('should not double compile when the route changes', function() {
+      it('should not double compile when the route changes', () => {
 
         let window;
-        module(function($routeProvider, $animateProvider, $provide) {
+        module(($routeProvider, $animateProvider, $provide) => {
           $routeProvider.when('/foo', {template: '<div ng-repeat="i in [1,2]">{{i}}</div>'});
           $routeProvider.when('/bar', {template: '<div ng-repeat="i in [3,4]">{{i}}</div>'});
-          $animateProvider.register('.my-animation', function() {
-            return {
-              leave: function(element, done) {
+          $animateProvider.register('.my-animation', () => ({
+              leave(element, done) {
                 done();
               }
-            };
-          });
+            }));
         });
 
-        inject(function($rootScope, $compile, $location, $route, $timeout, $rootElement, $sniffer, $animate) {
+        inject(($rootScope, $compile, $location, $route, $timeout, $rootElement, $sniffer, $animate) => {
           element = $compile(html('<div><ng:view onload="load()" class="my-animation"></ng:view></div>'))($rootScope);
           $animate.enabled(true);
 
           $location.path('/foo');
           $rootScope.$digest();
 
-          expect($animate.queue.shift().event).toBe('enter'); //ngView
-          expect($animate.queue.shift().event).toBe('enter'); //repeat 1
-          expect($animate.queue.shift().event).toBe('enter'); //repeat 2
+          expect($animate.queue.shift().event).toBe('enter'); // ngView
+          expect($animate.queue.shift().event).toBe('enter'); // repeat 1
+          expect($animate.queue.shift().event).toBe('enter'); // repeat 2
 
           expect(element.text()).toEqual('12');
 
           $location.path('/bar');
           $rootScope.$digest();
 
-          expect($animate.queue.shift().event).toBe('enter'); //ngView new
-          expect($animate.queue.shift().event).toBe('leave'); //ngView old
+          expect($animate.queue.shift().event).toBe('enter'); // ngView new
+          expect($animate.queue.shift().event).toBe('leave'); // ngView old
 
           $rootScope.$digest();
 
-          expect($animate.queue.shift().event).toBe('enter'); //ngRepeat 3
-          expect($animate.queue.shift().event).toBe('enter'); //ngRepeat 4
+          expect($animate.queue.shift().event).toBe('enter'); // ngRepeat 3
+          expect($animate.queue.shift().event).toBe('enter'); // ngRepeat 4
 
           $animate.flush();
 
@@ -925,8 +909,8 @@ describe('ngView', function() {
       });
 
       it('should destroy the previous leave animation if a new one takes place',
-        inject(function($compile, $rootScope, $animate, $location, $timeout) {
-          let $scope = $rootScope.$new();
+        inject(($compile, $rootScope, $animate, $location, $timeout) => {
+          const $scope = $rootScope.$new();
           element = $compile(html(
             '<div>' +
               '<div ng-view></div>' +
@@ -938,8 +922,8 @@ describe('ngView', function() {
           $location.path('/bar');
           $rootScope.$digest();
 
-          let destroyed, inner = element.children(0);
-          inner.on('$destroy', function() {
+          let destroyed; const inner = element.children(0);
+          inner.on('$destroy', () => {
             destroyed = true;
           });
 
@@ -958,7 +942,7 @@ describe('ngView', function() {
     });
 
 
-    describe('autoscroll', function() {
+    describe('autoscroll', () => {
       let autoScrollSpy;
 
       function spyOnAnchorScroll() {
@@ -989,7 +973,7 @@ describe('ngView', function() {
 
       it('should call $anchorScroll if autoscroll attribute is present', inject(
           compileAndLink('<div><ng:view autoscroll></ng:view></div>'),
-          function($rootScope, $animate, $timeout, $location) {
+          ($rootScope, $animate, $timeout, $location) => {
 
         $location.path('/foo');
         $rootScope.$digest();
@@ -1004,7 +988,7 @@ describe('ngView', function() {
 
       it('should call $anchorScroll if autoscroll evaluates to true', inject(
           compileAndLink('<div><ng:view src="tpl" autoscroll="value"></ng:view></div>'),
-          function($rootScope, $animate, $timeout, $location) {
+          ($rootScope, $animate, $timeout, $location) => {
 
         $rootScope.value = true;
         $location.path('/foo');
@@ -1020,7 +1004,7 @@ describe('ngView', function() {
 
       it('should not call $anchorScroll if autoscroll attribute is not present', inject(
           compileAndLink('<div><ng:view></ng:view></div>'),
-          function($rootScope, $location, $animate, $timeout) {
+          ($rootScope, $location, $animate, $timeout) => {
 
         $location.path('/foo');
         $rootScope.$digest();
@@ -1032,7 +1016,7 @@ describe('ngView', function() {
 
       it('should not call $anchorScroll if autoscroll evaluates to false', inject(
           compileAndLink('<div><ng:view autoscroll="value"></ng:view></div>'),
-          function($rootScope, $location, $animate, $timeout) {
+          ($rootScope, $location, $animate, $timeout) => {
 
         $rootScope.value = false;
         $location.path('/foo');
@@ -1045,7 +1029,7 @@ describe('ngView', function() {
 
       it('should only call $anchorScroll after the "enter" animation completes', inject(
         compileAndLink('<div><ng:view autoscroll></ng:view></div>'),
-        function($rootScope, $location, $animate, $timeout) {
+        ($rootScope, $location, $animate, $timeout) => {
           $location.path('/foo');
 
           expect($animate.enter).not.toHaveBeenCalled();
@@ -1065,18 +1049,14 @@ describe('ngView', function() {
     });
   });
 
-  describe('in async template', function() {
+  describe('in async template', () => {
     beforeEach(module('ngRoute'));
-    beforeEach(module(function($compileProvider, $provide, $routeProvider) {
-      $compileProvider.directive('asyncView', function() {
-        return {templateUrl: 'async-view.html'};
-      });
+    beforeEach(module(($compileProvider, $provide, $routeProvider) => {
+      $compileProvider.directive('asyncView', () => ({templateUrl: 'async-view.html'}));
 
-      $provide.decorator('$templateRequest', function($timeout) {
-        return function() {
+      $provide.decorator('$templateRequest', ($timeout) => function() {
           return $timeout(angular.identity, 500, false, '<ng-view></ng-view>');
-        };
-      });
+        });
 
       $routeProvider.when('/', {template: 'Hello, world!'});
     }));
@@ -1084,8 +1064,8 @@ describe('ngView', function() {
 
     it('should work correctly upon initial page load',
       // Injecting `$location` here is necessary, so that it gets instantiated early
-      inject(function($compile, $location, $rootScope, $timeout) {
-        let elem = $compile('<async-view></async-view>')($rootScope);
+      inject(($compile, $location, $rootScope, $timeout) => {
+        const elem = $compile('<async-view></async-view>')($rootScope);
         $rootScope.$digest();
         $timeout.flush(500);
 

@@ -128,15 +128,15 @@
 angular.module("ngSanitize").filter("linky", [
   "$sanitize",
   function ($sanitize) {
-    let LINKY_URL_REGEXP =
-        /((s?ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"\u201d\u2019]/i,
-      MAILTO_REGEXP = /^mailto:/i;
+    const LINKY_URL_REGEXP =
+      /((s?ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"\u201d\u2019]/i;
+    const MAILTO_REGEXP = /^mailto:/i;
 
-    let linkyMinErr = angular.$$minErr("linky");
-    let isDefined = angular.isDefined;
-    let isFunction = angular.isFunction;
-    let isObject = angular.isObject;
-    let isString = angular.isString;
+    const linkyMinErr = angular.$$minErr("linky");
+    const { isDefined } = angular;
+    const { isFunction } = angular;
+    const { isObject } = angular;
+    const { isString } = angular;
 
     return function (text, target, attributes) {
       if (text == null || text === "") return text;
@@ -147,7 +147,7 @@ angular.module("ngSanitize").filter("linky", [
           text,
         );
 
-      let attributesFn = isFunction(attributes)
+      const attributesFn = isFunction(attributes)
         ? attributes
         : isObject(attributes)
           ? function getAttributesObject() {
@@ -159,7 +159,7 @@ angular.module("ngSanitize").filter("linky", [
 
       let match;
       let raw = text;
-      let html = [];
+      const html = [];
       let url;
       let i;
       while ((match = raw.match(LINKY_URL_REGEXP))) {
@@ -185,12 +185,12 @@ angular.module("ngSanitize").filter("linky", [
       }
 
       function addLink(url, text) {
-        let key,
-          linkAttributes = attributesFn(url);
+        let key;
+        const linkAttributes = attributesFn(url);
         html.push("<a ");
 
         for (key in linkAttributes) {
-          html.push(key + '="' + linkAttributes[key] + '" ');
+          html.push(`${key}="${linkAttributes[key]}" `);
         }
 
         if (isDefined(target) && !("target" in linkAttributes)) {

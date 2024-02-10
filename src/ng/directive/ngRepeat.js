@@ -428,15 +428,15 @@
       </file>
     </example>
  */
-let ngRepeatDirective = [
+const ngRepeatDirective = [
   "$parse",
   "$animate",
   "$compile",
   function ($parse, $animate, $compile) {
-    let NG_REMOVED = "$$NG_REMOVED";
-    let ngRepeatMinErr = minErr("ngRepeat");
+    const NG_REMOVED = "$$NG_REMOVED";
+    const ngRepeatMinErr = minErr("ngRepeat");
 
-    let updateScope = function (
+    const updateScope = function (
       scope,
       index,
       valueIdentifier,
@@ -456,19 +456,19 @@ let ngRepeatDirective = [
       scope.$odd = !(scope.$even = (index & 1) === 0);
     };
 
-    let getBlockStart = function (block) {
+    const getBlockStart = function (block) {
       return block.clone[0];
     };
 
-    let getBlockEnd = function (block) {
+    const getBlockEnd = function (block) {
       return block.clone[block.clone.length - 1];
     };
 
-    let trackByIdArrayFn = function ($scope, key, value) {
+    const trackByIdArrayFn = function ($scope, key, value) {
       return hashKey(value);
     };
 
-    let trackByIdObjFn = function ($scope, key) {
+    const trackByIdObjFn = function ($scope, key) {
       return key;
     };
 
@@ -480,8 +480,8 @@ let ngRepeatDirective = [
       terminal: true,
       $$tlb: true,
       compile: function ngRepeatCompile($element, $attr) {
-        let expression = $attr.ngRepeat;
-        let ngRepeatEndComment = $compile.$$createComment(
+        const expression = $attr.ngRepeat;
+        const ngRepeatEndComment = $compile.$$createComment(
           "end ngRepeat",
           expression,
         );
@@ -498,10 +498,10 @@ let ngRepeatDirective = [
           );
         }
 
-        let lhs = match[1];
-        let rhs = match[2];
-        let aliasAs = match[3];
-        let trackByExp = match[4];
+        const lhs = match[1];
+        const rhs = match[2];
+        const aliasAs = match[3];
+        const trackByExp = match[4];
 
         match = lhs.match(
           /^(?:(\s*[$\w]+)|\(\s*([$\w]+)\s*,\s*([$\w]+)\s*\))$/,
@@ -514,8 +514,8 @@ let ngRepeatDirective = [
             lhs,
           );
         }
-        let valueIdentifier = match[3] || match[1];
-        let keyIdentifier = match[2];
+        const valueIdentifier = match[3] || match[1];
+        const keyIdentifier = match[2];
 
         if (
           aliasAs &&
@@ -534,8 +534,8 @@ let ngRepeatDirective = [
         let trackByIdExpFn;
 
         if (trackByExp) {
-          let hashFnLocals = { $id: hashKey };
-          let trackByExpGetter = $parse(trackByExp);
+          const hashFnLocals = { $id: hashKey };
+          const trackByExpGetter = $parse(trackByExp);
 
           trackByIdExpFn = function ($scope, key, value, index) {
             // assign key, value, and $index to the locals so that they can be used in hash functions
@@ -563,25 +563,25 @@ let ngRepeatDirective = [
           // hasOwnProperty.
           let lastBlockMap = createMap();
 
-          //watch props
-          $scope.$watchCollection(rhs, function ngRepeatAction(collection) {
-            let index,
-              length,
-              previousNode = $element[0], // node that cloned nodes should be inserted after
-              // initialized to the comment node anchor
-              nextNode,
-              // Same as lastBlockMap but it has the current state. It will become the
-              // lastBlockMap on the next iteration.
-              nextBlockMap = createMap(),
-              collectionLength,
-              key,
-              value, // key/value of iteration
-              trackById,
-              trackByIdFn,
-              collectionKeys,
-              block, // last object information {scope, element, id}
-              nextBlockOrder,
-              elementsToRemove;
+          // watch props
+          $scope.$watchCollection(rhs, (collection) => {
+            let index;
+            let length;
+            let previousNode = $element[0]; // node that cloned nodes should be inserted after
+            // initialized to the comment node anchor
+            let nextNode;
+            // Same as lastBlockMap but it has the current state. It will become the
+            // lastBlockMap on the next iteration.
+            const nextBlockMap = createMap();
+            let collectionLength;
+            let key;
+            let value; // key/value of iteration
+            let trackById;
+            let trackByIdFn;
+            let collectionKeys;
+            let block; // last object information {scope, element, id}
+            let nextBlockOrder;
+            let elementsToRemove;
 
             if (aliasAs) {
               $scope[aliasAs] = collection;
@@ -594,7 +594,7 @@ let ngRepeatDirective = [
               trackByIdFn = trackByIdExpFn || trackByIdObjFn;
               // if object, extract keys, in enumeration order, unsorted
               collectionKeys = [];
-              for (let itemKey in collection) {
+              for (const itemKey in collection) {
                 if (
                   hasOwnProperty.call(collection, itemKey) &&
                   itemKey.charAt(0) !== "$"
@@ -621,7 +621,7 @@ let ngRepeatDirective = [
                 nextBlockOrder[index] = block;
               } else if (nextBlockMap[trackById]) {
                 // if collision detected. restore lastBlockMap and throw an error
-                forEach(nextBlockOrder, function (block) {
+                forEach(nextBlockOrder, (block) => {
                   if (block && block.scope) lastBlockMap[block.id] = block;
                 });
                 throw ngRepeatMinErr(
@@ -649,7 +649,7 @@ let ngRepeatDirective = [
             }
 
             // remove leftover items
-            for (let blockKey in lastBlockMap) {
+            for (const blockKey in lastBlockMap) {
               block = lastBlockMap[blockKey];
               elementsToRemove = getBlockNodes(block.clone);
               $animate.leave(elementsToRemove);
@@ -701,10 +701,10 @@ let ngRepeatDirective = [
                 );
               } else {
                 // new item which we don't know about
-                $transclude(function ngRepeatTransclude(clone, scope) {
+                $transclude((clone, scope) => {
                   block.scope = scope;
                   // http://jsperf.com/clone-vs-createcomment
-                  let endNode = ngRepeatEndComment.cloneNode(false);
+                  const endNode = ngRepeatEndComment.cloneNode(false);
                   clone[clone.length++] = endNode;
 
                   $animate.enter(clone, null, previousNode);

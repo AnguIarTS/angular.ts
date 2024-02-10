@@ -1,43 +1,43 @@
 
 
-describe('angular.version', function() {
+describe('angular.version', () => {
   let version;
 
-  beforeEach(function() {
+  beforeEach(() => {
     loadFixture('version');
     version = browser.driver.executeScript('return angular.version');
   });
 
 
-  it('should expose the current version as object', function() {
+  it('should expose the current version as object', () => {
     expect(version).toEqual(jasmine.any(Object));
   });
 
-  it('should contain property `full` (string)', function() {
+  it('should contain property `full` (string)', () => {
     expect(version.then(get('full'))).toEqual(jasmine.any(String));
   });
 
-  it('should contain property `major` (number)', function() {
+  it('should contain property `major` (number)', () => {
     expect(version.then(get('major'))).toEqual(jasmine.any(Number));
   });
 
-  it('should contain property `minor` (number)', function() {
+  it('should contain property `minor` (number)', () => {
     expect(version.then(get('minor'))).toEqual(jasmine.any(Number));
   });
 
-  it('should contain property `dot` (number)', function() {
+  it('should contain property `dot` (number)', () => {
     expect(version.then(get('dot'))).toEqual(jasmine.any(Number));
   });
 
-  it('should contain property `codeName` (string)', function() {
+  it('should contain property `codeName` (string)', () => {
     expect(version.then(get('codeName'))).toEqual(jasmine.any(String));
   });
 
-  it('should not contain "NG_VERSION_" in `codeName`', function() {
+  it('should not contain "NG_VERSION_" in `codeName`', () => {
     expect(version.then(get('codeName'))).not.toMatch(/NG_VERSION_/);
   });
 
-  it('\'s `full` property should start with `"major.minor.dot"`', function() {
+  it('\'s `full` property should start with `"major.minor.dot"`', () => {
     expect(version.then(validate)).toBe(true);
 
     function validate(ver) {

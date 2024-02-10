@@ -2,7 +2,7 @@
 
 angular
   .module('test', [])
-  .run(function($rootScope) {
+  .run(($rootScope) => {
     $rootScope.internalFnCalled = false;
 
     $rootScope.internalFn = function() {

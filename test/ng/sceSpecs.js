@@ -2,38 +2,38 @@
 
 /* eslint-disable no-script-url */
 
-describe('SCE', function() {
+describe('SCE', () => {
 
-  describe('when disabled', function() {
-    beforeEach(function() {
-      module(function($sceProvider) {
+  describe('when disabled', () => {
+    beforeEach(() => {
+      module(($sceProvider) => {
         $sceProvider.enabled(false);
       });
     });
 
-    it('should provide the getter for enabled', inject(function($sce) {
+    it('should provide the getter for enabled', inject(($sce) => {
       expect($sce.isEnabled()).toBe(false);
     }));
 
-    it('should not wrap/unwrap any value or throw exception on non-string values', inject(function($sce) {
-      let originalValue = { foo: 'bar' };
+    it('should not wrap/unwrap any value or throw exception on non-string values', inject(($sce) => {
+      const originalValue = { foo: 'bar' };
       expect($sce.trustAs($sce.JS, originalValue)).toBe(originalValue);
       expect($sce.getTrusted($sce.JS, originalValue)).toBe(originalValue);
     }));
   });
 
-  describe('when enabled', function() {
-    it('should wrap string values with TrustedValueHolder', inject(function($sce) {
-      let originalValue = 'original_value';
+  describe('when enabled', () => {
+    it('should wrap string values with TrustedValueHolder', inject(($sce) => {
+      const originalValue = 'original_value';
       let wrappedValue = $sce.trustAs($sce.HTML, originalValue);
       expect(typeof wrappedValue).toBe('object');
       expect($sce.getTrusted($sce.HTML, wrappedValue)).toBe('original_value');
-      expect(function() { $sce.getTrusted($sce.CSS, wrappedValue); }).toThrowMinErr(
+      expect(() => { $sce.getTrusted($sce.CSS, wrappedValue); }).toThrowMinErr(
           '$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
       wrappedValue = $sce.trustAs($sce.CSS, originalValue);
       expect(typeof wrappedValue).toBe('object');
       expect($sce.getTrusted($sce.CSS, wrappedValue)).toBe('original_value');
-      expect(function() { $sce.getTrusted($sce.HTML, wrappedValue); }).toThrowMinErr(
+      expect(() => { $sce.getTrusted($sce.HTML, wrappedValue); }).toThrowMinErr(
           '$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
       wrappedValue = $sce.trustAs($sce.URL, originalValue);
       expect(typeof wrappedValue).toBe('object');
@@ -43,90 +43,90 @@ describe('SCE', function() {
       expect($sce.getTrusted($sce.JS, wrappedValue)).toBe('original_value');
     }));
 
-    it('should NOT wrap non-string values', inject(function($sce) {
-      expect(function() { $sce.trustAsCss(123); }).toThrowMinErr(
+    it('should NOT wrap non-string values', inject(($sce) => {
+      expect(() => { $sce.trustAsCss(123); }).toThrowMinErr(
           '$sce', 'itype', 'Attempted to trust a non-string value in a content requiring a string: ' +
           'Context: css');
     }));
 
-    it('should NOT wrap unknown contexts', inject(function($sce) {
-      expect(function() { $sce.trustAs('unknown1', '123'); }).toThrowMinErr(
+    it('should NOT wrap unknown contexts', inject(($sce) => {
+      expect(() => { $sce.trustAs('unknown1', '123'); }).toThrowMinErr(
           '$sce', 'icontext', 'Attempted to trust a value in invalid context. Context: unknown1; Value: 123');
     }));
 
-    it('should NOT wrap undefined context', inject(function($sce) {
-      expect(function() { $sce.trustAs(undefined, '123'); }).toThrowMinErr(
+    it('should NOT wrap undefined context', inject(($sce) => {
+      expect(() => { $sce.trustAs(undefined, '123'); }).toThrowMinErr(
           '$sce', 'icontext', 'Attempted to trust a value in invalid context. Context: undefined; Value: 123');
     }));
 
-    it('should wrap undefined into undefined', inject(function($sce) {
+    it('should wrap undefined into undefined', inject(($sce) => {
       expect($sce.trustAsHtml(undefined)).toBeUndefined();
     }));
 
-    it('should unwrap undefined into undefined', inject(function($sce) {
+    it('should unwrap undefined into undefined', inject(($sce) => {
       expect($sce.getTrusted($sce.HTML, undefined)).toBeUndefined();
     }));
 
-    it('should wrap null into null', inject(function($sce) {
+    it('should wrap null into null', inject(($sce) => {
       expect($sce.trustAsHtml(null)).toBe(null);
     }));
 
-    it('should unwrap null into null', inject(function($sce) {
+    it('should unwrap null into null', inject(($sce) => {
       expect($sce.getTrusted($sce.HTML, null)).toBe(null);
     }));
 
-    it('should wrap "" into ""', inject(function($sce) {
+    it('should wrap "" into ""', inject(($sce) => {
       expect($sce.trustAsHtml('')).toBe('');
     }));
 
-    it('should unwrap "" into ""', inject(function($sce) {
+    it('should unwrap "" into ""', inject(($sce) => {
       expect($sce.getTrusted($sce.HTML, '')).toBe('');
     }));
 
-    it('should unwrap values and return the original', inject(function($sce) {
-      let originalValue = 'originalValue';
-      let wrappedValue = $sce.trustAs($sce.HTML, originalValue);
+    it('should unwrap values and return the original', inject(($sce) => {
+      const originalValue = 'originalValue';
+      const wrappedValue = $sce.trustAs($sce.HTML, originalValue);
       expect($sce.getTrusted($sce.HTML, wrappedValue)).toBe(originalValue);
     }));
 
-    it('should NOT unwrap values when the type is different', inject(function($sce) {
-      let originalValue = 'originalValue';
-      let wrappedValue = $sce.trustAs($sce.HTML, originalValue);
-      expect(function() { $sce.getTrusted($sce.CSS, wrappedValue); }).toThrowMinErr(
+    it('should NOT unwrap values when the type is different', inject(($sce) => {
+      const originalValue = 'originalValue';
+      const wrappedValue = $sce.trustAs($sce.HTML, originalValue);
+      expect(() => { $sce.getTrusted($sce.CSS, wrappedValue); }).toThrowMinErr(
           '$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
     }));
 
-    it('should NOT unwrap values that had not been wrapped', inject(function($sce) {
+    it('should NOT unwrap values that had not been wrapped', inject(($sce) => {
       function TrustedValueHolder(trustedValue) {
         this.$unwrapTrustedValue = function() {
           return trustedValue;
         };
       }
-      let wrappedValue = new TrustedValueHolder('originalValue');
-      expect(function() { return $sce.getTrusted($sce.HTML, wrappedValue); }).toThrowMinErr(
+      const wrappedValue = new TrustedValueHolder('originalValue');
+      expect(() => $sce.getTrusted($sce.HTML, wrappedValue)).toThrowMinErr(
           '$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
     }));
 
-    it('should implement toString on trusted values', inject(function($sce) {
-      let originalValue = '123',
-          wrappedValue = $sce.trustAsHtml(originalValue);
+    it('should implement toString on trusted values', inject(($sce) => {
+      const originalValue = '123';
+          const wrappedValue = $sce.trustAsHtml(originalValue);
       expect($sce.getTrustedHtml(wrappedValue)).toBe(originalValue);
       expect(wrappedValue.toString()).toBe(originalValue.toString());
     }));
   });
 
 
-  describe('replace $sceDelegate', function() {
-    it('should override the default $sce.trustAs/valueOf/etc.', function() {
-      module(function($provide) {
+  describe('replace $sceDelegate', () => {
+    it('should override the default $sce.trustAs/valueOf/etc.', () => {
+      module(($provide) => {
         $provide.value('$sceDelegate', {
-          trustAs: function(type, value) { return 'wrapped:'   + value; },
-          getTrusted: function(type, value) { return 'unwrapped:' + value; },
-          valueOf: function(value) { return 'valueOf:' + value; }
+          trustAs(type, value) { return `wrapped:${    value}`; },
+          getTrusted(type, value) { return `unwrapped:${  value}`; },
+          valueOf(value) { return `valueOf:${  value}`; }
         });
       });
 
-      inject(function($sce) {
+      inject(($sce) => {
         expect($sce.trustAsJs('value')).toBe('wrapped:value');
         expect($sce.valueOf('value')).toBe('valueOf:value');
         expect($sce.getTrustedJs('value')).toBe('unwrapped:value');
@@ -136,8 +136,8 @@ describe('SCE', function() {
   });
 
 
-  describe('$sce.parseAs', function() {
-    it('should parse constant literals as trusted', inject(function($sce) {
+  describe('$sce.parseAs', () => {
+    it('should parse constant literals as trusted', inject(($sce) => {
       expect($sce.parseAsJs('1')()).toBe(1);
       expect($sce.parseAsJs('1', $sce.ANY)()).toBe(1);
       expect($sce.parseAsJs('1', $sce.HTML)()).toBe(1);
@@ -149,11 +149,11 @@ describe('SCE', function() {
       expect($sce.parseAsJs('"string"')()).toBe('string');
     }));
 
-    it('should be possible to do one-time binding on a non-concatenable context', function() {
+    it('should be possible to do one-time binding on a non-concatenable context', () => {
       module(provideLog);
-      inject(function($sce, $rootScope, log) {
-        $rootScope.$watch($sce.parseAsHtml('::foo'), function(value) {
-          log(value + '');
+      inject(($sce, $rootScope, log) => {
+        $rootScope.$watch($sce.parseAsHtml('::foo'), (value) => {
+          log(`${value  }`);
         });
 
         $rootScope.$digest();
@@ -174,11 +174,11 @@ describe('SCE', function() {
       });
     });
 
-    it('should be possible to do one-time binding on a concatenable context', function() {
+    it('should be possible to do one-time binding on a concatenable context', () => {
       module(provideLog);
-      inject(function($sce, $rootScope, log) {
-        $rootScope.$watch($sce.parseAsUrl('::foo'), function(value) {
-          log(value + '');
+      inject(($sce, $rootScope, log) => {
+        $rootScope.$watch($sce.parseAsUrl('::foo'), (value) => {
+          log(`${value  }`);
         });
 
         $rootScope.$digest();
@@ -199,40 +199,36 @@ describe('SCE', function() {
       });
     });
 
-    it('should NOT parse constant non-literals', inject(function($sce) {
+    it('should NOT parse constant non-literals', inject(($sce) => {
       // Until there's a real world use case for this, we're disallowing
       // constant non-literals.  See $SceParseProvider.
-      let exprFn = $sce.parseAsJs('1+1');
+      const exprFn = $sce.parseAsJs('1+1');
       expect(exprFn).toThrow();
     }));
 
-    it('should NOT return untrusted values from expression function', inject(function($sce) {
-      let exprFn = $sce.parseAs($sce.HTML, 'foo');
-      expect(function() {
-        return exprFn({}, {'foo': true});
-      }).toThrowMinErr(
+    it('should NOT return untrusted values from expression function', inject(($sce) => {
+      const exprFn = $sce.parseAs($sce.HTML, 'foo');
+      expect(() => exprFn({}, {'foo': true})).toThrowMinErr(
           '$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
     }));
 
-    it('should NOT return trusted values of the wrong type from expression function', inject(function($sce) {
-      let exprFn = $sce.parseAs($sce.HTML, 'foo');
-      expect(function() {
-        return exprFn({}, {'foo': $sce.trustAs($sce.JS, '123')});
-      }).toThrowMinErr(
+    it('should NOT return trusted values of the wrong type from expression function', inject(($sce) => {
+      const exprFn = $sce.parseAs($sce.HTML, 'foo');
+      expect(() => exprFn({}, {'foo': $sce.trustAs($sce.JS, '123')})).toThrowMinErr(
           '$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
     }));
 
-    it('should return trusted values from expression function', inject(function($sce) {
-      let exprFn = $sce.parseAs($sce.HTML, 'foo');
+    it('should return trusted values from expression function', inject(($sce) => {
+      const exprFn = $sce.parseAs($sce.HTML, 'foo');
       expect(exprFn({}, {'foo': $sce.trustAs($sce.HTML, 'trustedValue')})).toBe('trustedValue');
     }));
 
-    it('should support shorthand methods', inject(function($sce) {
+    it('should support shorthand methods', inject(($sce) => {
       // Test shorthand parse methods.
       expect($sce.parseAsHtml('1')()).toBe(1);
       // Test short trustAs methods.
       expect($sce.trustAsAny).toBeUndefined();
-      expect(function() {
+      expect(() => {
         // mismatched types.
         $sce.parseAsCss('foo')({}, {'foo': $sce.trustAsHtml('1')});
       }).toThrowMinErr(
@@ -241,10 +237,10 @@ describe('SCE', function() {
 
   });
 
-  describe('$sceDelegate resource url policies', function() {
+  describe('$sceDelegate resource url policies', () => {
     function runTest(cfg, testFn) {
       return function() {
-        module(function($sceDelegateProvider) {
+        module(($sceDelegateProvider) => {
           if (isDefined(cfg.trustedUrls)) {
             $sceDelegateProvider.trustedResourceUrlList(cfg.trustedUrls);
           }
@@ -256,7 +252,7 @@ describe('SCE', function() {
       };
     }
 
-    it('should default to "self" which allows relative urls', runTest({}, function($sce, $document) {
+    it('should default to "self" which allows relative urls', runTest({}, ($sce, $document) => {
       expect($sce.getTrustedResourceUrl('foo/bar')).toEqual('foo/bar');
     }));
 
@@ -264,8 +260,8 @@ describe('SCE', function() {
       {
         trustedUrls: [],
         bannedUrls: []
-      }, function($sce) {
-        expect(function() { $sce.getTrustedResourceUrl('#'); }).toThrowMinErr(
+      }, ($sce) => {
+        expect(() => { $sce.getTrustedResourceUrl('#'); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: #');
       }
     ));
@@ -274,23 +270,23 @@ describe('SCE', function() {
       {
         trustedUrls: [/^foo$/],
         bannedUrls: []
-      }, function($sce) {
-        expect(function() { $sce.getTrustedResourceUrl('foo'); }).toThrowMinErr(
+      }, ($sce) => {
+        expect(() => { $sce.getTrustedResourceUrl('foo'); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: foo');
       }
     ));
 
-    it('should not accept unknown matcher type', function() {
-      expect(function() {
+    it('should not accept unknown matcher type', () => {
+      expect(() => {
         runTest({trustedUrls: [{}]}, null)();
       }).toThrowMinErr('$injector', 'modulerr', new RegExp(
           /Failed to instantiate module function ?\(\$sceDelegateProvider\) due to:\n/.source +
           /[^[]*\[\$sce:imatcher] Matchers may only be "self", string patterns or RegExp objects/.source));
     });
 
-    describe('adjustMatcher', function() {
+    describe('adjustMatcher', () => {
       /* global adjustMatcher: false */
-      it('should rewrite regex into regex and add ^ & $ on either end', function() {
+      it('should rewrite regex into regex and add ^ & $ on either end', () => {
         expect(adjustMatcher(/a.*b/).exec('a.b')).not.toBeNull();
         expect(adjustMatcher(/a.*b/).exec('-a.b-')).toBeNull();
         // Adding ^ & $ onto a regex that already had them should also work.
@@ -298,23 +294,23 @@ describe('SCE', function() {
         expect(adjustMatcher(/^a.*b$/).exec('-a.b-')).toBeNull();
       });
 
-      it('should should match * and **', function() {
+      it('should should match * and **', () => {
         expect(adjustMatcher('*://*.example.com/**').exec('http://www.example.com/path')).not.toBeNull();
       });
     });
 
-    describe('regex matcher', function() {
+    describe('regex matcher', () => {
       it('should support custom regex', runTest(
         {
           trustedUrls: [/^http:\/\/example\.com\/.*/],
           bannedUrls: []
-        }, function($sce) {
+        }, ($sce) => {
           expect($sce.getTrustedResourceUrl('http://example.com/foo')).toEqual('http://example.com/foo');
           // must match entire regex
-          expect(function() { $sce.getTrustedResourceUrl('https://example.com/foo'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('https://example.com/foo'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: https://example.com/foo');
           // https doesn't match (mismatched protocol.)
-          expect(function() { $sce.getTrustedResourceUrl('https://example.com/foo'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('https://example.com/foo'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: https://example.com/foo');
         }
       ));
@@ -323,36 +319,36 @@ describe('SCE', function() {
         {
           trustedUrls: [/https?:\/\/example\.com\/foo/],
           bannedUrls: []
-        }, function($sce) {
+        }, ($sce) => {
           expect($sce.getTrustedResourceUrl('http://example.com/foo')).toEqual('http://example.com/foo');
           expect($sce.getTrustedResourceUrl('https://example.com/foo')).toEqual('https://example.com/foo');
-          expect(function() { $sce.getTrustedResourceUrl('http://example.com/fo'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('http://example.com/fo'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: http://example.com/fo');
           // Suffix not allowed even though original regex does not contain an ending $.
-          expect(function() { $sce.getTrustedResourceUrl('http://example.com/foo2'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('http://example.com/foo2'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: http://example.com/foo2');
           // Prefix not allowed even though original regex does not contain a leading ^.
-          expect(function() { $sce.getTrustedResourceUrl('xhttp://example.com/foo'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('xhttp://example.com/foo'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: xhttp://example.com/foo');
         }
       ));
     });
 
-    describe('string matchers', function() {
+    describe('string matchers', () => {
       it('should support strings as matchers', runTest(
         {
           trustedUrls: ['http://example.com/foo'],
           bannedUrls: []
-        }, function($sce) {
+        }, ($sce) => {
           expect($sce.getTrustedResourceUrl('http://example.com/foo')).toEqual('http://example.com/foo');
           // "." is not a special character like in a regex.
-          expect(function() { $sce.getTrustedResourceUrl('http://example-com/foo'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('http://example-com/foo'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: http://example-com/foo');
           // You can match a prefix.
-          expect(function() { $sce.getTrustedResourceUrl('http://example.com/foo2'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('http://example.com/foo2'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: http://example.com/foo2');
           // You can match a suffix.
-          expect(function() { $sce.getTrustedResourceUrl('xhttp://example.com/foo'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('xhttp://example.com/foo'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: xhttp://example.com/foo');
         }
       ));
@@ -361,27 +357,27 @@ describe('SCE', function() {
         {
           trustedUrls: ['http://example.com/foo*'],
           bannedUrls: []
-        }, function($sce) {
+        }, ($sce) => {
           expect($sce.getTrustedResourceUrl('http://example.com/foo')).toEqual('http://example.com/foo');
           // The * wildcard should match extra characters.
           expect($sce.getTrustedResourceUrl('http://example.com/foo-bar')).toEqual('http://example.com/foo-bar');
           // The * wildcard does not match ':'
-          expect(function() { $sce.getTrustedResourceUrl('http://example-com/foo:bar'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('http://example-com/foo:bar'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: http://example-com/foo:bar');
           // The * wildcard does not match '/'
-          expect(function() { $sce.getTrustedResourceUrl('http://example-com/foo/bar'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('http://example-com/foo/bar'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: http://example-com/foo/bar');
           // The * wildcard does not match '.'
-          expect(function() { $sce.getTrustedResourceUrl('http://example-com/foo.bar'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('http://example-com/foo.bar'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: http://example-com/foo.bar');
           // The * wildcard does not match '?'
-          expect(function() { $sce.getTrustedResourceUrl('http://example-com/foo?bar'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('http://example-com/foo?bar'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: http://example-com/foo?bar');
           // The * wildcard does not match '&'
-          expect(function() { $sce.getTrustedResourceUrl('http://example-com/foo&bar'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('http://example-com/foo&bar'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: http://example-com/foo&bar');
           // The * wildcard does not match ';'
-          expect(function() { $sce.getTrustedResourceUrl('http://example-com/foo;bar'); }).toThrowMinErr(
+          expect(() => { $sce.getTrustedResourceUrl('http://example-com/foo;bar'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: http://example-com/foo;bar');
         }
       ));
@@ -390,7 +386,7 @@ describe('SCE', function() {
         {
           trustedUrls: ['http://example.com/foo**'],
           bannedUrls: []
-        }, function($sce) {
+        }, ($sce) => {
           expect($sce.getTrustedResourceUrl('http://example.com/foo')).toEqual('http://example.com/foo');
           // The ** wildcard should match extra characters.
           expect($sce.getTrustedResourceUrl('http://example.com/foo-bar')).toEqual('http://example.com/foo-bar');
@@ -399,8 +395,8 @@ describe('SCE', function() {
         }
       ));
 
-      it('should not accept *** in the string', function() {
-        expect(function() {
+      it('should not accept *** in the string', () => {
+        expect(() => {
           runTest({trustedUrls: ['http://***']}, null)();
         }).toThrowMinErr('$injector', 'modulerr', new RegExp(
              /Failed to instantiate module function ?\(\$sceDelegateProvider\) due to:\n/.source +
@@ -408,12 +404,12 @@ describe('SCE', function() {
       });
     });
 
-    describe('"self" matcher', function() {
+    describe('"self" matcher', () => {
       it('should support the special string "self" in trusted resource URL list', runTest(
         {
           trustedUrls: ['self'],
           bannedUrls: []
-        }, function($sce) {
+        }, ($sce) => {
           expect($sce.getTrustedResourceUrl('foo')).toEqual('foo');
         }
       ));
@@ -422,38 +418,38 @@ describe('SCE', function() {
         {
           trustedUrls: [/.*/],
           bannedUrls: ['self']
-        }, function($sce) {
-          expect(function() { $sce.getTrustedResourceUrl('foo'); }).toThrowMinErr(
+        }, ($sce) => {
+          expect(() => { $sce.getTrustedResourceUrl('foo'); }).toThrowMinErr(
             '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: foo');
         }
       ));
 
-      describe('when the document base URL has changed', function() {
+      describe('when the document base URL has changed', () => {
         let baseElem;
-        let cfg = {trustedUrls: ['self'], bannedUrls: []};
+        const cfg = {trustedUrls: ['self'], bannedUrls: []};
 
-        beforeEach(function() {
+        beforeEach(() => {
           baseElem = window.document.createElement('BASE');
-          baseElem.setAttribute('href', window.location.protocol + '//foo.example.com/path/');
+          baseElem.setAttribute('href', `${window.location.protocol  }//foo.example.com/path/`);
           window.document.head.appendChild(baseElem);
         });
 
-        afterEach(function() {
+        afterEach(() => {
           window.document.head.removeChild(baseElem);
         });
 
 
-        it('should allow relative URLs', runTest(cfg, function($sce) {
+        it('should allow relative URLs', runTest(cfg, ($sce) => {
           expect($sce.getTrustedResourceUrl('foo')).toEqual('foo');
         }));
 
-        it('should allow absolute URLs', runTest(cfg, function($sce) {
+        it('should allow absolute URLs', runTest(cfg, ($sce) => {
           expect($sce.getTrustedResourceUrl('//foo.example.com/bar'))
               .toEqual('//foo.example.com/bar');
         }));
 
-        it('should still block some URLs', runTest(cfg, function($sce) {
-          expect(function() {
+        it('should still block some URLs', runTest(cfg, ($sce) => {
+          expect(() => {
             $sce.getTrustedResourceUrl('//bad.example.com');
           }).toThrowMinErr('$sce', 'insecurl',
               'Blocked loading resource from url not allowed by $sceDelegate policy.  ' +
@@ -466,8 +462,8 @@ describe('SCE', function() {
       {
         trustedUrls: ['self'],
         bannedUrls: ['self']
-      }, function($sce) {
-        expect(function() { $sce.getTrustedResourceUrl('foo'); }).toThrowMinErr(
+      }, ($sce) => {
+        expect(() => { $sce.getTrustedResourceUrl('foo'); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: foo');
       }
     ));
@@ -476,30 +472,30 @@ describe('SCE', function() {
       {
         trustedUrls: [/^http:\/\/example.com\/1$/, /^http:\/\/example.com\/2$/, /^http:\/\/example.com\/3$/, 'self'],
         bannedUrls: [/^http:\/\/example.com\/3$/, /.*\/open_redirect/]
-      }, function($sce) {
+      }, ($sce) => {
         expect($sce.getTrustedResourceUrl('same_domain')).toEqual('same_domain');
         expect($sce.getTrustedResourceUrl('http://example.com/1')).toEqual('http://example.com/1');
         expect($sce.getTrustedResourceUrl('http://example.com/2')).toEqual('http://example.com/2');
-        expect(function() { $sce.getTrustedResourceUrl('http://example.com/3'); }).toThrowMinErr(
+        expect(() => { $sce.getTrustedResourceUrl('http://example.com/3'); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: http://example.com/3');
-        expect(function() { $sce.getTrustedResourceUrl('open_redirect'); }).toThrowMinErr(
+        expect(() => { $sce.getTrustedResourceUrl('open_redirect'); }).toThrowMinErr(
           '$sce', 'insecurl', 'Blocked loading resource from url not allowed by $sceDelegate policy.  URL: open_redirect');
       }
     ));
   });
 
-  describe('URL-context sanitization', function() {
-    it('should sanitize values that are not found in the trusted resource URL list', inject(function($sce) {
+  describe('URL-context sanitization', () => {
+    it('should sanitize values that are not found in the trusted resource URL list', inject(($sce) => {
       expect($sce.getTrustedMediaUrl('javascript:foo')).toEqual('unsafe:javascript:foo');
       expect($sce.getTrustedUrl('javascript:foo')).toEqual('unsafe:javascript:foo');
     }));
 
-    it('should not sanitize values that are found in the trusted resource URL list', inject(function($sce) {
+    it('should not sanitize values that are found in the trusted resource URL list', inject(($sce) => {
       expect($sce.getTrustedMediaUrl('http://example.com')).toEqual('http://example.com');
       expect($sce.getTrustedUrl('http://example.com')).toEqual('http://example.com');
     }));
 
-    it('should not sanitize trusted values', inject(function($sce) {
+    it('should not sanitize trusted values', inject(($sce) => {
       expect($sce.getTrustedMediaUrl($sce.trustAsMediaUrl('javascript:foo'))).toEqual('javascript:foo');
       expect($sce.getTrustedMediaUrl($sce.trustAsUrl('javascript:foo'))).toEqual('javascript:foo');
       expect($sce.getTrustedMediaUrl($sce.trustAsResourceUrl('javascript:foo'))).toEqual('javascript:foo');
@@ -509,12 +505,12 @@ describe('SCE', function() {
       expect($sce.getTrustedUrl($sce.trustAsResourceUrl('javascript:foo'))).toEqual('javascript:foo');
     }));
 
-    it('should use the $$sanitizeUri', function() {
-      let $$sanitizeUri = jasmine.createSpy('$$sanitizeUri').and.returnValue('someSanitizedUrl');
-      module(function($provide) {
+    it('should use the $$sanitizeUri', () => {
+      const $$sanitizeUri = jasmine.createSpy('$$sanitizeUri').and.returnValue('someSanitizedUrl');
+      module(($provide) => {
         $provide.value('$$sanitizeUri', $$sanitizeUri);
       });
-      inject(function($sce) {
+      inject(($sce) => {
         expect($sce.getTrustedMediaUrl('someUrl')).toEqual('someSanitizedUrl');
         expect($$sanitizeUri).toHaveBeenCalledOnceWith('someUrl', true);
 
@@ -526,18 +522,18 @@ describe('SCE', function() {
     });
   });
 
-  describe('sanitizing html', function() {
-    describe('when $sanitize is NOT available', function() {
-      it('should throw an exception for getTrusted(string) values', inject(function($sce) {
-        expect(function() { $sce.getTrustedHtml('<b></b>'); }).toThrowMinErr(
+  describe('sanitizing html', () => {
+    describe('when $sanitize is NOT available', () => {
+      it('should throw an exception for getTrusted(string) values', inject(($sce) => {
+        expect(() => { $sce.getTrustedHtml('<b></b>'); }).toThrowMinErr(
             '$sce', 'unsafe', 'Attempting to use an unsafe value in a safe context.');
       }));
     });
 
-    describe('when $sanitize is available', function() {
-      beforeEach(function() { module('ngSanitize'); });
+    describe('when $sanitize is available', () => {
+      beforeEach(() => { module('ngSanitize'); });
 
-      it('should sanitize html using $sanitize', inject(function($sce) {
+      it('should sanitize html using $sanitize', inject(($sce) => {
         expect($sce.getTrustedHtml('a<xxx><B>b</B></xxx>c')).toBe('a<b>b</b>c');
       }));
 

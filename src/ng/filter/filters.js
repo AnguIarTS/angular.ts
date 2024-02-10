@@ -1,6 +1,6 @@
-let MAX_DIGITS = 22;
-let DECIMAL_SEP = ".";
-let ZERO_CHAR = "0";
+const MAX_DIGITS = 22;
+const DECIMAL_SEP = ".";
+const ZERO_CHAR = "0";
 
 /**
  * @ngdoc filter
@@ -56,7 +56,7 @@ let ZERO_CHAR = "0";
  */
 currencyFilter.$inject = ["$locale"];
 function currencyFilter($locale) {
-  let formats = $locale.NUMBER_FORMATS;
+  const formats = $locale.NUMBER_FORMATS;
   return function (amount, currencySymbol, fractionSize) {
     if (isUndefined(currencySymbol)) {
       currencySymbol = formats.CURRENCY_SYM;
@@ -67,7 +67,7 @@ function currencyFilter($locale) {
     }
 
     // If the currency symbol is empty, trim whitespace around the symbol
-    let currencySymbolRe = !currencySymbol ? /\s*\u00A4\s*/g : /\u00A4/g;
+    const currencySymbolRe = !currencySymbol ? /\s*\u00A4\s*/g : /\u00A4/g;
 
     // if null or undefined pass it through
     return amount == null
@@ -138,7 +138,7 @@ function currencyFilter($locale) {
  */
 numberFilter.$inject = ["$locale"];
 function numberFilter($locale) {
-  let formats = $locale.NUMBER_FORMATS;
+  const formats = $locale.NUMBER_FORMATS;
   return function (number, fractionSize) {
     // if null or undefined pass it through
     return number == null
@@ -167,10 +167,12 @@ function numberFilter($locale) {
  *
  */
 function parse(numStr) {
-  let exponent = 0,
-    digits,
-    numberOfIntegerDigits;
-  let i, j, zeros;
+  let exponent = 0;
+  let digits;
+  let numberOfIntegerDigits;
+  let i;
+  let j;
+  let zeros;
 
   // Decimal point?
   if ((numberOfIntegerDigits = numStr.indexOf(DECIMAL_SEP)) > -1) {
@@ -226,7 +228,7 @@ function parse(numStr) {
  * This function changed the parsedNumber in-place
  */
 function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
-  let digits = parsedNumber.d;
+  const digits = parsedNumber.d;
   let fractionLen = digits.length - parsedNumber.i;
 
   // determine fractionSize if it is not specified; `+fractionSize` converts it to a number
@@ -236,7 +238,7 @@ function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
 
   // The index of the digit to where rounding is to occur
   let roundAt = fractionSize + parsedNumber.i;
-  let digit = digits[roundAt];
+  const digit = digits[roundAt];
 
   if (roundAt > 0) {
     // Drop fractional digits beyond `roundAt`
@@ -272,8 +274,8 @@ function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
   for (; fractionLen < Math.max(0, fractionSize); fractionLen++) digits.push(0);
 
   // Do any carrying, e.g. a digit was rounded up to 10
-  let carry = digits.reduceRight(function (carry, d, i, digits) {
-    d = d + carry;
+  const carry = digits.reduceRight((carry, d, i, digits) => {
+    d += carry;
     digits[i] = d % 10;
     return Math.floor(d / 10);
   }, 0);
@@ -304,11 +306,11 @@ function roundNumber(parsedNumber, fractionSize, minFrac, maxFrac) {
 function formatNumber(number, pattern, groupSep, decimalSep, fractionSize) {
   if (!(isString(number) || isNumber(number)) || isNaN(number)) return "";
 
-  let isInfinity = !isFinite(number);
+  const isInfinity = !isFinite(number);
   let isZero = false;
-  let numStr = Math.abs(number) + "",
-    formattedText = "",
-    parsedNumber;
+  const numStr = `${Math.abs(number)}`;
+  let formattedText = "";
+  let parsedNumber;
 
   if (isInfinity) {
     formattedText = "\u221e";
@@ -319,11 +321,9 @@ function formatNumber(number, pattern, groupSep, decimalSep, fractionSize) {
 
     let digits = parsedNumber.d;
     let integerLen = parsedNumber.i;
-    let exponent = parsedNumber.e;
+    const exponent = parsedNumber.e;
     let decimals = [];
-    isZero = digits.reduce(function (isZero, d) {
-      return isZero && !d;
-    }, true);
+    isZero = digits.reduce((isZero, d) => isZero && !d, true);
 
     // pad zeros for small numbers
     while (integerLen < 0) {
@@ -340,7 +340,7 @@ function formatNumber(number, pattern, groupSep, decimalSep, fractionSize) {
     }
 
     // format the integer digits with grouping separators
-    let groups = [];
+    const groups = [];
     if (digits.length >= pattern.lgSize) {
       groups.unshift(digits.splice(-pattern.lgSize, digits.length).join(""));
     }
@@ -358,14 +358,13 @@ function formatNumber(number, pattern, groupSep, decimalSep, fractionSize) {
     }
 
     if (exponent) {
-      formattedText += "e+" + exponent;
+      formattedText += `e+${exponent}`;
     }
   }
   if (number < 0 && !isZero) {
     return pattern.negPre + formattedText + pattern.negSuf;
-  } else {
-    return pattern.posPre + formattedText + pattern.posSuf;
   }
+  return pattern.posPre + formattedText + pattern.posSuf;
 }
 
 function padNumber(num, digits, trim, negWrap) {
@@ -378,7 +377,7 @@ function padNumber(num, digits, trim, negWrap) {
       neg = "-";
     }
   }
-  num = "" + num;
+  num = `${num}`;
   while (num.length < digits) num = ZERO_CHAR + num;
   if (trim) {
     num = num.substr(num.length - digits);
@@ -389,7 +388,7 @@ function padNumber(num, digits, trim, negWrap) {
 function dateGetter(name, size, offset, trim, negWrap) {
   offset = offset || 0;
   return function (date) {
-    let value = date["get" + name]();
+    let value = date[`get${name}`]();
     if (offset > 0 || value > -offset) {
       value += offset;
     }
@@ -400,17 +399,17 @@ function dateGetter(name, size, offset, trim, negWrap) {
 
 function dateStrGetter(name, shortForm, standAlone) {
   return function (date, formats) {
-    let value = date["get" + name]();
-    let propPrefix =
+    const value = date[`get${name}`]();
+    const propPrefix =
       (standAlone ? "STANDALONE" : "") + (shortForm ? "SHORT" : "");
-    let get = uppercase(propPrefix + name);
+    const get = uppercase(propPrefix + name);
 
     return formats[get][value];
   };
 }
 
 function timeZoneGetter(date, formats, offset) {
-  let zone = -1 * offset;
+  const zone = -1 * offset;
   let paddedZone = zone >= 0 ? "+" : "";
 
   paddedZone +=
@@ -422,7 +421,7 @@ function timeZoneGetter(date, formats, offset) {
 
 function getFirstThursdayOfYear(year) {
   // 0 = index of January
-  let dayOfWeekOnFirst = new Date(year, 0, 1).getDay();
+  const dayOfWeekOnFirst = new Date(year, 0, 1).getDay();
   // 4 = index of Thursday (+1 to account for 1st = 5)
   // 11 = index of *next* Thursday (+1 account for 1st = 12)
   return new Date(year, 0, (dayOfWeekOnFirst <= 4 ? 5 : 12) - dayOfWeekOnFirst);
@@ -439,11 +438,11 @@ function getThursdayThisWeek(datetime) {
 
 function weekGetter(size) {
   return function (date) {
-    let firstThurs = getFirstThursdayOfYear(date.getFullYear()),
-      thisThurs = getThursdayThisWeek(date);
+    const firstThurs = getFirstThursdayOfYear(date.getFullYear());
+    const thisThurs = getThursdayThisWeek(date);
 
-    let diff = +thisThurs - +firstThurs,
-      result = 1 + Math.round(diff / 6.048e8); // 6.048e8 ms per week
+    const diff = +thisThurs - +firstThurs;
+    const result = 1 + Math.round(diff / 6.048e8); // 6.048e8 ms per week
 
     return padNumber(result, size);
   };
@@ -461,7 +460,7 @@ function longEraGetter(date, formats) {
   return date.getFullYear() <= 0 ? formats.ERANAMES[0] : formats.ERANAMES[1];
 }
 
-let DATE_FORMATS = {
+const DATE_FORMATS = {
   yyyy: dateGetter("FullYear", 4, 0, false, true),
   yy: dateGetter("FullYear", 2, 0, true, true),
   y: dateGetter("FullYear", 1, 0, false, true),
@@ -495,9 +494,9 @@ let DATE_FORMATS = {
   GGGG: longEraGetter,
 };
 
-let DATE_FORMATS_SPLIT =
-    /((?:[^yMLdHhmsaZEwG']+)|(?:'(?:[^']|'')*')|(?:E+|y+|M+|L+|d+|H+|h+|m+|s+|a|Z|G+|w+))([\s\S]*)/,
-  NUMBER_STRING = /^-?\d+$/;
+const DATE_FORMATS_SPLIT =
+  /((?:[^yMLdHhmsaZEwG']+)|(?:'(?:[^']|'')*')|(?:E+|y+|M+|L+|d+|H+|h+|m+|s+|a|Z|G+|w+))([\s\S]*)/;
+const NUMBER_STRING = /^-?\d+$/;
 
 /**
  * @ngdoc filter
@@ -597,17 +596,17 @@ let DATE_FORMATS_SPLIT =
  */
 dateFilter.$inject = ["$locale"];
 function dateFilter($locale) {
-  let R_ISO8601_STR =
+  const R_ISO8601_STR =
     /^(\d{4})-?(\d\d)-?(\d\d)(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:\.(\d+))?)?)?(Z|([+-])(\d\d):?(\d\d))?)?$/;
   // 1        2       3         4          5          6          7          8  9     10      11
   function jsonStringToDate(string) {
     let match;
     if ((match = string.match(R_ISO8601_STR))) {
-      let date = new Date(0),
-        tzHour = 0,
-        tzMin = 0,
-        dateSetter = match[8] ? date.setUTCFullYear : date.setFullYear,
-        timeSetter = match[8] ? date.setUTCHours : date.setHours;
+      const date = new Date(0);
+      let tzHour = 0;
+      let tzMin = 0;
+      const dateSetter = match[8] ? date.setUTCFullYear : date.setFullYear;
+      const timeSetter = match[8] ? date.setUTCHours : date.setHours;
 
       if (match[9]) {
         tzHour = toInt(match[9] + match[10]);
@@ -619,10 +618,10 @@ function dateFilter($locale) {
         toInt(match[2]) - 1,
         toInt(match[3]),
       );
-      let h = toInt(match[4] || 0) - tzHour;
-      let m = toInt(match[5] || 0) - tzMin;
-      let s = toInt(match[6] || 0);
-      let ms = Math.round(parseFloat("0." + (match[7] || 0)) * 1000);
+      const h = toInt(match[4] || 0) - tzHour;
+      const m = toInt(match[5] || 0) - tzMin;
+      const s = toInt(match[6] || 0);
+      const ms = Math.round(parseFloat(`0.${match[7] || 0}`) * 1000);
       timeSetter.call(date, h, m, s, ms);
       return date;
     }
@@ -630,10 +629,10 @@ function dateFilter($locale) {
   }
 
   return function (date, format, timezone) {
-    let text = "",
-      parts = [],
-      fn,
-      match;
+    let text = "";
+    let parts = [];
+    let fn;
+    let match;
 
     format = format || "mediumDate";
     format = $locale.DATETIME_FORMATS[format] || format;
@@ -665,7 +664,7 @@ function dateFilter($locale) {
       dateTimezoneOffset = timezoneToOffset(timezone, dateTimezoneOffset);
       date = convertTimezoneToLocal(date, timezone, true);
     }
-    forEach(parts, function (value) {
+    forEach(parts, (value) => {
       fn = DATE_FORMATS[value];
       text += fn
         ? fn(date, $locale.DATETIME_FORMATS, dateTimezoneOffset)
@@ -729,7 +728,7 @@ function jsonFilter() {
  *
  * @see angular.lowercase
  */
-let lowercaseFilter = valueFn(lowercase);
+const lowercaseFilter = valueFn(lowercase);
 
 /**
  * @ngdoc filter
@@ -755,4 +754,4 @@ let lowercaseFilter = valueFn(lowercase);
      </file>
    </example>
  */
-let uppercaseFilter = valueFn(uppercase);
+const uppercaseFilter = valueFn(uppercase);

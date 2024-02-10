@@ -1,6 +1,6 @@
 
 
-let config = require('../protractor-shared-conf').config;
+const {config} = require('../protractor-shared-conf');
 
 config.specs = [
   'app/e2e/**/*.scenario.js'

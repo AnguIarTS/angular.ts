@@ -1,6 +1,6 @@
 
 
-let directivesModule = angular.module('directives', []);
+const directivesModule = angular.module('directives', []);
 
 directivesModule
 /**
@@ -11,7 +11,7 @@ directivesModule
  */
 .directive('backToTop', ['$anchorScroll', '$location', function($anchorScroll, $location) {
   return function link(scope, element) {
-    element.on('click', function(event) {
+    element.on('click', (event) => {
       $location.hash('');
       scope.$apply($anchorScroll);
     });
@@ -19,19 +19,17 @@ directivesModule
 }])
 
 
-.directive('code', function() {
-  return {
+.directive('code', () => ({
     restrict: 'E',
     terminal: true,
-    compile: function(element) {
-      let linenums = element.hasClass('linenum');// || element.parent()[0].nodeName === 'PRE';
-      let match = /lang-(\S+)/.exec(element[0].className);
-      let lang = match && match[1];
-      let html = element.html();
+    compile(element) {
+      const linenums = element.hasClass('linenum');// || element.parent()[0].nodeName === 'PRE';
+      const match = /lang-(\S+)/.exec(element[0].className);
+      const lang = match && match[1];
+      const html = element.html();
       element.html(window.prettyPrintOne(html, lang, linenums));
     }
-  };
-})
+  }))
 
 .directive('scrollYOffsetElement', ['$anchorScroll', function($anchorScroll) {
   return function(scope, element) {
@@ -39,24 +37,22 @@ directivesModule
   };
 }])
 
-.directive('table', function() {
-  return {
+.directive('table', () => ({
     restrict: 'E',
-    link: function(scope, element, attrs) {
-      if (!attrs['class']) {
+    link(scope, element, attrs) {
+      if (!attrs.class) {
         element.addClass('table table-bordered table-striped code-table');
       }
     }
-  };
-})
+  }))
 
 .directive('tocCollector', ['$rootScope', function($rootScope) {
   return {
     controller: ['$element', function($element) {
       /* eslint-disable no-invalid-this */
-      let ctrl = this;
+      const ctrl = this;
 
-      $rootScope.$on('$includeContentRequested', function() {
+      $rootScope.$on('$includeContentRequested', () => {
         ctrl.hs = [];
         ctrl.root = [];
       });
@@ -102,20 +98,19 @@ directivesModule
     this.path = $location.path().replace(/^\/?(.+?)(\/index)?\/?$/, '$1');
   }]
 })
-.directive('tocContainer', function() {
-  return {
+.directive('tocContainer', () => ({
     scope: true,
     restrict: 'E',
     require: {
       tocContainer: '',
       tocCollector: '^^'
     },
-    controller: function() {
+    controller() {
       this.showToc = true;
       this.items = [];
     },
     controllerAs: '$ctrl',
-    link: function(scope, element, attrs, ctrls) {
+    link(scope, element, attrs, ctrls) {
       ctrls.tocContainer.items = ctrls.tocCollector.root;
     },
     template: '<div ng-if="::$ctrl.items.length > 1">' +
@@ -123,17 +118,14 @@ directivesModule
       '<button class="btn" ng-click="$ctrl.showToc = !$ctrl.showToc">{{$ctrl.showToc ? \'Hide\' : \'Show\'}}</button><br>' +
       '<toc-tree items="$ctrl.items" ng-show="$ctrl.showToc"></toc-tree>' +
       '</div>'
-  };
-})
-.directive('header', function() {
-  return {
+  }))
+.directive('header', () => ({
     restrict: 'E',
     controller: ['$element', function($element) {
       // eslint-disable-next-line no-invalid-this
       this.element = $element;
     }]
-  };
-})
+  }))
 .directive('h1', ['$compile', function($compile) {
   return {
     restrict: 'E',
@@ -141,11 +133,11 @@ directivesModule
       tocCollector: '^^?',
       header: '^^?'
     },
-    link: function(scope, element, attrs, ctrls) {
+    link(scope, element, attrs, ctrls) {
       if (!ctrls.tocCollector) return;
 
-      let tocContainer = angular.element('<toc-container></toc-container>');
-      let containerElement = ctrls.header ? ctrls.header.element : element;
+      const tocContainer = angular.element('<toc-container></toc-container>');
+      const containerElement = ctrls.header ? ctrls.header.element : element;
 
       containerElement.after(tocContainer);
       $compile(tocContainer)(scope);
@@ -158,14 +150,13 @@ for (let i = 2; i <= 5; i++) {
 }
 
 function registerHDirective(i) {
-  directivesModule.directive('h' + i, function() {
-    return {
+  directivesModule.directive(`h${  i}`, () => ({
       restrict: 'E',
       require: {
         'tocCollector': '^^?'
       },
-      link: function(scope, element, attrs, ctrls) {
-        let toc = ctrls.tocCollector;
+      link(scope, element, attrs, ctrls) {
+        const toc = ctrls.tocCollector;
 
         if (!toc || !attrs.id) return;
 
@@ -177,7 +168,6 @@ function registerHDirective(i) {
         });
 
       }
-    };
-  });
+    }));
 }
 

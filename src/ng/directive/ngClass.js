@@ -5,7 +5,7 @@
 */
 
 function classDirective(name, selector) {
-  name = "ngClass" + name;
+  name = `ngClass${name}`;
   let indexWatchExpression;
 
   return [
@@ -13,7 +13,7 @@ function classDirective(name, selector) {
     function ($parse) {
       return {
         restrict: "AC",
-        link: function (scope, element, attr) {
+        link(scope, element, attr) {
           let classCounts = element.data("$classCounts");
           let oldModulo = true;
           let oldClassString;
@@ -29,10 +29,9 @@ function classDirective(name, selector) {
             if (!indexWatchExpression) {
               indexWatchExpression = $parse(
                 "$index",
-                function moduloTwo($index) {
+                ($index) =>
                   // eslint-disable-next-line no-bitwise
-                  return $index & 1;
-                },
+                  $index & 1,
               );
             }
 
@@ -52,23 +51,23 @@ function classDirective(name, selector) {
           }
 
           function updateClasses(oldClassString, newClassString) {
-            let oldClassArray = split(oldClassString);
-            let newClassArray = split(newClassString);
+            const oldClassArray = split(oldClassString);
+            const newClassArray = split(newClassString);
 
-            let toRemoveArray = arrayDifference(oldClassArray, newClassArray);
-            let toAddArray = arrayDifference(newClassArray, oldClassArray);
+            const toRemoveArray = arrayDifference(oldClassArray, newClassArray);
+            const toAddArray = arrayDifference(newClassArray, oldClassArray);
 
-            let toRemoveString = digestClassCounts(toRemoveArray, -1);
-            let toAddString = digestClassCounts(toAddArray, 1);
+            const toRemoveString = digestClassCounts(toRemoveArray, -1);
+            const toAddString = digestClassCounts(toAddArray, 1);
 
             attr.$addClass(toAddString);
             attr.$removeClass(toRemoveString);
           }
 
           function digestClassCounts(classArray, count) {
-            let classesToUpdate = [];
+            const classesToUpdate = [];
 
-            forEach(classArray, function (className) {
+            forEach(classArray, (className) => {
               if (count > 0 || classCounts[className]) {
                 classCounts[className] = (classCounts[className] || 0) + count;
                 if (classCounts[className] === +(count > 0)) {
@@ -110,10 +109,10 @@ function classDirective(name, selector) {
     if (!tokens1 || !tokens1.length) return [];
     if (!tokens2 || !tokens2.length) return tokens1;
 
-    let values = [];
+    const values = [];
 
     outer: for (let i = 0; i < tokens1.length; i++) {
-      let token = tokens1[i];
+      const token = tokens1[i];
       for (let j = 0; j < tokens2.length; j++) {
         if (token === tokens2[j]) continue outer;
       }
@@ -136,12 +135,10 @@ function classDirective(name, selector) {
       classString = classValue.map(toClassString).join(" ");
     } else if (isObject(classValue)) {
       classString = Object.keys(classValue)
-        .filter(function (key) {
-          return classValue[key];
-        })
+        .filter((key) => classValue[key])
         .join(" ");
     } else if (!isString(classValue)) {
-      classString = classValue + "";
+      classString = `${classValue}`;
     }
 
     return classString;
@@ -333,7 +330,7 @@ function classDirective(name, selector) {
      </file>
    </example>
  */
-let ngClassDirective = classDirective("", true);
+const ngClassDirective = classDirective("", true);
 
 /**
  * @ngdoc directive
@@ -443,7 +440,7 @@ let ngClassDirective = classDirective("", true);
      </file>
    </example>
  */
-let ngClassOddDirective = classDirective("Odd", 0);
+const ngClassOddDirective = classDirective("Odd", 0);
 
 /**
  * @ngdoc directive
@@ -553,4 +550,4 @@ let ngClassOddDirective = classDirective("Odd", 0);
      </file>
    </example>
  */
-let ngClassEvenDirective = classDirective("Even", 1);
+const ngClassEvenDirective = classDirective("Even", 1);

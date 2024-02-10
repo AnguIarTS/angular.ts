@@ -1,12 +1,12 @@
 
 
-describe('$$animateAsyncRun', function() {
+describe('$$animateAsyncRun', () => {
   it('should fire the callback only when one or more RAFs have passed',
-    inject(function($$animateAsyncRun, $$rAF) {
+    inject(($$animateAsyncRun, $$rAF) => {
 
-    let trigger = $$animateAsyncRun();
+    const trigger = $$animateAsyncRun();
     let called = false;
-    trigger(function() {
+    trigger(() => {
       called = true;
     });
 
@@ -16,40 +16,40 @@ describe('$$animateAsyncRun', function() {
   }));
 
   it('should immediately fire the callback if a RAF has passed since construction',
-    inject(function($$animateAsyncRun, $$rAF) {
+    inject(($$animateAsyncRun, $$rAF) => {
 
-    let trigger = $$animateAsyncRun();
+    const trigger = $$animateAsyncRun();
     $$rAF.flush();
 
     let called = false;
-    trigger(function() {
+    trigger(() => {
       called = true;
     });
     expect(called).toBe(true);
   }));
 });
 
-describe('$$AnimateRunner', function() {
+describe('$$AnimateRunner', () => {
   they('should trigger the host $prop function',
-    ['end', 'cancel', 'pause', 'resume'], function(method) {
+    ['end', 'cancel', 'pause', 'resume'], (method) => {
 
-    inject(function($$AnimateRunner) {
-      let host = {};
-      let spy = host[method] = jasmine.createSpy();
-      let runner = new $$AnimateRunner(host);
+    inject(($$AnimateRunner) => {
+      const host = {};
+      const spy = host[method] = jasmine.createSpy();
+      const runner = new $$AnimateRunner(host);
       runner[method]();
       expect(spy).toHaveBeenCalled();
     });
   });
 
   they('should trigger the inner runner\'s host $prop function',
-    ['end', 'cancel', 'pause', 'resume'], function(method) {
+    ['end', 'cancel', 'pause', 'resume'], (method) => {
 
-    inject(function($$AnimateRunner) {
-      let host = {};
-      let spy = host[method] = jasmine.createSpy();
-      let runner1 = new $$AnimateRunner();
-      let runner2 = new $$AnimateRunner(host);
+    inject(($$AnimateRunner) => {
+      const host = {};
+      const spy = host[method] = jasmine.createSpy();
+      const runner1 = new $$AnimateRunner();
+      const runner2 = new $$AnimateRunner(host);
       runner1.setHost(runner2);
       runner1[method]();
       expect(spy).toHaveBeenCalled();
@@ -57,10 +57,10 @@ describe('$$AnimateRunner', function() {
   });
 
   it('should resolve the done function only if one RAF has passed',
-    inject(function($$AnimateRunner, $$rAF) {
+    inject(($$AnimateRunner, $$rAF) => {
 
-    let runner = new $$AnimateRunner();
-    let spy = jasmine.createSpy();
+    const runner = new $$AnimateRunner();
+    const spy = jasmine.createSpy();
     runner.done(spy);
     runner.complete(true);
     expect(spy).not.toHaveBeenCalled();
@@ -69,11 +69,11 @@ describe('$$AnimateRunner', function() {
   }));
 
   it('should resolve with the status provided in the completion function',
-    inject(function($$AnimateRunner, $$rAF) {
+    inject(($$AnimateRunner, $$rAF) => {
 
-    let runner = new $$AnimateRunner();
+    const runner = new $$AnimateRunner();
     let capturedValue;
-    runner.done(function(val) {
+    runner.done((val) => {
       capturedValue = val;
     });
     runner.complete('special value');
@@ -82,27 +82,27 @@ describe('$$AnimateRunner', function() {
   }));
 
   they('should immediately resolve each combined runner in a bottom-up order when $prop is called',
-    ['end', 'cancel'], function(method) {
+    ['end', 'cancel'], (method) => {
 
-    inject(function($$AnimateRunner) {
-      let runner1 = new $$AnimateRunner();
-      let runner2 = new $$AnimateRunner();
+    inject(($$AnimateRunner) => {
+      const runner1 = new $$AnimateRunner();
+      const runner2 = new $$AnimateRunner();
       runner1.setHost(runner2);
 
-      let status1, status2, signature = '';
-      runner1.done(function(status) {
+      let status1; let status2; let signature = '';
+      runner1.done((status) => {
         signature += '1';
         status1 = status;
       });
 
-      runner2.done(function(status) {
+      runner2.done((status) => {
         signature += '2';
         status2 = status;
       });
 
       runner1[method]();
 
-      let expectedStatus = method === 'end';
+      const expectedStatus = method === 'end';
       expect(status1).toBe(expectedStatus);
       expect(status2).toBe(expectedStatus);
       expect(signature).toBe('21');
@@ -110,26 +110,26 @@ describe('$$AnimateRunner', function() {
   });
 
   they('should resolve/reject using a newly created promise when .then() is used upon $prop',
-    ['end', 'cancel'], function(method) {
+    ['end', 'cancel'], (method) => {
 
-    inject(function($$AnimateRunner, $rootScope) {
-      let runner1 = new $$AnimateRunner();
-      let runner2 = new $$AnimateRunner();
+    inject(($$AnimateRunner, $rootScope) => {
+      const runner1 = new $$AnimateRunner();
+      const runner2 = new $$AnimateRunner();
       runner1.setHost(runner2);
 
       let status1;
       runner1.then(
-        function() { status1 = 'pass'; },
-        function() { status1 = 'fail'; });
+        () => { status1 = 'pass'; },
+        () => { status1 = 'fail'; });
 
       let status2;
       runner2.then(
-        function() { status2 = 'pass'; },
-        function() { status2 = 'fail'; });
+        () => { status2 = 'pass'; },
+        () => { status2 = 'fail'; });
 
       runner1[method]();
 
-      let expectedStatus = method === 'end' ? 'pass' : 'fail';
+      const expectedStatus = method === 'end' ? 'pass' : 'fail';
 
       expect(status1).toBeUndefined();
       expect(status2).toBeUndefined();
@@ -141,18 +141,18 @@ describe('$$AnimateRunner', function() {
   });
 
   it('should expose/create the contained promise when getPromise() is called',
-    inject(function($$AnimateRunner, $rootScope) {
+    inject(($$AnimateRunner, $rootScope) => {
 
-    let runner = new $$AnimateRunner();
+    const runner = new $$AnimateRunner();
     expect(isPromiseLike(runner.getPromise())).toBeTruthy();
   }));
 
   it('should expose the `catch` promise function to handle the rejected state',
-    inject(function($$AnimateRunner, $rootScope) {
+    inject(($$AnimateRunner, $rootScope) => {
 
-    let runner = new $$AnimateRunner();
+    const runner = new $$AnimateRunner();
     let animationFailed = false;
-    runner.catch(function() {
+    runner.catch(() => {
       animationFailed = true;
     });
     runner.cancel();
@@ -160,17 +160,15 @@ describe('$$AnimateRunner', function() {
     expect(animationFailed).toBe(true);
   }));
 
-  it('should use timeouts to trigger async operations when the document is hidden', function() {
+  it('should use timeouts to trigger async operations when the document is hidden', () => {
     let hidden = true;
 
-    module(function($provide) {
+    module(($provide) => {
 
-      $provide.value('$$isDocumentHidden', function() {
-        return hidden;
-      });
+      $provide.value('$$isDocumentHidden', () => hidden);
     });
 
-    inject(function($$AnimateRunner, $rootScope, $$rAF, $timeout) {
+    inject(($$AnimateRunner, $rootScope, $$rAF, $timeout) => {
       let spy = jasmine.createSpy();
       let runner = new $$AnimateRunner();
       runner.done(spy);
@@ -190,18 +188,18 @@ describe('$$AnimateRunner', function() {
       expect(spy).not.toHaveBeenCalled();
       $$rAF.flush();
       expect(spy).toHaveBeenCalled();
-      expect(function() {
+      expect(() => {
         $timeout.flush();
       }).toThrow();
     });
   });
 
   they('should expose the `finally` promise function to handle the final state when $prop',
-    { 'rejected': 'cancel', 'resolved': 'end' }, function(method) {
-    inject(function($$AnimateRunner, $rootScope) {
-        let runner = new $$AnimateRunner();
+    { 'rejected': 'cancel', 'resolved': 'end' }, (method) => {
+    inject(($$AnimateRunner, $rootScope) => {
+        const runner = new $$AnimateRunner();
         let animationComplete = false;
-        runner.finally(function() {
+        runner.finally(() => {
           animationComplete = true;
         }).catch(noop);
         runner[method]();
@@ -210,16 +208,16 @@ describe('$$AnimateRunner', function() {
     });
   });
 
-  describe('.all()', function() {
+  describe('.all()', () => {
     it('should resolve when all runners have naturally resolved',
-      inject(function($$rAF, $$AnimateRunner) {
+      inject(($$rAF, $$AnimateRunner) => {
 
-      let runner1 = new $$AnimateRunner();
-      let runner2 = new $$AnimateRunner();
-      let runner3 = new $$AnimateRunner();
+      const runner1 = new $$AnimateRunner();
+      const runner2 = new $$AnimateRunner();
+      const runner3 = new $$AnimateRunner();
 
       let status;
-      $$AnimateRunner.all([runner1, runner2, runner3], function(response) {
+      $$AnimateRunner.all([runner1, runner2, runner3], (response) => {
         status = response;
       });
 
@@ -235,17 +233,17 @@ describe('$$AnimateRunner', function() {
     }));
 
     they('should immediately resolve if and when all runners have been $prop',
-      { ended: 'end', cancelled: 'cancel' }, function(method) {
+      { ended: 'end', cancelled: 'cancel' }, (method) => {
 
-      inject(function($$AnimateRunner) {
-        let runner1 = new $$AnimateRunner();
-        let runner2 = new $$AnimateRunner();
-        let runner3 = new $$AnimateRunner();
+      inject(($$AnimateRunner) => {
+        const runner1 = new $$AnimateRunner();
+        const runner2 = new $$AnimateRunner();
+        const runner3 = new $$AnimateRunner();
 
-        let expectedStatus = method === 'end';
+        const expectedStatus = method === 'end';
 
         let status;
-        $$AnimateRunner.all([runner1, runner2, runner3], function(response) {
+        $$AnimateRunner.all([runner1, runner2, runner3], (response) => {
           status = response;
         });
 
@@ -258,14 +256,14 @@ describe('$$AnimateRunner', function() {
     });
 
     it('should return a status of `false` if one or more runners was cancelled',
-      inject(function($$AnimateRunner) {
+      inject(($$AnimateRunner) => {
 
-      let runner1 = new $$AnimateRunner();
-      let runner2 = new $$AnimateRunner();
-      let runner3 = new $$AnimateRunner();
+      const runner1 = new $$AnimateRunner();
+      const runner2 = new $$AnimateRunner();
+      const runner3 = new $$AnimateRunner();
 
       let status;
-      $$AnimateRunner.all([runner1, runner2, runner3], function(response) {
+      $$AnimateRunner.all([runner1, runner2, runner3], (response) => {
         status = response;
       });
 
@@ -277,40 +275,40 @@ describe('$$AnimateRunner', function() {
     }));
   });
 
-  describe('.chain()', function() {
+  describe('.chain()', () => {
     it('should evaluate an array of functions in a chain',
-      inject(function($$rAF, $$AnimateRunner) {
+      inject(($$rAF, $$AnimateRunner) => {
 
-      let runner1 = new $$AnimateRunner();
-      let runner2 = new $$AnimateRunner();
-      let runner3 = new $$AnimateRunner();
+      const runner1 = new $$AnimateRunner();
+      const runner2 = new $$AnimateRunner();
+      const runner3 = new $$AnimateRunner();
 
-      let log = [];
+      const log = [];
 
-      let items = [];
-      items.push(function(fn) {
-        runner1.done(function() {
+      const items = [];
+      items.push((fn) => {
+        runner1.done(() => {
           log.push(1);
           fn();
         });
       });
 
-      items.push(function(fn) {
-        runner2.done(function() {
+      items.push((fn) => {
+        runner2.done(() => {
           log.push(2);
           fn();
         });
       });
 
-      items.push(function(fn) {
-        runner3.done(function() {
+      items.push((fn) => {
+        runner3.done(() => {
           log.push(3);
           fn();
         });
       });
 
       let status;
-      $$AnimateRunner.chain(items, function(response) {
+      $$AnimateRunner.chain(items, (response) => {
         status = response;
       });
 
@@ -330,27 +328,27 @@ describe('$$AnimateRunner', function() {
     }));
 
     it('should break the chain when a function evaluates to false',
-      inject(function($$rAF, $$AnimateRunner) {
+      inject(($$rAF, $$AnimateRunner) => {
 
-      let runner1 = new $$AnimateRunner();
-      let runner2 = new $$AnimateRunner();
-      let runner3 = new $$AnimateRunner();
-      let runner4 = new $$AnimateRunner();
-      let runner5 = new $$AnimateRunner();
-      let runner6 = new $$AnimateRunner();
+      const runner1 = new $$AnimateRunner();
+      const runner2 = new $$AnimateRunner();
+      const runner3 = new $$AnimateRunner();
+      const runner4 = new $$AnimateRunner();
+      const runner5 = new $$AnimateRunner();
+      const runner6 = new $$AnimateRunner();
 
-      let log = [];
+      const log = [];
 
-      let items = [];
-      items.push(function(fn) { log.push(1); runner1.done(fn); });
-      items.push(function(fn) { log.push(2); runner2.done(fn); });
-      items.push(function(fn) { log.push(3); runner3.done(fn); });
-      items.push(function(fn) { log.push(4); runner4.done(fn); });
-      items.push(function(fn) { log.push(5); runner5.done(fn); });
-      items.push(function(fn) { log.push(6); runner6.done(fn); });
+      const items = [];
+      items.push((fn) => { log.push(1); runner1.done(fn); });
+      items.push((fn) => { log.push(2); runner2.done(fn); });
+      items.push((fn) => { log.push(3); runner3.done(fn); });
+      items.push((fn) => { log.push(4); runner4.done(fn); });
+      items.push((fn) => { log.push(5); runner5.done(fn); });
+      items.push((fn) => { log.push(6); runner6.done(fn); });
 
       let status;
-      $$AnimateRunner.chain(items, function(response) {
+      $$AnimateRunner.chain(items, (response) => {
         status = response;
       });
 

@@ -106,7 +106,7 @@
 $FilterProvider.$inject = ["$provide"];
 /** @this */
 function $FilterProvider($provide) {
-  let suffix = "Filter";
+  const suffix = "Filter";
 
   /**
    * @ngdoc method
@@ -126,14 +126,13 @@ function $FilterProvider($provide) {
    */
   function register(name, factory) {
     if (isObject(name)) {
-      let filters = {};
-      forEach(name, function (filter, key) {
+      const filters = {};
+      forEach(name, (filter, key) => {
         filters[key] = register(key, filter);
       });
       return filters;
-    } else {
-      return $provide.factory(name + suffix, factory);
     }
+    return $provide.factory(name + suffix, factory);
   }
   this.register = register;
 
@@ -146,7 +145,7 @@ function $FilterProvider($provide) {
     },
   ];
 
-  ////////////////////////////////////////
+  /// /////////////////////////////////////
 
   /* global
     currencyFilter: false,

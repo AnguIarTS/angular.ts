@@ -1,7 +1,7 @@
 
 
-let angularFiles = require('./angularFiles');
-let sharedConfig = require('./karma-shared.conf');
+const angularFiles = require('./angularFiles');
+const sharedConfig = require('./karma-shared.conf');
 
 module.exports = function(config) {
   sharedConfig(config, {testName: 'AngularJS: isolated module tests (ngAnimate)', logFile: 'karma-ngAnimate-isolated.log'});

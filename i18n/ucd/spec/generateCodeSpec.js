@@ -1,11 +1,12 @@
 
 
-let generateCodeModule = require('../src/generateCode.js');
-let generateCode = generateCodeModule.generateCode;
-let generateFunction = generateCodeModule.generateFunction;
+const generateCodeModule = require('../src/generateCode.js');
 
-describe('generateFunction', function() {
-  it('should generate function with ranges', function() {
+const {generateCode} = generateCodeModule;
+const {generateFunction} = generateCodeModule;
+
+describe('generateFunction', () => {
+  it('should generate function with ranges', () => {
     expect(generateFunction([['0001', '0003']], 'IDS_Y')).toEqual('\
 function IDS_Y(cp) {\n\
   if (0x0001 <= cp && cp <= 0x0003) return true;\n\
@@ -13,7 +14,7 @@ function IDS_Y(cp) {\n\
 }\n');
   });
 
-  it('should generate function with multiple ranges', function() {
+  it('should generate function with multiple ranges', () => {
     expect(generateFunction([['0001', '0003'], ['0005', '0009']], 'IDS_Y')).toEqual('\
 function IDS_Y(cp) {\n\
   if (0x0001 <= cp && cp <= 0x0003) return true;\n\
@@ -22,7 +23,7 @@ function IDS_Y(cp) {\n\
 }\n');
   });
 
-  it('should generate function with unique values', function() {
+  it('should generate function with unique values', () => {
     expect(generateFunction([['0001', '0001'], ['0005', '0009']], 'IDS_Y')).toEqual('\
 function IDS_Y(cp) {\n\
   if (cp === 0x0001) return true;\n\
@@ -32,8 +33,8 @@ function IDS_Y(cp) {\n\
   });
 });
 
-describe('generateCode', function() {
-  it('should generate the function for all the values', function() {
+describe('generateCode', () => {
+  it('should generate the function for all the values', () => {
     expect(generateCode({ IDS_Y : [['0001', '0001'], ['0006', '0006']], IDC_Y : [['0002', '0002'], ['0007', '0007']] })).toEqual('\
 /******************************************************\n\
  *         Generated file, do not modify              *\n\

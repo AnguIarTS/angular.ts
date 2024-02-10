@@ -179,7 +179,7 @@
  * @param {Object} angularEvent Synthetic event object.
  * @param {String} src URL of content to load.
  */
-let ngIncludeDirective = [
+const ngIncludeDirective = [
   "$templateRequest",
   "$anchorScroll",
   "$animate",
@@ -190,18 +190,18 @@ let ngIncludeDirective = [
       terminal: true,
       transclude: "element",
       controller: angular.noop,
-      compile: function (element, attr) {
-        let srcExp = attr.ngInclude || attr.src,
-          onloadExp = attr.onload || "",
-          autoScrollExp = attr.autoscroll;
+      compile(element, attr) {
+        const srcExp = attr.ngInclude || attr.src;
+        const onloadExp = attr.onload || "";
+        const autoScrollExp = attr.autoscroll;
 
         return function (scope, $element, $attr, ctrl, $transclude) {
-          let changeCounter = 0,
-            currentScope,
-            previousElement,
-            currentElement;
+          let changeCounter = 0;
+          let currentScope;
+          let previousElement;
+          let currentElement;
 
-          let cleanupLastIncludeContent = function () {
+          const cleanupLastIncludeContent = function () {
             if (previousElement) {
               previousElement.remove();
               previousElement = null;
@@ -211,7 +211,7 @@ let ngIncludeDirective = [
               currentScope = null;
             }
             if (currentElement) {
-              $animate.leave(currentElement).done(function (response) {
+              $animate.leave(currentElement).done((response) => {
                 if (response !== false) previousElement = null;
               });
               previousElement = currentElement;
@@ -219,8 +219,8 @@ let ngIncludeDirective = [
             }
           };
 
-          scope.$watch(srcExp, function ngIncludeWatchAction(src) {
-            let afterAnimation = function (response) {
+          scope.$watch(srcExp, (src) => {
+            const afterAnimation = function (response) {
               if (
                 response !== false &&
                 isDefined(autoScrollExp) &&
@@ -229,17 +229,17 @@ let ngIncludeDirective = [
                 $anchorScroll();
               }
             };
-            let thisChangeId = ++changeCounter;
+            const thisChangeId = ++changeCounter;
 
             if (src) {
-              //set the 2nd param to true to ignore the template request error so that the inner
-              //contents and scope can be cleaned up.
+              // set the 2nd param to true to ignore the template request error so that the inner
+              // contents and scope can be cleaned up.
               $templateRequest(src, true).then(
-                function (response) {
+                (response) => {
                   if (scope.$$destroyed) return;
 
                   if (thisChangeId !== changeCounter) return;
-                  let newScope = scope.$new();
+                  const newScope = scope.$new();
                   ctrl.template = response;
 
                   // Note: This will also link all children of ng-include that were contained in the original
@@ -248,7 +248,7 @@ let ngIncludeDirective = [
                   // Note: We can't remove them in the cloneAttchFn of $transclude as that
                   // function is called before linking the content, which would apply child
                   // directives to non existing elements.
-                  let clone = $transclude(newScope, function (clone) {
+                  const clone = $transclude(newScope, (clone) => {
                     cleanupLastIncludeContent();
                     $animate.enter(clone, null, $element).done(afterAnimation);
                   });
@@ -259,7 +259,7 @@ let ngIncludeDirective = [
                   currentScope.$emit("$includeContentLoaded", src);
                   scope.$eval(onloadExp);
                 },
-                function () {
+                () => {
                   if (scope.$$destroyed) return;
 
                   if (thisChangeId === changeCounter) {
@@ -285,14 +285,14 @@ let ngIncludeDirective = [
 // We need this directive so that the element content is already filled when
 // the link function of another directive on the same element as ngInclude
 // is called.
-let ngIncludeFillContentDirective = [
+const ngIncludeFillContentDirective = [
   "$compile",
   function ($compile) {
     return {
       restrict: "ECA",
       priority: -400,
       require: "ngInclude",
-      link: function (scope, $element, $attr, ctrl) {
+      link(scope, $element, $attr, ctrl) {
         if (toString.call($element[0]).match(/SVG/)) {
           // WebKit: https://bugs.webkit.org/show_bug.cgi?id=135698 --- SVG elements do not
           // support innerHTML, so detect this here and try to generate the contents
@@ -302,7 +302,7 @@ let ngIncludeFillContentDirective = [
             jqLiteBuildFragment(ctrl.template, window.document).childNodes,
           )(
             scope,
-            function namespaceAdaptedClone(clone) {
+            (clone) => {
               $element.append(clone);
             },
             { futureParentElement: $element },

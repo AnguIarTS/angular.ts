@@ -20,7 +20,7 @@ let noop;
  *
  */
 /* global -ngRouteModule */
-let ngRouteModule = angular
+const ngRouteModule = angular
   .module("ngRoute", [])
   .info({ angularVersion: '"NG_VERSION_FULL"' })
   .provider("$route", $RouteProvider)
@@ -28,7 +28,7 @@ let ngRouteModule = angular
   // event (unless explicitly disabled). This is necessary in case `ngView` is included in an
   // asynchronously loaded template.
   .run(instantiateRoute);
-let $routeMinErr = angular.$$minErr("ngRoute");
+const $routeMinErr = angular.$$minErr("ngRoute");
 let isEagerInstantiationEnabled;
 
 /**
@@ -56,7 +56,7 @@ function $RouteProvider() {
     return angular.extend(Object.create(parent), extra);
   }
 
-  let routes = {};
+  const routes = {};
 
   /**
    * @ngdoc method
@@ -209,8 +209,8 @@ function $RouteProvider() {
    * Adds a new route definition to the `$route` service.
    */
   this.when = function (path, route) {
-    //copy original route object to preserve params inherited from proto chain
-    let routeCopy = shallowCopy(route);
+    // copy original route object to preserve params inherited from proto chain
+    const routeCopy = shallowCopy(route);
     if (angular.isUndefined(routeCopy.reloadOnUrl)) {
       routeCopy.reloadOnUrl = true;
     }
@@ -228,10 +228,10 @@ function $RouteProvider() {
 
     // create redirection for trailing slashes
     if (path) {
-      let redirectPath =
+      const redirectPath =
         path[path.length - 1] === "/"
           ? path.substr(0, path.length - 1)
-          : path + "/";
+          : `${path}/`;
 
       routes[redirectPath] = angular.extend(
         { originalPath: path, redirectTo: path },
@@ -533,76 +533,76 @@ function $RouteProvider() {
        * @param {Route} current Current/previous route information.
        */
 
-      let forceReload = false,
-        preparedRoute,
-        preparedRouteIsUpdateOnly,
-        $route = {
-          routes: routes,
+      let forceReload = false;
+      let preparedRoute;
+      let preparedRouteIsUpdateOnly;
+      const $route = {
+        routes,
 
-          /**
-           * @ngdoc method
-           * @name $route#reload
-           *
-           * @description
-           * Causes `$route` service to reload the current route even if
-           * {@link ng.$location $location} hasn't changed.
-           *
-           * As a result of that, {@link ngRoute.directive:ngView ngView}
-           * creates new scope and reinstantiates the controller.
-           */
-          reload: function () {
-            forceReload = true;
+        /**
+         * @ngdoc method
+         * @name $route#reload
+         *
+         * @description
+         * Causes `$route` service to reload the current route even if
+         * {@link ng.$location $location} hasn't changed.
+         *
+         * As a result of that, {@link ngRoute.directive:ngView ngView}
+         * creates new scope and reinstantiates the controller.
+         */
+        reload() {
+          forceReload = true;
 
-            let fakeLocationEvent = {
-              defaultPrevented: false,
-              preventDefault: function fakePreventDefault() {
-                this.defaultPrevented = true;
-                forceReload = false;
-              },
-            };
+          const fakeLocationEvent = {
+            defaultPrevented: false,
+            preventDefault: function fakePreventDefault() {
+              this.defaultPrevented = true;
+              forceReload = false;
+            },
+          };
 
-            $rootScope.$evalAsync(function () {
-              prepareRoute(fakeLocationEvent);
-              if (!fakeLocationEvent.defaultPrevented) commitRoute();
-            });
-          },
+          $rootScope.$evalAsync(() => {
+            prepareRoute(fakeLocationEvent);
+            if (!fakeLocationEvent.defaultPrevented) commitRoute();
+          });
+        },
 
-          /**
-           * @ngdoc method
-           * @name $route#updateParams
-           *
-           * @description
-           * Causes `$route` service to update the current URL, replacing
-           * current route parameters with those specified in `newParams`.
-           * Provided property names that match the route's path segment
-           * definitions will be interpolated into the location's path, while
-           * remaining properties will be treated as query params.
-           *
-           * @param {!Object<string, string>} newParams mapping of URL parameter names to values
-           */
-          updateParams: function (newParams) {
-            if (this.current && this.current.$$route) {
-              newParams = angular.extend({}, this.current.params, newParams);
-              $location.path(
-                interpolate(this.current.$$route.originalPath, newParams),
-              );
-              // interpolate modifies newParams, only query params are left
-              $location.search(newParams);
-            } else {
-              throw $routeMinErr(
-                "norout",
-                "Tried updating route with no current route",
-              );
-            }
-          },
-        };
+        /**
+         * @ngdoc method
+         * @name $route#updateParams
+         *
+         * @description
+         * Causes `$route` service to update the current URL, replacing
+         * current route parameters with those specified in `newParams`.
+         * Provided property names that match the route's path segment
+         * definitions will be interpolated into the location's path, while
+         * remaining properties will be treated as query params.
+         *
+         * @param {!Object<string, string>} newParams mapping of URL parameter names to values
+         */
+        updateParams(newParams) {
+          if (this.current && this.current.$$route) {
+            newParams = angular.extend({}, this.current.params, newParams);
+            $location.path(
+              interpolate(this.current.$$route.originalPath, newParams),
+            );
+            // interpolate modifies newParams, only query params are left
+            $location.search(newParams);
+          } else {
+            throw $routeMinErr(
+              "norout",
+              "Tried updating route with no current route",
+            );
+          }
+        },
+      };
 
       $rootScope.$on("$locationChangeStart", prepareRoute);
       $rootScope.$on("$locationChangeSuccess", commitRoute);
 
       return $route;
 
-      /////////////////////////////////////////////////////
+      /// //////////////////////////////////////////////////
 
       /**
        * @param on {string} current url
@@ -616,18 +616,18 @@ function $RouteProvider() {
        * visionmedia/express/lib/router/router.js.
        */
       function switchRouteMatcher(on, route) {
-        let keys = route.keys,
-          params = {};
+        const { keys } = route;
+        const params = {};
 
         if (!route.regexp) return null;
 
-        let m = route.regexp.exec(on);
+        const m = route.regexp.exec(on);
         if (!m) return null;
 
         for (let i = 1, len = m.length; i < len; ++i) {
-          let key = keys[i - 1];
+          const key = keys[i - 1];
 
-          let val = m[i];
+          const val = m[i];
 
           if (key && val) {
             params[key.name] = val;
@@ -637,7 +637,7 @@ function $RouteProvider() {
       }
 
       function prepareRoute($locationEvent) {
-        let lastRoute = $route.current;
+        const lastRoute = $route.current;
 
         preparedRoute = parseRoute();
         preparedRouteIsUpdateOnly = isNavigationUpdateOnly(
@@ -658,8 +658,8 @@ function $RouteProvider() {
       }
 
       function commitRoute() {
-        let lastRoute = $route.current;
-        let nextRoute = preparedRoute;
+        const lastRoute = $route.current;
+        const nextRoute = preparedRoute;
 
         if (preparedRouteIsUpdateOnly) {
           lastRoute.params = nextRoute.params;
@@ -669,17 +669,17 @@ function $RouteProvider() {
           forceReload = false;
           $route.current = nextRoute;
 
-          let nextRoutePromise = $q.resolve(nextRoute);
+          const nextRoutePromise = $q.resolve(nextRoute);
 
           $browser.$$incOutstandingRequestCount("$route");
 
           nextRoutePromise
             .then(getRedirectionData)
             .then(handlePossibleRedirection)
-            .then(function (keepProcessingRoute) {
-              return (
+            .then(
+              (keepProcessingRoute) =>
                 keepProcessingRoute &&
-                nextRoutePromise.then(resolveLocals).then(function (locals) {
+                nextRoutePromise.then(resolveLocals).then((locals) => {
                   // after route change
                   if (nextRoute === $route.current) {
                     if (nextRoute) {
@@ -692,10 +692,9 @@ function $RouteProvider() {
                       lastRoute,
                     );
                   }
-                })
-              );
-            })
-            .catch(function (error) {
+                }),
+            )
+            .catch((error) => {
               if (nextRoute === $route.current) {
                 $rootScope.$broadcast(
                   "$routeChangeError",
@@ -705,7 +704,7 @@ function $RouteProvider() {
                 );
               }
             })
-            .finally(function () {
+            .finally(() => {
               // Because `commitRoute()` is called from a `$rootScope.$evalAsync` block (see
               // `$locationWatch`), this `$$completeOutstandingRequest()` call will not cause
               // `outstandingRequestCount` to hit zero.  This is important in case we are redirecting
@@ -717,8 +716,8 @@ function $RouteProvider() {
       }
 
       function getRedirectionData(route) {
-        let data = {
-          route: route,
+        const data = {
+          route,
           hasRedirection: false,
         };
 
@@ -729,9 +728,9 @@ function $RouteProvider() {
               data.search = route.params;
               data.hasRedirection = true;
             } else {
-              let oldPath = $location.path();
-              let oldSearch = $location.search();
-              let newUrl = route.redirectTo(
+              const oldPath = $location.path();
+              const oldSearch = $location.search();
+              const newUrl = route.redirectTo(
                 route.pathParams,
                 oldPath,
                 oldSearch,
@@ -745,7 +744,7 @@ function $RouteProvider() {
           } else if (route.resolveRedirectTo) {
             return $q
               .resolve($injector.invoke(route.resolveRedirectTo))
-              .then(function (newUrl) {
+              .then((newUrl) => {
                 if (angular.isDefined(newUrl)) {
                   data.url = newUrl;
                   data.hasRedirection = true;
@@ -765,7 +764,7 @@ function $RouteProvider() {
         if (data.route !== $route.current) {
           keepProcessingRoute = false;
         } else if (data.hasRedirection) {
-          let oldUrl = $location.url();
+          const oldUrl = $location.url();
           let newUrl = data.url;
 
           if (newUrl) {
@@ -790,22 +789,23 @@ function $RouteProvider() {
 
       function resolveLocals(route) {
         if (route) {
-          let locals = angular.extend({}, route.resolve);
-          angular.forEach(locals, function (value, key) {
+          const locals = angular.extend({}, route.resolve);
+          angular.forEach(locals, (value, key) => {
             locals[key] = angular.isString(value)
               ? $injector.get(value)
               : $injector.invoke(value, null, null, key);
           });
-          let template = getTemplateFor(route);
+          const template = getTemplateFor(route);
           if (angular.isDefined(template)) {
-            locals["$template"] = template;
+            locals.$template = template;
           }
           return $q.all(locals);
         }
       }
 
       function getTemplateFor(route) {
-        let template, templateUrl;
+        let template;
+        let templateUrl;
         if (angular.isDefined((template = route.template))) {
           if (angular.isFunction(template)) {
             template = template(route.params);
@@ -827,8 +827,9 @@ function $RouteProvider() {
        */
       function parseRoute() {
         // Match a route
-        let params, match;
-        angular.forEach(routes, function (route, path) {
+        let params;
+        let match;
+        angular.forEach(routes, (route, path) => {
           if (
             !match &&
             (params = switchRouteMatcher($location.path(), route))
@@ -843,8 +844,7 @@ function $RouteProvider() {
         // No route matched; fallback to "otherwise" route
         return (
           match ||
-          (routes[null] &&
-            inherit(routes[null], { params: {}, pathParams: {} }))
+          (routes.null && inherit(routes.null, { params: {}, pathParams: {} }))
         );
       }
 
@@ -876,13 +876,13 @@ function $RouteProvider() {
        * @returns {string} interpolation of the redirect path with the parameters
        */
       function interpolate(string, params) {
-        let result = [];
-        angular.forEach((string || "").split(":"), function (segment, i) {
+        const result = [];
+        angular.forEach((string || "").split(":"), (segment, i) => {
           if (i === 0) {
             result.push(segment);
           } else {
-            let segmentMatch = segment.match(/(\w+)(?:[?*])?(.*)/);
-            let key = segmentMatch[1];
+            const segmentMatch = segment.match(/(\w+)(?:[?*])?(.*)/);
+            const key = segmentMatch[1];
             result.push(params[key]);
             result.push(segmentMatch[2] || "");
             delete params[key];

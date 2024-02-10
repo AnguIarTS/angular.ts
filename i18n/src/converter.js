@@ -8,11 +8,11 @@ exports.convertDatetimeData = convertDatetimeData;
 exports.convertNumberData = convertNumberData;
 
 
-let parsePattern = require('./parser').parsePattern;
+const {parsePattern} = require('./parser');
 
 
 function convertNumberData(dataObj, currencySymbols) {
-  let numberFormats = {
+  const numberFormats = {
     DECIMAL_SEP: dataObj.DECIMAL_SEP,
     GROUP_SEP: dataObj.GROUP_SEP,
     PATTERNS: [parsePattern(dataObj.DECIMAL_PATTERN),
@@ -21,21 +21,19 @@ function convertNumberData(dataObj, currencySymbols) {
 
   if (currencySymbols[dataObj.DEF_CURRENCY_CODE]) {
     numberFormats.CURRENCY_SYM = currencySymbols[dataObj.DEF_CURRENCY_CODE][1];
-  } else {
-    if (dataObj.DEF_CURRENCY_CODE === 'MTL') {
-      numberFormats.CURRENCY_SYM = '₤'; //for some reason this is missing in closure
+  } else if (dataObj.DEF_CURRENCY_CODE === 'MTL') {
+      numberFormats.CURRENCY_SYM = '₤'; // for some reason this is missing in closure
     } else {
       // if there is no corresponding currency symbol, just use currency code.
-      let code = numberFormats.CURRENCY_SYM = dataObj.DEF_CURRENCY_CODE;
-      console.log(code + ' has no currency symbol in closure, used ' + code + ' instead!');
+      const code = numberFormats.CURRENCY_SYM = dataObj.DEF_CURRENCY_CODE;
+      console.log(`${code  } has no currency symbol in closure, used ${  code  } instead!`);
     }
-  }
   return numberFormats;
 }
 
 
 function convertDatetimeData(dataObj) {
-  let datetimeFormats = {};
+  const datetimeFormats = {};
 
   datetimeFormats.MONTH = dataObj.MONTHS;
   datetimeFormats.SHORTMONTH = dataObj.SHORTMONTHS;
@@ -49,8 +47,8 @@ function convertDatetimeData(dataObj) {
   datetimeFormats.ERANAMES = dataObj.ERANAMES;
 
 
-  datetimeFormats.medium      = dataObj.DATEFORMATS[2] + ' ' + dataObj.TIMEFORMATS[2];
-  datetimeFormats.short       = dataObj.DATEFORMATS[3] + ' ' + dataObj.TIMEFORMATS[3];
+  datetimeFormats.medium      = `${dataObj.DATEFORMATS[2]  } ${  dataObj.TIMEFORMATS[2]}`;
+  datetimeFormats.short       = `${dataObj.DATEFORMATS[3]  } ${  dataObj.TIMEFORMATS[3]}`;
   datetimeFormats.fullDate    = dataObj.DATEFORMATS[0];
   datetimeFormats.longDate    = dataObj.DATEFORMATS[1];
   datetimeFormats.mediumDate  = dataObj.DATEFORMATS[2];

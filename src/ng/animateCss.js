@@ -12,7 +12,7 @@
  *
  * Click here {@link ngAnimate.$animateCss to read the documentation for $animateCss}.
  */
-let $CoreAnimateCssProvider = function () {
+const $CoreAnimateCssProvider = function () {
   this.$get = [
     "$$rAF",
     "$q",
@@ -40,15 +40,15 @@ let $CoreAnimateCssProvider = function () {
           options.from = null;
         }
 
-        let closed,
-          runner = new $$AnimateRunner();
+        let closed;
+        const runner = new $$AnimateRunner();
         return {
           start: run,
           end: run,
         };
 
         function run() {
-          $$rAF(function () {
+          $$rAF(() => {
             applyAnimationContents();
             if (!closed) {
               runner.complete();

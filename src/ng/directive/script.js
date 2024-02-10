@@ -31,16 +31,16 @@
     </file>
   </example>
  */
-let scriptDirective = [
+const scriptDirective = [
   "$templateCache",
   function ($templateCache) {
     return {
       restrict: "E",
       terminal: true,
-      compile: function (element, attr) {
+      compile(element, attr) {
         if (attr.type === "text/ng-template") {
-          let templateUrl = attr.id,
-            text = element[0].text;
+          const templateUrl = attr.id;
+          const { text } = element[0];
 
           $templateCache.put(templateUrl, text);
         }

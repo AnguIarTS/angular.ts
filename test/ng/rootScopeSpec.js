@@ -1,24 +1,24 @@
 
 
-describe('Scope', function() {
+describe('Scope', () => {
 
   beforeEach(module(provideLog));
 
 
-  describe('$root', function() {
-    it('should point to itself', inject(function($rootScope) {
+  describe('$root', () => {
+    it('should point to itself', inject(($rootScope) => {
       expect($rootScope.$root).toEqual($rootScope);
       expect($rootScope.hasOwnProperty('$root')).toBeTruthy();
     }));
 
 
-    it('should expose the constructor', inject(function($rootScope) {
+    it('should expose the constructor', inject(($rootScope) => {
       expect(Object.getPrototypeOf($rootScope)).toBe($rootScope.constructor.prototype);
     }));
 
 
-    it('should not have $root on children, but should inherit', inject(function($rootScope) {
-      let child = $rootScope.$new();
+    it('should not have $root on children, but should inherit', inject(($rootScope) => {
+      const child = $rootScope.$new();
       expect(child.$root).toEqual($rootScope);
       expect(child.hasOwnProperty('$root')).toBeFalsy();
     }));
@@ -26,14 +26,14 @@ describe('Scope', function() {
   });
 
 
-  describe('$parent', function() {
-    it('should point to itself in root', inject(function($rootScope) {
+  describe('$parent', () => {
+    it('should point to itself in root', inject(($rootScope) => {
       expect($rootScope.$root).toEqual($rootScope);
     }));
 
 
-    it('should point to parent', inject(function($rootScope) {
-      let child = $rootScope.$new();
+    it('should point to parent', inject(($rootScope) => {
+      const child = $rootScope.$new();
       expect($rootScope.$parent).toEqual(null);
       expect(child.$parent).toEqual($rootScope);
       expect(child.$new().$parent).toEqual(child);
@@ -41,46 +41,46 @@ describe('Scope', function() {
   });
 
 
-  describe('$id', function() {
-    it('should have a unique id', inject(function($rootScope) {
+  describe('$id', () => {
+    it('should have a unique id', inject(($rootScope) => {
       expect($rootScope.$id < $rootScope.$new().$id).toBeTruthy();
     }));
   });
 
 
-  describe('this', function() {
-    it('should evaluate \'this\' to be the scope', inject(function($rootScope) {
-      let child = $rootScope.$new();
+  describe('this', () => {
+    it('should evaluate \'this\' to be the scope', inject(($rootScope) => {
+      const child = $rootScope.$new();
       expect($rootScope.$eval('this')).toEqual($rootScope);
       expect(child.$eval('this')).toEqual(child);
     }));
 
-    it('\'this\' should not be recursive', inject(function($rootScope) {
+    it('\'this\' should not be recursive', inject(($rootScope) => {
       expect($rootScope.$eval('this.this')).toBeUndefined();
       expect($rootScope.$eval('$parent.this')).toBeUndefined();
     }));
 
-    it('should not be able to overwrite the \'this\' keyword', inject(function($rootScope) {
-      $rootScope['this'] = 123;
+    it('should not be able to overwrite the \'this\' keyword', inject(($rootScope) => {
+      $rootScope.this = 123;
       expect($rootScope.$eval('this')).toEqual($rootScope);
     }));
 
-    it('should be able to access a variable named \'this\'', inject(function($rootScope) {
-      $rootScope['this'] = 42;
+    it('should be able to access a variable named \'this\'', inject(($rootScope) => {
+      $rootScope.this = 42;
       expect($rootScope.$eval('this[\'this\']')).toBe(42);
     }));
   });
 
 
-  describe('$new()', function() {
-    it('should create a child scope', inject(function($rootScope) {
-      let child = $rootScope.$new();
+  describe('$new()', () => {
+    it('should create a child scope', inject(($rootScope) => {
+      const child = $rootScope.$new();
       $rootScope.a = 123;
       expect(child.a).toEqual(123);
     }));
 
-    it('should create a non prototypically inherited child scope', inject(function($rootScope) {
-      let child = $rootScope.$new(true);
+    it('should create a non prototypically inherited child scope', inject(($rootScope) => {
+      const child = $rootScope.$new(true);
       $rootScope.a = 123;
       expect(child.a).toBeUndefined();
       expect(child.$parent).toEqual($rootScope);
@@ -88,9 +88,9 @@ describe('Scope', function() {
       expect(child.$root).toBe($rootScope);
     }));
 
-    it('should attach the child scope to a specified parent', inject(function($rootScope) {
-      let isolated = $rootScope.$new(true);
-      let trans = $rootScope.$new(false, isolated);
+    it('should attach the child scope to a specified parent', inject(($rootScope) => {
+      const isolated = $rootScope.$new(true);
+      const trans = $rootScope.$new(false, isolated);
       $rootScope.a = 123;
       expect(isolated.a).toBeUndefined();
       expect(trans.a).toEqual(123);
@@ -99,9 +99,9 @@ describe('Scope', function() {
   });
 
 
-  describe('$watch/$digest', function() {
-    it('should watch and fire on simple property change', inject(function($rootScope) {
-      let spy = jasmine.createSpy();
+  describe('$watch/$digest', () => {
+    it('should watch and fire on simple property change', inject(($rootScope) => {
+      const spy = jasmine.createSpy();
       $rootScope.$watch('name', spy);
       $rootScope.$digest();
       spy.calls.reset();
@@ -115,7 +115,7 @@ describe('Scope', function() {
     }));
 
 
-    it('should not expose the `inner working of watch', inject(function($rootScope) {
+    it('should not expose the `inner working of watch', inject(($rootScope) => {
       function Getter() {
         expect(this).toBeUndefined();
         return 'foo';
@@ -129,8 +129,8 @@ describe('Scope', function() {
     }));
 
 
-    it('should watch and fire on expression change', inject(function($rootScope) {
-      let spy = jasmine.createSpy();
+    it('should watch and fire on expression change', inject(($rootScope) => {
+      const spy = jasmine.createSpy();
       $rootScope.$watch('name.first', spy);
       $rootScope.$digest();
       spy.calls.reset();
@@ -144,16 +144,16 @@ describe('Scope', function() {
       expect(spy).toHaveBeenCalled();
     }));
 
-    it('should decrement the watcherCount when destroying a child scope', inject(function($rootScope) {
-      let child1 = $rootScope.$new(),
-        child2 = $rootScope.$new(),
-        grandChild1 = child1.$new(),
-        grandChild2 = child2.$new();
+    it('should decrement the watcherCount when destroying a child scope', inject(($rootScope) => {
+      const child1 = $rootScope.$new();
+        const child2 = $rootScope.$new();
+        const grandChild1 = child1.$new();
+        const grandChild2 = child2.$new();
 
-      child1.$watch('a', function() {});
-      child2.$watch('a', function() {});
-      grandChild1.$watch('a', function() {});
-      grandChild2.$watch('a', function() {});
+      child1.$watch('a', () => {});
+      child2.$watch('a', () => {});
+      grandChild1.$watch('a', () => {});
+      grandChild2.$watch('a', () => {});
 
       expect($rootScope.$$watchersCount).toBe(4);
       expect(child1.$$watchersCount).toBe(2);
@@ -168,18 +168,18 @@ describe('Scope', function() {
       expect($rootScope.$$watchersCount).toBe(1);
     }));
 
-    it('should decrement the watcherCount when calling the remove function', inject(function($rootScope) {
-      let child1 = $rootScope.$new(),
-        child2 = $rootScope.$new(),
-        grandChild1 = child1.$new(),
-        grandChild2 = child2.$new(),
-        remove1,
-        remove2;
+    it('should decrement the watcherCount when calling the remove function', inject(($rootScope) => {
+      const child1 = $rootScope.$new();
+        const child2 = $rootScope.$new();
+        const grandChild1 = child1.$new();
+        const grandChild2 = child2.$new();
+        let remove1;
+        let remove2;
 
-      remove1 = child1.$watch('a', function() {});
-      child2.$watch('a', function() {});
-      grandChild1.$watch('a', function() {});
-      remove2 = grandChild2.$watch('a', function() {});
+      remove1 = child1.$watch('a', () => {});
+      child2.$watch('a', () => {});
+      grandChild1.$watch('a', () => {});
+      remove2 = grandChild2.$watch('a', () => {});
 
       remove2();
       expect(grandChild2.$$watchersCount).toBe(0);
@@ -200,68 +200,68 @@ describe('Scope', function() {
       expect($rootScope.$$watchersCount).toBe(2);
     }));
 
-    describe('constants cleanup', function() {
-      it('should remove $watch of constant literals after initial digest', inject(function($rootScope) {
-        $rootScope.$watch('[]', function() {});
-        $rootScope.$watch('{}', function() {});
-        $rootScope.$watch('1', function() {});
-        $rootScope.$watch('"foo"', function() {});
+    describe('constants cleanup', () => {
+      it('should remove $watch of constant literals after initial digest', inject(($rootScope) => {
+        $rootScope.$watch('[]', () => {});
+        $rootScope.$watch('{}', () => {});
+        $rootScope.$watch('1', () => {});
+        $rootScope.$watch('"foo"', () => {});
         expect($rootScope.$$watchers.length).not.toEqual(0);
         $rootScope.$digest();
 
         expect($rootScope.$$watchers.length).toEqual(0);
       }));
 
-      it('should remove $watchCollection of constant literals after initial digest', inject(function($rootScope) {
-        $rootScope.$watchCollection('[]', function() {});
-        $rootScope.$watchCollection('{}', function() {});
-        $rootScope.$watchCollection('1', function() {});
-        $rootScope.$watchCollection('"foo"', function() {});
+      it('should remove $watchCollection of constant literals after initial digest', inject(($rootScope) => {
+        $rootScope.$watchCollection('[]', () => {});
+        $rootScope.$watchCollection('{}', () => {});
+        $rootScope.$watchCollection('1', () => {});
+        $rootScope.$watchCollection('"foo"', () => {});
         expect($rootScope.$$watchers.length).not.toEqual(0);
         $rootScope.$digest();
 
         expect($rootScope.$$watchers.length).toEqual(0);
       }));
 
-      it('should remove $watchGroup of constant literals after initial digest', inject(function($rootScope) {
-        $rootScope.$watchGroup(['[]', '{}', '1', '"foo"'], function() {});
+      it('should remove $watchGroup of constant literals after initial digest', inject(($rootScope) => {
+        $rootScope.$watchGroup(['[]', '{}', '1', '"foo"'], () => {});
         expect($rootScope.$$watchers.length).not.toEqual(0);
         $rootScope.$digest();
 
         expect($rootScope.$$watchers.length).toEqual(0);
       }));
 
-      it('should remove $watch of filtered constant literals after initial digest', inject(function($rootScope) {
-        $rootScope.$watch('[1] | filter:"x"', function() {});
-        $rootScope.$watch('1 | number:2', function() {});
+      it('should remove $watch of filtered constant literals after initial digest', inject(($rootScope) => {
+        $rootScope.$watch('[1] | filter:"x"', () => {});
+        $rootScope.$watch('1 | number:2', () => {});
         expect($rootScope.$$watchers.length).not.toEqual(0);
         $rootScope.$digest();
 
         expect($rootScope.$$watchers.length).toEqual(0);
       }));
 
-      it('should remove $watchCollection of filtered constant literals after initial digest', inject(function($rootScope) {
-        $rootScope.$watchCollection('[1] | filter:"x"', function() {});
+      it('should remove $watchCollection of filtered constant literals after initial digest', inject(($rootScope) => {
+        $rootScope.$watchCollection('[1] | filter:"x"', () => {});
         expect($rootScope.$$watchers.length).not.toEqual(0);
         $rootScope.$digest();
 
         expect($rootScope.$$watchers.length).toEqual(0);
       }));
 
-      it('should remove $watchGroup of filtered constant literals after initial digest', inject(function($rootScope) {
-        $rootScope.$watchGroup(['[1] | filter:"x"', '1 | number:2'], function() {});
+      it('should remove $watchGroup of filtered constant literals after initial digest', inject(($rootScope) => {
+        $rootScope.$watchGroup(['[1] | filter:"x"', '1 | number:2'], () => {});
         expect($rootScope.$$watchers.length).not.toEqual(0);
         $rootScope.$digest();
 
         expect($rootScope.$$watchers.length).toEqual(0);
       }));
 
-      it('should remove $watch of constant expressions after initial digest', inject(function($rootScope) {
-        $rootScope.$watch('1 + 1', function() {});
-        $rootScope.$watch('"a" + "b"', function() {});
-        $rootScope.$watch('"ab".length', function() {});
-        $rootScope.$watch('[].length', function() {});
-        $rootScope.$watch('(1 + 1) | number:2', function() {});
+      it('should remove $watch of constant expressions after initial digest', inject(($rootScope) => {
+        $rootScope.$watch('1 + 1', () => {});
+        $rootScope.$watch('"a" + "b"', () => {});
+        $rootScope.$watch('"ab".length', () => {});
+        $rootScope.$watch('[].length', () => {});
+        $rootScope.$watch('(1 + 1) | number:2', () => {});
         expect($rootScope.$$watchers.length).not.toEqual(0);
         $rootScope.$digest();
 
@@ -269,9 +269,9 @@ describe('Scope', function() {
       }));
     });
 
-    describe('onetime cleanup', function() {
-      it('should clean up stable watches on the watch queue', inject(function($rootScope) {
-        $rootScope.$watch('::foo', function() {});
+    describe('onetime cleanup', () => {
+      it('should clean up stable watches on the watch queue', inject(($rootScope) => {
+        $rootScope.$watch('::foo', () => {});
         expect($rootScope.$$watchers.length).toEqual(1);
 
         $rootScope.$digest();
@@ -282,8 +282,8 @@ describe('Scope', function() {
         expect($rootScope.$$watchers.length).toEqual(0);
       }));
 
-      it('should clean up stable watches from $watchCollection', inject(function($rootScope) {
-        $rootScope.$watchCollection('::foo', function() {});
+      it('should clean up stable watches from $watchCollection', inject(($rootScope) => {
+        $rootScope.$watchCollection('::foo', () => {});
         expect($rootScope.$$watchers.length).toEqual(1);
 
         $rootScope.$digest();
@@ -294,8 +294,8 @@ describe('Scope', function() {
         expect($rootScope.$$watchers.length).toEqual(0);
       }));
 
-      it('should clean up stable watches from $watchCollection literals', inject(function($rootScope) {
-        $rootScope.$watchCollection('::[foo, bar]', function() {});
+      it('should clean up stable watches from $watchCollection literals', inject(($rootScope) => {
+        $rootScope.$watchCollection('::[foo, bar]', () => {});
         expect($rootScope.$$watchers.length).toEqual(1);
 
         $rootScope.$digest();
@@ -314,8 +314,8 @@ describe('Scope', function() {
         expect($rootScope.$$watchers.length).toEqual(0);
       }));
 
-      it('should clean up stable watches from $watchGroup', inject(function($rootScope) {
-        $rootScope.$watchGroup(['::foo', '::bar'], function() {});
+      it('should clean up stable watches from $watchGroup', inject(($rootScope) => {
+        $rootScope.$watchGroup(['::foo', '::bar'], () => {});
         expect($rootScope.$$watchers.length).toEqual(2);
 
         $rootScope.$digest();
@@ -331,12 +331,12 @@ describe('Scope', function() {
       }));
     });
 
-    it('should delegate exceptions', function() {
-      module(function($exceptionHandlerProvider) {
+    it('should delegate exceptions', () => {
+      module(($exceptionHandlerProvider) => {
         $exceptionHandlerProvider.mode('log');
       });
-      inject(function($rootScope, $exceptionHandler, $log) {
-        $rootScope.$watch('a', function() {throw new Error('abc');});
+      inject(($rootScope, $exceptionHandler, $log) => {
+        $rootScope.$watch('a', () => {throw new Error('abc');});
         $rootScope.a = 1;
         $rootScope.$digest();
         expect($exceptionHandler.errors[0].message).toEqual('abc');
@@ -345,31 +345,31 @@ describe('Scope', function() {
     });
 
 
-    it('should fire watches in order of addition', inject(function($rootScope) {
+    it('should fire watches in order of addition', inject(($rootScope) => {
       // this is not an external guarantee, just our own sanity
       let log = '';
-      $rootScope.$watch('a', function() { log += 'a'; });
-      $rootScope.$watch('b', function() { log += 'b'; });
+      $rootScope.$watch('a', () => { log += 'a'; });
+      $rootScope.$watch('b', () => { log += 'b'; });
       // constant expressions have slightly different handling,
       // let's ensure they are kept in the same list as others
-      $rootScope.$watch('1', function() { log += '1'; });
-      $rootScope.$watch('c', function() { log += 'c'; });
-      $rootScope.$watch('2', function() { log += '2'; });
+      $rootScope.$watch('1', () => { log += '1'; });
+      $rootScope.$watch('c', () => { log += 'c'; });
+      $rootScope.$watch('2', () => { log += '2'; });
       $rootScope.a = $rootScope.b = $rootScope.c = 1;
       $rootScope.$digest();
       expect(log).toEqual('ab1c2');
     }));
 
 
-    it('should call child $watchers in addition order', inject(function($rootScope) {
+    it('should call child $watchers in addition order', inject(($rootScope) => {
       // this is not an external guarantee, just our own sanity
       let log = '';
-      let childA = $rootScope.$new();
-      let childB = $rootScope.$new();
-      let childC = $rootScope.$new();
-      childA.$watch('a', function() { log += 'a'; });
-      childB.$watch('b', function() { log += 'b'; });
-      childC.$watch('c', function() { log += 'c'; });
+      const childA = $rootScope.$new();
+      const childB = $rootScope.$new();
+      const childC = $rootScope.$new();
+      childA.$watch('a', () => { log += 'a'; });
+      childB.$watch('b', () => { log += 'b'; });
+      childC.$watch('c', () => { log += 'c'; });
       childA.a = childB.b = childC.c = 1;
       $rootScope.$digest();
       expect(log).toEqual('abc');
@@ -377,15 +377,15 @@ describe('Scope', function() {
 
 
     it('should allow $digest on a child scope with and without a right sibling', inject(
-        function($rootScope) {
+        ($rootScope) => {
       // tests a traversal edge case which we originally missed
-      let log = '',
-          childA = $rootScope.$new(),
-          childB = $rootScope.$new();
+      let log = '';
+          const childA = $rootScope.$new();
+          const childB = $rootScope.$new();
 
-      $rootScope.$watch(function() { log += 'r'; });
-      childA.$watch(function() { log += 'a'; });
-      childB.$watch(function() { log += 'b'; });
+      $rootScope.$watch(() => { log += 'r'; });
+      childA.$watch(() => { log += 'a'; });
+      childB.$watch(() => { log += 'b'; });
 
       // init
       $rootScope.$digest();
@@ -401,11 +401,11 @@ describe('Scope', function() {
     }));
 
 
-    it('should repeat watch cycle while model changes are identified', inject(function($rootScope) {
+    it('should repeat watch cycle while model changes are identified', inject(($rootScope) => {
       let log = '';
-      $rootScope.$watch('c', function(v) {$rootScope.d = v; log += 'c'; });
-      $rootScope.$watch('b', function(v) {$rootScope.c = v; log += 'b'; });
-      $rootScope.$watch('a', function(v) {$rootScope.b = v; log += 'a'; });
+      $rootScope.$watch('c', (v) => {$rootScope.d = v; log += 'c'; });
+      $rootScope.$watch('b', (v) => {$rootScope.c = v; log += 'b'; });
+      $rootScope.$watch('a', (v) => {$rootScope.b = v; log += 'a'; });
       $rootScope.$digest();
       log = '';
       $rootScope.a = 1;
@@ -417,26 +417,26 @@ describe('Scope', function() {
     }));
 
 
-    it('should repeat watch cycle from the root element', inject(function($rootScope) {
+    it('should repeat watch cycle from the root element', inject(($rootScope) => {
       let log = '';
-      let child = $rootScope.$new();
-      $rootScope.$watch(function() { log += 'a'; });
-      child.$watch(function() { log += 'b'; });
+      const child = $rootScope.$new();
+      $rootScope.$watch(() => { log += 'a'; });
+      child.$watch(() => { log += 'b'; });
       $rootScope.$digest();
       expect(log).toEqual('abab');
     }));
 
 
-    it('should prevent infinite recursion and print watcher expression',function() {
-      module(function($rootScopeProvider) {
+    it('should prevent infinite recursion and print watcher expression',() => {
+      module(($rootScopeProvider) => {
         $rootScopeProvider.digestTtl(100);
       });
-      inject(function($rootScope) {
-        $rootScope.$watch('a', function() {$rootScope.b++;});
-        $rootScope.$watch('b', function() {$rootScope.a++;});
+      inject(($rootScope) => {
+        $rootScope.$watch('a', () => {$rootScope.b++;});
+        $rootScope.$watch('b', () => {$rootScope.a++;});
         $rootScope.a = $rootScope.b = 0;
 
-        expect(function() {
+        expect(() => {
           $rootScope.$digest();
         }).toThrowMinErr('$rootScope', 'infdig', '100 $digest() iterations reached. Aborting!\n' +
             'Watchers fired in the last 5 iterations: ' +
@@ -452,9 +452,9 @@ describe('Scope', function() {
 
 
     it('should prevent infinite recursion and print watcher function name or body',
-        inject(function($rootScope) {
-      $rootScope.$watch(function watcherA() {return $rootScope.a;}, function() {$rootScope.b++;});
-      $rootScope.$watch(function() {return $rootScope.b;}, function() {$rootScope.a++;});
+        inject(($rootScope) => {
+      $rootScope.$watch(() => $rootScope.a, () => {$rootScope.b++;});
+      $rootScope.$watch(() => $rootScope.b, () => {$rootScope.a++;});
       $rootScope.a = $rootScope.b = 0;
 
       try {
@@ -466,22 +466,22 @@ describe('Scope', function() {
     }));
 
 
-    it('should prevent infinite loop when creating and resolving a promise in a watched expression', function() {
-      module(function($rootScopeProvider) {
+    it('should prevent infinite loop when creating and resolving a promise in a watched expression', () => {
+      module(($rootScopeProvider) => {
         $rootScopeProvider.digestTtl(10);
       });
-      inject(function($rootScope, $q) {
-        let d = $q.defer();
+      inject(($rootScope, $q) => {
+        const d = $q.defer();
 
         d.resolve('Hello, world.');
-        $rootScope.$watch(function() {
-          let $d2 = $q.defer();
+        $rootScope.$watch(() => {
+          const $d2 = $q.defer();
           $d2.resolve('Goodbye.');
-          $d2.promise.then(function() { });
+          $d2.promise.then(() => { });
           return d.promise;
-        }, function() { return 0; });
+        }, () => 0);
 
-        expect(function() {
+        expect(() => {
           $rootScope.$digest();
         }).toThrowMinErr('$rootScope', 'infdig', '10 $digest() iterations reached. Aborting!\n' +
                 'Watchers fired in the last 5 iterations: []');
@@ -491,11 +491,11 @@ describe('Scope', function() {
     });
 
 
-    it('should not fire upon $watch registration on initial $digest', inject(function($rootScope) {
+    it('should not fire upon $watch registration on initial $digest', inject(($rootScope) => {
       let log = '';
       $rootScope.a = 1;
-      $rootScope.$watch('a', function() { log += 'a'; });
-      $rootScope.$watch('b', function() { log += 'b'; });
+      $rootScope.$watch('a', () => { log += 'a'; });
+      $rootScope.$watch('b', () => { log += 'b'; });
       $rootScope.$digest();
       log = '';
       $rootScope.$digest();
@@ -503,15 +503,15 @@ describe('Scope', function() {
     }));
 
 
-    it('should watch objects', inject(function($rootScope) {
+    it('should watch objects', inject(($rootScope) => {
       let log = '';
       $rootScope.a = [];
       $rootScope.b = {};
-      $rootScope.$watch('a', function(value) {
+      $rootScope.$watch('a', (value) => {
         log += '.';
         expect(value).toBe($rootScope.a);
       }, true);
-      $rootScope.$watch('b', function(value) {
+      $rootScope.$watch('b', (value) => {
         log += '!';
         expect(value).toBe($rootScope.b);
       }, true);
@@ -526,11 +526,11 @@ describe('Scope', function() {
     }));
 
 
-    it('should watch functions', function() {
+    it('should watch functions', () => {
       module(provideLog);
-      inject(function($rootScope, log) {
+      inject(($rootScope, log) => {
         $rootScope.fn = function() {return 'a';};
-        $rootScope.$watch('fn', function(fn) {
+        $rootScope.$watch('fn', (fn) => {
           log(fn());
         });
         $rootScope.$digest();
@@ -542,10 +542,10 @@ describe('Scope', function() {
     });
 
 
-    it('should prevent $digest recursion', inject(function($rootScope) {
+    it('should prevent $digest recursion', inject(($rootScope) => {
       let callCount = 0;
-      $rootScope.$watch('name', function() {
-        expect(function() {
+      $rootScope.$watch('name', () => {
+        expect(() => {
           $rootScope.$digest();
         }).toThrowMinErr('$rootScope', 'inprog', '$digest already in progress');
         callCount++;
@@ -556,10 +556,10 @@ describe('Scope', function() {
     }));
 
 
-    it('should allow a watch to be added while in a digest', inject(function($rootScope) {
-      let watch1 = jasmine.createSpy('watch1'),
-          watch2 = jasmine.createSpy('watch2');
-      $rootScope.$watch('foo', function() {
+    it('should allow a watch to be added while in a digest', inject(($rootScope) => {
+      const watch1 = jasmine.createSpy('watch1');
+          const watch2 = jasmine.createSpy('watch2');
+      $rootScope.$watch('foo', () => {
         $rootScope.$watch('foo', watch1);
         $rootScope.$watch('foo', watch2);
       });
@@ -570,13 +570,13 @@ describe('Scope', function() {
 
 
     it('should not skip watchers when adding new watchers during digest',
-      inject(function($rootScope) {
-        let log = [];
+      inject(($rootScope) => {
+        const log = [];
 
-        let watchFn1 = function() { log.push(1); };
-        let watchFn2 = function() { log.push(2); };
-        let watchFn3 = function() { log.push(3); };
-        let addWatcherOnce = function(newValue, oldValue) {
+        const watchFn1 = function() { log.push(1); };
+        const watchFn2 = function() { log.push(2); };
+        const watchFn3 = function() { log.push(3); };
+        const addWatcherOnce = function(newValue, oldValue) {
           if (newValue === oldValue) {
             $rootScope.$watch(watchFn3);
           }
@@ -593,14 +593,14 @@ describe('Scope', function() {
 
 
     it('should not run the current watcher twice when removing a watcher during digest',
-      inject(function($rootScope) {
-        let log = [];
+      inject(($rootScope) => {
+        const log = [];
         let removeWatcher3;
 
-        let watchFn3 = function() { log.push(3); };
-        let watchFn2 = function() { log.push(2); };
-        let watchFn1 = function() { log.push(1); };
-        let removeWatcherOnce = function(newValue, oldValue) {
+        const watchFn3 = function() { log.push(3); };
+        const watchFn2 = function() { log.push(2); };
+        const watchFn1 = function() { log.push(1); };
+        const removeWatcherOnce = function(newValue, oldValue) {
           if (newValue === oldValue) {
             removeWatcher3();
           }
@@ -618,14 +618,14 @@ describe('Scope', function() {
 
 
     it('should not skip watchers when removing itself during digest',
-      inject(function($rootScope) {
-        let log = [];
+      inject(($rootScope) => {
+        const log = [];
         let removeWatcher1;
 
-        let watchFn3 = function() { log.push(3); };
-        let watchFn2 = function() { log.push(2); };
-        let watchFn1 = function() { log.push(1); };
-        let removeItself = function() {
+        const watchFn3 = function() { log.push(3); };
+        const watchFn2 = function() { log.push(2); };
+        const watchFn1 = function() { log.push(1); };
+        const removeItself = function() {
           removeWatcher1();
         };
 
@@ -640,32 +640,32 @@ describe('Scope', function() {
     );
 
 
-    it('should not infinitely digest when current value is NaN', inject(function($rootScope) {
-      $rootScope.$watch(function() { return NaN;});
+    it('should not infinitely digest when current value is NaN', inject(($rootScope) => {
+      $rootScope.$watch(() => NaN);
 
-      expect(function() {
+      expect(() => {
         $rootScope.$digest();
       }).not.toThrow();
     }));
 
 
     it('should always call the watcher with newVal and oldVal equal on the first run',
-        inject(function($rootScope) {
+        inject(($rootScope) => {
       let log = [];
       function logger(scope, newVal, oldVal) {
-        let val = (newVal === oldVal || (newVal !== oldVal && oldVal !== newVal)) ? newVal : 'xxx';
+        const val = (newVal === oldVal || (newVal !== oldVal && oldVal !== newVal)) ? newVal : 'xxx';
         log.push(val);
       }
 
-      $rootScope.$watch(function() { return NaN;}, logger);
-      $rootScope.$watch(function() { return undefined;}, logger);
-      $rootScope.$watch(function() { return '';}, logger);
-      $rootScope.$watch(function() { return false;}, logger);
-      $rootScope.$watch(function() { return {};}, logger, true);
-      $rootScope.$watch(function() { return 23;}, logger);
+      $rootScope.$watch(() => NaN, logger);
+      $rootScope.$watch(() => undefined, logger);
+      $rootScope.$watch(() => '', logger);
+      $rootScope.$watch(() => false, logger);
+      $rootScope.$watch(() => ({}), logger, true);
+      $rootScope.$watch(() => 23, logger);
 
       $rootScope.$digest();
-      expect(isNaN(log.shift())).toBe(true); //jasmine's toBe and toEqual don't work well with NaNs
+      expect(isNaN(log.shift())).toBe(true); // jasmine's toBe and toEqual don't work well with NaNs
       expect(log).toEqual([undefined, '', false, {}, 23]);
       log = [];
       $rootScope.$digest();
@@ -673,54 +673,54 @@ describe('Scope', function() {
     }));
 
 
-    describe('$watch deregistration', function() {
+    describe('$watch deregistration', () => {
 
       it('should return a function that allows listeners to be deregistered', inject(
-          function($rootScope) {
-        let listener = jasmine.createSpy('watch listener'),
-            listenerRemove;
+          ($rootScope) => {
+        const listener = jasmine.createSpy('watch listener');
+            let listenerRemove;
 
         listenerRemove = $rootScope.$watch('foo', listener);
-        $rootScope.$digest(); //init
+        $rootScope.$digest(); // init
         expect(listener).toHaveBeenCalled();
         expect(listenerRemove).toBeDefined();
 
         listener.calls.reset();
         $rootScope.foo = 'bar';
-        $rootScope.$digest(); //trigger
+        $rootScope.$digest(); // trigger
         expect(listener).toHaveBeenCalledOnce();
 
         listener.calls.reset();
         $rootScope.foo = 'baz';
         listenerRemove();
-        $rootScope.$digest(); //trigger
+        $rootScope.$digest(); // trigger
         expect(listener).not.toHaveBeenCalled();
       }));
 
 
-      it('should allow a watch to be deregistered while in a digest', inject(function($rootScope) {
-        let remove1, remove2;
-        $rootScope.$watch('remove', function() {
+      it('should allow a watch to be deregistered while in a digest', inject(($rootScope) => {
+        let remove1; let remove2;
+        $rootScope.$watch('remove', () => {
           remove1();
           remove2();
         });
-        remove1 = $rootScope.$watch('thing', function() {});
-        remove2 = $rootScope.$watch('thing', function() {});
-        expect(function() {
+        remove1 = $rootScope.$watch('thing', () => {});
+        remove2 = $rootScope.$watch('thing', () => {});
+        expect(() => {
           $rootScope.$apply('remove = true');
         }).not.toThrow();
       }));
 
 
       it('should not mess up the digest loop if deregistration happens during digest', inject(
-          function($rootScope, log) {
+          ($rootScope, log) => {
 
         // we are testing this due to regression #5525 which is related to how the digest loops lastDirtyWatch
         // short-circuiting optimization works
 
         // scenario: watch1 deregistering watch1
         let scope = $rootScope.$new();
-        let deregWatch1 = scope.$watch(log.fn('watch1'), function() { deregWatch1(); log('watchAction1'); });
+        let deregWatch1 = scope.$watch(log.fn('watch1'), () => { deregWatch1(); log('watchAction1'); });
         scope.$watch(log.fn('watch2'), log.fn('watchAction2'));
         scope.$watch(log.fn('watch3'), log.fn('watchAction3'));
 
@@ -734,7 +734,7 @@ describe('Scope', function() {
 
         // scenario: watch1 deregistering watch2
         scope = $rootScope.$new();
-        scope.$watch(log.fn('watch1'), function() { deregWatch2(); log('watchAction1'); });
+        scope.$watch(log.fn('watch1'), () => { deregWatch2(); log('watchAction1'); });
         let deregWatch2 = scope.$watch(log.fn('watch2'), log.fn('watchAction2'));
         scope.$watch(log.fn('watch3'), log.fn('watchAction3'));
 
@@ -749,7 +749,7 @@ describe('Scope', function() {
         // scenario: watch2 deregistering watch1
         scope = $rootScope.$new();
         deregWatch1 = scope.$watch(log.fn('watch1'), log.fn('watchAction1'));
-        scope.$watch(log.fn('watch2'), function() { deregWatch1(); log('watchAction2'); });
+        scope.$watch(log.fn('watch2'), () => { deregWatch1(); log('watchAction2'); });
         scope.$watch(log.fn('watch3'), log.fn('watchAction3'));
 
         $rootScope.$digest();
@@ -759,15 +759,15 @@ describe('Scope', function() {
       }));
     });
 
-    describe('$watchCollection', function() {
-      describe('variable', function() {
-        let log, $rootScope, deregister;
+    describe('$watchCollection', () => {
+      describe('variable', () => {
+        let log; let $rootScope; let deregister;
 
-        beforeEach(inject(function(_$rootScope_, _log_) {
+        beforeEach(inject((_$rootScope_, _log_) => {
           $rootScope = _$rootScope_;
           log = _log_;
-          deregister = $rootScope.$watchCollection('obj', function logger(newVal, oldVal) {
-            let msg = {newVal: newVal, oldVal: oldVal};
+          deregister = $rootScope.$watchCollection('obj', (newVal, oldVal) => {
+            const msg = {newVal, oldVal};
 
             if (newVal === oldVal) {
               msg.identical = true;
@@ -778,7 +778,7 @@ describe('Scope', function() {
         }));
 
 
-        it('should not trigger if nothing change', function() {
+        it('should not trigger if nothing change', () => {
           $rootScope.$digest();
           expect(log).toEqual([{ newVal: undefined, oldVal: undefined, identical: true }]);
           log.reset();
@@ -788,7 +788,7 @@ describe('Scope', function() {
         });
 
 
-        it('should allow deregistration', function() {
+        it('should allow deregistration', () => {
           $rootScope.obj = [];
           $rootScope.$digest();
           expect(log.toArray().length).toBe(1);
@@ -802,10 +802,10 @@ describe('Scope', function() {
         });
 
 
-        describe('array', function() {
+        describe('array', () => {
 
           it('should return oldCollection === newCollection only on the first listener call',
-              inject(function($rootScope, log) {
+              inject(($rootScope, log) => {
 
             // first time should be identical
             $rootScope.obj = ['a', 'b'];
@@ -820,7 +820,7 @@ describe('Scope', function() {
           }));
 
 
-          it('should trigger when property changes into array', function() {
+          it('should trigger when property changes into array', () => {
             $rootScope.obj = 'test';
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: 'test', oldVal: 'test', identical: true}]);
@@ -843,7 +843,7 @@ describe('Scope', function() {
           });
 
 
-          it('should not trigger change when object in collection changes', function() {
+          it('should not trigger change when object in collection changes', () => {
             $rootScope.obj = [{}];
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: [{}], oldVal: [{}], identical: true}]);
@@ -854,7 +854,7 @@ describe('Scope', function() {
           });
 
 
-          it('should watch array properties', function() {
+          it('should watch array properties', () => {
             $rootScope.obj = [];
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: [], oldVal: [], identical: true}]);
@@ -872,7 +872,7 @@ describe('Scope', function() {
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: ['b', [], {}], oldVal: ['b']}]);
 
-            let temp = $rootScope.obj[1];
+            const temp = $rootScope.obj[1];
             $rootScope.obj[1] = $rootScope.obj[2];
             $rootScope.obj[2] = temp;
             $rootScope.$digest();
@@ -883,14 +883,14 @@ describe('Scope', function() {
             expect(log.empty()).toEqual([{newVal: [{}, []], oldVal: ['b', {}, []]}]);
           });
 
-          it('should not infinitely digest when current value is NaN', function() {
+          it('should not infinitely digest when current value is NaN', () => {
             $rootScope.obj = [NaN];
-            expect(function() {
+            expect(() => {
               $rootScope.$digest();
             }).not.toThrow();
           });
 
-          it('should watch array-like objects like arrays', function() {
+          it('should watch array-like objects like arrays', () => {
             window.document.body.innerHTML = '<p>' +
                                               '<a name=\'x\'>a</a>' +
                                               '<a name=\'y\'>b</a>' +
@@ -899,8 +899,8 @@ describe('Scope', function() {
             $rootScope.obj = window.document.getElementsByTagName('a');
             $rootScope.$digest();
 
-            let arrayLikelog = [];
-            forEach(log.empty()[0].newVal, function(element) {
+            const arrayLikelog = [];
+            forEach(log.empty()[0].newVal, (element) => {
               arrayLikelog.push(element.name);
             });
             expect(arrayLikelog).toEqual(['x', 'y']);
@@ -908,9 +908,9 @@ describe('Scope', function() {
         });
 
 
-        describe('object', function() {
+        describe('object', () => {
 
-          it('should return oldCollection === newCollection only on the first listener call', function() {
+          it('should return oldCollection === newCollection only on the first listener call', () => {
 
             $rootScope.obj = {'a': 'b'};
             // first time should be identical
@@ -924,7 +924,7 @@ describe('Scope', function() {
           });
 
 
-          it('should trigger when property changes into object', function() {
+          it('should trigger when property changes into object', () => {
             $rootScope.obj = 'test';
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: 'test', oldVal: 'test', identical: true}]);
@@ -935,7 +935,7 @@ describe('Scope', function() {
           });
 
 
-          it('should not trigger change when object in collection changes', function() {
+          it('should not trigger change when object in collection changes', () => {
             $rootScope.obj = {name: {}};
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: {name: {}}, oldVal: {name: {}}, identical: true}]);
@@ -946,7 +946,7 @@ describe('Scope', function() {
           });
 
 
-          it('should watch object properties', function() {
+          it('should watch object properties', () => {
             $rootScope.obj = {};
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: {}, oldVal: {}, identical: true}]);
@@ -964,7 +964,7 @@ describe('Scope', function() {
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: {a: 'B', b: [], c: {}}, oldVal: {a: 'B'}}]);
 
-            let temp = $rootScope.obj.a;
+            const temp = $rootScope.obj.a;
             $rootScope.obj.a = $rootScope.obj.b;
             $rootScope.obj.c = temp;
             $rootScope.$digest();
@@ -977,15 +977,15 @@ describe('Scope', function() {
           });
 
 
-          it('should not infinitely digest when current value is NaN', function() {
+          it('should not infinitely digest when current value is NaN', () => {
             $rootScope.obj = {a: NaN};
-            expect(function() {
+            expect(() => {
               $rootScope.$digest();
             }).not.toThrow();
           });
 
 
-          it('should handle objects created using `Object.create(null)`', function() {
+          it('should handle objects created using `Object.create(null)`', () => {
             $rootScope.obj = Object.create(null);
             $rootScope.obj.a = 'a';
             $rootScope.obj.b = 'b';
@@ -999,15 +999,15 @@ describe('Scope', function() {
         });
       });
 
-      describe('literal', function() {
-        describe('array', function() {
-          let log, $rootScope;
+      describe('literal', () => {
+        describe('array', () => {
+          let log; let $rootScope;
 
-          beforeEach(inject(function(_$rootScope_, _log_) {
+          beforeEach(inject((_$rootScope_, _log_) => {
             $rootScope = _$rootScope_;
             log = _log_;
-            $rootScope.$watchCollection('[obj]', function logger(newVal, oldVal) {
-              let msg = {newVal: newVal, oldVal: oldVal};
+            $rootScope.$watchCollection('[obj]', (newVal, oldVal) => {
+              const msg = {newVal, oldVal};
 
               if (newVal === oldVal) {
                 msg.identical = true;
@@ -1018,7 +1018,7 @@ describe('Scope', function() {
           }));
 
 
-          it('should return oldCollection === newCollection only on the first listener call', function() {
+          it('should return oldCollection === newCollection only on the first listener call', () => {
 
             // first time should be identical
             $rootScope.obj = 'a';
@@ -1033,7 +1033,7 @@ describe('Scope', function() {
           });
 
 
-          it('should trigger when property changes into array', function() {
+          it('should trigger when property changes into array', () => {
             $rootScope.obj = 'test';
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: ['test'], oldVal: ['test'], identical: true}]);
@@ -1056,7 +1056,7 @@ describe('Scope', function() {
           });
 
 
-          it('should not trigger change when object in collection changes', function() {
+          it('should not trigger change when object in collection changes', () => {
             $rootScope.obj = {};
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: [{}], oldVal: [{}], identical: true}]);
@@ -1067,23 +1067,23 @@ describe('Scope', function() {
           });
 
 
-          it('should not infinitely digest when current value is NaN', function() {
+          it('should not infinitely digest when current value is NaN', () => {
             $rootScope.obj = NaN;
-            expect(function() {
+            expect(() => {
               $rootScope.$digest();
             }).not.toThrow();
           });
         });
 
 
-        describe('object', function() {
-          let log, $rootScope;
+        describe('object', () => {
+          let log; let $rootScope;
 
-          beforeEach(inject(function(_$rootScope_, _log_) {
+          beforeEach(inject((_$rootScope_, _log_) => {
             $rootScope = _$rootScope_;
             log = _log_;
-            $rootScope.$watchCollection('{a: obj}', function logger(newVal, oldVal) {
-              let msg = {newVal: newVal, oldVal: oldVal};
+            $rootScope.$watchCollection('{a: obj}', (newVal, oldVal) => {
+              const msg = {newVal, oldVal};
 
               if (newVal === oldVal) {
                 msg.identical = true;
@@ -1093,7 +1093,7 @@ describe('Scope', function() {
             });
           }));
 
-          it('should return oldCollection === newCollection only on the first listener call', function() {
+          it('should return oldCollection === newCollection only on the first listener call', () => {
 
             $rootScope.obj = 'b';
             // first time should be identical
@@ -1107,7 +1107,7 @@ describe('Scope', function() {
           });
 
 
-          it('should trigger when property changes into object', function() {
+          it('should trigger when property changes into object', () => {
             $rootScope.obj = 'test';
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: {'a': 'test'}, oldVal: {'a': 'test'}, identical: true}]);
@@ -1118,7 +1118,7 @@ describe('Scope', function() {
           });
 
 
-          it('should not trigger change when object in collection changes', function() {
+          it('should not trigger change when object in collection changes', () => {
             $rootScope.obj = {name: 'foo'};
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: {'a': {name: 'foo'}}, oldVal: {'a': {name: 'foo'}}, identical: true}]);
@@ -1129,7 +1129,7 @@ describe('Scope', function() {
           });
 
 
-          it('should watch object properties', function() {
+          it('should watch object properties', () => {
             $rootScope.obj = {};
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: {'a': {}}, oldVal: {'a': {}}, identical: true}]);
@@ -1152,23 +1152,23 @@ describe('Scope', function() {
           });
 
 
-          it('should not infinitely digest when current value is NaN', function() {
+          it('should not infinitely digest when current value is NaN', () => {
             $rootScope.obj = NaN;
-            expect(function() {
+            expect(() => {
               $rootScope.$digest();
             }).not.toThrow();
           });
         });
 
 
-        describe('object computed property', function() {
-          let log, $rootScope;
+        describe('object computed property', () => {
+          let log; let $rootScope;
 
-          beforeEach(inject(function(_$rootScope_, _log_) {
+          beforeEach(inject((_$rootScope_, _log_) => {
             $rootScope = _$rootScope_;
             log = _log_;
-            $rootScope.$watchCollection('{[key]: obj}', function logger(newVal, oldVal) {
-              let msg = {newVal: newVal, oldVal: oldVal};
+            $rootScope.$watchCollection('{[key]: obj}', (newVal, oldVal) => {
+              const msg = {newVal, oldVal};
 
               if (newVal === oldVal) {
                 msg.identical = true;
@@ -1179,14 +1179,14 @@ describe('Scope', function() {
           }));
 
 
-          it('should default to "undefined" key', function() {
+          it('should default to "undefined" key', () => {
             $rootScope.obj = 'test';
             $rootScope.$digest();
             expect(log.empty()).toEqual([{newVal: {'undefined': 'test'}, oldVal: {'undefined': 'test'}, identical: true}]);
           });
 
 
-          it('should trigger when key changes', function() {
+          it('should trigger when key changes', () => {
             $rootScope.key = 'a';
             $rootScope.obj = 'test';
             $rootScope.$digest();
@@ -1202,7 +1202,7 @@ describe('Scope', function() {
           });
 
 
-          it('should not trigger when key changes but stringified key does not', function() {
+          it('should not trigger when key changes but stringified key does not', () => {
             $rootScope.key = 1;
             $rootScope.obj = 'test';
             $rootScope.$digest();
@@ -1230,7 +1230,7 @@ describe('Scope', function() {
           });
 
 
-          it('should not trigger change when object in collection changes', function() {
+          it('should not trigger change when object in collection changes', () => {
             $rootScope.key = 'a';
             $rootScope.obj = {name: 'foo'};
             $rootScope.$digest();
@@ -1242,10 +1242,10 @@ describe('Scope', function() {
           });
 
 
-          it('should not infinitely digest when key value is NaN', function() {
+          it('should not infinitely digest when key value is NaN', () => {
             $rootScope.key = NaN;
             $rootScope.obj = NaN;
-            expect(function() {
+            expect(() => {
               $rootScope.$digest();
             }).not.toThrow();
           });
@@ -1254,17 +1254,17 @@ describe('Scope', function() {
     });
 
 
-    describe('$suspend/$resume/$isSuspended', function() {
-      it('should suspend watchers on scope', inject(function($rootScope) {
-        let watchSpy = jasmine.createSpy('watchSpy');
+    describe('$suspend/$resume/$isSuspended', () => {
+      it('should suspend watchers on scope', inject(($rootScope) => {
+        const watchSpy = jasmine.createSpy('watchSpy');
         $rootScope.$watch(watchSpy);
         $rootScope.$suspend();
         $rootScope.$digest();
         expect(watchSpy).not.toHaveBeenCalled();
       }));
 
-      it('should resume watchers on scope', inject(function($rootScope) {
-        let watchSpy = jasmine.createSpy('watchSpy');
+      it('should resume watchers on scope', inject(($rootScope) => {
+        const watchSpy = jasmine.createSpy('watchSpy');
         $rootScope.$watch(watchSpy);
         $rootScope.$suspend();
         $rootScope.$resume();
@@ -1272,18 +1272,18 @@ describe('Scope', function() {
         expect(watchSpy).toHaveBeenCalled();
       }));
 
-      it('should suspend watchers on child scope', inject(function($rootScope) {
-        let watchSpy = jasmine.createSpy('watchSpy');
-        let scope = $rootScope.$new(true);
+      it('should suspend watchers on child scope', inject(($rootScope) => {
+        const watchSpy = jasmine.createSpy('watchSpy');
+        const scope = $rootScope.$new(true);
         scope.$watch(watchSpy);
         $rootScope.$suspend();
         $rootScope.$digest();
         expect(watchSpy).not.toHaveBeenCalled();
       }));
 
-      it('should resume watchers on child scope', inject(function($rootScope) {
-        let watchSpy = jasmine.createSpy('watchSpy');
-        let scope = $rootScope.$new(true);
+      it('should resume watchers on child scope', inject(($rootScope) => {
+        const watchSpy = jasmine.createSpy('watchSpy');
+        const scope = $rootScope.$new(true);
         scope.$watch(watchSpy);
         $rootScope.$suspend();
         $rootScope.$resume();
@@ -1291,12 +1291,12 @@ describe('Scope', function() {
         expect(watchSpy).toHaveBeenCalled();
       }));
 
-      it('should resume digesting immediately if `$resume` is called from an ancestor scope watch handler', inject(function($rootScope) {
-        let watchSpy = jasmine.createSpy('watchSpy');
-        let scope = $rootScope.$new();
+      it('should resume digesting immediately if `$resume` is called from an ancestor scope watch handler', inject(($rootScope) => {
+        const watchSpy = jasmine.createSpy('watchSpy');
+        const scope = $rootScope.$new();
 
         // Setup a handler that will toggle the scope suspension
-        $rootScope.$watch('a', function(a) { if (a) scope.$resume(); else scope.$suspend(); });
+        $rootScope.$watch('a', (a) => { if (a) scope.$resume(); else scope.$suspend(); });
 
         // Spy on the scope watches being called
         scope.$watch(watchSpy);
@@ -1312,13 +1312,13 @@ describe('Scope', function() {
         expect(watchSpy).toHaveBeenCalled();
       }));
 
-      it('should resume digesting immediately if `$resume` is called from a non-ancestor scope watch handler', inject(function($rootScope) {
-        let watchSpy = jasmine.createSpy('watchSpy');
-        let scope = $rootScope.$new();
-        let sibling = $rootScope.$new();
+      it('should resume digesting immediately if `$resume` is called from a non-ancestor scope watch handler', inject(($rootScope) => {
+        const watchSpy = jasmine.createSpy('watchSpy');
+        const scope = $rootScope.$new();
+        const sibling = $rootScope.$new();
 
         // Setup a handler that will toggle the scope suspension
-        sibling.$watch('a', function(a) { if (a) scope.$resume(); else scope.$suspend(); });
+        sibling.$watch('a', (a) => { if (a) scope.$resume(); else scope.$suspend(); });
 
         // Spy on the scope watches being called
         scope.$watch(watchSpy);
@@ -1335,16 +1335,16 @@ describe('Scope', function() {
         expect(watchSpy).toHaveBeenCalled();
       }));
 
-      it('should not suspend watchers on parent or sibling scopes', inject(function($rootScope) {
-        let watchSpyParent = jasmine.createSpy('watchSpyParent');
-        let watchSpyChild = jasmine.createSpy('watchSpyChild');
-        let watchSpySibling = jasmine.createSpy('watchSpySibling');
+      it('should not suspend watchers on parent or sibling scopes', inject(($rootScope) => {
+        const watchSpyParent = jasmine.createSpy('watchSpyParent');
+        const watchSpyChild = jasmine.createSpy('watchSpyChild');
+        const watchSpySibling = jasmine.createSpy('watchSpySibling');
 
-        let parent = $rootScope.$new();
+        const parent = $rootScope.$new();
         parent.$watch(watchSpyParent);
-        let child = parent.$new();
+        const child = parent.$new();
         child.$watch(watchSpyChild);
-        let sibling = parent.$new();
+        const sibling = parent.$new();
         sibling.$watch(watchSpySibling);
 
         child.$suspend();
@@ -1354,15 +1354,15 @@ describe('Scope', function() {
         expect(watchSpySibling).toHaveBeenCalled();
       }));
 
-      it('should return true from `$isSuspended()` when a scope is suspended', inject(function($rootScope) {
+      it('should return true from `$isSuspended()` when a scope is suspended', inject(($rootScope) => {
         $rootScope.$suspend();
         expect($rootScope.$isSuspended()).toBe(true);
         $rootScope.$resume();
         expect($rootScope.$isSuspended()).toBe(false);
       }));
 
-      it('should return false from `$isSuspended()` for a non-suspended scope that has a suspended ancestor', inject(function($rootScope) {
-        let childScope = $rootScope.$new();
+      it('should return false from `$isSuspended()` for a non-suspended scope that has a suspended ancestor', inject(($rootScope) => {
+        const childScope = $rootScope.$new();
         $rootScope.$suspend();
         expect(childScope.$isSuspended()).toBe(false);
         childScope.$suspend();
@@ -1375,18 +1375,18 @@ describe('Scope', function() {
     });
 
 
-    describe('optimizations', function() {
+    describe('optimizations', () => {
 
       function setupWatches(scope, log) {
-        scope.$watch(function() { log('w1'); return scope.w1; }, log.fn('w1action'));
-        scope.$watch(function() { log('w2'); return scope.w2; }, log.fn('w2action'));
-        scope.$watch(function() { log('w3'); return scope.w3; }, log.fn('w3action'));
+        scope.$watch(() => { log('w1'); return scope.w1; }, log.fn('w1action'));
+        scope.$watch(() => { log('w2'); return scope.w2; }, log.fn('w2action'));
+        scope.$watch(() => { log('w3'); return scope.w3; }, log.fn('w3action'));
         scope.$digest();
         log.reset();
       }
 
 
-      it('should check watches only once during an empty digest', inject(function(log, $rootScope) {
+      it('should check watches only once during an empty digest', inject((log, $rootScope) => {
         setupWatches($rootScope, log);
         $rootScope.$digest();
         expect(log).toEqual(['w1', 'w2', 'w3']);
@@ -1394,7 +1394,7 @@ describe('Scope', function() {
 
 
       it('should quit digest early after we check the last watch that was previously dirty',
-          inject(function(log, $rootScope) {
+          inject((log, $rootScope) => {
         setupWatches($rootScope, log);
         $rootScope.w1 = 'x';
         $rootScope.$digest();
@@ -1403,9 +1403,9 @@ describe('Scope', function() {
 
 
       it('should not quit digest early if a new watch was added from an existing watch action',
-          inject(function(log, $rootScope) {
+          inject((log, $rootScope) => {
         setupWatches($rootScope, log);
-        $rootScope.$watch(log.fn('w4'), function() {
+        $rootScope.$watch(log.fn('w4'), () => {
           log('w4action');
           $rootScope.$watch(log.fn('w5'), log.fn('w5action'));
         });
@@ -1416,11 +1416,11 @@ describe('Scope', function() {
 
 
       it('should not quit digest early if an evalAsync task was scheduled from a watch action',
-          inject(function(log, $rootScope) {
+          inject((log, $rootScope) => {
         setupWatches($rootScope, log);
-        $rootScope.$watch(log.fn('w4'), function() {
+        $rootScope.$watch(log.fn('w4'), () => {
           log('w4action');
-          $rootScope.$evalAsync(function() {
+          $rootScope.$evalAsync(() => {
             log('evalAsync');
           });
         });
@@ -1430,9 +1430,9 @@ describe('Scope', function() {
       }));
 
 
-      it('should quit digest early but not too early when various watches fire', inject(function(log, $rootScope) {
+      it('should quit digest early but not too early when various watches fire', inject((log, $rootScope) => {
         setupWatches($rootScope, log);
-        $rootScope.$watch(function() { log('w4'); return $rootScope.w4; }, function(newVal) {
+        $rootScope.$watch(() => { log('w4'); return $rootScope.w4; }, (newVal) => {
           log('w4action');
           $rootScope.w2 = newVal;
         });
@@ -1450,20 +1450,20 @@ describe('Scope', function() {
     });
   });
 
-  describe('$watchGroup', function() {
+  describe('$watchGroup', () => {
     let scope;
     let log;
 
-    beforeEach(inject(function($rootScope, _log_) {
+    beforeEach(inject(($rootScope, _log_) => {
       scope = $rootScope.$new();
       log = _log_;
     }));
 
 
-    it('should pass same group instance on first call (no expressions)', function() {
+    it('should pass same group instance on first call (no expressions)', () => {
       let newValues;
       let oldValues;
-      scope.$watchGroup([], function(n, o) {
+      scope.$watchGroup([], (n, o) => {
         newValues = n;
         oldValues = o;
       });
@@ -1473,25 +1473,10 @@ describe('Scope', function() {
     });
 
 
-    it('should pass same group instance on first call (single expression)', function() {
+    it('should pass same group instance on first call (single expression)', () => {
       let newValues;
       let oldValues;
-      scope.$watchGroup(['a'], function(n, o) {
-        newValues = n;
-        oldValues = o;
-      });
-
-      scope.$apply();
-      expect(newValues).toBe(oldValues);
-
-      scope.$apply('a = 1');
-      expect(newValues).not.toBe(oldValues);
-    });
-
-    it('should pass same group instance on first call (multiple expressions)', function() {
-      let newValues;
-      let oldValues;
-      scope.$watchGroup(['a', 'b'], function(n, o) {
+      scope.$watchGroup(['a'], (n, o) => {
         newValues = n;
         oldValues = o;
       });
@@ -1503,10 +1488,25 @@ describe('Scope', function() {
       expect(newValues).not.toBe(oldValues);
     });
 
-    it('should detect a change to any one expression in the group', function() {
-      scope.$watchGroup(['a', 'b'], function(values, oldValues, s) {
+    it('should pass same group instance on first call (multiple expressions)', () => {
+      let newValues;
+      let oldValues;
+      scope.$watchGroup(['a', 'b'], (n, o) => {
+        newValues = n;
+        oldValues = o;
+      });
+
+      scope.$apply();
+      expect(newValues).toBe(oldValues);
+
+      scope.$apply('a = 1');
+      expect(newValues).not.toBe(oldValues);
+    });
+
+    it('should detect a change to any one expression in the group', () => {
+      scope.$watchGroup(['a', 'b'], (values, oldValues, s) => {
         expect(s).toBe(scope);
-        log(oldValues + ' >>> ' + values);
+        log(`${oldValues  } >>> ${  values}`);
       });
 
       scope.a = 'foo';
@@ -1530,10 +1530,10 @@ describe('Scope', function() {
     });
 
 
-    it('should work for a group with just a single expression', function() {
-      scope.$watchGroup(['a'], function(values, oldValues, s) {
+    it('should work for a group with just a single expression', () => {
+      scope.$watchGroup(['a'], (values, oldValues, s) => {
         expect(s).toBe(scope);
-        log(oldValues + ' >>> ' + values);
+        log(`${oldValues  } >>> ${  values}`);
       });
 
       scope.a = 'foo';
@@ -1550,9 +1550,9 @@ describe('Scope', function() {
     });
 
 
-    it('should call the listener once when the array of watchExpressions is empty', function() {
-      scope.$watchGroup([], function(values, oldValues) {
-        log(oldValues + ' >>> ' + values);
+    it('should call the listener once when the array of watchExpressions is empty', () => {
+      scope.$watchGroup([], (values, oldValues) => {
+        log(`${oldValues  } >>> ${  values}`);
       });
 
       expect(log).toEqual('');
@@ -1565,13 +1565,13 @@ describe('Scope', function() {
     });
 
 
-    it('should not call watch action fn when watchGroup was deregistered', function() {
-      let deregisterMany = scope.$watchGroup(['a', 'b'], function(values, oldValues) {
-        log(oldValues + ' >>> ' + values);
-      }), deregisterOne = scope.$watchGroup(['a'], function(values, oldValues) {
-        log(oldValues + ' >>> ' + values);
-      }), deregisterNone = scope.$watchGroup([], function(values, oldValues) {
-        log(oldValues + ' >>> ' + values);
+    it('should not call watch action fn when watchGroup was deregistered', () => {
+      const deregisterMany = scope.$watchGroup(['a', 'b'], (values, oldValues) => {
+        log(`${oldValues  } >>> ${  values}`);
+      }); const deregisterOne = scope.$watchGroup(['a'], (values, oldValues) => {
+        log(`${oldValues  } >>> ${  values}`);
+      }); const deregisterNone = scope.$watchGroup([], (values, oldValues) => {
+        log(`${oldValues  } >>> ${  values}`);
       });
 
       deregisterMany();
@@ -1583,15 +1583,15 @@ describe('Scope', function() {
       expect(log).toEqual('');
     });
 
-    it('should have each individual old value equal to new values of previous watcher invocation', function() {
+    it('should have each individual old value equal to new values of previous watcher invocation', () => {
       let newValues;
       let oldValues;
-      scope.$watchGroup(['a', 'b'], function(n, o) {
+      scope.$watchGroup(['a', 'b'], (n, o) => {
         newValues = n.slice();
         oldValues = o.slice();
       });
 
-      scope.$apply(); //skip the initial invocation
+      scope.$apply(); // skip the initial invocation
 
       scope.$apply('a = 1');
       expect(newValues).toEqual([1, undefined]);
@@ -1619,18 +1619,18 @@ describe('Scope', function() {
     });
 
 
-    it('should have each individual old value equal to new values of previous watcher invocation, with modifications from other watchers', function() {
-      scope.$watch('a', function() { scope.b++; });
-      scope.$watch('b', function() { scope.c++; });
+    it('should have each individual old value equal to new values of previous watcher invocation, with modifications from other watchers', () => {
+      scope.$watch('a', () => { scope.b++; });
+      scope.$watch('b', () => { scope.c++; });
 
       let newValues;
       let oldValues;
-      scope.$watchGroup(['a', 'b', 'c'], function(n, o) {
+      scope.$watchGroup(['a', 'b', 'c'], (n, o) => {
         newValues = n.slice();
         oldValues = o.slice();
       });
 
-      scope.$apply(); //skip the initial invocation
+      scope.$apply(); // skip the initial invocation
 
       scope.$apply('a = b = c = 1');
       expect(newValues).toEqual([1, 2, 2]);
@@ -1649,18 +1649,18 @@ describe('Scope', function() {
       expect(oldValues).toEqual([3, 5, 4]);
     });
 
-    it('should remove all watchers once one-time/constant bindings are stable', function() {
-      //empty
+    it('should remove all watchers once one-time/constant bindings are stable', () => {
+      // empty
       scope.$watchGroup([], noop);
-      //single one-time
+      // single one-time
       scope.$watchGroup(['::a'], noop);
-      //multi one-time
+      // multi one-time
       scope.$watchGroup(['::a', '::b'], noop);
-      //single constant
+      // single constant
       scope.$watchGroup(['1'], noop);
-      //multi constant
+      // multi constant
       scope.$watchGroup(['1', '2'], noop);
-      //multi one-time/constant
+      // multi one-time/constant
       scope.$watchGroup(['::a', '1'], noop);
 
       expect(scope.$$watchersCount).not.toBe(0);
@@ -1668,10 +1668,10 @@ describe('Scope', function() {
       expect(scope.$$watchersCount).toBe(0);
     });
 
-    it('should maintain correct new/old values with one time bindings', function() {
+    it('should maintain correct new/old values with one time bindings', () => {
       let newValues;
       let oldValues;
-      scope.$watchGroup(['a', '::b', 'b', '4'], function(n, o) {
+      scope.$watchGroup(['a', '::b', 'b', '4'], (n, o) => {
         newValues = n.slice();
         oldValues = o.slice();
       });
@@ -1698,16 +1698,16 @@ describe('Scope', function() {
     });
   });
 
-  describe('$watchGroup with logging $exceptionHandler', function() {
-    it('should maintain correct new/old values even when listener throws', function() {
-      module(function($exceptionHandlerProvider) {
+  describe('$watchGroup with logging $exceptionHandler', () => {
+    it('should maintain correct new/old values even when listener throws', () => {
+      module(($exceptionHandlerProvider) => {
         $exceptionHandlerProvider.mode('log');
       });
 
-      inject(function($rootScope, $exceptionHandler) {
+      inject(($rootScope, $exceptionHandler) => {
         let newValues;
         let oldValues;
-        $rootScope.$watchGroup(['a', '::b', 'b', '4'], function(n, o) {
+        $rootScope.$watchGroup(['a', '::b', 'b', '4'], (n, o) => {
           newValues = n.slice();
           oldValues = o.slice();
           throw 'test';
@@ -1741,27 +1741,27 @@ describe('Scope', function() {
     });
   });
 
-  describe('$destroy', function() {
-    let first = null, middle = null, last = null, log = null;
+  describe('$destroy', () => {
+    let first = null; let middle = null; let last = null; let log = null;
 
-    beforeEach(inject(function($rootScope) {
+    beforeEach(inject(($rootScope) => {
       log = '';
 
       first = $rootScope.$new();
       middle = $rootScope.$new();
       last = $rootScope.$new();
 
-      first.$watch(function() { log += '1';});
-      middle.$watch(function() { log += '2';});
-      last.$watch(function() { log += '3';});
+      first.$watch(() => { log += '1';});
+      middle.$watch(() => { log += '2';});
+      last.$watch(() => { log += '3';});
 
       $rootScope.$digest();
       log = '';
     }));
 
 
-    it('should broadcast $destroy on rootScope', inject(function($rootScope) {
-      let spy = jasmine.createSpy('$destroy handler');
+    it('should broadcast $destroy on rootScope', inject(($rootScope) => {
+      const spy = jasmine.createSpy('$destroy handler');
       $rootScope.$on('$destroy', spy);
       $rootScope.$destroy();
       expect(spy).toHaveBeenCalled();
@@ -1769,8 +1769,8 @@ describe('Scope', function() {
     }));
 
 
-    it('should remove all listeners after $destroy of rootScope', inject(function($rootScope) {
-      let spy = jasmine.createSpy('$destroy handler');
+    it('should remove all listeners after $destroy of rootScope', inject(($rootScope) => {
+      const spy = jasmine.createSpy('$destroy handler');
       $rootScope.$on('dummy', spy);
       $rootScope.$destroy();
       $rootScope.$broadcast('dummy');
@@ -1778,9 +1778,9 @@ describe('Scope', function() {
     }));
 
 
-    it('should remove all watchers after $destroy of rootScope', inject(function($rootScope) {
-      let spy = jasmine.createSpy('$watch spy');
-      let digest = $rootScope.$digest;
+    it('should remove all watchers after $destroy of rootScope', inject(($rootScope) => {
+      const spy = jasmine.createSpy('$watch spy');
+      const digest = $rootScope.$digest;
       $rootScope.$watch(spy);
       $rootScope.$destroy();
       digest.call($rootScope);
@@ -1788,35 +1788,35 @@ describe('Scope', function() {
     }));
 
 
-    it('should call $browser.$$applicationDestroyed when destroying rootScope', inject(function($rootScope, $browser) {
+    it('should call $browser.$$applicationDestroyed when destroying rootScope', inject(($rootScope, $browser) => {
       spyOn($browser, '$$applicationDestroyed');
       $rootScope.$destroy();
       expect($browser.$$applicationDestroyed).toHaveBeenCalledOnce();
     }));
 
 
-    it('should remove first', inject(function($rootScope) {
+    it('should remove first', inject(($rootScope) => {
       first.$destroy();
       $rootScope.$digest();
       expect(log).toEqual('23');
     }));
 
 
-    it('should remove middle', inject(function($rootScope) {
+    it('should remove middle', inject(($rootScope) => {
       middle.$destroy();
       $rootScope.$digest();
       expect(log).toEqual('13');
     }));
 
 
-    it('should remove last', inject(function($rootScope) {
+    it('should remove last', inject(($rootScope) => {
       last.$destroy();
       $rootScope.$digest();
       expect(log).toEqual('12');
     }));
 
 
-    it('should broadcast the $destroy event', inject(function($rootScope, log) {
+    it('should broadcast the $destroy event', inject(($rootScope, log) => {
       first.$on('$destroy', log.fn('first'));
       first.$new().$on('$destroy', log.fn('first-child'));
 
@@ -1826,7 +1826,7 @@ describe('Scope', function() {
 
 
     it('should $destroy a scope only once and ignore any further destroy calls',
-        inject(function($rootScope) {
+        inject(($rootScope) => {
       $rootScope.$digest();
       expect(log).toBe('123');
 
@@ -1842,18 +1842,18 @@ describe('Scope', function() {
       expect(log).toBe('123');
     }));
 
-    it('should broadcast the $destroy only once', inject(function($rootScope, log) {
-      let isolateScope = first.$new(true);
+    it('should broadcast the $destroy only once', inject(($rootScope, log) => {
+      const isolateScope = first.$new(true);
       isolateScope.$on('$destroy', log.fn('event'));
       first.$destroy();
       isolateScope.$destroy();
       expect(log).toEqual('event');
     }));
 
-    it('should decrement ancestor $$listenerCount entries', inject(function($rootScope) {
-      let EVENT = 'fooEvent',
-          spy = jasmine.createSpy('listener'),
-          firstSecond = first.$new();
+    it('should decrement ancestor $$listenerCount entries', inject(($rootScope) => {
+      const EVENT = 'fooEvent';
+          const spy = jasmine.createSpy('listener');
+          const firstSecond = first.$new();
 
       firstSecond.$on(EVENT, spy);
       firstSecond.$on(EVENT, spy);
@@ -1873,29 +1873,29 @@ describe('Scope', function() {
 
 
     it('should do nothing when a child event listener is registered after parent\'s destruction',
-        inject(function($rootScope) {
-      let parent = $rootScope.$new(),
-          child = parent.$new();
+        inject(($rootScope) => {
+      const parent = $rootScope.$new();
+          const child = parent.$new();
 
       parent.$destroy();
-      let fn = child.$on('someEvent', function() {});
+      const fn = child.$on('someEvent', () => {});
       expect(fn).toBe(noop);
     }));
 
 
     it('should do nothing when a child watch is registered after parent\'s destruction',
-        inject(function($rootScope) {
-      let parent = $rootScope.$new(),
-          child = parent.$new();
+        inject(($rootScope) => {
+      const parent = $rootScope.$new();
+          const child = parent.$new();
 
       parent.$destroy();
-      let fn = child.$watch('somePath', function() {});
+      const fn = child.$watch('somePath', () => {});
       expect(fn).toBe(noop);
     }));
 
-    it('should do nothing when $apply()ing after parent\'s destruction', inject(function($rootScope) {
-      let parent = $rootScope.$new(),
-          child = parent.$new();
+    it('should do nothing when $apply()ing after parent\'s destruction', inject(($rootScope) => {
+      const parent = $rootScope.$new();
+          const child = parent.$new();
 
       parent.$destroy();
 
@@ -1906,9 +1906,9 @@ describe('Scope', function() {
       expect(called).toBe(false);
     }));
 
-    it('should do nothing when $evalAsync()ing after parent\'s destruction', inject(function($rootScope, $timeout) {
-      let parent = $rootScope.$new(),
-          child = parent.$new();
+    it('should do nothing when $evalAsync()ing after parent\'s destruction', inject(($rootScope, $timeout) => {
+      const parent = $rootScope.$new();
+          const child = parent.$new();
 
       parent.$destroy();
 
@@ -1922,13 +1922,13 @@ describe('Scope', function() {
 
 
     it('should preserve all (own and inherited) model properties on a destroyed scope',
-        inject(function($rootScope) {
+        inject(($rootScope) => {
       // This test simulates an async task (xhr response) interacting with the scope after the scope
       // was destroyed. Since we can't abort the request, we should ensure that the task doesn't
       // throw NPEs because the scope was cleaned up during destruction.
 
-      let parent = $rootScope.$new(),
-          child = parent.$new();
+      const parent = $rootScope.$new();
+          const child = parent.$new();
 
       parent.parentModel = 'parent';
       child.childModel = 'child';
@@ -1942,20 +1942,20 @@ describe('Scope', function() {
   });
 
 
-  describe('$eval', function() {
-    it('should eval an expression', inject(function($rootScope) {
+  describe('$eval', () => {
+    it('should eval an expression', inject(($rootScope) => {
       expect($rootScope.$eval('a=1')).toEqual(1);
       expect($rootScope.a).toEqual(1);
 
-      $rootScope.$eval(function(self) {self.b = 2;});
+      $rootScope.$eval((self) => {self.b = 2;});
       expect($rootScope.b).toEqual(2);
     }));
 
 
-    it('should allow passing locals to the expression', inject(function($rootScope) {
+    it('should allow passing locals to the expression', inject(($rootScope) => {
       expect($rootScope.$eval('a+1', {a: 2})).toBe(3);
 
-      $rootScope.$eval(function(scope, locals) {
+      $rootScope.$eval((scope, locals) => {
         scope.c = locals.b + 4;
       }, {b: 3});
       expect($rootScope.c).toBe(7);
@@ -1963,38 +1963,38 @@ describe('Scope', function() {
   });
 
 
-  describe('$evalAsync', function() {
+  describe('$evalAsync', () => {
 
-    it('should run callback before $watch', inject(function($rootScope) {
+    it('should run callback before $watch', inject(($rootScope) => {
       let log = '';
-      let child = $rootScope.$new();
-      $rootScope.$evalAsync(function(scope) { log += 'parent.async;'; });
-      $rootScope.$watch('value', function() { log += 'parent.$digest;'; });
-      child.$evalAsync(function(scope) { log += 'child.async;'; });
-      child.$watch('value', function() { log += 'child.$digest;'; });
+      const child = $rootScope.$new();
+      $rootScope.$evalAsync((scope) => { log += 'parent.async;'; });
+      $rootScope.$watch('value', () => { log += 'parent.$digest;'; });
+      child.$evalAsync((scope) => { log += 'child.async;'; });
+      child.$watch('value', () => { log += 'child.$digest;'; });
       $rootScope.$digest();
       expect(log).toEqual('parent.async;child.async;parent.$digest;child.$digest;');
     }));
 
-    it('should not run another digest for an $$postDigest call', inject(function($rootScope) {
+    it('should not run another digest for an $$postDigest call', inject(($rootScope) => {
       let internalWatchCount = 0;
       let externalWatchCount = 0;
 
       $rootScope.internalCount = 0;
       $rootScope.externalCount = 0;
 
-      $rootScope.$evalAsync(function(scope) {
+      $rootScope.$evalAsync((scope) => {
         $rootScope.internalCount++;
       });
 
-      $rootScope.$$postDigest(function(scope) {
+      $rootScope.$$postDigest((scope) => {
         $rootScope.externalCount++;
       });
 
-      $rootScope.$watch('internalCount', function(value) {
+      $rootScope.$watch('internalCount', (value) => {
         internalWatchCount = value;
       });
-      $rootScope.$watch('externalCount', function(value) {
+      $rootScope.$watch('externalCount', (value) => {
         externalWatchCount = value;
       });
 
@@ -2004,13 +2004,13 @@ describe('Scope', function() {
       expect(externalWatchCount).toEqual(0);
     }));
 
-    it('should cause a $digest rerun', inject(function($rootScope) {
+    it('should cause a $digest rerun', inject(($rootScope) => {
       $rootScope.log = '';
       $rootScope.value = 0;
-      $rootScope.$watch('value', function() {
-        $rootScope.log = $rootScope.log + '.';
+      $rootScope.$watch('value', () => {
+        $rootScope.log += '.';
       });
-      $rootScope.$watch('init', function() {
+      $rootScope.$watch('init', () => {
         $rootScope.$evalAsync('value = 123; log = log + "=" ');
         expect($rootScope.value).toEqual(0);
       });
@@ -2018,7 +2018,7 @@ describe('Scope', function() {
       expect($rootScope.log).toEqual('.=.');
     }));
 
-    it('should run async in the same order as added', inject(function($rootScope) {
+    it('should run async in the same order as added', inject(($rootScope) => {
       $rootScope.log = '';
       $rootScope.$evalAsync('log = log + 1');
       $rootScope.$evalAsync('log = log + 2');
@@ -2026,15 +2026,15 @@ describe('Scope', function() {
       expect($rootScope.log).toBe('12');
     }));
 
-    it('should allow passing locals to the expression', inject(function($rootScope) {
+    it('should allow passing locals to the expression', inject(($rootScope) => {
       $rootScope.log = '';
       $rootScope.$evalAsync('log = log + a', {a: 1});
       $rootScope.$digest();
       expect($rootScope.log).toBe('1');
     }));
 
-    it('should run async expressions in their proper context', inject(function($rootScope) {
-      let child = $rootScope.$new();
+    it('should run async expressions in their proper context', inject(($rootScope) => {
+      const child = $rootScope.$new();
       $rootScope.ctx = 'root context';
       $rootScope.log = '';
       child.ctx = 'child context';
@@ -2045,9 +2045,9 @@ describe('Scope', function() {
       expect(child.log).toBe('child context');
     }));
 
-    it('should operate only with a single queue across all child and isolate scopes', inject(function($rootScope, $parse) {
-      let childScope = $rootScope.$new();
-      let isolateScope = $rootScope.$new(true);
+    it('should operate only with a single queue across all child and isolate scopes', inject(($rootScope, $parse) => {
+      const childScope = $rootScope.$new();
+      const isolateScope = $rootScope.$new(true);
 
       $rootScope.$evalAsync('rootExpression');
       childScope.$evalAsync('childExpression');
@@ -2063,17 +2063,17 @@ describe('Scope', function() {
     }));
 
 
-    describe('auto-flushing when queueing outside of an $apply', function() {
-      let log, $rootScope, $browser;
+    describe('auto-flushing when queueing outside of an $apply', () => {
+      let log; let $rootScope; let $browser;
 
-      beforeEach(inject(function(_log_, _$rootScope_, _$browser_) {
+      beforeEach(inject((_log_, _$rootScope_, _$browser_) => {
         log = _log_;
         $rootScope = _$rootScope_;
         $browser = _$browser_;
       }));
 
 
-      it('should auto-flush the queue asynchronously and trigger digest', function() {
+      it('should auto-flush the queue asynchronously and trigger digest', () => {
         $rootScope.$evalAsync(log.fn('eval-ed!'));
         $rootScope.$watch(log.fn('digesting'));
         expect(log).toEqual([]);
@@ -2084,7 +2084,7 @@ describe('Scope', function() {
       });
 
 
-      it('should not trigger digest asynchronously if the queue is empty in the next tick', function() {
+      it('should not trigger digest asynchronously if the queue is empty in the next tick', () => {
         $rootScope.$evalAsync(log.fn('eval-ed!'));
         $rootScope.$watch(log.fn('digesting'));
         expect(log).toEqual([]);
@@ -2100,7 +2100,7 @@ describe('Scope', function() {
       });
 
 
-      it('should not schedule more than one auto-flush task', function() {
+      it('should not schedule more than one auto-flush task', () => {
         $rootScope.$evalAsync(log.fn('eval-ed 1!'));
         $rootScope.$evalAsync(log.fn('eval-ed 2!'));
 
@@ -2111,15 +2111,15 @@ describe('Scope', function() {
         expect(log).toEqual(['eval-ed 1!', 'eval-ed 2!']);
       });
 
-      it('should not have execution affected by an explicit $digest call', function() {
-        let scope1 = $rootScope.$new();
-        let scope2 = $rootScope.$new();
+      it('should not have execution affected by an explicit $digest call', () => {
+        const scope1 = $rootScope.$new();
+        const scope2 = $rootScope.$new();
 
-        scope1.$watch('value', function(value) {
+        scope1.$watch('value', (value) => {
           scope1.result = value;
         });
 
-        scope1.$evalAsync(function() {
+        scope1.$evalAsync(() => {
           scope1.value = 'bar';
         });
 
@@ -2131,9 +2131,9 @@ describe('Scope', function() {
       });
     });
 
-    it('should not pass anything as `this` to scheduled functions', inject(function($rootScope) {
+    it('should not pass anything as `this` to scheduled functions', inject(($rootScope) => {
       let this1 = {};
-      let this2 = (function() { return this; })();
+      const this2 = (function() { return this; })();
       $rootScope.$evalAsync(function() { this1 = this; });
       $rootScope.$digest();
       expect(this1).toEqual(this2);
@@ -2141,26 +2141,26 @@ describe('Scope', function() {
   });
 
 
-  describe('$apply', function() {
-    it('should apply expression with full lifecycle', inject(function($rootScope) {
+  describe('$apply', () => {
+    it('should apply expression with full lifecycle', inject(($rootScope) => {
       let log = '';
-      let child = $rootScope.$new();
-      $rootScope.$watch('a', function(a) { log += '1'; });
+      const child = $rootScope.$new();
+      $rootScope.$watch('a', (a) => { log += '1'; });
       child.$apply('$parent.a=0');
       expect(log).toEqual('1');
     }));
 
 
-    it('should catch exceptions', function() {
-      module(function($exceptionHandlerProvider) {
+    it('should catch exceptions', () => {
+      module(($exceptionHandlerProvider) => {
         $exceptionHandlerProvider.mode('log');
       });
-      inject(function($rootScope, $exceptionHandler, $log) {
+      inject(($rootScope, $exceptionHandler, $log) => {
         let log = '';
-        let child = $rootScope.$new();
-        $rootScope.$watch('a', function(a) { log += '1'; });
+        const child = $rootScope.$new();
+        $rootScope.$watch('a', (a) => { log += '1'; });
         $rootScope.a = 0;
-        child.$apply(function() { throw new Error('MyError'); });
+        child.$apply(() => { throw new Error('MyError'); });
         expect(log).toEqual('1');
         expect($exceptionHandler.errors[0].message).toEqual('MyError');
         $log.error.logs.shift();
@@ -2168,17 +2168,17 @@ describe('Scope', function() {
     });
 
 
-    it('should log exceptions from $digest', function() {
-      module(function($rootScopeProvider, $exceptionHandlerProvider) {
+    it('should log exceptions from $digest', () => {
+      module(($rootScopeProvider, $exceptionHandlerProvider) => {
         $rootScopeProvider.digestTtl(2);
         $exceptionHandlerProvider.mode('log');
       });
-      inject(function($rootScope, $exceptionHandler) {
-        $rootScope.$watch('a', function() {$rootScope.b++;});
-        $rootScope.$watch('b', function() {$rootScope.a++;});
+      inject(($rootScope, $exceptionHandler) => {
+        $rootScope.$watch('a', () => {$rootScope.b++;});
+        $rootScope.$watch('b', () => {$rootScope.a++;});
         $rootScope.a = $rootScope.b = 0;
 
-        expect(function() {
+        expect(() => {
           $rootScope.$apply();
         }).toThrow();
 
@@ -2189,44 +2189,42 @@ describe('Scope', function() {
     });
 
 
-    describe('exceptions', function() {
+    describe('exceptions', () => {
       let log;
-      beforeEach(module(function($exceptionHandlerProvider) {
+      beforeEach(module(($exceptionHandlerProvider) => {
         $exceptionHandlerProvider.mode('log');
       }));
-      beforeEach(inject(function($rootScope) {
+      beforeEach(inject(($rootScope) => {
         log = '';
-        $rootScope.$watch(function() { log += '$digest;'; });
+        $rootScope.$watch(() => { log += '$digest;'; });
         $rootScope.$digest();
         log = '';
       }));
 
 
       it('should execute and return value and update', inject(
-          function($rootScope, $exceptionHandler) {
+          ($rootScope, $exceptionHandler) => {
         $rootScope.name = 'abc';
-        expect($rootScope.$apply(function(scope) {
-          return scope.name;
-        })).toEqual('abc');
+        expect($rootScope.$apply((scope) => scope.name)).toEqual('abc');
         expect(log).toEqual('$digest;');
         expect($exceptionHandler.errors).toEqual([]);
       }));
 
 
-      it('should catch exception and update', inject(function($rootScope, $exceptionHandler) {
-        let error = new Error('MyError');
-        $rootScope.$apply(function() { throw error; });
+      it('should catch exception and update', inject(($rootScope, $exceptionHandler) => {
+        const error = new Error('MyError');
+        $rootScope.$apply(() => { throw error; });
         expect(log).toEqual('$digest;');
         expect($exceptionHandler.errors).toEqual([error]);
       }));
     });
 
 
-    describe('recursive $apply protection', function() {
+    describe('recursive $apply protection', () => {
       it('should throw an exception if $apply is called while an $apply is in progress', inject(
-          function($rootScope) {
-        expect(function() {
-          $rootScope.$apply(function() {
+          ($rootScope) => {
+        expect(() => {
+          $rootScope.$apply(() => {
             $rootScope.$apply();
           });
         }).toThrowMinErr('$rootScope', 'inprog', '$apply already in progress');
@@ -2234,26 +2232,26 @@ describe('Scope', function() {
 
 
       it('should not clear the state when calling $apply during an $apply', inject(
-          function($rootScope) {
-        $rootScope.$apply(function() {
-          expect(function() {
+          ($rootScope) => {
+        $rootScope.$apply(() => {
+          expect(() => {
             $rootScope.$apply();
           }).toThrowMinErr('$rootScope', 'inprog', '$apply already in progress');
-          expect(function() {
+          expect(() => {
             $rootScope.$apply();
           }).toThrowMinErr('$rootScope', 'inprog', '$apply already in progress');
         });
-        expect(function() {
+        expect(() => {
           $rootScope.$apply();
         }).not.toThrow();
       }));
 
 
       it('should throw an exception if $apply is called while flushing evalAsync queue', inject(
-          function($rootScope) {
-        expect(function() {
-          $rootScope.$apply(function() {
-            $rootScope.$evalAsync(function() {
+          ($rootScope) => {
+        expect(() => {
+          $rootScope.$apply(() => {
+            $rootScope.$evalAsync(() => {
               $rootScope.$apply();
             });
           });
@@ -2262,28 +2260,28 @@ describe('Scope', function() {
 
 
       it('should throw an exception if $apply is called while a watch is being initialized', inject(
-          function($rootScope) {
-        let childScope1 = $rootScope.$new();
-        childScope1.$watch('x', function() {
+          ($rootScope) => {
+        const childScope1 = $rootScope.$new();
+        childScope1.$watch('x', () => {
           childScope1.$apply();
         });
-        expect(function() { childScope1.$apply(); }).toThrowMinErr('$rootScope', 'inprog', '$digest already in progress');
+        expect(() => { childScope1.$apply(); }).toThrowMinErr('$rootScope', 'inprog', '$digest already in progress');
       }));
 
 
       it('should thrown an exception if $apply in called from a watch fn (after init)', inject(
-          function($rootScope) {
-        let childScope2 = $rootScope.$new();
-        childScope2.$apply(function() {
-          childScope2.$watch('x', function(newVal, oldVal) {
+          ($rootScope) => {
+        const childScope2 = $rootScope.$new();
+        childScope2.$apply(() => {
+          childScope2.$watch('x', (newVal, oldVal) => {
             if (newVal !== oldVal) {
               childScope2.$apply();
             }
           });
         });
 
-        expect(function() {
-          childScope2.$apply(function() {
+        expect(() => {
+          childScope2.$apply(() => {
             childScope2.x = 'something';
           });
         }).toThrowMinErr('$rootScope', 'inprog', '$digest already in progress');
@@ -2292,14 +2290,14 @@ describe('Scope', function() {
   });
 
 
-  describe('$applyAsync', function() {
-    beforeEach(module(function($exceptionHandlerProvider) {
+  describe('$applyAsync', () => {
+    beforeEach(module(($exceptionHandlerProvider) => {
       $exceptionHandlerProvider.mode('log');
     }));
 
 
-    it('should evaluate in the context of specific $scope', inject(function($rootScope, $browser) {
-      let scope = $rootScope.$new();
+    it('should evaluate in the context of specific $scope', inject(($rootScope, $browser) => {
+      const scope = $rootScope.$new();
       scope.$applyAsync('x = "CODE ORANGE"');
 
       $browser.defer.flush();
@@ -2308,7 +2306,7 @@ describe('Scope', function() {
     }));
 
 
-    it('should evaluate queued expressions in order', inject(function($rootScope, $browser) {
+    it('should evaluate queued expressions in order', inject(($rootScope, $browser) => {
       $rootScope.x = [];
       $rootScope.$applyAsync('x.push("expr1")');
       $rootScope.$applyAsync('x.push("expr2")');
@@ -2318,9 +2316,9 @@ describe('Scope', function() {
     }));
 
 
-    it('should evaluate subsequently queued items in same turn', inject(function($rootScope, $browser) {
+    it('should evaluate subsequently queued items in same turn', inject(($rootScope, $browser) => {
       $rootScope.x = [];
-      $rootScope.$applyAsync(function() {
+      $rootScope.$applyAsync(() => {
         $rootScope.x.push('expr1');
         $rootScope.$applyAsync('x.push("expr2")');
         expect($browser.deferredFns.length).toBe(0);
@@ -2331,8 +2329,8 @@ describe('Scope', function() {
     }));
 
 
-    it('should pass thrown exceptions to $exceptionHandler', inject(function($rootScope, $browser, $exceptionHandler) {
-      $rootScope.$applyAsync(function() {
+    it('should pass thrown exceptions to $exceptionHandler', inject(($rootScope, $browser, $exceptionHandler) => {
+      $rootScope.$applyAsync(() => {
         throw 'OOPS';
       });
 
@@ -2343,8 +2341,8 @@ describe('Scope', function() {
     }));
 
 
-    it('should evaluate subsequent expressions after an exception is thrown', inject(function($rootScope, $browser) {
-      $rootScope.$applyAsync(function() {
+    it('should evaluate subsequent expressions after an exception is thrown', inject(($rootScope, $browser) => {
+      $rootScope.$applyAsync(() => {
         throw 'OOPS';
       });
       $rootScope.$applyAsync('x = "All good!"');
@@ -2354,9 +2352,9 @@ describe('Scope', function() {
     }));
 
 
-    it('should be cancelled if a $rootScope digest occurs before the next tick', inject(function($rootScope, $browser) {
-      let cancel = spyOn($browser.defer, 'cancel').and.callThrough();
-      let expression = jasmine.createSpy('expr');
+    it('should be cancelled if a $rootScope digest occurs before the next tick', inject(($rootScope, $browser) => {
+      const cancel = spyOn($browser.defer, 'cancel').and.callThrough();
+      const expression = jasmine.createSpy('expr');
 
       $rootScope.$applyAsync(expression);
       $rootScope.$digest();
@@ -2375,22 +2373,22 @@ describe('Scope', function() {
     }));
   });
 
-  describe('$$postDigest', function() {
-    it('should process callbacks as a queue (FIFO) when the scope is digested', inject(function($rootScope) {
+  describe('$$postDigest', () => {
+    it('should process callbacks as a queue (FIFO) when the scope is digested', inject(($rootScope) => {
       let signature = '';
 
-      $rootScope.$$postDigest(function() {
+      $rootScope.$$postDigest(() => {
         signature += 'A';
-        $rootScope.$$postDigest(function() {
+        $rootScope.$$postDigest(() => {
           signature += 'D';
         });
       });
 
-      $rootScope.$$postDigest(function() {
+      $rootScope.$$postDigest(() => {
         signature += 'B';
       });
 
-      $rootScope.$$postDigest(function() {
+      $rootScope.$$postDigest(() => {
         signature += 'C';
       });
 
@@ -2399,20 +2397,20 @@ describe('Scope', function() {
       expect(signature).toBe('ABCD');
     }));
 
-    it('should support $apply calls nested in $$postDigest callbacks', inject(function($rootScope) {
+    it('should support $apply calls nested in $$postDigest callbacks', inject(($rootScope) => {
       let signature = '';
 
-      $rootScope.$$postDigest(function() {
+      $rootScope.$$postDigest(() => {
         signature += 'A';
       });
 
-      $rootScope.$$postDigest(function() {
+      $rootScope.$$postDigest(() => {
         signature += 'B';
         $rootScope.$apply();
         signature += 'D';
       });
 
-      $rootScope.$$postDigest(function() {
+      $rootScope.$$postDigest(() => {
         signature += 'C';
       });
 
@@ -2421,20 +2419,20 @@ describe('Scope', function() {
       expect(signature).toBe('ABCD');
     }));
 
-    it('should run a $$postDigest call on all child scopes when a parent scope is digested', inject(function($rootScope) {
-      let parent = $rootScope.$new(),
-          child = parent.$new(),
-          count = 0;
+    it('should run a $$postDigest call on all child scopes when a parent scope is digested', inject(($rootScope) => {
+      const parent = $rootScope.$new();
+          const child = parent.$new();
+          let count = 0;
 
-      $rootScope.$$postDigest(function() {
+      $rootScope.$$postDigest(() => {
         count++;
       });
 
-      parent.$$postDigest(function() {
+      parent.$$postDigest(() => {
         count++;
       });
 
-      child.$$postDigest(function() {
+      child.$$postDigest(() => {
         count++;
       });
 
@@ -2443,16 +2441,16 @@ describe('Scope', function() {
       expect(count).toBe(3);
     }));
 
-    it('should run a $$postDigest call even if the child scope is isolated', inject(function($rootScope) {
-      let parent = $rootScope.$new(),
-          child = parent.$new(true),
-          signature = '';
+    it('should run a $$postDigest call even if the child scope is isolated', inject(($rootScope) => {
+      const parent = $rootScope.$new();
+          const child = parent.$new(true);
+          let signature = '';
 
-      parent.$$postDigest(function() {
+      parent.$$postDigest(() => {
         signature += 'A';
       });
 
-      child.$$postDigest(function() {
+      child.$$postDigest(() => {
         signature += 'B';
       });
 
@@ -2462,13 +2460,13 @@ describe('Scope', function() {
     }));
   });
 
-  describe('events', function() {
+  describe('events', () => {
 
-    describe('$on', function() {
+    describe('$on', () => {
 
-      it('should add listener for both $emit and $broadcast events', inject(function($rootScope) {
-        let log = '',
-            child = $rootScope.$new();
+      it('should add listener for both $emit and $broadcast events', inject(($rootScope) => {
+        let log = '';
+            const child = $rootScope.$new();
 
         function eventFn() {
           log += 'X';
@@ -2485,10 +2483,10 @@ describe('Scope', function() {
       }));
 
 
-      it('should increment ancestor $$listenerCount entries', inject(function($rootScope) {
-        let child1 = $rootScope.$new(),
-            child2 = child1.$new(),
-            spy = jasmine.createSpy();
+      it('should increment ancestor $$listenerCount entries', inject(($rootScope) => {
+        const child1 = $rootScope.$new();
+            const child2 = child1.$new();
+            const spy = jasmine.createSpy();
 
         $rootScope.$on('event1', spy);
         expect($rootScope.$$listenerCount).toEqual({event1: 1});
@@ -2504,12 +2502,12 @@ describe('Scope', function() {
       }));
 
 
-      describe('deregistration', function() {
+      describe('deregistration', () => {
 
-        it('should return a function that deregisters the listener', inject(function($rootScope) {
-          let log = '',
-              child = $rootScope.$new(),
-              listenerRemove;
+        it('should return a function that deregisters the listener', inject(($rootScope) => {
+          let log = '';
+              const child = $rootScope.$new();
+              let listenerRemove;
 
           function eventFn() {
             log += 'X';
@@ -2522,41 +2520,41 @@ describe('Scope', function() {
           child.$emit('abc');
           child.$broadcast('abc');
           expect(log).toEqual('XX');
-          expect($rootScope.$$listenerCount['abc']).toBe(1);
+          expect($rootScope.$$listenerCount.abc).toBe(1);
 
           log = '';
           listenerRemove();
           child.$emit('abc');
           child.$broadcast('abc');
           expect(log).toEqual('');
-          expect($rootScope.$$listenerCount['abc']).toBeUndefined();
+          expect($rootScope.$$listenerCount.abc).toBeUndefined();
         }));
 
 
         // See issue https://github.com/angular/angular.js/issues/16135
-        it('should deallocate the listener array entry', inject(function($rootScope) {
-          let remove1 = $rootScope.$on('abc', noop);
+        it('should deallocate the listener array entry', inject(($rootScope) => {
+          const remove1 = $rootScope.$on('abc', noop);
           $rootScope.$on('abc', noop);
 
-          expect($rootScope.$$listeners['abc'].length).toBe(2);
-          expect(0 in $rootScope.$$listeners['abc']).toBe(true);
+          expect($rootScope.$$listeners.abc.length).toBe(2);
+          expect(0 in $rootScope.$$listeners.abc).toBe(true);
 
           remove1();
 
-          expect($rootScope.$$listeners['abc'].length).toBe(2);
-          expect(0 in $rootScope.$$listeners['abc']).toBe(false);
+          expect($rootScope.$$listeners.abc.length).toBe(2);
+          expect(0 in $rootScope.$$listeners.abc).toBe(false);
         }));
 
 
-        it('should call next listener after removing the current listener via its own handler', inject(function($rootScope) {
-          let listener1 = jasmine.createSpy('listener1').and.callFake(function() { remove1(); });
+        it('should call next listener after removing the current listener via its own handler', inject(($rootScope) => {
+          const listener1 = jasmine.createSpy('listener1').and.callFake(() => { remove1(); });
           let remove1 = $rootScope.$on('abc', listener1);
 
-          let listener2 = jasmine.createSpy('listener2');
-          let remove2 = $rootScope.$on('abc', listener2);
+          const listener2 = jasmine.createSpy('listener2');
+          const remove2 = $rootScope.$on('abc', listener2);
 
-          let listener3 = jasmine.createSpy('listener3');
-          let remove3 = $rootScope.$on('abc', listener3);
+          const listener3 = jasmine.createSpy('listener3');
+          const remove3 = $rootScope.$on('abc', listener3);
 
           $rootScope.$broadcast('abc');
           expect(listener1).toHaveBeenCalled();
@@ -2574,15 +2572,15 @@ describe('Scope', function() {
         }));
 
 
-        it('should call all subsequent listeners when a previous listener is removed via a handler', inject(function($rootScope) {
-          let listener1 = jasmine.createSpy();
-          let remove1 = $rootScope.$on('abc', listener1);
+        it('should call all subsequent listeners when a previous listener is removed via a handler', inject(($rootScope) => {
+          const listener1 = jasmine.createSpy();
+          const remove1 = $rootScope.$on('abc', listener1);
 
-          let listener2 = jasmine.createSpy().and.callFake(remove1);
-          let remove2 = $rootScope.$on('abc', listener2);
+          const listener2 = jasmine.createSpy().and.callFake(remove1);
+          const remove2 = $rootScope.$on('abc', listener2);
 
-          let listener3 = jasmine.createSpy();
-          let remove3 = $rootScope.$on('abc', listener3);
+          const listener3 = jasmine.createSpy();
+          const remove3 = $rootScope.$on('abc', listener3);
 
           $rootScope.$broadcast('abc');
           expect(listener1).toHaveBeenCalled();
@@ -2600,18 +2598,18 @@ describe('Scope', function() {
         }));
 
 
-        it('should not call listener when removed by previous', inject(function($rootScope) {
-          let listener1 = jasmine.createSpy('listener1');
-          let remove1 = $rootScope.$on('abc', listener1);
+        it('should not call listener when removed by previous', inject(($rootScope) => {
+          const listener1 = jasmine.createSpy('listener1');
+          const remove1 = $rootScope.$on('abc', listener1);
 
-          let listener2 = jasmine.createSpy('listener2').and.callFake(function() { remove3(); });
-          let remove2 = $rootScope.$on('abc', listener2);
+          const listener2 = jasmine.createSpy('listener2').and.callFake(() => { remove3(); });
+          const remove2 = $rootScope.$on('abc', listener2);
 
-          let listener3 = jasmine.createSpy('listener3');
+          const listener3 = jasmine.createSpy('listener3');
           let remove3 = $rootScope.$on('abc', listener3);
 
-          let listener4 = jasmine.createSpy('listener4');
-          let remove4 = $rootScope.$on('abc', listener4);
+          const listener4 = jasmine.createSpy('listener4');
+          const remove4 = $rootScope.$on('abc', listener4);
 
           $rootScope.$broadcast('abc');
           expect(listener1).toHaveBeenCalled();
@@ -2632,10 +2630,10 @@ describe('Scope', function() {
         }));
 
 
-        it('should decrement ancestor $$listenerCount entries', inject(function($rootScope) {
-          let child1 = $rootScope.$new(),
-              child2 = child1.$new(),
-              spy = jasmine.createSpy();
+        it('should decrement ancestor $$listenerCount entries', inject(($rootScope) => {
+          const child1 = $rootScope.$new();
+              const child2 = child1.$new();
+              const spy = jasmine.createSpy();
 
           $rootScope.$on('event1', spy);
           expect($rootScope.$$listenerCount).toEqual({event1: 1});
@@ -2644,7 +2642,7 @@ describe('Scope', function() {
           expect($rootScope.$$listenerCount).toEqual({event1: 2});
           expect(child1.$$listenerCount).toEqual({event1: 1});
 
-          let deregisterEvent2Listener = child2.$on('event2', spy);
+          const deregisterEvent2Listener = child2.$on('event2', spy);
           expect($rootScope.$$listenerCount).toEqual({event1: 2, event2: 1});
           expect(child1.$$listenerCount).toEqual({event1: 1, event2: 1});
           expect(child2.$$listenerCount).toEqual({event2: 1});
@@ -2657,16 +2655,16 @@ describe('Scope', function() {
         }));
 
 
-        it('should not decrement $$listenerCount when called second time', inject(function($rootScope) {
-          let child = $rootScope.$new(),
-              listener1Spy = jasmine.createSpy(),
-              listener2Spy = jasmine.createSpy();
+        it('should not decrement $$listenerCount when called second time', inject(($rootScope) => {
+          const child = $rootScope.$new();
+              const listener1Spy = jasmine.createSpy();
+              const listener2Spy = jasmine.createSpy();
 
           child.$on('abc', listener1Spy);
           expect($rootScope.$$listenerCount).toEqual({abc: 1});
           expect(child.$$listenerCount).toEqual({abc: 1});
 
-          let deregisterEventListener = child.$on('abc', listener2Spy);
+          const deregisterEventListener = child.$on('abc', listener2Spy);
           expect($rootScope.$$listenerCount).toEqual({abc: 2});
           expect(child.$$listenerCount).toEqual({abc: 2});
 
@@ -2684,17 +2682,17 @@ describe('Scope', function() {
     });
 
 
-    describe('$emit', function() {
-      let log, child, grandChild, greatGrandChild;
+    describe('$emit', () => {
+      let log; let child; let grandChild; let greatGrandChild;
 
       function logger(event) {
-        log += event.currentScope.id + '>';
+        log += `${event.currentScope.id  }>`;
       }
 
-      beforeEach(module(function($exceptionHandlerProvider) {
+      beforeEach(module(($exceptionHandlerProvider) => {
         $exceptionHandlerProvider.mode('log');
       }));
-      beforeEach(inject(function($rootScope) {
+      beforeEach(inject(($rootScope) => {
         log = '';
         child = $rootScope.$new();
         grandChild = child.$new();
@@ -2711,14 +2709,14 @@ describe('Scope', function() {
         greatGrandChild.$on('myEvent', logger);
       }));
 
-      it('should bubble event up to the root scope', function() {
+      it('should bubble event up to the root scope', () => {
         grandChild.$emit('myEvent');
         expect(log).toEqual('2>1>0>');
       });
 
-      it('should allow all events on the same scope to run even if stopPropagation is called', function() {
+      it('should allow all events on the same scope to run even if stopPropagation is called', () => {
         child.$on('myEvent', logger);
-        grandChild.$on('myEvent', function(e) { e.stopPropagation(); });
+        grandChild.$on('myEvent', (e) => { e.stopPropagation(); });
         grandChild.$on('myEvent', logger);
         grandChild.$on('myEvent', logger);
         grandChild.$emit('myEvent');
@@ -2726,23 +2724,23 @@ describe('Scope', function() {
       });
 
       it('should dispatch exceptions to the $exceptionHandler',
-          inject(function($exceptionHandler) {
-        child.$on('myEvent', function() { throw 'bubbleException'; });
+          inject(($exceptionHandler) => {
+        child.$on('myEvent', () => { throw 'bubbleException'; });
         grandChild.$emit('myEvent');
         expect(log).toEqual('2>1>0>');
         expect($exceptionHandler.errors).toEqual(['bubbleException']);
       }));
 
 
-      it('should allow stopping event propagation', function() {
-        child.$on('myEvent', function(event) { event.stopPropagation(); });
+      it('should allow stopping event propagation', () => {
+        child.$on('myEvent', (event) => { event.stopPropagation(); });
         grandChild.$emit('myEvent');
         expect(log).toEqual('2>1>');
       });
 
 
-      it('should forward method arguments', function() {
-        child.$on('abc', function(event, arg1, arg2) {
+      it('should forward method arguments', () => {
+        child.$on('abc', (event, arg1, arg2) => {
           expect(event.name).toBe('abc');
           expect(arg1).toBe('arg1');
           expect(arg2).toBe('arg2');
@@ -2751,25 +2749,25 @@ describe('Scope', function() {
       });
 
 
-      it('should allow removing event listener inside a listener on $emit', function() {
-        let spy1 = jasmine.createSpy('1st listener');
-        let spy2 = jasmine.createSpy('2nd listener');
-        let spy3 = jasmine.createSpy('3rd listener');
+      it('should allow removing event listener inside a listener on $emit', () => {
+        const spy1 = jasmine.createSpy('1st listener');
+        const spy2 = jasmine.createSpy('2nd listener');
+        const spy3 = jasmine.createSpy('3rd listener');
 
-        let remove1 = child.$on('evt', spy1);
-        let remove2 = child.$on('evt', spy2);
-        let remove3 = child.$on('evt', spy3);
+        const remove1 = child.$on('evt', spy1);
+        const remove2 = child.$on('evt', spy2);
+        const remove3 = child.$on('evt', spy3);
 
         spy1.and.callFake(remove1);
 
-        expect(child.$$listeners['evt'].length).toBe(3);
+        expect(child.$$listeners.evt.length).toBe(3);
 
         // should call all listeners and remove 1st
         child.$emit('evt');
         expect(spy1).toHaveBeenCalledOnce();
         expect(spy2).toHaveBeenCalledOnce();
         expect(spy3).toHaveBeenCalledOnce();
-        expect(child.$$listeners['evt'].length).toBe(3); // cleanup will happen on next $emit
+        expect(child.$$listeners.evt.length).toBe(3); // cleanup will happen on next $emit
 
         spy1.calls.reset();
         spy2.calls.reset();
@@ -2781,29 +2779,29 @@ describe('Scope', function() {
         expect(spy1).not.toHaveBeenCalled();
         expect(spy2).toHaveBeenCalledOnce();
         expect(spy3).not.toHaveBeenCalled();
-        expect(child.$$listeners['evt'].length).toBe(1);
+        expect(child.$$listeners.evt.length).toBe(1);
       });
 
 
-      it('should allow removing event listener inside a listener on $broadcast', function() {
-        let spy1 = jasmine.createSpy('1st listener');
-        let spy2 = jasmine.createSpy('2nd listener');
-        let spy3 = jasmine.createSpy('3rd listener');
+      it('should allow removing event listener inside a listener on $broadcast', () => {
+        const spy1 = jasmine.createSpy('1st listener');
+        const spy2 = jasmine.createSpy('2nd listener');
+        const spy3 = jasmine.createSpy('3rd listener');
 
-        let remove1 = child.$on('evt', spy1);
-        let remove2 = child.$on('evt', spy2);
-        let remove3 = child.$on('evt', spy3);
+        const remove1 = child.$on('evt', spy1);
+        const remove2 = child.$on('evt', spy2);
+        const remove3 = child.$on('evt', spy3);
 
         spy1.and.callFake(remove1);
 
-        expect(child.$$listeners['evt'].length).toBe(3);
+        expect(child.$$listeners.evt.length).toBe(3);
 
         // should call all listeners and remove 1st
         child.$broadcast('evt');
         expect(spy1).toHaveBeenCalledOnce();
         expect(spy2).toHaveBeenCalledOnce();
         expect(spy3).toHaveBeenCalledOnce();
-        expect(child.$$listeners['evt'].length).toBe(3); //cleanup will happen on next $broadcast
+        expect(child.$$listeners.evt.length).toBe(3); // cleanup will happen on next $broadcast
 
         spy1.calls.reset();
         spy2.calls.reset();
@@ -2815,15 +2813,15 @@ describe('Scope', function() {
         expect(spy1).not.toHaveBeenCalled();
         expect(spy2).toHaveBeenCalledOnce();
         expect(spy3).not.toHaveBeenCalled();
-        expect(child.$$listeners['evt'].length).toBe(1);
+        expect(child.$$listeners.evt.length).toBe(1);
       });
 
 
-      describe('event object', function() {
-        it('should have methods/properties', function() {
+      describe('event object', () => {
+        it('should have methods/properties', () => {
           let eventFired = false;
 
-          child.$on('myEvent', function(e) {
+          child.$on('myEvent', (e) => {
             expect(e.targetScope).toBe(grandChild);
             expect(e.currentScope).toBe(child);
             expect(e.name).toBe('myEvent');
@@ -2834,10 +2832,10 @@ describe('Scope', function() {
         });
 
 
-        it('should have its `currentScope` property set to null after emit', function() {
+        it('should have its `currentScope` property set to null after emit', () => {
           let event;
 
-          child.$on('myEvent', function(e) {
+          child.$on('myEvent', (e) => {
             event = e;
           });
           grandChild.$emit('myEvent');
@@ -2848,11 +2846,11 @@ describe('Scope', function() {
         });
 
 
-        it('should have preventDefault method and defaultPrevented property', function() {
+        it('should have preventDefault method and defaultPrevented property', () => {
           let event = grandChild.$emit('myEvent');
           expect(event.defaultPrevented).toBe(false);
 
-          child.$on('myEvent', function(event) {
+          child.$on('myEvent', (event) => {
             event.preventDefault();
           });
           event = grandChild.$emit('myEvent');
@@ -2863,16 +2861,16 @@ describe('Scope', function() {
     });
 
 
-    describe('$broadcast', function() {
-      describe('event propagation', function() {
-        let log, child1, child2, child3, grandChild11, grandChild21, grandChild22, grandChild23,
-            greatGrandChild211;
+    describe('$broadcast', () => {
+      describe('event propagation', () => {
+        let log; let child1; let child2; let child3; let grandChild11; let grandChild21; let grandChild22; let grandChild23;
+            let greatGrandChild211;
 
         function logger(event) {
-          log += event.currentScope.id + '>';
+          log += `${event.currentScope.id  }>`;
         }
 
-        beforeEach(inject(function($rootScope) {
+        beforeEach(inject(($rootScope) => {
           log = '';
           child1 = $rootScope.$new();
           child2 = $rootScope.$new();
@@ -2913,40 +2911,40 @@ describe('Scope', function() {
         }));
 
 
-        it('should broadcast an event from the root scope', inject(function($rootScope) {
+        it('should broadcast an event from the root scope', inject(($rootScope) => {
           $rootScope.$broadcast('myEvent');
           expect(log).toBe('0>1>11>2>21>211>22>23>3>');
         }));
 
 
-        it('should broadcast an event from a child scope', function() {
+        it('should broadcast an event from a child scope', () => {
           child2.$broadcast('myEvent');
           expect(log).toBe('2>21>211>22>23>');
         });
 
 
-        it('should broadcast an event from a leaf scope with a sibling', function() {
+        it('should broadcast an event from a leaf scope with a sibling', () => {
           grandChild22.$broadcast('myEvent');
           expect(log).toBe('22>');
         });
 
 
-        it('should broadcast an event from a leaf scope without a sibling', function() {
+        it('should broadcast an event from a leaf scope without a sibling', () => {
           grandChild23.$broadcast('myEvent');
           expect(log).toBe('23>');
         });
 
 
-        it('should not not fire any listeners for other events', inject(function($rootScope) {
+        it('should not not fire any listeners for other events', inject(($rootScope) => {
           $rootScope.$broadcast('fooEvent');
           expect(log).toBe('');
         }));
 
 
         it('should not descend past scopes with a $$listerCount of 0 or undefined',
-            inject(function($rootScope) {
-          let EVENT = 'fooEvent',
-              spy = jasmine.createSpy('listener');
+            inject(($rootScope) => {
+          const EVENT = 'fooEvent';
+              const spy = jasmine.createSpy('listener');
 
           // Precondition: There should be no listeners for fooEvent.
           expect($rootScope.$$listenerCount[EVENT]).toBeUndefined();
@@ -2960,8 +2958,8 @@ describe('Scope', function() {
         }));
 
 
-        it('should return event object', function() {
-          let result = child1.$broadcast('some');
+        it('should return event object', () => {
+          const result = child1.$broadcast('some');
 
           expect(result).toBeDefined();
           expect(result.name).toBe('some');
@@ -2970,13 +2968,13 @@ describe('Scope', function() {
       });
 
 
-      describe('listener', function() {
-        it('should receive event object', inject(function($rootScope) {
-          let scope = $rootScope,
-              child = scope.$new(),
-              eventFired = false;
+      describe('listener', () => {
+        it('should receive event object', inject(($rootScope) => {
+          const scope = $rootScope;
+              const child = scope.$new();
+              let eventFired = false;
 
-          child.$on('fooEvent', function(event) {
+          child.$on('fooEvent', (event) => {
             eventFired = true;
             expect(event.name).toBe('fooEvent');
             expect(event.targetScope).toBe(scope);
@@ -2989,12 +2987,12 @@ describe('Scope', function() {
 
 
         it('should have the event\'s `currentScope` property set to null after broadcast',
-            inject(function($rootScope) {
-          let scope = $rootScope,
-              child = scope.$new(),
-              event;
+            inject(($rootScope) => {
+          const scope = $rootScope;
+              const child = scope.$new();
+              let event;
 
-          child.$on('fooEvent', function(e) {
+          child.$on('fooEvent', (e) => {
             event = e;
           });
           scope.$broadcast('fooEvent');
@@ -3005,10 +3003,10 @@ describe('Scope', function() {
         }));
 
 
-        it('should support passing messages as varargs', inject(function($rootScope) {
-          let scope = $rootScope,
-              child = scope.$new(),
-              args;
+        it('should support passing messages as varargs', inject(($rootScope) => {
+          const scope = $rootScope;
+              const child = scope.$new();
+              let args;
 
           child.$on('fooEvent', function() {
             args = arguments;
@@ -3022,9 +3020,9 @@ describe('Scope', function() {
     });
 
 
-    it('should allow recursive $emit/$broadcast', inject(function($rootScope) {
+    it('should allow recursive $emit/$broadcast', inject(($rootScope) => {
       let callCount = 0;
-      $rootScope.$on('evt', function($event, arg0) {
+      $rootScope.$on('evt', ($event, arg0) => {
         callCount++;
         if (arg0 !== 1234) {
           $rootScope.$emit('evt', 1234);
@@ -3038,18 +3036,18 @@ describe('Scope', function() {
     }));
 
 
-    it('should allow recursive $emit/$broadcast between parent/child', inject(function($rootScope) {
-      let child = $rootScope.$new();
+    it('should allow recursive $emit/$broadcast between parent/child', inject(($rootScope) => {
+      const child = $rootScope.$new();
       let calls = '';
 
-      $rootScope.$on('evt', function($event, arg0) {
+      $rootScope.$on('evt', ($event, arg0) => {
         calls += 'r';  // For "root".
         if (arg0 === 'fromChild') {
           $rootScope.$broadcast('evt', 'fromRoot2');
         }
       });
 
-      child.$on('evt', function($event, arg0) {
+      child.$on('evt', ($event, arg0) => {
         calls += 'c';  // For "child".
         if (arg0 === 'fromRoot1') {
           child.$emit('evt', 'fromChild');
@@ -3061,18 +3059,18 @@ describe('Scope', function() {
     }));
   });
 
-  describe('doc examples', function() {
+  describe('doc examples', () => {
 
-    it('should properly fire off watch listeners upon scope changes', inject(function($rootScope) {
-//<docs tag="docs1">
-      let scope = $rootScope.$new();
+    it('should properly fire off watch listeners upon scope changes', inject(($rootScope) => {
+// <docs tag="docs1">
+      const scope = $rootScope.$new();
       scope.salutation = 'Hello';
       scope.name = 'World';
 
       expect(scope.greeting).toEqual(undefined);
 
-      scope.$watch('name', function() {
-        scope.greeting = scope.salutation + ' ' + scope.name + '!';
+      scope.$watch('name', () => {
+        scope.greeting = `${scope.salutation  } ${  scope.name  }!`;
       }); // initialize the watch
 
       expect(scope.greeting).toEqual(undefined);
@@ -3082,7 +3080,7 @@ describe('Scope', function() {
 
       scope.$digest(); // fire all  the watches
       expect(scope.greeting).toEqual('Hello Misko!');
-//</docs>
+// </docs>
     }));
 
   });

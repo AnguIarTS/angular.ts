@@ -1,8 +1,8 @@
 
 
-let _ = require('lodash');
-let fs = require('fs');
-let path = require('canonical-path');
+const _ = require('lodash');
+const fs = require('fs');
+const path = require('canonical-path');
 
 /**
  * @dgProcessor generateKeywordsProcessor
@@ -25,7 +25,7 @@ module.exports = function generateKeywordsProcessor(log, readFilesProcessor) {
     },
     $runAfter: ['memberDocsProcessor'],
     $runBefore: ['rendering-docs'],
-    $process: function(docs) {
+    $process(docs) {
 
       // Keywords to ignore
       let wordsToIgnore = [];
@@ -34,15 +34,15 @@ module.exports = function generateKeywordsProcessor(log, readFilesProcessor) {
       let areasToSearch;
 
       // Keywords start with "ng:" or one of $, _ or a letter
-      let KEYWORD_REGEX = /^((ng:|[$_a-z])[\w\-_]+)/;
+      const KEYWORD_REGEX = /^((ng:|[$_a-z])[\w\-_]+)/;
 
       // Load up the keywords to ignore, if specified in the config
       if (this.ignoreWordsFile) {
 
-        let ignoreWordsPath = path.resolve(readFilesProcessor.basePath, this.ignoreWordsFile);
+        const ignoreWordsPath = path.resolve(readFilesProcessor.basePath, this.ignoreWordsFile);
         wordsToIgnore = fs.readFileSync(ignoreWordsPath, 'utf8').toString().split(/[,\s\n\r]+/gm);
 
-        log.debug('Loaded ignore words from "' + ignoreWordsPath + '"');
+        log.debug(`Loaded ignore words from "${  ignoreWordsPath  }"`);
         log.silly(wordsToIgnore);
 
       }
@@ -53,25 +53,25 @@ module.exports = function generateKeywordsProcessor(log, readFilesProcessor) {
       docTypesToIgnore = _.keyBy(this.docTypesToIgnore);
       log.debug('Doc types to ignore', docTypesToIgnore);
 
-      let ignoreWordsMap = _.keyBy(wordsToIgnore);
+      const ignoreWordsMap = _.keyBy(wordsToIgnore);
 
       // If the title contains a name starting with ng, e.g. "ngController", then add the module name
       // without the ng to the title text, e.g. "controller".
       function extractTitleWords(title) {
-        let match = /ng([A-Z]\w*)/.exec(title);
+        const match = /ng([A-Z]\w*)/.exec(title);
         if (match) {
-          title = title + ' ' + match[1].toLowerCase();
+          title = `${title  } ${  match[1].toLowerCase()}`;
         }
         return title;
       }
 
     function extractWords(text, words, keywordMap) {
 
-      let tokens = text.toLowerCase().split(/[.\s,`'"#]+/mg);
-      _.forEach(tokens, function(token) {
-        let match = token.match(KEYWORD_REGEX);
+      const tokens = text.toLowerCase().split(/[.\s,`'"#]+/mg);
+      _.forEach(tokens, (token) => {
+        const match = token.match(KEYWORD_REGEX);
         if (match) {
-          let key = match[1];
+          const key = match[1];
           if (!keywordMap[key]) {
             keywordMap[key] = true;
             words.push(key);
@@ -82,26 +82,26 @@ module.exports = function generateKeywordsProcessor(log, readFilesProcessor) {
 
 
       // We are only interested in docs that live in the right area
-      docs = _.filter(docs, function(doc) { return areasToSearch[doc.area]; });
-      docs = _.filter(docs, function(doc) { return !docTypesToIgnore[doc.docType]; });
+      docs = _.filter(docs, (doc) => areasToSearch[doc.area]);
+      docs = _.filter(docs, (doc) => !docTypesToIgnore[doc.docType]);
 
-      _.forEach(docs, function(doc) {
+      _.forEach(docs, (doc) => {
 
 
-        let words = [];
-        let keywordMap = _.clone(ignoreWordsMap);
-        let members = [];
-        let membersMap = {};
+        const words = [];
+        const keywordMap = _.clone(ignoreWordsMap);
+        const members = [];
+        const membersMap = {};
 
         // Search each top level property of the document for search terms
-        _.forEach(doc, function(value, key) {
+        _.forEach(doc, (value, key) => {
 
           if (_.isString(value) && !propertiesToIgnore[key]) {
             extractWords(value, words, keywordMap);
           }
 
           if (key === 'methods' || key === 'properties' || key === 'events') {
-            _.forEach(value, function(member) {
+            _.forEach(value, (member) => {
               extractWords(member.name, members, membersMap);
             });
           }

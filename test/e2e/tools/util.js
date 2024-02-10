@@ -1,10 +1,10 @@
 
 
-let fs = require('fs');
-let path = require('path');
+const fs = require('fs');
+const path = require('path');
 
-let root = path.resolve(__dirname, '..');
-let tests = path.resolve(root, 'fixtures');
+const root = path.resolve(__dirname, '..');
+const tests = path.resolve(root, 'fixtures');
 
 function stat(path) {
   try {
@@ -18,7 +18,7 @@ function stat(path) {
 }
 
 function testExists(testname) {
-  let s = stat(path.resolve(tests, testname));
+  const s = stat(path.resolve(tests, testname));
   return s && s.isDirectory();
 }
 
@@ -30,7 +30,7 @@ function rewriteTestFile(testname, testfile) {
   let i = 0;
   while (testfile[i] === '/') ++i;
   testfile = testfile.slice(i);
-  let s = stat(path.resolve(tests, testname, testfile));
+  const s = stat(path.resolve(tests, testname, testfile));
   if (s && (s.isFile() || s.isDirectory())) {
     return ['/test/e2e/fixtures', testname, testfile].join('/');
   }
@@ -38,7 +38,7 @@ function rewriteTestFile(testname, testfile) {
 }
 
 module.exports = {
-  stat: stat,
-  testExists: testExists,
-  rewriteTestFile: rewriteTestFile
+  stat,
+  testExists,
+  rewriteTestFile
 };

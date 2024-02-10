@@ -20,33 +20,32 @@ export function $SnifferProvider() {
     "$window",
     "$document",
     function ($window, $document) {
-      let eventSupport = {},
-        // Chrome Packaged Apps are not allowed to access `history.pushState`.
-        // If not sandboxed, they can be detected by the presence of `chrome.app.runtime`
-        // (see https://developer.chrome.com/apps/api_index). If sandboxed, they can be detected by
-        // the presence of an extension runtime ID and the absence of other Chrome runtime APIs
-        // (see https://developer.chrome.com/apps/manifest/sandbox).
-        // (NW.js apps have access to Chrome APIs, but do support `history`.)
-        isNw = $window.nw && $window.nw.process,
-        isChromePackagedApp =
-          !isNw &&
-          $window.chrome &&
-          (($window.chrome.app && $window.chrome.app.runtime) ||
-            (!$window.chrome.app &&
-              $window.chrome.runtime &&
-              $window.chrome.runtime.id)),
-        hasHistoryPushState =
-          !isChromePackagedApp && $window.history && $window.history.pushState,
-        android = toInt(
-          (/android (\d+)/.exec(
-            lowercase(($window.navigator || {}).userAgent),
-          ) || [])[1],
-        ),
-        boxee = /Boxee/i.test(($window.navigator || {}).userAgent),
-        document = $document[0] || {},
-        bodyStyle = document.body && document.body.style,
-        transitions = false,
-        animations = false;
+      const eventSupport = {};
+      // Chrome Packaged Apps are not allowed to access `history.pushState`.
+      // If not sandboxed, they can be detected by the presence of `chrome.app.runtime`
+      // (see https://developer.chrome.com/apps/api_index). If sandboxed, they can be detected by
+      // the presence of an extension runtime ID and the absence of other Chrome runtime APIs
+      // (see https://developer.chrome.com/apps/manifest/sandbox).
+      // (NW.js apps have access to Chrome APIs, but do support `history`.)
+      const isNw = $window.nw && $window.nw.process;
+      const isChromePackagedApp =
+        !isNw &&
+        $window.chrome &&
+        (($window.chrome.app && $window.chrome.app.runtime) ||
+          (!$window.chrome.app &&
+            $window.chrome.runtime &&
+            $window.chrome.runtime.id));
+      const hasHistoryPushState =
+        !isChromePackagedApp && $window.history && $window.history.pushState;
+      const android = toInt(
+        (/android (\d+)/.exec(lowercase(($window.navigator || {}).userAgent)) ||
+          [])[1],
+      );
+      const boxee = /Boxee/i.test(($window.navigator || {}).userAgent);
+      const document = $document[0] || {};
+      const bodyStyle = document.body && document.body.style;
+      let transitions = false;
+      let animations = false;
 
       if (bodyStyle) {
         // Support: Android <5, Blackberry Browser 10, default Chrome in Android 4.4.x
@@ -69,18 +68,18 @@ export function $SnifferProvider() {
         // so let's not use the history API also
         // We are purposefully using `!(android < 4)` to cover the case when `android` is undefined
         history: !!(hasHistoryPushState && !(android < 4) && !boxee),
-        hasEvent: function (event) {
+        hasEvent(event) {
           if (isUndefined(eventSupport[event])) {
-            let divElm = document.createElement("div");
-            eventSupport[event] = "on" + event in divElm;
+            const divElm = document.createElement("div");
+            eventSupport[event] = `on${event}` in divElm;
           }
 
           return eventSupport[event];
         },
         csp: csp(),
-        transitions: transitions,
-        animations: animations,
-        android: android,
+        transitions,
+        animations,
+        android,
       };
     },
   ];

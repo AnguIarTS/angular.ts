@@ -1,14 +1,14 @@
 
 
-describe('boolean attr directives', function() {
+describe('boolean attr directives', () => {
   let element;
 
-  afterEach(function() {
+  afterEach(() => {
     dealoc(element);
   });
 
 
-  it('should properly evaluate 0 as false', inject(function($rootScope, $compile) {
+  it('should properly evaluate 0 as false', inject(($rootScope, $compile) => {
     // jQuery does not treat 0 as false, when setting attr()
     element = $compile('<button ng-disabled="isDisabled">Button</button>')($rootScope);
     $rootScope.isDisabled = 0;
@@ -20,7 +20,7 @@ describe('boolean attr directives', function() {
   }));
 
 
-  it('should bind disabled', inject(function($rootScope, $compile) {
+  it('should bind disabled', inject(($rootScope, $compile) => {
     element = $compile('<button ng-disabled="isDisabled">Button</button>')($rootScope);
     $rootScope.isDisabled = false;
     $rootScope.$digest();
@@ -31,7 +31,7 @@ describe('boolean attr directives', function() {
   }));
 
 
-  it('should bind checked', inject(function($rootScope, $compile) {
+  it('should bind checked', inject(($rootScope, $compile) => {
     element = $compile('<input type="checkbox" ng-checked="isChecked" />')($rootScope);
     $rootScope.isChecked = false;
     $rootScope.$digest();
@@ -42,7 +42,7 @@ describe('boolean attr directives', function() {
   }));
 
 
-  it('should not bind checked when ngModel is present', inject(function($rootScope, $compile, $document, $rootElement) {
+  it('should not bind checked when ngModel is present', inject(($rootScope, $compile, $document, $rootElement) => {
     // test for https://github.com/angular/angular.js/issues/10662
     element = $compile('<input type="checkbox" ng-model="value" ng-false-value="\'false\'" ' +
       'ng-true-value="\'true\'" ng-checked="value" />')($rootScope);
@@ -63,7 +63,7 @@ describe('boolean attr directives', function() {
   }));
 
 
-  it('should bind selected', inject(function($rootScope, $compile) {
+  it('should bind selected', inject(($rootScope, $compile) => {
     element = $compile('<select><option value=""></option><option ng-selected="isSelected">Greetings!</option></select>')($rootScope);
     jqLite(window.document.body).append(element);
     $rootScope.isSelected = false;
@@ -75,7 +75,7 @@ describe('boolean attr directives', function() {
   }));
 
 
-  it('should bind readonly', inject(function($rootScope, $compile) {
+  it('should bind readonly', inject(($rootScope, $compile) => {
     element = $compile('<input type="text" ng-readonly="isReadonly" />')($rootScope);
     $rootScope.isReadonly = false;
     $rootScope.$digest();
@@ -86,7 +86,7 @@ describe('boolean attr directives', function() {
   }));
 
 
-  it('should bind open', inject(function($rootScope, $compile) {
+  it('should bind open', inject(($rootScope, $compile) => {
     element = $compile('<details ng-open="isOpen"></details>')($rootScope);
     $rootScope.isOpen = false;
     $rootScope.$digest();
@@ -97,8 +97,8 @@ describe('boolean attr directives', function() {
   }));
 
 
-  describe('multiple', function() {
-    it('should NOT bind to multiple via ngMultiple', inject(function($rootScope, $compile) {
+  describe('multiple', () => {
+    it('should NOT bind to multiple via ngMultiple', inject(($rootScope, $compile) => {
       element = $compile('<select ng-multiple="isMultiple"></select>')($rootScope);
       $rootScope.isMultiple = false;
       $rootScope.$digest();
@@ -109,8 +109,8 @@ describe('boolean attr directives', function() {
     }));
 
 
-    it('should throw an exception if binding to multiple attribute', inject(function($rootScope, $compile) {
-      expect(function() {
+    it('should throw an exception if binding to multiple attribute', inject(($rootScope, $compile) => {
+      expect(() => {
         $compile('<select multiple="{{isMultiple}}"></select>');
       }).toThrowMinErr('$compile', 'selmulti', 'Binding to the \'multiple\' attribute is not supported. ' +
                  'Element: <select multiple="{{isMultiple}}">');

@@ -1,5 +1,5 @@
 
-let StringMap = require('stringmap');
+const StringMap = require('stringmap');
 
 /**
  * @dgService errorNamespaceMap

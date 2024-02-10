@@ -2,6 +2,6 @@
 
 angular.
   module('test', []).
-  controller('TestController', function($scope) {
+  controller('TestController', ($scope) => {
     $scope.text = 'Hello, world!';
   });

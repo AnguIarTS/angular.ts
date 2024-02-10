@@ -1,5 +1,5 @@
 /* global _jQuery: true, _jqLiteMode: true */
 
 
-let _jQuery = jQuery,
-    _jqLiteMode = false;
+const _jQuery = jQuery;
+    const _jqLiteMode = false;

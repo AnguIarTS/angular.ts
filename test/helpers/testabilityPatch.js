@@ -3,7 +3,7 @@
 
 if (window.bindJQuery) bindJQuery();
 
-beforeEach(function() {
+beforeEach(() => {
 
   // all this stuff is not needed for module tests, where jqlite and publishExternalAPI and jqLite are not global vars
   if (window.publishExternalAPI) {
@@ -24,23 +24,23 @@ beforeEach(function() {
 });
 
 afterEach(function() {
-  let count, cache;
+  let count; let cache;
 
   // These Nodes are persisted across tests.
   // They used to be assigned a `$$hashKey` when animated, which we needed to clear after each test
   // to avoid affecting other tests. This is no longer the case, so we are just ensuring that there
   // is indeed no `$$hashKey` on them.
-  let doc = window.document;
-  let html = doc.querySelector('html');
-  let body = doc.body;
+  const doc = window.document;
+  const html = doc.querySelector('html');
+  const {body} = doc;
   expect(doc.$$hashKey).toBeFalsy();
   expect(html && html.$$hashKey).toBeFalsy();
   expect(body && body.$$hashKey).toBeFalsy();
 
   if (this.$injector) {
-    let $rootScope = this.$injector.get('$rootScope');
-    let $rootElement = this.$injector.get('$rootElement');
-    let $log = this.$injector.get('$log');
+    const $rootScope = this.$injector.get('$rootScope');
+    const $rootElement = this.$injector.get('$rootElement');
+    const $log = this.$injector.get('$log');
     // release the injector
     dealoc($rootScope);
     dealoc($rootElement);
@@ -59,8 +59,8 @@ afterEach(function() {
 
     cache = angular.element.cache;
 
-    forEachSorted(cache, function(expando, key) {
-      angular.forEach(expando.data, function(value, key) {
+    forEachSorted(cache, (expando, key) => {
+      angular.forEach(expando.data, (value, key) => {
         count++;
         if (value && value.$element) {
           dump('LEAK', key, value.$id, sortedHtml(value.$element));
@@ -71,14 +71,14 @@ afterEach(function() {
       });
     });
     if (count) {
-      throw new Error('Found jqCache references that were not deallocated! count: ' + count);
+      throw new Error(`Found jqCache references that were not deallocated! count: ${  count}`);
     }
   }
 
   // copied from Angular.js
   // we need this method here so that we can run module tests with wrapped angular.js
   function forEachSorted(obj, iterator, context) {
-    let keys = Object.keys(obj).sort();
+    const keys = Object.keys(obj).sort();
     for (let i = 0; i < keys.length; i++) {
       iterator.call(context, obj[keys[i]], keys[i]);
     }
@@ -88,14 +88,14 @@ afterEach(function() {
 
 
 function dealoc(obj) {
-  let jqCache = angular.element.cache;
+  const jqCache = angular.element.cache;
   if (obj) {
     if (angular.isElement(obj)) {
       cleanup(angular.element(obj));
     } else if (!window.jQuery) {
       // jQuery 2.x doesn't expose the cache storage.
-      for (let key in jqCache) {
-        let value = jqCache[key];
+      for (const key in jqCache) {
+        const value = jqCache[key];
         if (value.data && value.data.$scope === obj) {
           delete jqCache[key];
         }
@@ -110,7 +110,7 @@ function dealoc(obj) {
     // for IFRAME elements.  jQuery explicitly uses (element.contentDocument ||
     // element.contentWindow.document) and both properties are null for IFRAMES that aren't attached
     // to a document.
-    let children = element[0].childNodes || [];
+    const children = element[0].childNodes || [];
     for (let i = 0; i < children.length; i++) {
       cleanup(angular.element(children[i]));
     }
@@ -133,29 +133,29 @@ function sortedHtml(element, showNgClass) {
 
     if (node.nodeName === '#text') {
       html += node.nodeValue.
-        replace(/&(\w+[&;\W])?/g, function(match, entity) {return entity ? match : '&amp;';}).
+        replace(/&(\w+[&;\W])?/g, (match, entity) => entity ? match : '&amp;').
         replace(/</g, '&lt;').
         replace(/>/g, '&gt;');
     } else if (node.nodeName === '#comment') {
-      html += '<!--' + node.nodeValue + '-->';
+      html += `<!--${  node.nodeValue  }-->`;
     } else {
-      html += '<' + (node.nodeName || '?NOT_A_NODE?').toLowerCase();
-      let attributes = node.attributes || [];
-      let attrs = [];
+      html += `<${  (node.nodeName || '?NOT_A_NODE?').toLowerCase()}`;
+      const attributes = node.attributes || [];
+      const attrs = [];
       let className = node.className || '';
       if (!showNgClass) {
         className = className.replace(/ng-[\w-]+\s*/g, '');
       }
       className = trim(className);
       if (className) {
-        attrs.push(' class="' + className + '"');
+        attrs.push(` class="${  className  }"`);
       }
       for (let i = 0; i < attributes.length; i++) {
         if (i > 0 && attributes[i] === attributes[i - 1]) {
           continue; // IE9 creates dupes. Ignore them!
         }
 
-        let attr = attributes[i];
+        const attr = attributes[i];
         if (attr.name.match(/^ng[:-]/) ||
             !/^ng\d+/.test(attr.name) &&
             (attr.value || attr.value === '') &&
@@ -173,7 +173,7 @@ function sortedHtml(element, showNgClass) {
             attr.name !== 'tabIndex' &&
             attr.name !== 'style' &&
             attr.name.substr(0, 6) !== 'jQuery') {
-          attrs.push(' ' + attr.name + '="' + attr.value + '"');
+          attrs.push(` ${  attr.name  }="${  attr.value  }"`);
         }
       }
       attrs.sort();
@@ -181,40 +181,40 @@ function sortedHtml(element, showNgClass) {
       if (node.style) {
         let style = [];
         if (node.style.cssText) {
-          forEach(node.style.cssText.split(';'), function(value) {
+          forEach(node.style.cssText.split(';'), (value) => {
             value = trim(value);
             if (value) {
               style.push(lowercase(value));
             }
           });
         }
-        for (let css in node.style) {
-          let value = node.style[css];
+        for (const css in node.style) {
+          const value = node.style[css];
           if (isString(value) && isString(css) && css !== 'cssText' && value && isNaN(Number(css))) {
-            let text = lowercase(css + ': ' + value);
+            const text = lowercase(`${css  }: ${  value}`);
             if (value !== 'false' && style.indexOf(text) === -1) {
               style.push(text);
             }
           }
         }
         style.sort();
-        let tmp = style;
+        const tmp = style;
         style = [];
-        forEach(tmp, function(value) {
+        forEach(tmp, (value) => {
           if (!value.match(/^max[^-]/)) {
             style.push(value);
           }
         });
         if (style.length) {
-          html += ' style="' + style.join('; ') + ';"';
+          html += ` style="${  style.join('; ')  };"`;
         }
       }
       html += '>';
-      let children = node.childNodes;
+      const children = node.childNodes;
       for (let j = 0; j < children.length; j++) {
         toString(children[j]);
       }
-      html += '</' + node.nodeName.toLowerCase() + '>';
+      html += `</${  node.nodeName.toLowerCase()  }>`;
     }
   });
   return html;
@@ -222,9 +222,9 @@ function sortedHtml(element, showNgClass) {
 
 
 function childrenTagsOf(element) {
-  let tags = [];
+  const tags = [];
 
-  forEach(jqLite(element).children(), function(child) {
+  forEach(jqLite(element).children(), (child) => {
     tags.push(child.nodeName.toLowerCase());
   });
 
@@ -233,29 +233,29 @@ function childrenTagsOf(element) {
 
 
 // TODO(vojta): migrate these helpers into jasmine matchers
-/**a
+/** a
  * This method is a cheap way of testing if css for a given node is not set to 'none'. It doesn't
  * actually test if an element is displayed by the browser. Be aware!!!
  */
 function isCssVisible(node) {
-  let display = node.css('display');
+  const display = node.css('display');
   return !node.hasClass('ng-hide') && display !== 'none';
 }
 
 function assertHidden(node) {
   if (isCssVisible(node)) {
-    throw new Error('Node should be hidden but was visible: ' + angular.mock.dump(node));
+    throw new Error(`Node should be hidden but was visible: ${  angular.mock.dump(node)}`);
   }
 }
 
 function assertVisible(node) {
   if (!isCssVisible(node)) {
-    throw new Error('Node should be visible but was hidden: ' + angular.mock.dump(node));
+    throw new Error(`Node should be visible but was hidden: ${  angular.mock.dump(node)}`);
   }
 }
 
 function provideLog($provide) {
-  $provide.factory('log', function() {
+  $provide.factory('log', () => {
       let messages = [];
 
       function log(msg) {
@@ -276,7 +276,7 @@ function provideLog($provide) {
       };
 
       log.empty = function() {
-        let currentMessages = messages;
+        const currentMessages = messages;
         messages = [];
         return currentMessages;
       };
@@ -301,29 +301,26 @@ function trace(name) {
   window.dump(new Error(name).stack);
 }
 
-let karmaDump = window.dump || function() {
+const karmaDump = window.dump || function() {
   window.console.log.apply(window.console, arguments);
 };
 
 window.dump = function() {
-  karmaDump.apply(undefined, Array.prototype.map.call(arguments, function(arg) {
-    return angular.mock.dump(arg);
-  }));
+  karmaDump.apply(undefined, Array.prototype.map.call(arguments, (arg) => angular.mock.dump(arg)));
 };
 
 function generateInputCompilerHelper(helper) {
-  beforeEach(function() {
+  beforeEach(() => {
     helper.validationCounter = {};
 
-    module(function($compileProvider) {
-      $compileProvider.directive('validationSpy', function() {
-        return {
+    module(($compileProvider) => {
+      $compileProvider.directive('validationSpy', () => ({
           priority: 1,
           require: 'ngModel',
-          link: function(scope, element, attrs, ctrl) {
-            let validationName = attrs.validationSpy;
+          link(scope, element, attrs, ctrl) {
+            const validationName = attrs.validationSpy;
 
-            let originalValidator = ctrl.$validators[validationName];
+            const originalValidator = ctrl.$validators[validationName];
             helper.validationCounter[validationName] = 0;
 
             ctrl.$validators[validationName] = function(modelValue, viewValue) {
@@ -332,16 +329,13 @@ function generateInputCompilerHelper(helper) {
               return originalValidator(modelValue, viewValue);
             };
           }
-        };
-      });
+        }));
 
-      $compileProvider.directive('attrCapture', function() {
-        return function(scope, element, $attrs) {
+      $compileProvider.directive('attrCapture', () => function(scope, element, $attrs) {
           helper.attrs = $attrs;
-        };
-      });
+        });
     });
-    inject(function($compile, $rootScope, $sniffer, $document, $rootElement) {
+    inject(($compile, $rootScope, $sniffer, $document, $rootElement) => {
 
       helper.compileInput = function(inputHtml, mockValidity, scope) {
 
@@ -392,11 +386,11 @@ function generateInputCompilerHelper(helper) {
     });
   });
 
-  afterEach(function() {
+  afterEach(() => {
     helper.dealoc();
   });
 
-  afterEach(function() {
+  afterEach(() => {
     VALIDITY_STATE_PROPERTY = 'validity';
   });
 }

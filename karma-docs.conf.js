@@ -1,6 +1,6 @@
 
 
-let sharedConfig = require('./karma-shared.conf');
+const sharedConfig = require('./karma-shared.conf');
 
 module.exports = function(config) {
   sharedConfig(config, {testName: 'AngularJS: docs', logFile: 'karma-docs.log'});

@@ -85,16 +85,17 @@ function makeSwipeDirective(directiveName, direction, eventName) {
     "$swipe",
     function ($parse, $swipe) {
       // The maximum vertical delta for a swipe should be less than 75px.
-      let MAX_VERTICAL_DISTANCE = 75;
+      const MAX_VERTICAL_DISTANCE = 75;
       // Vertical distance should not be more than a fraction of the horizontal distance.
-      let MAX_VERTICAL_RATIO = 0.3;
+      const MAX_VERTICAL_RATIO = 0.3;
       // At least a 30px lateral motion is necessary for a swipe.
-      let MIN_HORIZONTAL_DISTANCE = 30;
+      const MIN_HORIZONTAL_DISTANCE = 30;
 
       return function (scope, element, attr) {
-        let swipeHandler = $parse(attr[directiveName]);
+        const swipeHandler = $parse(attr[directiveName]);
 
-        let startCoords, valid;
+        let startCoords;
+        let valid;
 
         function validSwipe(coords) {
           // Check that it's within the coordinates.
@@ -106,8 +107,8 @@ function makeSwipeDirective(directiveName, direction, eventName) {
           // illegal ones a negative delta.
           // Therefore this delta must be positive, and larger than the minimum.
           if (!startCoords) return false;
-          let deltaY = Math.abs(coords.y - startCoords.y);
-          let deltaX = (coords.x - startCoords.x) * direction;
+          const deltaY = Math.abs(coords.y - startCoords.y);
+          const deltaX = (coords.x - startCoords.x) * direction;
           return (
             valid && // Short circuit for already-invalidated swipes.
             deltaY < MAX_VERTICAL_DISTANCE &&
@@ -117,23 +118,23 @@ function makeSwipeDirective(directiveName, direction, eventName) {
           );
         }
 
-        let pointerTypes = ["touch"];
-        if (!angular.isDefined(attr["ngSwipeDisableMouse"])) {
+        const pointerTypes = ["touch"];
+        if (!angular.isDefined(attr.ngSwipeDisableMouse)) {
           pointerTypes.push("mouse");
         }
         $swipe.bind(
           element,
           {
-            start: function (coords, event) {
+            start(coords, event) {
               startCoords = coords;
               valid = true;
             },
-            cancel: function (event) {
+            cancel(event) {
               valid = false;
             },
-            end: function (coords, event) {
+            end(coords, event) {
               if (validSwipe(coords)) {
-                scope.$apply(function () {
+                scope.$apply(() => {
                   element.triggerHandler(eventName);
                   swipeHandler(scope, { $event: event });
                 });

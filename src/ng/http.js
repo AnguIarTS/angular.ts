@@ -1,14 +1,14 @@
-let APPLICATION_JSON = "application/json";
-let CONTENT_TYPE_APPLICATION_JSON = {
-  "Content-Type": APPLICATION_JSON + ";charset=utf-8",
+const APPLICATION_JSON = "application/json";
+const CONTENT_TYPE_APPLICATION_JSON = {
+  "Content-Type": `${APPLICATION_JSON};charset=utf-8`,
 };
-let JSON_START = /^\[|^\{(?!\{)/;
-let JSON_ENDS = {
+const JSON_START = /^\[|^\{(?!\{)/;
+const JSON_ENDS = {
   "[": /]$/,
   "{": /}$/,
 };
-let JSON_PROTECTION_PREFIX = /^\)]\}',?\n/;
-let $httpMinErr = minErr("$http");
+const JSON_PROTECTION_PREFIX = /^\)]\}',?\n/;
+const $httpMinErr = minErr("$http");
 
 function serializeValue(v) {
   if (isObject(v)) {
@@ -38,18 +38,18 @@ function $HttpParamSerializerProvider() {
   this.$get = function () {
     return function ngParamSerializer(params) {
       if (!params) return "";
-      let parts = [];
-      forEachSorted(params, function (value, key) {
+      const parts = [];
+      forEachSorted(params, (value, key) => {
         if (value === null || isUndefined(value) || isFunction(value)) return;
         if (isArray(value)) {
-          forEach(value, function (v) {
+          forEach(value, (v) => {
             parts.push(
-              encodeUriQuery(key) + "=" + encodeUriQuery(serializeValue(v)),
+              `${encodeUriQuery(key)}=${encodeUriQuery(serializeValue(v))}`,
             );
           });
         } else {
           parts.push(
-            encodeUriQuery(key) + "=" + encodeUriQuery(serializeValue(value)),
+            `${encodeUriQuery(key)}=${encodeUriQuery(serializeValue(value))}`,
           );
         }
       });
@@ -108,20 +108,17 @@ function $HttpParamSerializerJQLikeProvider() {
   this.$get = function () {
     return function jQueryLikeParamSerializer(params) {
       if (!params) return "";
-      let parts = [];
+      const parts = [];
       serialize(params, "", true);
       return parts.join("&");
 
       function serialize(toSerialize, prefix, topLevel) {
         if (isArray(toSerialize)) {
-          forEach(toSerialize, function (value, index) {
-            serialize(
-              value,
-              prefix + "[" + (isObject(value) ? index : "") + "]",
-            );
+          forEach(toSerialize, (value, index) => {
+            serialize(value, `${prefix}[${isObject(value) ? index : ""}]`);
           });
         } else if (isObject(toSerialize) && !isDate(toSerialize)) {
-          forEachSorted(toSerialize, function (value, key) {
+          forEachSorted(toSerialize, (value, key) => {
             serialize(
               value,
               prefix + (topLevel ? "" : "[") + key + (topLevel ? "" : "]"),
@@ -132,11 +129,11 @@ function $HttpParamSerializerJQLikeProvider() {
             toSerialize = toSerialize();
           }
           parts.push(
-            encodeUriQuery(prefix) +
-              "=" +
-              (toSerialize == null
+            `${encodeUriQuery(prefix)}=${
+              toSerialize == null
                 ? ""
-                : encodeUriQuery(serializeValue(toSerialize))),
+                : encodeUriQuery(serializeValue(toSerialize))
+            }`,
           );
         }
       }
@@ -147,11 +144,11 @@ function $HttpParamSerializerJQLikeProvider() {
 export function defaultHttpResponseTransform(data, headers) {
   if (isString(data)) {
     // Strip json vulnerability protection prefix and trim whitespace
-    let tempData = data.replace(JSON_PROTECTION_PREFIX, "").trim();
+    const tempData = data.replace(JSON_PROTECTION_PREFIX, "").trim();
 
     if (tempData) {
-      let contentType = headers("Content-Type");
-      let hasJsonContentType =
+      const contentType = headers("Content-Type");
+      const hasJsonContentType =
         contentType && contentType.indexOf(APPLICATION_JSON) === 0;
 
       if (hasJsonContentType || isJsonLike(tempData)) {
@@ -177,7 +174,7 @@ export function defaultHttpResponseTransform(data, headers) {
 }
 
 function isJsonLike(str) {
-  let jsonStart = str.match(JSON_START);
+  const jsonStart = str.match(JSON_START);
   return jsonStart && JSON_ENDS[jsonStart[0]].test(str);
 }
 
@@ -188,17 +185,17 @@ function isJsonLike(str) {
  * @returns {Object} Parsed headers as key value object
  */
 function parseHeaders(headers) {
-  let parsed = createMap(),
-    i;
+  const parsed = createMap();
+  let i;
 
   function fillInParsed(key, val) {
     if (key) {
-      parsed[key] = parsed[key] ? parsed[key] + ", " + val : val;
+      parsed[key] = parsed[key] ? `${parsed[key]}, ${val}` : val;
     }
   }
 
   if (isString(headers)) {
-    forEach(headers.split("\n"), function (line) {
+    forEach(headers.split("\n"), (line) => {
       i = line.indexOf(":");
       fillInParsed(
         lowercase(trim(line.substr(0, i))),
@@ -206,7 +203,7 @@ function parseHeaders(headers) {
       );
     });
   } else if (isObject(headers)) {
-    forEach(headers, function (headerVal, headerKey) {
+    forEach(headers, (headerVal, headerKey) => {
       fillInParsed(lowercase(headerKey), trim(headerVal));
     });
   }
@@ -260,7 +257,7 @@ function transformData(data, headers, status, fns) {
     return fns(data, headers, status);
   }
 
-  forEach(fns, function (fn) {
+  forEach(fns, (fn) => {
     data = fn(data, headers, status);
   });
 
@@ -268,7 +265,7 @@ function transformData(data, headers, status, fns) {
 }
 
 function isSuccess(status) {
-  return 200 <= status && status < 300;
+  return status >= 200 && status < 300;
 }
 
 /**
@@ -333,7 +330,7 @@ function $HttpProvider() {
    * XSRF token. Defaults value is `'X-XSRF-TOKEN'`.
    *
    */
-  let defaults = (this.defaults = {
+  const defaults = (this.defaults = {
     // transform incoming response data
     transformResponse: [defaultHttpResponseTransform],
 
@@ -405,7 +402,7 @@ function $HttpProvider() {
    *
    * {@link ng.$http#interceptors Interceptors detailed info}
    */
-  let interceptorFactories = (this.interceptors = []);
+  const interceptorFactories = (this.interceptors = []);
 
   /**
    * @ngdoc property
@@ -447,7 +444,7 @@ function $HttpProvider() {
    *   }]);
    * ```
    */
-  let xsrfTrustedOrigins = (this.xsrfTrustedOrigins = []);
+  const xsrfTrustedOrigins = (this.xsrfTrustedOrigins = []);
 
   /**
    * @ngdoc property
@@ -461,10 +458,10 @@ function $HttpProvider() {
    * instead.
    */
   Object.defineProperty(this, "xsrfWhitelistedOrigins", {
-    get: function () {
+    get() {
       return this.xsrfTrustedOrigins;
     },
-    set: function (origins) {
+    set(origins) {
       this.xsrfTrustedOrigins = origins;
     },
   });
@@ -488,7 +485,7 @@ function $HttpProvider() {
       $injector,
       $sce,
     ) {
-      let defaultCache = $cacheFactory("$http");
+      const defaultCache = $cacheFactory("$http");
 
       /**
        * Make sure that default param serializer is exposed as a function
@@ -502,9 +499,9 @@ function $HttpProvider() {
        * The reversal is needed so that we can build up the interception chain around the
        * server request.
        */
-      let reversedInterceptors = [];
+      const reversedInterceptors = [];
 
-      forEach(interceptorFactories, function (interceptorFactory) {
+      forEach(interceptorFactories, (interceptorFactory) => {
         reversedInterceptors.unshift(
           isString(interceptorFactory)
             ? $injector.get(interceptorFactory)
@@ -515,7 +512,7 @@ function $HttpProvider() {
       /**
        * A function to check request URLs against a list of allowed origins.
        */
-      let urlIsAllowedOrigin = urlIsAllowedOriginFactory(xsrfTrustedOrigins);
+      const urlIsAllowedOrigin = urlIsAllowedOriginFactory(xsrfTrustedOrigins);
 
       /**
      * @ngdoc service
@@ -1109,7 +1106,7 @@ function $HttpProvider() {
           );
         }
 
-        let config = extend(
+        const config = extend(
           {
             method: "get",
             transformRequest: defaults.transformRequest,
@@ -1128,12 +1125,12 @@ function $HttpProvider() {
 
         $browser.$$incOutstandingRequestCount("$http");
 
-        let requestInterceptors = [];
-        let responseInterceptors = [];
+        const requestInterceptors = [];
+        const responseInterceptors = [];
         let promise = $q.resolve(config);
 
         // apply interceptors
-        forEach(reversedInterceptors, function (interceptor) {
+        forEach(reversedInterceptors, (interceptor) => {
           if (interceptor.request || interceptor.requestError) {
             requestInterceptors.unshift(
               interceptor.request,
@@ -1157,8 +1154,8 @@ function $HttpProvider() {
 
         function chainInterceptors(promise, interceptors) {
           for (let i = 0, ii = interceptors.length; i < ii; ) {
-            let thenFn = interceptors[i++];
-            let rejectFn = interceptors[i++];
+            const thenFn = interceptors[i++];
+            const rejectFn = interceptors[i++];
 
             promise = promise.then(thenFn, rejectFn);
           }
@@ -1173,10 +1170,10 @@ function $HttpProvider() {
         }
 
         function executeHeaderFns(headers, config) {
-          let headerContent,
-            processedHeaders = {};
+          let headerContent;
+          const processedHeaders = {};
 
-          forEach(headers, function (headerFn, header) {
+          forEach(headers, (headerFn, header) => {
             if (isFunction(headerFn)) {
               headerContent = headerFn(config);
               if (headerContent != null) {
@@ -1191,11 +1188,11 @@ function $HttpProvider() {
         }
 
         function mergeHeaders(config) {
-          let defHeaders = defaults.headers,
-            reqHeaders = extend({}, config.headers),
-            defHeaderName,
-            lowercaseDefHeaderName,
-            reqHeaderName;
+          let defHeaders = defaults.headers;
+          const reqHeaders = extend({}, config.headers);
+          let defHeaderName;
+          let lowercaseDefHeaderName;
+          let reqHeaderName;
 
           defHeaders = extend(
             {},
@@ -1221,8 +1218,8 @@ function $HttpProvider() {
         }
 
         function serverRequest(config) {
-          let headers = config.headers;
-          let reqData = transformData(
+          const { headers } = config;
+          const reqData = transformData(
             config.data,
             headersGetter(headers),
             undefined,
@@ -1231,7 +1228,7 @@ function $HttpProvider() {
 
           // strip content-type if data is undefined
           if (isUndefined(reqData)) {
-            forEach(headers, function (value, header) {
+            forEach(headers, (value, header) => {
               if (lowercase(header) === "content-type") {
                 delete headers[header];
               }
@@ -1254,7 +1251,7 @@ function $HttpProvider() {
 
         function transformResponse(response) {
           // make a copy since the response must be cacheable
-          let resp = extend({}, response);
+          const resp = extend({}, response);
           resp.data = transformData(
             response.data,
             response.headers,
@@ -1411,12 +1408,12 @@ function $HttpProvider() {
       return $http;
 
       function createShortMethods(names) {
-        forEach(arguments, function (name) {
+        forEach(arguments, (name) => {
           $http[name] = function (url, config) {
             return $http(
               extend({}, config || {}, {
                 method: name,
-                url: url,
+                url,
               }),
             );
           };
@@ -1424,13 +1421,13 @@ function $HttpProvider() {
       }
 
       function createShortMethodsWithData(name) {
-        forEach(arguments, function (name) {
+        forEach(arguments, (name) => {
           $http[name] = function (url, data, config) {
             return $http(
               extend({}, config || {}, {
                 method: name,
-                url: url,
-                data: data,
+                url,
+                data,
               }),
             );
           };
@@ -1444,13 +1441,13 @@ function $HttpProvider() {
        * $httpBackend, defaults, $log, $rootScope, defaultCache, $http.pendingRequests
        */
       function sendReq(config, reqData) {
-        let deferred = $q.defer(),
-          promise = deferred.promise,
-          cache,
-          cachedResp,
-          reqHeaders = config.headers,
-          isJsonp = lowercase(config.method) === "jsonp",
-          url = config.url;
+        const deferred = $q.defer();
+        const { promise } = deferred;
+        let cache;
+        let cachedResp;
+        const reqHeaders = config.headers;
+        const isJsonp = lowercase(config.method) === "jsonp";
+        let { url } = config;
 
         if (isJsonp) {
           // JSONP is a pretty sensitive operation where we're allowing a script to have full access to
@@ -1515,7 +1512,7 @@ function $HttpProvider() {
         // if we won't have the response in cache, set the xsrf headers and
         // send the request to the backend
         if (isUndefined(cachedResp)) {
-          let xsrfValue = urlIsAllowedOrigin(config.url)
+          const xsrfValue = urlIsAllowedOrigin(config.url)
             ? $$cookieReader()[config.xsrfCookieName || defaults.xsrfCookieName]
             : undefined;
           if (xsrfValue) {
@@ -1541,8 +1538,8 @@ function $HttpProvider() {
 
         function createApplyHandlers(eventHandlers) {
           if (eventHandlers) {
-            let applyHandlers = {};
-            forEach(eventHandlers, function (eventHandler, key) {
+            const applyHandlers = {};
+            forEach(eventHandlers, (eventHandler, key) => {
               applyHandlers[key] = function (event) {
                 if (useApplyAsync) {
                   $rootScope.$applyAsync(callEventHandler);
@@ -1611,16 +1608,16 @@ function $HttpProvider() {
           statusText,
           xhrStatus,
         ) {
-          //status: HTTP response status code, 0, -1 (aborted by timeout / promise)
+          // status: HTTP response status code, 0, -1 (aborted by timeout / promise)
           status = status >= -1 ? status : 0;
 
           (isSuccess(status) ? deferred.resolve : deferred.reject)({
             data: response,
-            status: status,
+            status,
             headers: headersGetter(headers),
-            config: config,
-            statusText: statusText,
-            xhrStatus: xhrStatus,
+            config,
+            statusText,
+            xhrStatus,
           });
         }
 
@@ -1635,7 +1632,7 @@ function $HttpProvider() {
         }
 
         function removePendingReq() {
-          let idx = $http.pendingRequests.indexOf(config);
+          const idx = $http.pendingRequests.indexOf(config);
           if (idx !== -1) $http.pendingRequests.splice(idx, 1);
         }
       }
@@ -1648,7 +1645,7 @@ function $HttpProvider() {
       }
 
       function sanitizeJsonpCallbackParam(url, cbKey) {
-        let parts = url.split("?");
+        const parts = url.split("?");
         if (parts.length > 2) {
           // Throw if the url contains more than one `?` query indicator
           throw $httpMinErr(
@@ -1657,8 +1654,8 @@ function $HttpProvider() {
             url,
           );
         }
-        let params = parseKeyValue(parts[1]);
-        forEach(params, function (value, key) {
+        const params = parseKeyValue(parts[1]);
+        forEach(params, (value, key) => {
           if (value === "JSON_CALLBACK") {
             // Throw if the url already contains a reference to JSON_CALLBACK
             throw $httpMinErr(
@@ -1679,7 +1676,7 @@ function $HttpProvider() {
         });
 
         // Add in the JSON_CALLBACK callback param value
-        url += (url.indexOf("?") === -1 ? "?" : "&") + cbKey + "=JSON_CALLBACK";
+        url += `${(url.indexOf("?") === -1 ? "?" : "&") + cbKey}=JSON_CALLBACK`;
 
         return url;
       }

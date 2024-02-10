@@ -1,51 +1,51 @@
 
 
-describe('jqLite', function() {
-  let scope, a, b, c, document;
+describe('jqLite', () => {
+  let scope; let a; let b; let c; let document;
 
   // Checks if jQuery 2.1 is used.
   function isJQuery21() {
     if (_jqLiteMode) return false;
-    let jQueryVersionParts = _jQuery.fn.jquery.split('.');
-    return jQueryVersionParts[0] + '.' + jQueryVersionParts[1] === '2.1';
+    const jQueryVersionParts = _jQuery.fn.jquery.split('.');
+    return `${jQueryVersionParts[0]  }.${  jQueryVersionParts[1]}` === '2.1';
   }
 
   // Checks if jQuery 2.x is used.
   function isJQuery2x() {
     if (_jqLiteMode) return false;
-    let jQueryVersionParts = _jQuery.fn.jquery.split('.');
+    const jQueryVersionParts = _jQuery.fn.jquery.split('.');
     return jQueryVersionParts[0] === '2';
   }
 
   beforeEach(module(provideLog));
 
-  beforeEach(function() {
+  beforeEach(() => {
     a = jqLite('<div>A</div>')[0];
     b = jqLite('<div>B</div>')[0];
     c = jqLite('<div>C</div>')[0];
   });
 
 
-  beforeEach(inject(function($rootScope) {
+  beforeEach(inject(($rootScope) => {
     document = window.document;
     scope = $rootScope;
     jasmine.addMatchers({
-      toJqEqual: function() {
+      toJqEqual() {
         return {
-          compare: function(_actual_, expected) {
+          compare(_actual_, expected) {
             let msg = 'Unequal length';
-            let message = function() {return msg;};
+            const message = function() {return msg;};
 
             let value = _actual_ && expected && _actual_.length === expected.length;
             for (let i = 0; value && i < expected.length; i++) {
-              let actual = jqLite(_actual_[i])[0];
-              let expect = jqLite(expected[i])[0];
+              const actual = jqLite(_actual_[i])[0];
+              const expect = jqLite(expected[i])[0];
               value = value && equals(expect, actual);
-              msg = 'Not equal at index: ' + i
-                  + ' - Expected: ' + expect
-                  + ' - Actual: ' + actual;
+              msg = `Not equal at index: ${  i
+                   } - Expected: ${  expect
+                   } - Actual: ${  actual}`;
             }
-            return { pass: value, message: message };
+            return { pass: value, message };
           }
         };
       }
@@ -53,31 +53,31 @@ describe('jqLite', function() {
   }));
 
 
-  afterEach(function() {
+  afterEach(() => {
     dealoc(a);
     dealoc(b);
     dealoc(c);
   });
 
 
-  it('should be jqLite when jqLiteMode is on, otherwise jQuery', function() {
+  it('should be jqLite when jqLiteMode is on, otherwise jQuery', () => {
     expect(jqLite).toBe(_jqLiteMode ? JQLite : _jQuery);
   });
 
 
-  describe('construction', function() {
-    it('should allow construction with text node', function() {
-      let text = a.firstChild;
-      let selected = jqLite(text);
+  describe('construction', () => {
+    it('should allow construction with text node', () => {
+      const text = a.firstChild;
+      const selected = jqLite(text);
       expect(selected.length).toEqual(1);
       expect(selected[0]).toEqual(text);
     });
 
 
-    it('should allow construction with html', function() {
-      let nodes = jqLite('<div>1</div><span>2</span>');
+    it('should allow construction with html', () => {
+      const nodes = jqLite('<div>1</div><span>2</span>');
       expect(nodes[0].parentNode).toBeDefined();
-      expect(nodes[0].parentNode.nodeType).toBe(11); /** Document Fragment **/
+      expect(nodes[0].parentNode.nodeType).toBe(11); /** Document Fragment * */
       expect(nodes[0].parentNode).toBe(nodes[1].parentNode);
       expect(nodes.length).toEqual(2);
       expect(nodes[0].innerHTML).toEqual('1');
@@ -85,10 +85,10 @@ describe('jqLite', function() {
     });
 
 
-    it('should allow construction of html with leading whitespace', function() {
-      let nodes = jqLite('  \n\r   \r\n<div>1</div><span>2</span>');
+    it('should allow construction of html with leading whitespace', () => {
+      const nodes = jqLite('  \n\r   \r\n<div>1</div><span>2</span>');
       expect(nodes[0].parentNode).toBeDefined();
-      expect(nodes[0].parentNode.nodeType).toBe(11); /** Document Fragment **/
+      expect(nodes[0].parentNode.nodeType).toBe(11); /** Document Fragment * */
       expect(nodes[0].parentNode).toBe(nodes[1].parentNode);
       expect(nodes.length).toBe(2);
       expect(nodes[0].innerHTML).toBe('1');
@@ -98,16 +98,16 @@ describe('jqLite', function() {
 
     // This is not working correctly in jQuery prior to v2.2.
     // See https://github.com/jquery/jquery/issues/1987 for details.
-    it('should properly handle dash-delimited node names', function() {
+    it('should properly handle dash-delimited node names', () => {
       if (isJQuery21()) return;
 
-      let nodeNames = 'thead tbody tfoot colgroup caption tr th td div kung'.split(' ');
+      const nodeNames = 'thead tbody tfoot colgroup caption tr th td div kung'.split(' ');
       let nodeNamesTested = 0;
-      let nodes, customNodeName;
+      let nodes; let customNodeName;
 
-      forEach(nodeNames, function(nodeName) {
-        let customNodeName = nodeName + '-foo';
-        let nodes = jqLite('<' + customNodeName + '>Hello, world !</' + customNodeName + '>');
+      forEach(nodeNames, (nodeName) => {
+        const customNodeName = `${nodeName  }-foo`;
+        const nodes = jqLite(`<${  customNodeName  }>Hello, world !</${  customNodeName  }>`);
 
         expect(nodes.length).toBe(1);
         expect(nodeName_(nodes)).toBe(customNodeName);
@@ -120,35 +120,35 @@ describe('jqLite', function() {
     });
 
 
-    it('should allow creation of comment tags', function() {
-      let nodes = jqLite('<!-- foo -->');
+    it('should allow creation of comment tags', () => {
+      const nodes = jqLite('<!-- foo -->');
       expect(nodes.length).toBe(1);
       expect(nodes[0].nodeType).toBe(8);
     });
 
 
-    it('should allow creation of script tags', function() {
-      let nodes = jqLite('<script></script>');
+    it('should allow creation of script tags', () => {
+      const nodes = jqLite('<script></script>');
       expect(nodes.length).toBe(1);
       expect(nodes[0].tagName.toUpperCase()).toBe('SCRIPT');
     });
 
 
-    it('should wrap document fragment', function() {
-      let fragment = jqLite(document.createDocumentFragment());
+    it('should wrap document fragment', () => {
+      const fragment = jqLite(document.createDocumentFragment());
       expect(fragment.length).toBe(1);
       expect(fragment[0].nodeType).toBe(11);
     });
 
 
-    it('should allow construction of <option> elements', function() {
-      let nodes = jqLite('<option>');
+    it('should allow construction of <option> elements', () => {
+      const nodes = jqLite('<option>');
       expect(nodes.length).toBe(1);
       expect(nodes[0].nodeName.toLowerCase()).toBe('option');
     });
 
-    it('should allow construction of multiple <option> elements', function() {
-      let nodes = jqLite('<option></option><option></option>');
+    it('should allow construction of multiple <option> elements', () => {
+      const nodes = jqLite('<option></option><option></option>');
       expect(nodes.length).toBe(2);
       expect(nodes[0].nodeName.toLowerCase()).toBe('option');
       expect(nodes[1].nodeName.toLowerCase()).toBe('option');
@@ -169,16 +169,16 @@ describe('jqLite', function() {
       'th',
       'thead',
       'tr'
-    ], function(name) {
-      it('should allow construction of <$NAME$> elements'.replace('$NAME$', name), function() {
-        let nodes = jqLite('<$NAME$>'.replace('$NAME$', name));
+    ], (name) => {
+      it('should allow construction of <$NAME$> elements'.replace('$NAME$', name), () => {
+        const nodes = jqLite('<$NAME$>'.replace('$NAME$', name));
         expect(nodes.length).toBe(1);
         expect(nodes[0].nodeName.toLowerCase()).toBe(name);
       });
     });
 
-    describe('security', function() {
-      it('shouldn\'t crash at attempts to close the table wrapper', function() {
+    describe('security', () => {
+      it('shouldn\'t crash at attempts to close the table wrapper', () => {
         // jQuery doesn't pass this test yet.
         if (!_jqLiteMode) return;
 
@@ -187,27 +187,27 @@ describe('jqLite', function() {
         // as that's the only one that works.
         if (msie < 10) return;
 
-        expect(function() {
+        expect(() => {
           // This test case attempts to close the tags which wrap input
           // based on matching done in wrapMap, escaping the wrapper & thus
           // triggering an error when descending.
-          let el = jqLite('<td></td></tr></tbody></table><td></td>');
+          const el = jqLite('<td></td></tr></tbody></table><td></td>');
           expect(el.length).toBe(2);
           expect(el[0].nodeName.toLowerCase()).toBe('td');
           expect(el[1].nodeName.toLowerCase()).toBe('td');
         }).not.toThrow();
       });
 
-      it('shouldn\'t unsanitize sanitized code', function(done) {
+      it('shouldn\'t unsanitize sanitized code', (done) => {
         // jQuery <3.5.0 fail those tests.
         if (isJQuery2x()) {
           done();
           return;
         }
 
-        let counter = 0,
-          assertCount = 13,
-          container = jqLite('<div></div>');
+        let counter = 0;
+          const assertCount = 13;
+          const container = jqLite('<div></div>');
 
         function donePartial() {
           counter++;
@@ -239,27 +239,27 @@ describe('jqLite', function() {
           '<noembed><noembed/><img src=url404 onerror=xss(11)>',
 
           '<option><style></option></select><img src=url404 onerror=xss(12)></style>'
-        ], function(htmlString, index) {
-          let element = jqLite('<div></div>');
+        ], (htmlString, index) => {
+          const element = jqLite('<div></div>');
 
           container.append(element);
           element.append(jqLite(htmlString));
 
-          window.setTimeout(function() {
+          window.setTimeout(() => {
             expect(window.xss).not.toHaveBeenCalledWith(index);
             donePartial();
           }, 1000);
         });
       });
 
-      it('should allow to restore legacy insecure behavior', function() {
+      it('should allow to restore legacy insecure behavior', () => {
         // jQuery doesn't have this API.
         if (!_jqLiteMode) return;
 
         // eslint-disable-next-line new-cap
         angular.UNSAFE_restoreLegacyJqLiteXHTMLReplacement();
 
-        let elem = jqLite('<div/><span/>');
+        const elem = jqLite('<div/><span/>');
         expect(elem.length).toBe(2);
         expect(elem[0].nodeName.toLowerCase()).toBe('div');
         expect(elem[1].nodeName.toLowerCase()).toBe('span');
@@ -267,48 +267,48 @@ describe('jqLite', function() {
     });
   });
 
-  describe('_data', function() {
-    it('should provide access to the events present on the element', function() {
-      let element = jqLite('<i>foo</i>');
+  describe('_data', () => {
+    it('should provide access to the events present on the element', () => {
+      const element = jqLite('<i>foo</i>');
       expect(angular.element._data(element[0]).events).toBeUndefined();
 
-      element.on('click', function() { });
+      element.on('click', () => { });
       expect(angular.element._data(element[0]).events.click).toBeDefined();
     });
   });
 
-  describe('inheritedData', function() {
+  describe('inheritedData', () => {
 
-    it('should retrieve data attached to the current element', function() {
-      let element = jqLite('<i>foo</i>');
+    it('should retrieve data attached to the current element', () => {
+      const element = jqLite('<i>foo</i>');
       element.data('myData', 'abc');
       expect(element.inheritedData('myData')).toBe('abc');
       dealoc(element);
     });
 
 
-    it('should walk up the dom to find data', function() {
-      let element = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>');
-      let deepChild = jqLite(element[0].getElementsByTagName('b')[0]);
+    it('should walk up the dom to find data', () => {
+      const element = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>');
+      const deepChild = jqLite(element[0].getElementsByTagName('b')[0]);
       element.data('myData', 'abc');
       expect(deepChild.inheritedData('myData')).toBe('abc');
       dealoc(element);
     });
 
 
-    it('should return undefined when no data was found', function() {
-      let element = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>');
-      let deepChild = jqLite(element[0].getElementsByTagName('b')[0]);
+    it('should return undefined when no data was found', () => {
+      const element = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>');
+      const deepChild = jqLite(element[0].getElementsByTagName('b')[0]);
       expect(deepChild.inheritedData('myData')).toBeFalsy();
       dealoc(element);
     });
 
 
     it('should work with the child html element instead if the current element is the document obj',
-      function() {
-        let item = {},
-            doc = jqLite(document),
-            html = doc.find('html');
+      () => {
+        const item = {};
+            const doc = jqLite(document);
+            const html = doc.find('html');
 
         html.data('item', item);
         expect(doc.inheritedData('item')).toBe(item);
@@ -317,10 +317,10 @@ describe('jqLite', function() {
       }
     );
 
-    it('should return null values', function() {
-      let ul = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>'),
-          li = ul.find('li'),
-          b = li.find('b');
+    it('should return null values', () => {
+      const ul = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>');
+          const li = ul.find('li');
+          const b = li.find('b');
 
       ul.data('foo', 'bar');
       li.data('foo', null);
@@ -331,10 +331,10 @@ describe('jqLite', function() {
       dealoc(ul);
     });
 
-    it('should pass through DocumentFragment boundaries via host', function() {
-      let host = jqLite('<div></div>'),
-          frag = document.createDocumentFragment(),
-          $frag = jqLite(frag);
+    it('should pass through DocumentFragment boundaries via host', () => {
+      const host = jqLite('<div></div>');
+          const frag = document.createDocumentFragment();
+          const $frag = jqLite(frag);
       frag.host = host[0];
       host.data('foo', 123);
       host.append($frag);
@@ -346,26 +346,26 @@ describe('jqLite', function() {
   });
 
 
-  describe('scope', function() {
-    it('should retrieve scope attached to the current element', function() {
-      let element = jqLite('<i>foo</i>');
+  describe('scope', () => {
+    it('should retrieve scope attached to the current element', () => {
+      const element = jqLite('<i>foo</i>');
       element.data('$scope', scope);
       expect(element.scope()).toBe(scope);
       dealoc(element);
     });
 
-    it('should retrieve isolate scope attached to the current element', function() {
-      let element = jqLite('<i>foo</i>');
+    it('should retrieve isolate scope attached to the current element', () => {
+      const element = jqLite('<i>foo</i>');
       element.data('$isolateScope', scope);
       expect(element.isolateScope()).toBe(scope);
       dealoc(element);
     });
 
     it('should retrieve scope attached to the html element if it\'s requested on the document',
-        function() {
-      let doc = jqLite(document),
-          html = doc.find('html'),
-          scope = {};
+        () => {
+      const doc = jqLite(document);
+          const html = doc.find('html');
+          const scope = {};
 
       html.data('$scope', scope);
 
@@ -374,56 +374,56 @@ describe('jqLite', function() {
       dealoc(doc);
     });
 
-    it('should walk up the dom to find scope', function() {
-      let element = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>');
-      let deepChild = jqLite(element[0].getElementsByTagName('b')[0]);
+    it('should walk up the dom to find scope', () => {
+      const element = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>');
+      const deepChild = jqLite(element[0].getElementsByTagName('b')[0]);
       element.data('$scope', scope);
       expect(deepChild.scope()).toBe(scope);
       dealoc(element);
     });
 
 
-    it('should return undefined when no scope was found', function() {
-      let element = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>');
-      let deepChild = jqLite(element[0].getElementsByTagName('b')[0]);
+    it('should return undefined when no scope was found', () => {
+      const element = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>');
+      const deepChild = jqLite(element[0].getElementsByTagName('b')[0]);
       expect(deepChild.scope()).toBeFalsy();
       dealoc(element);
     });
   });
 
 
-  describe('isolateScope', function() {
+  describe('isolateScope', () => {
 
-    it('should retrieve isolate scope attached to the current element', function() {
-      let element = jqLite('<i>foo</i>');
+    it('should retrieve isolate scope attached to the current element', () => {
+      const element = jqLite('<i>foo</i>');
       element.data('$isolateScope', scope);
       expect(element.isolateScope()).toBe(scope);
       dealoc(element);
     });
 
 
-    it('should not walk up the dom to find scope', function() {
-      let element = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>');
-      let deepChild = jqLite(element[0].getElementsByTagName('b')[0]);
+    it('should not walk up the dom to find scope', () => {
+      const element = jqLite('<ul><li><p><b>deep deep</b><p></li></ul>');
+      const deepChild = jqLite(element[0].getElementsByTagName('b')[0]);
       element.data('$isolateScope', scope);
       expect(deepChild.isolateScope()).toBeUndefined();
       dealoc(element);
     });
 
 
-    it('should return undefined when no scope was found', function() {
-      let element = jqLite('<div></div>');
+    it('should return undefined when no scope was found', () => {
+      const element = jqLite('<div></div>');
       expect(element.isolateScope()).toBeFalsy();
       dealoc(element);
     });
   });
 
 
-  describe('injector', function() {
-    it('should retrieve injector attached to the current element or its parent', function() {
-      let template = jqLite('<div><span></span></div>'),
-        span = template.children().eq(0),
-        injector = angular.bootstrap(template);
+  describe('injector', () => {
+    it('should retrieve injector attached to the current element or its parent', () => {
+      const template = jqLite('<div><span></span></div>');
+        const span = template.children().eq(0);
+        const injector = angular.bootstrap(template);
 
 
       expect(span.injector()).toBe(injector);
@@ -432,10 +432,10 @@ describe('jqLite', function() {
 
 
     it('should retrieve injector attached to the html element if it\'s requested on document',
-        function() {
-      let doc = jqLite(document),
-          html = doc.find('html'),
-          injector = {};
+        () => {
+      const doc = jqLite(document);
+          const html = doc.find('html');
+          const injector = {};
 
       html.data('$injector', injector);
 
@@ -445,18 +445,18 @@ describe('jqLite', function() {
     });
 
 
-    it('should do nothing with a noncompiled template', function() {
-      let template = jqLite('<div><span></span></div>');
+    it('should do nothing with a noncompiled template', () => {
+      const template = jqLite('<div><span></span></div>');
       expect(template.injector()).toBeUndefined();
       dealoc(template);
     });
   });
 
 
-  describe('controller', function() {
-    it('should retrieve controller attached to the current element or its parent', function() {
-      let div = jqLite('<div><span></span></div>'),
-          span = div.find('span');
+  describe('controller', () => {
+    it('should retrieve controller attached to the current element or its parent', () => {
+      const div = jqLite('<div><span></span></div>');
+          const span = div.find('span');
 
       div.data('$ngControllerController', 'ngController');
       span.data('$otherController', 'other');
@@ -474,9 +474,9 @@ describe('jqLite', function() {
   });
 
 
-  describe('data', function() {
-    it('should set and get and remove data', function() {
-      let selected = jqLite([a, b, c]);
+  describe('data', () => {
+    it('should set and get and remove data', () => {
+      const selected = jqLite([a, b, c]);
 
       expect(selected.data('prop')).toBeUndefined();
       expect(selected.data('prop', 'value')).toBe(selected);
@@ -497,8 +497,8 @@ describe('jqLite', function() {
       expect(jqLite(c).data('prop')).toBeUndefined();
     });
 
-    it('should only remove the specified value when providing a property name to removeData', function() {
-      let selected = jqLite(a);
+    it('should only remove the specified value when providing a property name to removeData', () => {
+      const selected = jqLite(a);
 
       expect(selected.data('prop1')).toBeUndefined();
 
@@ -516,10 +516,10 @@ describe('jqLite', function() {
       selected.removeData('prop2');
     });
 
-    it('should not remove event handlers on removeData()', function() {
+    it('should not remove event handlers on removeData()', () => {
       let log = '';
-      let elm = jqLite(a);
-      elm.on('click', function() {
+      const elm = jqLite(a);
+      elm.on('click', () => {
         log += 'click;';
       });
 
@@ -528,9 +528,9 @@ describe('jqLite', function() {
       expect(log).toBe('click;');
     });
 
-    it('should allow to set data after removeData() with event handlers present', function() {
-      let elm = jqLite(a);
-      elm.on('click', function() {});
+    it('should allow to set data after removeData() with event handlers present', () => {
+      const elm = jqLite(a);
+      elm.on('click', () => {});
       elm.data('key1', 'value1');
       elm.removeData();
       elm.data('key2', 'value2');
@@ -538,8 +538,8 @@ describe('jqLite', function() {
       expect(elm.data('key2')).toBe('value2');
     });
 
-    it('should allow to set data after removeData() without event handlers present', function() {
-      let elm = jqLite(a);
+    it('should allow to set data after removeData() without event handlers present', () => {
+      const elm = jqLite(a);
       elm.data('key1', 'value1');
       elm.removeData();
       elm.data('key2', 'value2');
@@ -548,8 +548,8 @@ describe('jqLite', function() {
     });
 
 
-    it('should remove user data on cleanData()', function() {
-      let selected = jqLite([a, b, c]);
+    it('should remove user data on cleanData()', () => {
+      const selected = jqLite([a, b, c]);
 
       selected.data('prop', 'value');
       jqLite(b).data('prop', 'new value');
@@ -561,12 +561,12 @@ describe('jqLite', function() {
       expect(jqLite(c).data('prop')).toBeUndefined();
     });
 
-    it('should remove event handlers on cleanData()', function() {
-      let selected = jqLite([a, b, c]);
+    it('should remove event handlers on cleanData()', () => {
+      const selected = jqLite([a, b, c]);
 
       let log = '';
-      let elm = jqLite(b);
-      elm.on('click', function() {
+      const elm = jqLite(b);
+      elm.on('click', () => {
         log += 'click;';
       });
       jqLite.cleanData(selected);
@@ -575,12 +575,12 @@ describe('jqLite', function() {
       expect(log).toBe('');
     });
 
-    it('should remove user data & event handlers on cleanData()', function() {
-      let selected = jqLite([a, b, c]);
+    it('should remove user data & event handlers on cleanData()', () => {
+      const selected = jqLite([a, b, c]);
 
       let log = '';
-      let elm = jqLite(b);
-      elm.on('click', function() {
+      const elm = jqLite(b);
+      elm.on('click', () => {
         log += 'click;';
       });
 
@@ -597,15 +597,15 @@ describe('jqLite', function() {
       expect(jqLite(c).data('prop')).toBeUndefined();
     });
 
-    it('should not break on cleanData(), if element has no data', function() {
-      let selected = jqLite([a, b, c]);
+    it('should not break on cleanData(), if element has no data', () => {
+      const selected = jqLite([a, b, c]);
       spyOn(jqLite, '_data').and.returnValue(undefined);
-      expect(function() { jqLite.cleanData(selected); }).not.toThrow();
+      expect(() => { jqLite.cleanData(selected); }).not.toThrow();
     });
 
 
-    it('should add and remove data on SVGs', function() {
-      let svg = jqLite('<svg><rect></rect></svg>');
+    it('should add and remove data on SVGs', () => {
+      const svg = jqLite('<svg><rect></rect></svg>');
 
       svg.data('svg-level', 1);
       expect(svg.data('svg-level')).toBe(1);
@@ -617,8 +617,8 @@ describe('jqLite', function() {
     });
 
 
-    it('should not add to the cache if the node is a comment or text node', function() {
-      let nodes = jqLite('<!-- some comment --> and some text');
+    it('should not add to the cache if the node is a comment or text node', () => {
+      const nodes = jqLite('<!-- some comment --> and some text');
       expect(jqLiteCacheSize()).toEqual(0);
       nodes.data('someKey');
       expect(jqLiteCacheSize()).toEqual(0);
@@ -627,8 +627,8 @@ describe('jqLite', function() {
     });
 
 
-    it('should provide the non-wrapped data calls', function() {
-      let node = document.createElement('div');
+    it('should provide the non-wrapped data calls', () => {
+      const node = document.createElement('div');
 
       expect(jqLite.hasData(node)).toBe(false);
       expect(jqLite.data(node, 'foo')).toBeUndefined();
@@ -654,17 +654,17 @@ describe('jqLite', function() {
       expect(jqLite.hasData(node)).toBe(false);
     });
 
-    it('should emit $destroy event if element removed via remove()', function() {
+    it('should emit $destroy event if element removed via remove()', () => {
       let log = '';
-      let element = jqLite(a);
-      element.on('$destroy', function() {log += 'destroy;';});
+      const element = jqLite(a);
+      element.on('$destroy', () => {log += 'destroy;';});
       element.remove();
       expect(log).toEqual('destroy;');
     });
 
 
-    it('should emit $destroy event if an element is removed via html(\'\')', inject(function(log) {
-      let element = jqLite('<div><span>x</span></div>');
+    it('should emit $destroy event if an element is removed via html(\'\')', inject((log) => {
+      const element = jqLite('<div><span>x</span></div>');
       element.find('span').on('$destroy', log.fn('destroyed'));
 
       element.html('');
@@ -674,8 +674,8 @@ describe('jqLite', function() {
     }));
 
 
-    it('should emit $destroy event if an element is removed via empty()', inject(function(log) {
-      let element = jqLite('<div><span>x</span></div>');
+    it('should emit $destroy event if an element is removed via empty()', inject((log) => {
+      const element = jqLite('<div><span>x</span></div>');
       element.find('span').on('$destroy', log.fn('destroyed'));
 
       element.empty();
@@ -685,10 +685,10 @@ describe('jqLite', function() {
     }));
 
 
-    it('should keep data if an element is removed via detach()', function() {
-      let root = jqLite('<div><span>abc</span></div>'),
-          span = root.find('span'),
-          data = span.data();
+    it('should keep data if an element is removed via detach()', () => {
+      const root = jqLite('<div><span>abc</span></div>');
+          const span = root.find('span');
+          const data = span.data();
 
       span.data('foo', 'bar');
       span.detach();
@@ -699,8 +699,8 @@ describe('jqLite', function() {
     });
 
 
-    it('should retrieve all data if called without params', function() {
-      let element = jqLite(a);
+    it('should retrieve all data if called without params', () => {
+      const element = jqLite(a);
       expect(element.data()).toEqual({});
 
       element.data('foo', 'bar');
@@ -710,18 +710,18 @@ describe('jqLite', function() {
       expect(element.data()).toEqual({foo: 'bar', baz: 'xxx'});
     });
 
-    it('should create a new data object if called without args', function() {
-      let element = jqLite(a),
-          data = element.data();
+    it('should create a new data object if called without args', () => {
+      const element = jqLite(a);
+          const data = element.data();
 
       expect(data).toEqual({});
       element.data('foo', 'bar');
       expect(data).toEqual({foo: 'bar'});
     });
 
-    it('should create a new data object if called with a single object arg', function() {
-      let element = jqLite(a),
-          newData = {foo: 'bar'};
+    it('should create a new data object if called with a single object arg', () => {
+      const element = jqLite(a);
+          const newData = {foo: 'bar'};
 
       element.data(newData);
       expect(element.data()).toEqual({foo: 'bar'});
@@ -729,35 +729,35 @@ describe('jqLite', function() {
     });
 
     it('should merge existing data object with a new one if called with a single object arg',
-        function() {
-      let element = jqLite(a);
+        () => {
+      const element = jqLite(a);
       element.data('existing', 'val');
       expect(element.data()).toEqual({existing: 'val'});
 
-      let oldData = element.data(),
-          newData = {meLike: 'turtles', 'youLike': 'carrots'};
+      const oldData = element.data();
+          const newData = {meLike: 'turtles', 'youLike': 'carrots'};
 
       expect(element.data(newData)).toBe(element);
       expect(element.data()).toEqual({meLike: 'turtles', youLike: 'carrots', existing: 'val'});
       expect(element.data()).toBe(oldData); // merge into the old object
     });
 
-    describe('data cleanup', function() {
-      it('should remove data on element removal', function() {
-        let div = jqLite('<div><span>text</span></div>'),
-            span = div.find('span');
+    describe('data cleanup', () => {
+      it('should remove data on element removal', () => {
+        const div = jqLite('<div><span>text</span></div>');
+            const span = div.find('span');
 
         span.data('name', 'AngularJS');
         span.remove();
         expect(span.data('name')).toBeUndefined();
       });
 
-      it('should remove event listeners on element removal', function() {
-        let div = jqLite('<div><span>text</span></div>'),
-            span = div.find('span'),
-            log = '';
+      it('should remove event listeners on element removal', () => {
+        const div = jqLite('<div><span>text</span></div>');
+            const span = div.find('span');
+            let log = '';
 
-        span.on('click', function() { log += 'click;'; });
+        span.on('click', () => { log += 'click;'; });
         browserTrigger(span);
         expect(log).toEqual('click;');
 
@@ -767,44 +767,44 @@ describe('jqLite', function() {
         expect(log).toEqual('click;');
       });
 
-      it('should work if the descendants of the element change while it\'s being removed', function() {
-        let div = jqLite('<div><p><span>text</span></p></div>');
-        div.find('p').on('$destroy', function() {
+      it('should work if the descendants of the element change while it\'s being removed', () => {
+        const div = jqLite('<div><p><span>text</span></p></div>');
+        div.find('p').on('$destroy', () => {
           div.find('span').remove();
         });
-        expect(function() {
+        expect(() => {
           div.remove();
         }).not.toThrow();
       });
     });
 
-    describe('camelCasing keys', function() {
+    describe('camelCasing keys', () => {
       // jQuery 2.x has different behavior; skip the tests.
       if (isJQuery2x()) return;
 
-      it('should camelCase the key in a setter', function() {
-        let element = jqLite(a);
+      it('should camelCase the key in a setter', () => {
+        const element = jqLite(a);
 
         element.data('a-B-c-d-42--e', 'z-x');
         expect(element.data()).toEqual({'a-BCD-42-E': 'z-x'});
       });
 
-      it('should camelCase the key in a getter', function() {
-        let element = jqLite(a);
+      it('should camelCase the key in a getter', () => {
+        const element = jqLite(a);
 
         element.data()['a-BCD-42-E'] = 'x-c';
         expect(element.data('a-B-c-d-42--e')).toBe('x-c');
       });
 
-      it('should camelCase the key in a mass setter', function() {
-        let element = jqLite(a);
+      it('should camelCase the key in a mass setter', () => {
+        const element = jqLite(a);
 
         element.data({'a-B-c-d-42--e': 'c-v', 'r-t-v': 42});
         expect(element.data()).toEqual({'a-BCD-42-E': 'c-v', 'rTV': 42});
       });
 
-      it('should ignore non-camelCase keys in the data in a getter', function() {
-        let element = jqLite(a);
+      it('should ignore non-camelCase keys in the data in a getter', () => {
+        const element = jqLite(a);
 
         element.data()['a-b'] = 'b-n';
         expect(element.data('a-b')).toBe(undefined);
@@ -813,9 +813,9 @@ describe('jqLite', function() {
   });
 
 
-  describe('attr', function() {
-    it('should read, write and remove attr', function() {
-      let selector = jqLite([a, b]);
+  describe('attr', () => {
+    it('should read, write and remove attr', () => {
+      const selector = jqLite([a, b]);
 
       expect(selector.attr('prop', 'value')).toEqual(selector);
       expect(jqLite(a).attr('prop')).toEqual('value');
@@ -834,16 +834,16 @@ describe('jqLite', function() {
       expect(jqLite(b).attr('prop')).toBeFalsy();
     });
 
-    it('should read boolean attributes as strings', function() {
-      let select = jqLite('<select>');
+    it('should read boolean attributes as strings', () => {
+      const select = jqLite('<select>');
       expect(select.attr('multiple')).toBeUndefined();
       expect(jqLite('<select multiple>').attr('multiple')).toBe('multiple');
       expect(jqLite('<select multiple="">').attr('multiple')).toBe('multiple');
       expect(jqLite('<select multiple="x">').attr('multiple')).toBe('multiple');
     });
 
-    it('should add/remove boolean attributes', function() {
-      let select = jqLite('<select>');
+    it('should add/remove boolean attributes', () => {
+      const select = jqLite('<select>');
       select.attr('multiple', false);
       expect(select.attr('multiple')).toBeUndefined();
 
@@ -851,10 +851,10 @@ describe('jqLite', function() {
       expect(select.attr('multiple')).toBe('multiple');
     });
 
-    it('should not take properties into account when getting respective boolean attributes', function() {
+    it('should not take properties into account when getting respective boolean attributes', () => {
       // Use a div and not a select as the latter would itself reflect the multiple attribute
       // to a property.
-      let div = jqLite('<div>');
+      const div = jqLite('<div>');
 
       div[0].multiple = true;
       expect(div.attr('multiple')).toBe(undefined);
@@ -864,13 +864,13 @@ describe('jqLite', function() {
       expect(div.attr('multiple')).toBe('multiple');
     });
 
-    it('should not set properties when setting respective boolean attributes', function() {
+    it('should not set properties when setting respective boolean attributes', () => {
       // jQuery 2.x has different behavior; skip the test.
       if (isJQuery2x()) return;
 
       // Use a div and not a select as the latter would itself reflect the multiple attribute
       // to a property.
-      let div = jqLite('<div>');
+      const div = jqLite('<div>');
 
       // Check the initial state.
       expect(div[0].multiple).toBe(undefined);
@@ -888,8 +888,8 @@ describe('jqLite', function() {
       expect(div[0].multiple).toBe(undefined);
     });
 
-    it('should normalize the case of boolean attributes', function() {
-      let input = jqLite('<input readonly>');
+    it('should normalize the case of boolean attributes', () => {
+      const input = jqLite('<input readonly>');
       expect(input.attr('readonly')).toBe('readonly');
       expect(input.attr('readOnly')).toBe('readonly');
       expect(input.attr('READONLY')).toBe('readonly');
@@ -902,76 +902,76 @@ describe('jqLite', function() {
       expect(input.attr('readOnly')).toBe('readonly');
     });
 
-    it('should return undefined for non-existing attributes', function() {
-      let elm = jqLite('<div class="any">a</div>');
+    it('should return undefined for non-existing attributes', () => {
+      const elm = jqLite('<div class="any">a</div>');
       expect(elm.attr('non-existing')).toBeUndefined();
     });
 
-    it('should return undefined for non-existing attributes on input', function() {
-      let elm = jqLite('<input>');
+    it('should return undefined for non-existing attributes on input', () => {
+      const elm = jqLite('<input>');
       expect(elm.attr('readonly')).toBeUndefined();
       expect(elm.attr('readOnly')).toBeUndefined();
       expect(elm.attr('disabled')).toBeUndefined();
     });
 
-    it('should do nothing when setting or getting on attribute nodes', function() {
-      let attrNode = jqLite(document.createAttribute('myattr'));
+    it('should do nothing when setting or getting on attribute nodes', () => {
+      const attrNode = jqLite(document.createAttribute('myattr'));
       expect(attrNode).toBeDefined();
       expect(attrNode[0].nodeType).toEqual(2);
       expect(attrNode.attr('some-attribute','somevalue')).toEqual(attrNode);
       expect(attrNode.attr('some-attribute')).toBeUndefined();
     });
 
-    it('should do nothing when setting or getting on text nodes', function() {
-      let textNode = jqLite(document.createTextNode('some text'));
+    it('should do nothing when setting or getting on text nodes', () => {
+      const textNode = jqLite(document.createTextNode('some text'));
       expect(textNode).toBeDefined();
       expect(textNode[0].nodeType).toEqual(3);
       expect(textNode.attr('some-attribute','somevalue')).toEqual(textNode);
       expect(textNode.attr('some-attribute')).toBeUndefined();
     });
 
-    it('should do nothing when setting or getting on comment nodes', function() {
-      let comment = jqLite(document.createComment('some comment'));
+    it('should do nothing when setting or getting on comment nodes', () => {
+      const comment = jqLite(document.createComment('some comment'));
       expect(comment).toBeDefined();
       expect(comment[0].nodeType).toEqual(8);
       expect(comment.attr('some-attribute','somevalue')).toEqual(comment);
       expect(comment.attr('some-attribute')).toBeUndefined();
     });
 
-    it('should remove the attribute for a null value', function() {
-      let elm = jqLite('<div attribute="value">a</div>');
+    it('should remove the attribute for a null value', () => {
+      const elm = jqLite('<div attribute="value">a</div>');
       elm.attr('attribute', null);
       expect(elm[0].hasAttribute('attribute')).toBe(false);
     });
 
-    it('should not remove the attribute for an empty string as a value', function() {
-      let elm = jqLite('<div attribute="value">a</div>');
+    it('should not remove the attribute for an empty string as a value', () => {
+      const elm = jqLite('<div attribute="value">a</div>');
       elm.attr('attribute', '');
       expect(elm[0].getAttribute('attribute')).toBe('');
     });
 
-    it('should remove the boolean attribute for a false value', function() {
-      let elm = jqLite('<select multiple>');
+    it('should remove the boolean attribute for a false value', () => {
+      const elm = jqLite('<select multiple>');
       elm.attr('multiple', false);
       expect(elm[0].hasAttribute('multiple')).toBe(false);
     });
 
-    it('should remove the boolean attribute for a null value', function() {
-      let elm = jqLite('<select multiple>');
+    it('should remove the boolean attribute for a null value', () => {
+      const elm = jqLite('<select multiple>');
       elm.attr('multiple', null);
       expect(elm[0].hasAttribute('multiple')).toBe(false);
     });
 
-    it('should not remove the boolean attribute for an empty string as a value', function() {
-      let elm = jqLite('<select multiple>');
+    it('should not remove the boolean attribute for an empty string as a value', () => {
+      const elm = jqLite('<select multiple>');
       elm.attr('multiple', '');
       expect(elm[0].getAttribute('multiple')).toBe('multiple');
     });
 
-    it('should not fail on elements without the getAttribute method', function() {
-      forEach([window, document], function(node) {
-        expect(function() {
-          let elem = jqLite(node);
+    it('should not fail on elements without the getAttribute method', () => {
+      forEach([window, document], (node) => {
+        expect(() => {
+          const elem = jqLite(node);
           elem.attr('foo');
           elem.attr('bar', 'baz');
           elem.attr('bar');
@@ -981,21 +981,21 @@ describe('jqLite', function() {
   });
 
 
-  describe('prop', function() {
-    it('should read element property', function() {
-      let elm = jqLite('<div class="foo">a</div>');
+  describe('prop', () => {
+    it('should read element property', () => {
+      const elm = jqLite('<div class="foo">a</div>');
       expect(elm.prop('className')).toBe('foo');
     });
 
-    it('should set element property to a value', function() {
-      let elm = jqLite('<div class="foo">a</div>');
+    it('should set element property to a value', () => {
+      const elm = jqLite('<div class="foo">a</div>');
       elm.prop('className', 'bar');
       expect(elm[0].className).toBe('bar');
       expect(elm.prop('className')).toBe('bar');
     });
 
-    it('should set boolean element property', function() {
-      let elm = jqLite('<input type="checkbox">');
+    it('should set boolean element property', () => {
+      const elm = jqLite('<input type="checkbox">');
       expect(elm.prop('checked')).toBe(false);
 
       elm.prop('checked', true);
@@ -1013,15 +1013,15 @@ describe('jqLite', function() {
   });
 
 
-  describe('class', function() {
+  describe('class', () => {
 
-    it('should properly do  with SVG elements', function() {
+    it('should properly do  with SVG elements', () => {
       // This is not working correctly in jQuery prior to v2.2.
       // See https://github.com/jquery/jquery/issues/2199 for details.
       if (isJQuery21()) return;
 
-      let svg = jqLite('<svg><rect></rect></svg>');
-      let rect = svg.children();
+      const svg = jqLite('<svg><rect></rect></svg>');
+      const rect = svg.children();
 
       expect(rect.hasClass('foo-class')).toBe(false);
       rect.addClass('foo-class');
@@ -1031,8 +1031,8 @@ describe('jqLite', function() {
     });
 
 
-    it('should ignore comment elements', function() {
-      let comment = jqLite(document.createComment('something'));
+    it('should ignore comment elements', () => {
+      const comment = jqLite(document.createComment('something'));
 
       comment.addClass('whatever');
       comment.hasClass('whatever');
@@ -1041,15 +1041,15 @@ describe('jqLite', function() {
     });
 
 
-    describe('hasClass', function() {
-      it('should check class', function() {
-        let selector = jqLite([a, b]);
+    describe('hasClass', () => {
+      it('should check class', () => {
+        const selector = jqLite([a, b]);
         expect(selector.hasClass('abc')).toEqual(false);
       });
 
 
-      it('should make sure that partial class is not checked as a subset', function() {
-        let selector = jqLite([a, b]);
+      it('should make sure that partial class is not checked as a subset', () => {
+        const selector = jqLite([a, b]);
         selector.addClass('a');
         selector.addClass('b');
         selector.addClass('c');
@@ -1064,17 +1064,17 @@ describe('jqLite', function() {
     });
 
 
-    describe('addClass', function() {
-      it('should allow adding of class', function() {
-        let selector = jqLite([a, b]);
+    describe('addClass', () => {
+      it('should allow adding of class', () => {
+        const selector = jqLite([a, b]);
         expect(selector.addClass('abc')).toEqual(selector);
         expect(jqLite(a).hasClass('abc')).toEqual(true);
         expect(jqLite(b).hasClass('abc')).toEqual(true);
       });
 
 
-      it('should ignore falsy values', function() {
-        let jqA = jqLite(a);
+      it('should ignore falsy values', () => {
+        const jqA = jqLite(a);
         expect(jqA[0].className).toBe('');
 
         jqA.addClass(undefined);
@@ -1088,8 +1088,8 @@ describe('jqLite', function() {
       });
 
 
-      it('should allow multiple classes to be added in a single string', function() {
-        let jqA = jqLite(a);
+      it('should allow multiple classes to be added in a single string', () => {
+        const jqA = jqLite(a);
         expect(a.className).toBe('');
 
         jqA.addClass('foo bar baz');
@@ -1099,13 +1099,13 @@ describe('jqLite', function() {
 
       // JQLite specific implementation/performance tests
       if (_jqLiteMode) {
-        it('should only get/set the attribute once when multiple classes added', function() {
-          let fakeElement = {
+        it('should only get/set the attribute once when multiple classes added', () => {
+          const fakeElement = {
             nodeType: 1,
             setAttribute: jasmine.createSpy(),
             getAttribute: jasmine.createSpy().and.returnValue('')
           };
-          let jqA = jqLite(fakeElement);
+          const jqA = jqLite(fakeElement);
 
           jqA.addClass('foo bar baz');
           expect(fakeElement.getAttribute).toHaveBeenCalledOnceWith('class');
@@ -1113,13 +1113,13 @@ describe('jqLite', function() {
         });
 
 
-        it('should not set the attribute when classes not changed', function() {
-          let fakeElement = {
+        it('should not set the attribute when classes not changed', () => {
+          const fakeElement = {
             nodeType: 1,
             setAttribute: jasmine.createSpy(),
             getAttribute: jasmine.createSpy().and.returnValue('foo bar')
           };
-          let jqA = jqLite(fakeElement);
+          const jqA = jqLite(fakeElement);
 
           jqA.addClass('foo');
           expect(fakeElement.getAttribute).toHaveBeenCalledOnceWith('class');
@@ -1128,8 +1128,8 @@ describe('jqLite', function() {
       }
 
 
-      it('should not add duplicate classes', function() {
-        let jqA = jqLite(a);
+      it('should not add duplicate classes', () => {
+        const jqA = jqLite(a);
         expect(a.className).toBe('');
 
         a.className = 'foo';
@@ -1142,9 +1142,9 @@ describe('jqLite', function() {
     });
 
 
-    describe('toggleClass', function() {
-      it('should allow toggling of class', function() {
-        let selector = jqLite([a, b]);
+    describe('toggleClass', () => {
+      it('should allow toggling of class', () => {
+        const selector = jqLite([a, b]);
         expect(selector.toggleClass('abc')).toEqual(selector);
         expect(jqLite(a).hasClass('abc')).toEqual(true);
         expect(jqLite(b).hasClass('abc')).toEqual(true);
@@ -1163,8 +1163,8 @@ describe('jqLite', function() {
 
       });
 
-      it('should allow toggling multiple classes without a condition', function() {
-        let selector = jqLite([a, b]);
+      it('should allow toggling multiple classes without a condition', () => {
+        const selector = jqLite([a, b]);
         expect(selector.toggleClass('abc cde')).toBe(selector);
         expect(jqLite(a).hasClass('abc')).toBe(true);
         expect(jqLite(a).hasClass('cde')).toBe(true);
@@ -1191,8 +1191,8 @@ describe('jqLite', function() {
         expect(jqLite(b).hasClass('cde')).toBe(false);
       });
 
-      it('should allow toggling multiple classes with a condition', function() {
-        let selector = jqLite([a, b]);
+      it('should allow toggling multiple classes with a condition', () => {
+        const selector = jqLite([a, b]);
         selector.addClass('abc');
         expect(selector.toggleClass('abc cde', true)).toBe(selector);
         expect(jqLite(a).hasClass('abc')).toBe(true);
@@ -1208,17 +1208,17 @@ describe('jqLite', function() {
         expect(jqLite(b).hasClass('cde')).toBe(false);
       });
 
-      it('should not break for null / undefined selectors', function() {
-        let selector = jqLite([a, b]);
+      it('should not break for null / undefined selectors', () => {
+        const selector = jqLite([a, b]);
         expect(selector.toggleClass(null)).toBe(selector);
         expect(selector.toggleClass(undefined)).toBe(selector);
       });
     });
 
 
-    describe('removeClass', function() {
-      it('should allow removal of class', function() {
-        let selector = jqLite([a, b]);
+    describe('removeClass', () => {
+      it('should allow removal of class', () => {
+        const selector = jqLite([a, b]);
         expect(selector.addClass('abc')).toEqual(selector);
         expect(selector.removeClass('abc')).toEqual(selector);
         expect(jqLite(a).hasClass('abc')).toEqual(false);
@@ -1226,8 +1226,8 @@ describe('jqLite', function() {
       });
 
 
-      it('should correctly remove middle class', function() {
-        let element = jqLite('<div class="foo bar baz"></div>');
+      it('should correctly remove middle class', () => {
+        const element = jqLite('<div class="foo bar baz"></div>');
         expect(element.hasClass('bar')).toBe(true);
 
         element.removeClass('bar');
@@ -1238,8 +1238,8 @@ describe('jqLite', function() {
       });
 
 
-      it('should remove multiple classes specified as one string', function() {
-        let jqA = jqLite(a);
+      it('should remove multiple classes specified as one string', () => {
+        const jqA = jqLite(a);
 
         a.className = 'foo bar baz';
         jqA.removeClass('foo baz noexistent');
@@ -1249,13 +1249,13 @@ describe('jqLite', function() {
 
       // JQLite specific implementation/performance tests
       if (_jqLiteMode) {
-        it('should get/set the attribute once when removing multiple classes', function() {
-          let fakeElement = {
+        it('should get/set the attribute once when removing multiple classes', () => {
+          const fakeElement = {
             nodeType: 1,
             setAttribute: jasmine.createSpy(),
             getAttribute: jasmine.createSpy().and.returnValue('foo bar baz')
           };
-          let jqA = jqLite(fakeElement);
+          const jqA = jqLite(fakeElement);
 
           jqA.removeClass('foo baz noexistent');
           expect(fakeElement.getAttribute).toHaveBeenCalledOnceWith('class');
@@ -1263,13 +1263,13 @@ describe('jqLite', function() {
         });
 
 
-        it('should not set the attribute when classes not changed', function() {
-          let fakeElement = {
+        it('should not set the attribute when classes not changed', () => {
+          const fakeElement = {
             nodeType: 1,
             setAttribute: jasmine.createSpy(),
             getAttribute: jasmine.createSpy().and.returnValue('foo bar')
           };
-          let jqA = jqLite(fakeElement);
+          const jqA = jqLite(fakeElement);
 
           jqA.removeClass('noexistent');
           expect(fakeElement.getAttribute).toHaveBeenCalledOnceWith('class');
@@ -1280,9 +1280,9 @@ describe('jqLite', function() {
   });
 
 
-  describe('css', function() {
-    it('should set and read css', function() {
-      let selector = jqLite([a, b]);
+  describe('css', () => {
+    it('should set and read css', () => {
+      const selector = jqLite([a, b]);
 
       expect(selector.css('margin', '1px')).toEqual(selector);
       expect(jqLite(a).css('margin')).toEqual('1px');
@@ -1303,7 +1303,7 @@ describe('jqLite', function() {
     });
 
 
-    it('should set a bunch of css properties specified via an object', function() {
+    it('should set a bunch of css properties specified via an object', () => {
       expect(jqLite(a).css('margin')).toBeFalsy();
       expect(jqLite(a).css('padding')).toBeFalsy();
       expect(jqLite(a).css('border')).toBeFalsy();
@@ -1316,8 +1316,8 @@ describe('jqLite', function() {
     });
 
 
-    it('should correctly handle dash-separated and camelCased properties', function() {
-      let jqA = jqLite(a);
+    it('should correctly handle dash-separated and camelCased properties', () => {
+      const jqA = jqLite(a);
 
       expect(jqA.css('z-index')).toBeOneOf('', 'auto');
       expect(jqA.css('zIndex')).toBeOneOf('', 'auto');
@@ -1334,8 +1334,8 @@ describe('jqLite', function() {
       expect(jqA.css('zIndex')).toBeOneOf('7', 7);
     });
 
-    it('should leave non-dashed strings alone', function() {
-      let jqA = jqLite(a);
+    it('should leave non-dashed strings alone', () => {
+      const jqA = jqLite(a);
 
       jqA.css('foo', 'foo');
       jqA.css('fooBar', 'bar');
@@ -1344,8 +1344,8 @@ describe('jqLite', function() {
       expect(a.style.fooBar).toBe('bar');
     });
 
-    it('should convert dash-separated strings to camelCase', function() {
-      let jqA = jqLite(a);
+    it('should convert dash-separated strings to camelCase', () => {
+      const jqA = jqLite(a);
 
       jqA.css('foo-bar', 'foo');
       jqA.css('foo-bar-baz', 'bar');
@@ -1356,27 +1356,27 @@ describe('jqLite', function() {
       expect(a.style['foo:bar_baz']).toBe('baz');
     });
 
-    it('should convert leading dashes followed by a lowercase letter', function() {
-      let jqA = jqLite(a);
+    it('should convert leading dashes followed by a lowercase letter', () => {
+      const jqA = jqLite(a);
 
       jqA.css('-foo-bar', 'foo');
 
       expect(a.style.FooBar).toBe('foo');
     });
 
-    it('should not convert slashes followed by a non-letter', function() {
+    it('should not convert slashes followed by a non-letter', () => {
       // jQuery 2.x had different behavior; skip the test.
       if (isJQuery2x()) return;
 
-      let jqA = jqLite(a);
+      const jqA = jqLite(a);
 
       jqA.css('foo-42- -a-B', 'foo');
 
       expect(a.style['foo-42- A-B']).toBe('foo');
     });
 
-    it('should convert the -ms- prefix to ms instead of Ms', function() {
-      let jqA = jqLite(a);
+    it('should convert the -ms- prefix to ms instead of Ms', () => {
+      const jqA = jqLite(a);
 
       jqA.css('-ms-foo-bar', 'foo');
       jqA.css('-moz-foo-bar', 'bar');
@@ -1387,8 +1387,8 @@ describe('jqLite', function() {
       expect(a.style.WebkitFooBar).toBe('baz');
     });
 
-    it('should not collapse sequences of dashes', function() {
-      let jqA = jqLite(a);
+    it('should not collapse sequences of dashes', () => {
+      const jqA = jqLite(a);
 
       jqA.css('foo---bar-baz--qaz', 'foo');
 
@@ -1396,11 +1396,11 @@ describe('jqLite', function() {
     });
 
 
-    it('should read vendor prefixes with the special -ms- exception', function() {
+    it('should read vendor prefixes with the special -ms- exception', () => {
       // jQuery uses getComputedStyle() in a css getter so these tests would fail there.
       if (!_jqLiteMode) return;
 
-      let jqA = jqLite(a);
+      const jqA = jqLite(a);
 
       a.style.WebkitFooBar = 'webkit-uppercase';
       a.style.webkitFooBar = 'webkit-lowercase';
@@ -1416,8 +1416,8 @@ describe('jqLite', function() {
       expect(jqA.css('-ms-foo-qaz')).toBe('ms-lowercase');
     });
 
-    it('should write vendor prefixes with the special -ms- exception', function() {
-      let jqA = jqLite(a);
+    it('should write vendor prefixes with the special -ms- exception', () => {
+      const jqA = jqLite(a);
 
       jqA.css('-webkit-foo-bar', 'webkit');
       jqA.css('-moz-foo-baz', 'moz');
@@ -1435,15 +1435,15 @@ describe('jqLite', function() {
   });
 
 
-  describe('text', function() {
-    it('should return `""` on empty', function() {
+  describe('text', () => {
+    it('should return `""` on empty', () => {
       expect(jqLite().length).toEqual(0);
       expect(jqLite().text()).toEqual('');
     });
 
 
-    it('should read/write value', function() {
-      let element = jqLite('<div>ab</div><span>c</span>');
+    it('should read/write value', () => {
+      const element = jqLite('<div>ab</div><span>c</span>');
       expect(element.length).toEqual(2);
       expect(element[0].innerHTML).toEqual('ab');
       expect(element[1].innerHTML).toEqual('c');
@@ -1452,7 +1452,7 @@ describe('jqLite', function() {
       expect(element.text()).toEqual('xyzxyz');
     });
 
-    it('should return text only for element or text nodes', function() {
+    it('should return text only for element or text nodes', () => {
       expect(jqLite('<div>foo</div>').text()).toBe('foo');
       expect(jqLite('<div>foo</div>').contents().eq(0).text()).toBe('foo');
       expect(jqLite(document.createComment('foo')).text()).toBe('');
@@ -1460,15 +1460,15 @@ describe('jqLite', function() {
   });
 
 
-  describe('val', function() {
-    it('should read, write value', function() {
-      let input = jqLite('<input type="text"/>');
+  describe('val', () => {
+    it('should read, write value', () => {
+      const input = jqLite('<input type="text"/>');
       expect(input.val('abc')).toEqual(input);
       expect(input[0].value).toEqual('abc');
       expect(input.val()).toEqual('abc');
     });
 
-    it('should get an array of selected elements from a multi select', function() {
+    it('should get an array of selected elements from a multi select', () => {
       expect(jqLite(
         '<select multiple>' +
           '<option selected>test 1</option>' +
@@ -1490,7 +1490,7 @@ describe('jqLite', function() {
         '</select>').val()).toEqualOneOf(null, []);
     });
 
-    it('should get an empty array from a multi select if no elements are chosen', function() {
+    it('should get an empty array from a multi select if no elements are chosen', () => {
       // In jQuery < 3.0 .val() on select[multiple] with no selected options returns an
       // null instead of an empty array.
       // See https://github.com/jquery/jquery/issues/2562 for more details.
@@ -1517,15 +1517,15 @@ describe('jqLite', function() {
   });
 
 
-  describe('html', function() {
-    it('should return `undefined` on empty', function() {
+  describe('html', () => {
+    it('should return `undefined` on empty', () => {
       expect(jqLite().length).toEqual(0);
       expect(jqLite().html()).toEqual(undefined);
     });
 
 
-    it('should read/write a value', function() {
-      let element = jqLite('<div>abc</div>');
+    it('should read/write a value', () => {
+      const element = jqLite('<div>abc</div>');
       expect(element.length).toEqual(1);
       expect(element[0].innerHTML).toEqual('abc');
       expect(element.html()).toEqual('abc');
@@ -1535,9 +1535,9 @@ describe('jqLite', function() {
   });
 
 
-  describe('empty', function() {
-    it('should write a value', function() {
-      let element = jqLite('<div>abc</div>');
+  describe('empty', () => {
+    it('should write a value', () => {
+      const element = jqLite('<div>abc</div>');
       expect(element.length).toEqual(1);
       expect(element.empty() === element).toBeTruthy();
       expect(element.html()).toEqual('');
@@ -1545,18 +1545,18 @@ describe('jqLite', function() {
   });
 
 
-  describe('on', function() {
-    it('should bind to window on hashchange', function() {
+  describe('on', () => {
+    it('should bind to window on hashchange', () => {
       if (!_jqLiteMode) return; // don't run in jQuery
 
       let eventFn;
-      let window = {
+      const window = {
         document: {},
         location: {},
         alert: noop,
         setInterval: noop,
         length:10, // pretend you are an array
-        addEventListener: function(type, fn) {
+        addEventListener(type, fn) {
           expect(type).toEqual('hashchange');
           eventFn = fn;
         },
@@ -1565,7 +1565,7 @@ describe('jqLite', function() {
       window.window = window;
 
       let log;
-      let jWindow = jqLite(window).on('hashchange', function() {
+      const jWindow = jqLite(window).on('hashchange', () => {
         log = 'works!';
       });
       eventFn({type: 'hashchange'});
@@ -1574,11 +1574,11 @@ describe('jqLite', function() {
     });
 
 
-    it('should bind to all elements and return functions', function() {
-      let selected = jqLite([a, b]);
+    it('should bind to all elements and return functions', () => {
+      const selected = jqLite([a, b]);
       let log = '';
       expect(selected.on('click', function() {
-        log += 'click on: ' + jqLite(this).text() + ';';
+        log += `click on: ${  jqLite(this).text()  };`;
       })).toEqual(selected);
       browserTrigger(a, 'click');
       expect(log).toEqual('click on: A;');
@@ -1586,9 +1586,9 @@ describe('jqLite', function() {
       expect(log).toEqual('click on: A;click on: B;');
     });
 
-    it('should not bind to comment or text nodes', function() {
-      let nodes = jqLite('<!-- some comment -->Some text');
-      let someEventHandler = jasmine.createSpy('someEventHandler');
+    it('should not bind to comment or text nodes', () => {
+      const nodes = jqLite('<!-- some comment -->Some text');
+      const someEventHandler = jasmine.createSpy('someEventHandler');
 
       nodes.on('someEvent', someEventHandler);
       nodes.triggerHandler('someEvent');
@@ -1596,9 +1596,9 @@ describe('jqLite', function() {
       expect(someEventHandler).not.toHaveBeenCalled();
     });
 
-    it('should bind to all events separated by space', function() {
-      let elm = jqLite(a),
-          callback = jasmine.createSpy('callback');
+    it('should bind to all events separated by space', () => {
+      const elm = jqLite(a);
+          const callback = jasmine.createSpy('callback');
 
       elm.on('click keypress', callback);
       elm.on('click', callback);
@@ -1613,21 +1613,21 @@ describe('jqLite', function() {
       expect(callback).toHaveBeenCalledTimes(1);
     });
 
-    it('should set event.target', function() {
-      let elm = jqLite(a);
-      elm.on('click', function(event) {
+    it('should set event.target', () => {
+      const elm = jqLite(a);
+      elm.on('click', (event) => {
         expect(event.target).toBe(a);
       });
 
       browserTrigger(a, 'click');
     });
 
-    it('should have event.isDefaultPrevented method', function() {
-      let element = jqLite(a),
-          clickSpy = jasmine.createSpy('clickSpy');
+    it('should have event.isDefaultPrevented method', () => {
+      const element = jqLite(a);
+          const clickSpy = jasmine.createSpy('clickSpy');
 
-      clickSpy.and.callFake(function(e) {
-        expect(function() {
+      clickSpy.and.callFake((e) => {
+        expect(() => {
           expect(e.isDefaultPrevented()).toBe(false);
           e.preventDefault();
           expect(e.isDefaultPrevented()).toBe(true);
@@ -1640,12 +1640,12 @@ describe('jqLite', function() {
       expect(clickSpy).toHaveBeenCalled();
     });
 
-    it('should stop triggering handlers when stopImmediatePropagation is called', function() {
-      let element = jqLite(a),
-          clickSpy1 = jasmine.createSpy('clickSpy1'),
-          clickSpy2 = jasmine.createSpy('clickSpy2').and.callFake(function(event) { event.stopImmediatePropagation(); }),
-          clickSpy3 = jasmine.createSpy('clickSpy3'),
-          clickSpy4 = jasmine.createSpy('clickSpy4');
+    it('should stop triggering handlers when stopImmediatePropagation is called', () => {
+      const element = jqLite(a);
+          const clickSpy1 = jasmine.createSpy('clickSpy1');
+          const clickSpy2 = jasmine.createSpy('clickSpy2').and.callFake((event) => { event.stopImmediatePropagation(); });
+          const clickSpy3 = jasmine.createSpy('clickSpy3');
+          const clickSpy4 = jasmine.createSpy('clickSpy4');
 
       element.on('click', clickSpy1);
       element.on('click', clickSpy2);
@@ -1660,11 +1660,11 @@ describe('jqLite', function() {
       expect(clickSpy4).not.toHaveBeenCalled();
     });
 
-    it('should execute stopPropagation when stopImmediatePropagation is called', function() {
-      let element = jqLite(a),
-          clickSpy = jasmine.createSpy('clickSpy');
+    it('should execute stopPropagation when stopImmediatePropagation is called', () => {
+      const element = jqLite(a);
+          const clickSpy = jasmine.createSpy('clickSpy');
 
-      clickSpy.and.callFake(function(event) {
+      clickSpy.and.callFake((event) => {
           spyOn(event, 'stopPropagation');
           event.stopImmediatePropagation();
           expect(event.stopPropagation).toHaveBeenCalled();
@@ -1676,11 +1676,11 @@ describe('jqLite', function() {
       expect(clickSpy).toHaveBeenCalled();
     });
 
-    it('should have event.isImmediatePropagationStopped method', function() {
-      let element = jqLite(a),
-          clickSpy = jasmine.createSpy('clickSpy');
+    it('should have event.isImmediatePropagationStopped method', () => {
+      const element = jqLite(a);
+          const clickSpy = jasmine.createSpy('clickSpy');
 
-      clickSpy.and.callFake(function(event) {
+      clickSpy.and.callFake((event) => {
           expect(event.isImmediatePropagationStopped()).toBe(false);
           event.stopImmediatePropagation();
           expect(event.isImmediatePropagationStopped()).toBe(true);
@@ -1692,8 +1692,8 @@ describe('jqLite', function() {
       expect(clickSpy).toHaveBeenCalled();
     });
 
-    describe('mouseenter-mouseleave', function() {
-      let root, parent, child, log;
+    describe('mouseenter-mouseleave', () => {
+      let root; let parent; let child; let log;
 
       function setup(html, parentNode, childNode) {
         log = '';
@@ -1701,29 +1701,29 @@ describe('jqLite', function() {
         parent = root.find(parentNode);
         child = parent.find(childNode);
 
-        parent.on('mouseenter', function() { log += 'parentEnter;'; });
-        parent.on('mouseleave', function() { log += 'parentLeave;'; });
+        parent.on('mouseenter', () => { log += 'parentEnter;'; });
+        parent.on('mouseleave', () => { log += 'parentLeave;'; });
 
-        child.on('mouseenter', function() { log += 'childEnter;'; });
-        child.on('mouseleave', function() { log += 'childLeave;'; });
+        child.on('mouseenter', () => { log += 'childEnter;'; });
+        child.on('mouseleave', () => { log += 'childLeave;'; });
       }
 
       function browserMoveTrigger(from, to) {
-        let fireEvent = function(type, element, relatedTarget) {
+        const fireEvent = function(type, element, relatedTarget) {
           let evnt;
           evnt = document.createEvent('MouseEvents');
 
-          let originalPreventDefault = evnt.preventDefault,
-          appWindow = window,
-          fakeProcessDefault = true,
-          finalProcessDefault;
+          const originalPreventDefault = evnt.preventDefault;
+          const appWindow = window;
+          let fakeProcessDefault = true;
+          let finalProcessDefault;
 
           evnt.preventDefault = function() {
             fakeProcessDefault = false;
             return originalPreventDefault.apply(evnt, arguments);
           };
 
-          let x = 0, y = 0;
+          const x = 0; const y = 0;
           evnt.initMouseEvent(type, true, true, window, 0, x, y, x, y, false, false,
           false, false, 0, relatedTarget);
 
@@ -1733,11 +1733,11 @@ describe('jqLite', function() {
         fireEvent('mouseover', to[0], from[0]);
       }
 
-      afterEach(function() {
+      afterEach(() => {
         dealoc(root);
       });
 
-      it('should fire mouseenter when coming from outside the browser window', function() {
+      it('should fire mouseenter when coming from outside the browser window', () => {
         if (!_jqLiteMode) return;
 
         setup('<div>root<p>parent<span>child</span></p><ul></ul></div>', 'p', 'span');
@@ -1756,7 +1756,7 @@ describe('jqLite', function() {
 
       });
 
-      it('should fire the mousenter on SVG elements', function() {
+      it('should fire the mousenter on SVG elements', () => {
         if (!_jqLiteMode) return;
 
         setup(
@@ -1779,24 +1779,24 @@ describe('jqLite', function() {
       });
     });
 
-    it('should throw an error if eventData or a selector is passed', function() {
+    it('should throw an error if eventData or a selector is passed', () => {
       if (!_jqLiteMode) return;
 
-      let elm = jqLite(a),
-          anObj = {},
-          aString = '',
-          aValue = 45,
-          callback = function() {};
+      const elm = jqLite(a);
+          const anObj = {};
+          const aString = '';
+          const aValue = 45;
+          const callback = function() {};
 
-      expect(function() {
+      expect(() => {
         elm.on('click', anObj, callback);
       }).toThrowMinErr('jqLite', 'onargs');
 
-      expect(function() {
+      expect(() => {
         elm.on('click', null, aString, callback);
       }).toThrowMinErr('jqLite', 'onargs');
 
-      expect(function() {
+      expect(() => {
         elm.on('click', aValue, callback);
       }).toThrowMinErr('jqLite', 'onargs');
 
@@ -1804,26 +1804,26 @@ describe('jqLite', function() {
   });
 
 
-  describe('off', function() {
-    it('should do nothing when no listener was registered with bound', function() {
-      let aElem = jqLite(a);
+  describe('off', () => {
+    it('should do nothing when no listener was registered with bound', () => {
+      const aElem = jqLite(a);
 
       aElem.off();
       aElem.off('click');
-      aElem.off('click', function() {});
+      aElem.off('click', () => {});
     });
 
-    it('should do nothing when a specific listener was not registered', function() {
-      let aElem = jqLite(a);
-      aElem.on('click', function() {});
+    it('should do nothing when a specific listener was not registered', () => {
+      const aElem = jqLite(a);
+      aElem.on('click', () => {});
 
-      aElem.off('mouseenter', function() {});
+      aElem.off('mouseenter', () => {});
     });
 
-    it('should deregister all listeners', function() {
-      let aElem = jqLite(a),
-          clickSpy = jasmine.createSpy('click'),
-          mouseoverSpy = jasmine.createSpy('mouseover');
+    it('should deregister all listeners', () => {
+      const aElem = jqLite(a);
+          const clickSpy = jasmine.createSpy('click');
+          const mouseoverSpy = jasmine.createSpy('mouseover');
 
       aElem.on('click', clickSpy);
       aElem.on('mouseover', mouseoverSpy);
@@ -1845,10 +1845,10 @@ describe('jqLite', function() {
     });
 
 
-    it('should deregister listeners for specific type', function() {
-      let aElem = jqLite(a),
-          clickSpy = jasmine.createSpy('click'),
-          mouseoverSpy = jasmine.createSpy('mouseover');
+    it('should deregister listeners for specific type', () => {
+      const aElem = jqLite(a);
+          const clickSpy = jasmine.createSpy('click');
+          const mouseoverSpy = jasmine.createSpy('mouseover');
 
       aElem.on('click', clickSpy);
       aElem.on('mouseover', mouseoverSpy);
@@ -1876,10 +1876,10 @@ describe('jqLite', function() {
     });
 
 
-    it('should deregister all listeners for types separated by spaces', function() {
-      let aElem = jqLite(a),
-          clickSpy = jasmine.createSpy('click'),
-          mouseoverSpy = jasmine.createSpy('mouseover');
+    it('should deregister all listeners for types separated by spaces', () => {
+      const aElem = jqLite(a);
+          const clickSpy = jasmine.createSpy('click');
+          const mouseoverSpy = jasmine.createSpy('mouseover');
 
       aElem.on('click', clickSpy);
       aElem.on('mouseover', mouseoverSpy);
@@ -1901,10 +1901,10 @@ describe('jqLite', function() {
     });
 
 
-    it('should deregister specific listener', function() {
-      let aElem = jqLite(a),
-          clickSpy1 = jasmine.createSpy('click1'),
-          clickSpy2 = jasmine.createSpy('click2');
+    it('should deregister specific listener', () => {
+      const aElem = jqLite(a);
+          const clickSpy1 = jasmine.createSpy('click1');
+          const clickSpy2 = jasmine.createSpy('click2');
 
       aElem.on('click', clickSpy1);
       aElem.on('click', clickSpy2);
@@ -1930,10 +1930,10 @@ describe('jqLite', function() {
     });
 
 
-    it('should correctly deregister the mouseenter/mouseleave listeners', function() {
-      let aElem = jqLite(a);
-      let onMouseenter = jasmine.createSpy('onMouseenter');
-      let onMouseleave = jasmine.createSpy('onMouseleave');
+    it('should correctly deregister the mouseenter/mouseleave listeners', () => {
+      const aElem = jqLite(a);
+      const onMouseenter = jasmine.createSpy('onMouseenter');
+      const onMouseleave = jasmine.createSpy('onMouseleave');
 
       aElem.on('mouseenter', onMouseenter);
       aElem.on('mouseleave', onMouseleave);
@@ -1951,10 +1951,10 @@ describe('jqLite', function() {
 
 
     it('should call a `mouseenter/leave` listener only once when `mouseenter/leave` and `mouseover/out` '
-       + 'are triggered simultaneously', function() {
-      let aElem = jqLite(a);
-      let onMouseenter = jasmine.createSpy('mouseenter');
-      let onMouseleave = jasmine.createSpy('mouseleave');
+       + 'are triggered simultaneously', () => {
+      const aElem = jqLite(a);
+      const onMouseenter = jasmine.createSpy('mouseenter');
+      const onMouseleave = jasmine.createSpy('mouseleave');
 
       aElem.on('mouseenter', onMouseenter);
       aElem.on('mouseleave', onMouseleave);
@@ -1968,10 +1968,10 @@ describe('jqLite', function() {
       expect(onMouseleave).toHaveBeenCalledOnce();
     });
 
-    it('should call a `mouseenter/leave` listener when manually triggering the event', function() {
-      let aElem = jqLite(a);
-      let onMouseenter = jasmine.createSpy('mouseenter');
-      let onMouseleave = jasmine.createSpy('mouseleave');
+    it('should call a `mouseenter/leave` listener when manually triggering the event', () => {
+      const aElem = jqLite(a);
+      const onMouseenter = jasmine.createSpy('mouseenter');
+      const onMouseleave = jasmine.createSpy('mouseleave');
 
       aElem.on('mouseenter', onMouseenter);
       aElem.on('mouseleave', onMouseleave);
@@ -1984,10 +1984,10 @@ describe('jqLite', function() {
     });
 
 
-    it('should deregister specific listener within the listener and call subsequent listeners', function() {
-      let aElem = jqLite(a),
-          clickSpy = jasmine.createSpy('click'),
-          clickOnceSpy = jasmine.createSpy('clickOnce').and.callFake(function() {
+    it('should deregister specific listener within the listener and call subsequent listeners', () => {
+      const aElem = jqLite(a);
+          const clickSpy = jasmine.createSpy('click');
+          const clickOnceSpy = jasmine.createSpy('clickOnce').and.callFake(() => {
             aElem.off('click', clickOnceSpy);
           });
 
@@ -2004,10 +2004,10 @@ describe('jqLite', function() {
     });
 
 
-    it('should deregister specific listener for multiple types separated by spaces', function() {
-      let aElem = jqLite(a),
-          leaderSpy = jasmine.createSpy('leader'),
-          extraSpy = jasmine.createSpy('extra');
+    it('should deregister specific listener for multiple types separated by spaces', () => {
+      const aElem = jqLite(a);
+          const leaderSpy = jasmine.createSpy('leader');
+          const extraSpy = jasmine.createSpy('extra');
 
       aElem.on('click', leaderSpy);
       aElem.on('click', extraSpy);
@@ -2030,15 +2030,15 @@ describe('jqLite', function() {
     });
 
 
-    describe('native listener deregistration', function() {
+    describe('native listener deregistration', () => {
       it('should deregister the native listener when all jqLite listeners for given type are gone ' +
-         'after off("eventName", listener) call',  function() {
-        let aElem = jqLite(a);
-        let addEventListenerSpy = spyOn(aElem[0], 'addEventListener').and.callThrough();
-        let removeEventListenerSpy = spyOn(aElem[0], 'removeEventListener').and.callThrough();
+         'after off("eventName", listener) call',  () => {
+        const aElem = jqLite(a);
+        const addEventListenerSpy = spyOn(aElem[0], 'addEventListener').and.callThrough();
+        const removeEventListenerSpy = spyOn(aElem[0], 'removeEventListener').and.callThrough();
         let nativeListenerFn;
 
-        let jqLiteListener = function() {};
+        const jqLiteListener = function() {};
         aElem.on('click', jqLiteListener);
 
         // jQuery <2.2 passes the non-needed `false` useCapture parameter.
@@ -2061,13 +2061,13 @@ describe('jqLite', function() {
 
 
       it('should deregister the native listener when all jqLite listeners for given type are gone ' +
-         'after off("eventName") call',  function() {
-        let aElem = jqLite(a);
-        let addEventListenerSpy = spyOn(aElem[0], 'addEventListener').and.callThrough();
-        let removeEventListenerSpy = spyOn(aElem[0], 'removeEventListener').and.callThrough();
+         'after off("eventName") call',  () => {
+        const aElem = jqLite(a);
+        const addEventListenerSpy = spyOn(aElem[0], 'addEventListener').and.callThrough();
+        const removeEventListenerSpy = spyOn(aElem[0], 'removeEventListener').and.callThrough();
         let nativeListenerFn;
 
-        aElem.on('click', function() {});
+        aElem.on('click', () => {});
         if (isJQuery21()) {
           expect(addEventListenerSpy).toHaveBeenCalledOnceWith('click', jasmine.any(Function), false);
         } else {
@@ -2086,13 +2086,13 @@ describe('jqLite', function() {
 
 
       it('should deregister the native listener when all jqLite listeners for given type are gone ' +
-         'after off("eventName1 eventName2") call',  function() {
-        let aElem = jqLite(a);
-        let addEventListenerSpy = spyOn(aElem[0], 'addEventListener').and.callThrough();
-        let removeEventListenerSpy = spyOn(aElem[0], 'removeEventListener').and.callThrough();
+         'after off("eventName1 eventName2") call',  () => {
+        const aElem = jqLite(a);
+        const addEventListenerSpy = spyOn(aElem[0], 'addEventListener').and.callThrough();
+        const removeEventListenerSpy = spyOn(aElem[0], 'removeEventListener').and.callThrough();
         let nativeListenerFn;
 
-        aElem.on('click', function() {});
+        aElem.on('click', () => {});
         if (isJQuery21()) {
           expect(addEventListenerSpy).toHaveBeenCalledOnceWith('click', jasmine.any(Function), false);
         } else {
@@ -2101,7 +2101,7 @@ describe('jqLite', function() {
         nativeListenerFn = addEventListenerSpy.calls.mostRecent().args[1];
         addEventListenerSpy.calls.reset();
 
-        aElem.on('dblclick', function() {});
+        aElem.on('dblclick', () => {});
         if (isJQuery21()) {
           expect(addEventListenerSpy).toHaveBeenCalledOnceWith('dblclick', nativeListenerFn, false);
         } else {
@@ -2124,13 +2124,13 @@ describe('jqLite', function() {
 
 
       it('should deregister the native listener when all jqLite listeners for given type are gone ' +
-         'after off() call',  function() {
-        let aElem = jqLite(a);
-        let addEventListenerSpy = spyOn(aElem[0], 'addEventListener').and.callThrough();
-        let removeEventListenerSpy = spyOn(aElem[0], 'removeEventListener').and.callThrough();
+         'after off() call',  () => {
+        const aElem = jqLite(a);
+        const addEventListenerSpy = spyOn(aElem[0], 'addEventListener').and.callThrough();
+        const removeEventListenerSpy = spyOn(aElem[0], 'removeEventListener').and.callThrough();
         let nativeListenerFn;
 
-        aElem.on('click', function() {});
+        aElem.on('click', () => {});
         if (isJQuery21()) {
           expect(addEventListenerSpy).toHaveBeenCalledOnceWith('click', jasmine.any(Function), false);
         } else {
@@ -2139,7 +2139,7 @@ describe('jqLite', function() {
         nativeListenerFn = addEventListenerSpy.calls.mostRecent().args[1];
         addEventListenerSpy.calls.reset();
 
-        aElem.on('dblclick', function() {});
+        aElem.on('dblclick', () => {});
         if (isJQuery21()) {
           expect(addEventListenerSpy).toHaveBeenCalledOnceWith('dblclick', nativeListenerFn, false);
         } else {
@@ -2160,22 +2160,22 @@ describe('jqLite', function() {
     });
 
 
-    it('should throw an error if a selector is passed', function() {
+    it('should throw an error if a selector is passed', () => {
       if (!_jqLiteMode) return;
 
-      let aElem = jqLite(a);
+      const aElem = jqLite(a);
       aElem.on('click', noop);
-      expect(function() {
+      expect(() => {
         aElem.off('click', noop, '.test');
       }).toThrowMinErr('jqLite', 'offargs');
     });
   });
 
-  describe('one', function() {
+  describe('one', () => {
 
-    it('should only fire the callback once', function() {
-      let element = jqLite(a);
-      let spy = jasmine.createSpy('click');
+    it('should only fire the callback once', () => {
+      const element = jqLite(a);
+      const spy = jasmine.createSpy('click');
 
       element.one('click', spy);
 
@@ -2186,9 +2186,9 @@ describe('jqLite', function() {
       expect(spy).toHaveBeenCalledOnce();
     });
 
-    it('should deregister when off is called', function() {
-      let element = jqLite(a);
-      let spy = jasmine.createSpy('click');
+    it('should deregister when off is called', () => {
+      const element = jqLite(a);
+      const spy = jasmine.createSpy('click');
 
       element.one('click', spy);
       element.off('click', spy);
@@ -2197,13 +2197,13 @@ describe('jqLite', function() {
       expect(spy).not.toHaveBeenCalled();
     });
 
-    it('should return the same event object just as on() does', function() {
-      let element = jqLite(a);
-      let eventA, eventB;
-      element.on('click', function(event) {
+    it('should return the same event object just as on() does', () => {
+      const element = jqLite(a);
+      let eventA; let eventB;
+      element.on('click', (event) => {
         eventA = event;
       });
-      element.one('click', function(event) {
+      element.one('click', (event) => {
         eventB = event;
       });
 
@@ -2211,13 +2211,13 @@ describe('jqLite', function() {
       expect(eventA).toEqual(eventB);
     });
 
-    it('should not remove other event handlers of the same type after execution', function() {
-      let element = jqLite(a);
-      let calls = [];
-      element.one('click', function(event) {
+    it('should not remove other event handlers of the same type after execution', () => {
+      const element = jqLite(a);
+      const calls = [];
+      element.one('click', (event) => {
         calls.push('one');
       });
-      element.on('click', function(event) {
+      element.on('click', (event) => {
         calls.push('on');
       });
 
@@ -2229,52 +2229,52 @@ describe('jqLite', function() {
   });
 
 
-  describe('replaceWith', function() {
-    it('should replaceWith', function() {
-      let root = jqLite('<div>').html('before-<div></div>after');
-      let div = root.find('div');
+  describe('replaceWith', () => {
+    it('should replaceWith', () => {
+      const root = jqLite('<div>').html('before-<div></div>after');
+      const div = root.find('div');
       expect(div.replaceWith('<span>span-</span><b>bold-</b>')).toEqual(div);
       expect(root.text()).toEqual('before-span-bold-after');
     });
 
 
-    it('should replaceWith text', function() {
-      let root = jqLite('<div>').html('before-<div></div>after');
-      let div = root.find('div');
+    it('should replaceWith text', () => {
+      const root = jqLite('<div>').html('before-<div></div>after');
+      const div = root.find('div');
       expect(div.replaceWith('text-')).toEqual(div);
       expect(root.text()).toEqual('before-text-after');
     });
   });
 
 
-  describe('children', function() {
-    it('should only select element nodes', function() {
-      let root = jqLite('<div><!-- some comment -->before-<div></div>after-<span></span>');
-      let div = root.find('div');
-      let span = root.find('span');
+  describe('children', () => {
+    it('should only select element nodes', () => {
+      const root = jqLite('<div><!-- some comment -->before-<div></div>after-<span></span>');
+      const div = root.find('div');
+      const span = root.find('span');
       expect(root.children()).toJqEqual([div, span]);
     });
   });
 
 
-  describe('contents', function() {
-    it('should select all types child nodes', function() {
-      let root = jqLite('<div><!-- some comment -->before-<div></div>after-<span></span></div>');
-      let contents = root.contents();
+  describe('contents', () => {
+    it('should select all types child nodes', () => {
+      const root = jqLite('<div><!-- some comment -->before-<div></div>after-<span></span></div>');
+      const contents = root.contents();
       expect(contents.length).toEqual(5);
       expect(contents[0].data).toEqual(' some comment ');
       expect(contents[1].data).toEqual('before-');
     });
 
-    it('should select all types iframe contents', function(done) {
-      let iframe_ = document.createElement('iframe');
+    it('should select all types iframe contents', (done) => {
+      const iframe_ = document.createElement('iframe');
       let tested = false;
-      let iframe = jqLite(iframe_);
+      const iframe = jqLite(iframe_);
       function test() {
         let doc = iframe_.contentDocument || iframe_.contentWindow.document;
         doc.body.innerHTML = '\n<span>Text</span>\n';
 
-        let contents = iframe.contents();
+        const contents = iframe.contents();
         expect(contents[0]).toBeTruthy();
         expect(contents.length).toBe(1);
         expect(contents.prop('nodeType')).toBe(9);
@@ -2293,64 +2293,64 @@ describe('jqLite', function() {
 
       // This test is potentially flaky on CI cloud instances, so there is a generous
       // wait period...
-      let job = createAsync(done);
-      job.waitsFor(function() { return tested; }, 'iframe to load', 5000).done();
+      const job = createAsync(done);
+      job.waitsFor(() => tested, 'iframe to load', 5000).done();
       job.start();
     });
   });
 
 
-  describe('append', function() {
-    it('should append', function() {
-      let root = jqLite('<div>');
+  describe('append', () => {
+    it('should append', () => {
+      const root = jqLite('<div>');
       expect(root.append('<span>abc</span>')).toEqual(root);
       expect(root.html().toLowerCase()).toEqual('<span>abc</span>');
     });
-    it('should append text', function() {
-      let root = jqLite('<div>');
+    it('should append text', () => {
+      const root = jqLite('<div>');
       expect(root.append('text')).toEqual(root);
       expect(root.html()).toEqual('text');
     });
-    it('should append to document fragment', function() {
-      let root = jqLite(document.createDocumentFragment());
+    it('should append to document fragment', () => {
+      const root = jqLite(document.createDocumentFragment());
       expect(root.append('<p>foo</p>')).toBe(root);
       expect(root.children().length).toBe(1);
     });
-    it('should not append anything if parent node is not of type element or docfrag', function() {
-      let root = jqLite('<p>some text node</p>').contents();
+    it('should not append anything if parent node is not of type element or docfrag', () => {
+      const root = jqLite('<p>some text node</p>').contents();
       expect(root.append('<p>foo</p>')).toBe(root);
       expect(root.children().length).toBe(0);
     });
   });
 
 
-  describe('wrap', function() {
-    it('should wrap text node', function() {
-      let root = jqLite('<div>A&lt;a&gt;B&lt;/a&gt;C</div>');
-      let text = root.contents();
+  describe('wrap', () => {
+    it('should wrap text node', () => {
+      const root = jqLite('<div>A&lt;a&gt;B&lt;/a&gt;C</div>');
+      const text = root.contents();
       expect(text.wrap('<span>')[0]).toBe(text[0]);
       expect(root.find('span').text()).toEqual('A<a>B</a>C');
     });
-    it('should wrap free text node', function() {
-      let root = jqLite('<div>A&lt;a&gt;B&lt;/a&gt;C</div>');
-      let text = root.contents();
+    it('should wrap free text node', () => {
+      const root = jqLite('<div>A&lt;a&gt;B&lt;/a&gt;C</div>');
+      const text = root.contents();
       text.remove();
       expect(root.text()).toBe('');
 
       text.wrap('<span>');
       expect(text.parent().text()).toEqual('A<a>B</a>C');
     });
-    it('should clone elements to be wrapped around target', function() {
-      let root = jqLite('<div class="sigil"></div>');
-      let span = jqLite('<span>A</span>');
+    it('should clone elements to be wrapped around target', () => {
+      const root = jqLite('<div class="sigil"></div>');
+      const span = jqLite('<span>A</span>');
 
       span.wrap(root);
       expect(root.children().length).toBe(0);
       expect(span.parent().hasClass('sigil')).toBeTruthy();
     });
-    it('should wrap multiple elements', function() {
-      let root = jqLite('<div class="sigil"></div>');
-      let spans = jqLite('<span>A</span><span>B</span><span>C</span>');
+    it('should wrap multiple elements', () => {
+      const root = jqLite('<div class="sigil"></div>');
+      const spans = jqLite('<span>A</span><span>B</span><span>C</span>');
 
       spans.wrap(root);
 
@@ -2361,30 +2361,30 @@ describe('jqLite', function() {
   });
 
 
-  describe('prepend', function() {
-    it('should prepend to empty', function() {
-      let root = jqLite('<div>');
+  describe('prepend', () => {
+    it('should prepend to empty', () => {
+      const root = jqLite('<div>');
       expect(root.prepend('<span>abc</span>')).toEqual(root);
       expect(root.html().toLowerCase()).toEqual('<span>abc</span>');
     });
-    it('should prepend to content', function() {
-      let root = jqLite('<div>text</div>');
+    it('should prepend to content', () => {
+      const root = jqLite('<div>text</div>');
       expect(root.prepend('<span>abc</span>')).toEqual(root);
       expect(root.html().toLowerCase()).toEqual('<span>abc</span>text');
     });
-    it('should prepend text to content', function() {
-      let root = jqLite('<div>text</div>');
+    it('should prepend text to content', () => {
+      const root = jqLite('<div>text</div>');
       expect(root.prepend('abc')).toEqual(root);
       expect(root.html().toLowerCase()).toEqual('abctext');
     });
-    it('should prepend array to empty in the right order', function() {
-      let root = jqLite('<div>');
+    it('should prepend array to empty in the right order', () => {
+      const root = jqLite('<div>');
       expect(root.prepend([a, b, c])).toBe(root);
       expect(sortedHtml(root)).
         toBe('<div><div>A</div><div>B</div><div>C</div></div>');
     });
-    it('should prepend array to content in the right order', function() {
-      let root = jqLite('<div>text</div>');
+    it('should prepend array to content in the right order', () => {
+      const root = jqLite('<div>text</div>');
       expect(root.prepend([a, b, c])).toBe(root);
       expect(sortedHtml(root)).
         toBe('<div><div>A</div><div>B</div><div>C</div>text</div>');
@@ -2392,56 +2392,56 @@ describe('jqLite', function() {
   });
 
 
-  describe('remove', function() {
-    it('should remove', function() {
-      let root = jqLite('<div><span>abc</span></div>');
-      let span = root.find('span');
+  describe('remove', () => {
+    it('should remove', () => {
+      const root = jqLite('<div><span>abc</span></div>');
+      const span = root.find('span');
       expect(span.remove()).toEqual(span);
       expect(root.html()).toEqual('');
     });
   });
 
 
-  describe('detach', function() {
-    it('should detach', function() {
-      let root = jqLite('<div><span>abc</span></div>');
-      let span = root.find('span');
+  describe('detach', () => {
+    it('should detach', () => {
+      const root = jqLite('<div><span>abc</span></div>');
+      const span = root.find('span');
       expect(span.detach()).toEqual(span);
       expect(root.html()).toEqual('');
     });
   });
 
 
-  describe('after', function() {
-    it('should after', function() {
-      let root = jqLite('<div><span></span></div>');
-      let span = root.find('span');
+  describe('after', () => {
+    it('should after', () => {
+      const root = jqLite('<div><span></span></div>');
+      const span = root.find('span');
       expect(span.after('<i></i><b></b>')).toEqual(span);
       expect(root.html().toLowerCase()).toEqual('<span></span><i></i><b></b>');
     });
 
 
-    it('should allow taking text', function() {
-      let root = jqLite('<div><span></span></div>');
-      let span = root.find('span');
+    it('should allow taking text', () => {
+      const root = jqLite('<div><span></span></div>');
+      const span = root.find('span');
       span.after('abc');
       expect(root.html().toLowerCase()).toEqual('<span></span>abc');
     });
 
 
-    it('should not throw when the element has no parent', function() {
-      let span = jqLite('<span></span>');
-      expect(function() { span.after('abc'); }).not.toThrow();
+    it('should not throw when the element has no parent', () => {
+      const span = jqLite('<span></span>');
+      expect(() => { span.after('abc'); }).not.toThrow();
       expect(span.length).toBe(1);
       expect(span[0].outerHTML).toBe('<span></span>');
     });
   });
 
 
-  describe('parent', function() {
-    it('should return parent or an empty set when no parent', function() {
-      let parent = jqLite('<div><p>abc</p></div>'),
-          child = parent.find('p');
+  describe('parent', () => {
+    it('should return parent or an empty set when no parent', () => {
+      const parent = jqLite('<div><p>abc</p></div>');
+          const child = parent.find('p');
 
       expect(parent.parent()).toBeTruthy();
       expect(parent.parent().length).toEqual(0);
@@ -2451,17 +2451,17 @@ describe('jqLite', function() {
     });
 
 
-    it('should return empty set when no parent', function() {
-      let element = jqLite('<div>abc</div>');
+    it('should return empty set when no parent', () => {
+      const element = jqLite('<div>abc</div>');
       expect(element.parent()).toBeTruthy();
       expect(element.parent().length).toEqual(0);
     });
 
 
-    it('should return empty jqLite object when parent is a document fragment', function() {
-      //this is quite unfortunate but jQuery 1.5.1 behaves this way
-      let fragment = document.createDocumentFragment(),
-          child = jqLite('<p>foo</p>');
+    it('should return empty jqLite object when parent is a document fragment', () => {
+      // this is quite unfortunate but jQuery 1.5.1 behaves this way
+      const fragment = document.createDocumentFragment();
+          const child = jqLite('<p>foo</p>');
 
       fragment.appendChild(child[0]);
       expect(child[0].parentNode).toBe(fragment);
@@ -2470,43 +2470,43 @@ describe('jqLite', function() {
   });
 
 
-  describe('next', function() {
-    it('should return next sibling', function() {
-      let element = jqLite('<div><b>b</b><i>i</i></div>');
-      let b = element.find('b');
-      let i = element.find('i');
+  describe('next', () => {
+    it('should return next sibling', () => {
+      const element = jqLite('<div><b>b</b><i>i</i></div>');
+      const b = element.find('b');
+      const i = element.find('i');
       expect(b.next()).toJqEqual([i]);
     });
 
 
-    it('should ignore non-element siblings', function() {
-      let element = jqLite('<div><b>b</b>TextNode<!-- comment node --><i>i</i></div>');
-      let b = element.find('b');
-      let i = element.find('i');
+    it('should ignore non-element siblings', () => {
+      const element = jqLite('<div><b>b</b>TextNode<!-- comment node --><i>i</i></div>');
+      const b = element.find('b');
+      const i = element.find('i');
       expect(b.next()).toJqEqual([i]);
     });
   });
 
 
-  describe('find', function() {
-    it('should find child by name', function() {
-      let root = jqLite('<div><div>text</div></div>');
-      let innerDiv = root.find('div');
+  describe('find', () => {
+    it('should find child by name', () => {
+      const root = jqLite('<div><div>text</div></div>');
+      const innerDiv = root.find('div');
       expect(innerDiv.length).toEqual(1);
       expect(innerDiv.html()).toEqual('text');
     });
 
-    it('should find child by name and not care about text nodes', function() {
-      let divs = jqLite('<div><span>aa</span></div>text<div><span>bb</span></div>');
-      let innerSpan = divs.find('span');
+    it('should find child by name and not care about text nodes', () => {
+      const divs = jqLite('<div><span>aa</span></div>text<div><span>bb</span></div>');
+      const innerSpan = divs.find('span');
       expect(innerSpan.length).toEqual(2);
     });
   });
 
 
-  describe('eq', function() {
-    it('should select the nth element ', function() {
-      let element = jqLite('<div><span>aa</span></div><div><span>bb</span></div>');
+  describe('eq', () => {
+    it('should select the nth element ', () => {
+      const element = jqLite('<div><span>aa</span></div><div><span>bb</span></div>');
       expect(element.find('span').eq(0).html()).toBe('aa');
       expect(element.find('span').eq(-1).html()).toBe('bb');
       expect(element.find('span').eq(20).length).toBe(0);
@@ -2514,12 +2514,12 @@ describe('jqLite', function() {
   });
 
 
-  describe('triggerHandler', function() {
-    it('should trigger all registered handlers for an event', function() {
-      let element = jqLite('<span>poke</span>'),
-          pokeSpy = jasmine.createSpy('poke'),
-          clickSpy1 = jasmine.createSpy('clickSpy1'),
-          clickSpy2 = jasmine.createSpy('clickSpy2');
+  describe('triggerHandler', () => {
+    it('should trigger all registered handlers for an event', () => {
+      const element = jqLite('<span>poke</span>');
+          const pokeSpy = jasmine.createSpy('poke');
+          const clickSpy1 = jasmine.createSpy('clickSpy1');
+          const clickSpy2 = jasmine.createSpy('clickSpy2');
 
       element.on('poke', pokeSpy);
       element.on('click', clickSpy1);
@@ -2539,13 +2539,13 @@ describe('jqLite', function() {
       expect(clickSpy2).toHaveBeenCalledOnce();
     });
 
-    it('should pass in a dummy event', function() {
+    it('should pass in a dummy event', () => {
       // we need the event to have at least preventDefault because AngularJS will call it on
       // all anchors with no href automatically
 
-      let element = jqLite('<a>poke</a>'),
-          pokeSpy = jasmine.createSpy('poke'),
-          event;
+      const element = jqLite('<a>poke</a>');
+          const pokeSpy = jasmine.createSpy('poke');
+          let event;
 
       element.on('click', pokeSpy);
 
@@ -2556,10 +2556,10 @@ describe('jqLite', function() {
       expect(event.type).toEqual('click');
     });
 
-    it('should pass extra parameters as an additional argument', function() {
-      let element = jqLite('<a>poke</a>'),
-          pokeSpy = jasmine.createSpy('poke'),
-          data;
+    it('should pass extra parameters as an additional argument', () => {
+      const element = jqLite('<a>poke</a>');
+          const pokeSpy = jasmine.createSpy('poke');
+          let data;
 
       element.on('click', pokeSpy);
 
@@ -2568,10 +2568,10 @@ describe('jqLite', function() {
       expect(data.hello).toBe('world');
     });
 
-    it('should mark event as prevented if preventDefault is called', function() {
-      let element = jqLite('<a>poke</a>'),
-          pokeSpy = jasmine.createSpy('poke'),
-          event;
+    it('should mark event as prevented if preventDefault is called', () => {
+      const element = jqLite('<a>poke</a>');
+          const pokeSpy = jasmine.createSpy('poke');
+          let event;
 
       element.on('click', pokeSpy);
       element.triggerHandler('click');
@@ -2582,10 +2582,10 @@ describe('jqLite', function() {
       expect(event.isDefaultPrevented()).toBe(true);
     });
 
-    it('should support handlers that deregister themselves', function() {
-      let element = jqLite('<a>poke</a>'),
-          clickSpy = jasmine.createSpy('click'),
-          clickOnceSpy = jasmine.createSpy('clickOnce').and.callFake(function() {
+    it('should support handlers that deregister themselves', () => {
+      const element = jqLite('<a>poke</a>');
+          const clickSpy = jasmine.createSpy('click');
+          const clickOnceSpy = jasmine.createSpy('clickOnce').and.callFake(() => {
             element.off('click', clickOnceSpy);
           });
 
@@ -2601,14 +2601,14 @@ describe('jqLite', function() {
       expect(clickSpy).toHaveBeenCalledTimes(2);
     });
 
-    it('should accept a custom event instead of eventName', function() {
-      let element = jqLite('<a>poke</a>'),
-          pokeSpy = jasmine.createSpy('poke'),
-          customEvent = {
+    it('should accept a custom event instead of eventName', () => {
+      const element = jqLite('<a>poke</a>');
+          const pokeSpy = jasmine.createSpy('poke');
+          const customEvent = {
             type: 'click',
             someProp: 'someValue'
-          },
-          actualEvent;
+          };
+          let actualEvent;
 
       element.on('click', pokeSpy);
       element.triggerHandler(customEvent);
@@ -2619,11 +2619,11 @@ describe('jqLite', function() {
       expect(actualEvent.type).toEqual('click');
     });
 
-    it('should stop triggering handlers when stopImmediatePropagation is called', function() {
-      let element = jqLite(a),
-          clickSpy1 = jasmine.createSpy('clickSpy1'),
-          clickSpy2 = jasmine.createSpy('clickSpy2').and.callFake(function(event) { event.stopImmediatePropagation(); }),
-          clickSpy3 = jasmine.createSpy('clickSpy3');
+    it('should stop triggering handlers when stopImmediatePropagation is called', () => {
+      const element = jqLite(a);
+          const clickSpy1 = jasmine.createSpy('clickSpy1');
+          const clickSpy2 = jasmine.createSpy('clickSpy2').and.callFake((event) => { event.stopImmediatePropagation(); });
+          const clickSpy3 = jasmine.createSpy('clickSpy3');
 
       element.on('click', clickSpy1);
       element.on('click', clickSpy2);
@@ -2636,10 +2636,10 @@ describe('jqLite', function() {
       expect(clickSpy3).not.toHaveBeenCalled();
     });
 
-    it('should have event.isImmediatePropagationStopped method', function() {
-      let element = jqLite(a),
-          clickSpy = jasmine.createSpy('clickSpy'),
-          event;
+    it('should have event.isImmediatePropagationStopped method', () => {
+      const element = jqLite(a);
+          const clickSpy = jasmine.createSpy('clickSpy');
+          let event;
 
       element.on('click', clickSpy);
       element.triggerHandler('click');
@@ -2652,40 +2652,40 @@ describe('jqLite', function() {
   });
 
 
-  describe('kebabToCamel', function() {
-    it('should leave non-dashed strings alone', function() {
+  describe('kebabToCamel', () => {
+    it('should leave non-dashed strings alone', () => {
       expect(kebabToCamel('foo')).toBe('foo');
       expect(kebabToCamel('')).toBe('');
       expect(kebabToCamel('fooBar')).toBe('fooBar');
     });
 
-    it('should convert dash-separated strings to camelCase', function() {
+    it('should convert dash-separated strings to camelCase', () => {
       expect(kebabToCamel('foo-bar')).toBe('fooBar');
       expect(kebabToCamel('foo-bar-baz')).toBe('fooBarBaz');
       expect(kebabToCamel('foo:bar_baz')).toBe('foo:bar_baz');
     });
 
-    it('should convert leading dashes followed by a lowercase letter', function() {
+    it('should convert leading dashes followed by a lowercase letter', () => {
       expect(kebabToCamel('-foo-bar')).toBe('FooBar');
     });
 
-    it('should not convert dashes followed by a non-letter', function() {
+    it('should not convert dashes followed by a non-letter', () => {
       expect(kebabToCamel('foo-42- -a-B')).toBe('foo-42- A-B');
     });
 
-    it('should not convert browser specific css properties in a special way', function() {
+    it('should not convert browser specific css properties in a special way', () => {
       expect(kebabToCamel('-ms-foo-bar')).toBe('MsFooBar');
       expect(kebabToCamel('-moz-foo-bar')).toBe('MozFooBar');
       expect(kebabToCamel('-webkit-foo-bar')).toBe('WebkitFooBar');
     });
 
-    it('should not collapse sequences of dashes', function() {
+    it('should not collapse sequences of dashes', () => {
       expect(kebabToCamel('foo---bar-baz--qaz')).toBe('foo--BarBaz-Qaz');
     });
   });
 
 
-  describe('jqLiteDocumentLoaded', function() {
+  describe('jqLiteDocumentLoaded', () => {
 
     function createMockWindow(readyState) {
       return {
@@ -2696,10 +2696,10 @@ describe('jqLite', function() {
       };
     }
 
-    it('should execute the callback via a timeout if the document has already completed loading', function() {
+    it('should execute the callback via a timeout if the document has already completed loading', () => {
       function onLoadCallback() { }
 
-      let mockWindow = createMockWindow('complete');
+      const mockWindow = createMockWindow('complete');
 
       jqLiteDocumentLoaded(onLoadCallback, mockWindow);
 
@@ -2708,9 +2708,9 @@ describe('jqLite', function() {
     });
 
 
-    it('should register a listener for the `load` event', function() {
-      let onLoadCallback = jasmine.createSpy('onLoadCallback');
-      let mockWindow = createMockWindow();
+    it('should register a listener for the `load` event', () => {
+      const onLoadCallback = jasmine.createSpy('onLoadCallback');
+      const mockWindow = createMockWindow();
 
       jqLiteDocumentLoaded(onLoadCallback, mockWindow);
 
@@ -2718,9 +2718,9 @@ describe('jqLite', function() {
     });
 
 
-    it('should execute the callback only once the document completes loading', function() {
-      let onLoadCallback = jasmine.createSpy('onLoadCallback');
-      let mockWindow = createMockWindow();
+    it('should execute the callback only once the document completes loading', () => {
+      const onLoadCallback = jasmine.createSpy('onLoadCallback');
+      const mockWindow = createMockWindow();
 
       jqLiteDocumentLoaded(onLoadCallback, mockWindow);
       expect(onLoadCallback).not.toHaveBeenCalled();
@@ -2731,16 +2731,16 @@ describe('jqLite', function() {
   });
 
 
-  describe('bind/unbind', function() {
+  describe('bind/unbind', () => {
     if (!_jqLiteMode) return;
 
-    it('should alias bind() to on()', function() {
-      let element = jqLite(a);
+    it('should alias bind() to on()', () => {
+      const element = jqLite(a);
       expect(element.bind).toBe(element.on);
     });
 
-    it('should alias unbind() to off()', function() {
-      let element = jqLite(a);
+    it('should alias unbind() to off()', () => {
+      const element = jqLite(a);
       expect(element.unbind).toBe(element.off);
     });
   });

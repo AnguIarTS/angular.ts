@@ -1,6 +1,6 @@
 
 
-describe('DocsController', function() {
+describe('DocsController', () => {
   let $scope;
 
   angular.module('fake', [])
@@ -15,14 +15,14 @@ describe('DocsController', function() {
     .value('ALL_NG_VERSIONS', {});
 
   beforeEach(module('fake', 'DocsController'));
-  beforeEach(inject(function($rootScope, $controller) {
+  beforeEach(inject(($rootScope, $controller) => {
     $scope = $rootScope;
-    $controller('DocsController', { $scope: $scope });
+    $controller('DocsController', { $scope });
   }));
 
 
-  describe('afterPartialLoaded', function() {
-    it('should update the Google Analytics with currentPage path if currentPage exists', inject(function($window) {
+  describe('afterPartialLoaded', () => {
+    it('should update the Google Analytics with currentPage path if currentPage exists', inject(($window) => {
       $window._gaq = [];
       $scope.currentPage = { path: 'a/b/c' };
       $scope.$broadcast('$includeContentLoaded');
@@ -30,7 +30,7 @@ describe('DocsController', function() {
     }));
 
 
-    it('should update the Google Analytics with $location.path if currentPage is missing', inject(function($window, $location) {
+    it('should update the Google Analytics with $location.path if currentPage is missing', inject(($window, $location) => {
       $window._gaq = [];
       spyOn($location, 'path').and.returnValue('x/y/z');
       $scope.$broadcast('$includeContentLoaded');

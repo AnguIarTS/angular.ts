@@ -341,20 +341,20 @@
  *     then special attribute "open" will be set on the element
  */
 
-let ngAttributeAliasDirectives = {};
+const ngAttributeAliasDirectives = {};
 
 // boolean attrs are evaluated
-forEach(BOOLEAN_ATTR, function (propName, attrName) {
+forEach(BOOLEAN_ATTR, (propName, attrName) => {
   // binding to multiple is not supported
   if (propName === "multiple") return;
 
   function defaultLinkFn(scope, element, attr) {
-    scope.$watch(attr[normalized], function ngBooleanAttrWatchAction(value) {
+    scope.$watch(attr[normalized], (value) => {
       attr.$set(attrName, !!value);
     });
   }
 
-  let normalized = directiveNormalize("ng-" + attrName);
+  let normalized = directiveNormalize(`ng-${attrName}`);
   let linkFn = defaultLinkFn;
 
   if (propName === "checked") {
@@ -376,22 +376,22 @@ forEach(BOOLEAN_ATTR, function (propName, attrName) {
 });
 
 // aliased input attrs are evaluated
-forEach(ALIASED_ATTR, function (htmlAttr, ngAttr) {
+forEach(ALIASED_ATTR, (htmlAttr, ngAttr) => {
   ngAttributeAliasDirectives[ngAttr] = function () {
     return {
       priority: 100,
-      link: function (scope, element, attr) {
-        //special case ngPattern when a literal regular expression value
-        //is used as the expression (this way we don't have to watch anything).
+      link(scope, element, attr) {
+        // special case ngPattern when a literal regular expression value
+        // is used as the expression (this way we don't have to watch anything).
         if (ngAttr === "ngPattern" && attr.ngPattern.charAt(0) === "/") {
-          let match = attr.ngPattern.match(REGEX_STRING_REGEXP);
+          const match = attr.ngPattern.match(REGEX_STRING_REGEXP);
           if (match) {
             attr.$set("ngPattern", new RegExp(match[1], match[2]));
             return;
           }
         }
 
-        scope.$watch(attr[ngAttr], function ngAttrAliasWatchAction(value) {
+        scope.$watch(attr[ngAttr], (value) => {
           attr.$set(ngAttr, value);
         });
       },
@@ -400,16 +400,16 @@ forEach(ALIASED_ATTR, function (htmlAttr, ngAttr) {
 });
 
 // ng-src, ng-srcset, ng-href are interpolated
-forEach(["src", "srcset", "href"], function (attrName) {
-  let normalized = directiveNormalize("ng-" + attrName);
+forEach(["src", "srcset", "href"], (attrName) => {
+  const normalized = directiveNormalize(`ng-${attrName}`);
   ngAttributeAliasDirectives[normalized] = [
     "$sce",
     function ($sce) {
       return {
         priority: 99, // it needs to run after the attributes are interpolated
-        link: function (scope, element, attr) {
-          let propName = attrName,
-            name = attrName;
+        link(scope, element, attr) {
+          let propName = attrName;
+          let name = attrName;
 
           if (
             attrName === "href" &&
@@ -424,7 +424,7 @@ forEach(["src", "srcset", "href"], function (attrName) {
           // non-interpolated attribute.
           attr.$set(normalized, $sce.getTrustedMediaUrl(attr[normalized]));
 
-          attr.$observe(normalized, function (value) {
+          attr.$observe(normalized, (value) => {
             if (!value) {
               if (attrName === "href") {
                 attr.$set(name, null);

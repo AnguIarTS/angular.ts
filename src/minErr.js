@@ -86,27 +86,27 @@ export function errorHandlingConfig(config) {
  */
 
 export function minErr(module) {
-  let url = 'https://errors.angularjs.org/"NG_VERSION_FULL"/';
-  let regex = url.replace(".", "\\.") + "[\\s\\S]*";
-  let errRegExp = new RegExp(regex, "g");
+  const url = 'https://errors.angularjs.org/"NG_VERSION_FULL"/';
+  const regex = `${url.replace(".", "\\.")}[\\s\\S]*`;
+  const errRegExp = new RegExp(regex, "g");
 
   return function () {
-    let code = arguments[0],
-      template = arguments[1],
-      message = "[" + (module ? module + ":" : "") + code + "] ",
-      templateArgs = sliceArgs(arguments, 2).map(function (arg) {
-        return toDebugString(arg, minErrConfig.objectMaxDepth);
-      }),
-      paramPrefix,
-      i;
+    const code = arguments[0];
+    const template = arguments[1];
+    let message = `[${module ? `${module}:` : ""}${code}] `;
+    const templateArgs = sliceArgs(arguments, 2).map((arg) =>
+      toDebugString(arg, minErrConfig.objectMaxDepth),
+    );
+    let paramPrefix;
+    let i;
 
     // A minErr message has two parts: the message itself and the url that contains the
     // encoded message.
     // The message's parameters can contain other error messages which also include error urls.
     // To prevent the messages from getting too long, we strip the error urls from the parameters.
 
-    message += template.replace(/\{\d+\}/g, function (match) {
-      let index = +match.slice(1, -1);
+    message += template.replace(/\{\d+\}/g, (match) => {
+      const index = +match.slice(1, -1);
 
       if (index < templateArgs.length) {
         return templateArgs[index].replace(errRegExp, "");
@@ -115,7 +115,7 @@ export function minErr(module) {
       return match;
     });
 
-    message += "\n" + url + (module ? module + "/" : "") + code;
+    message += `\n${url}${module ? `${module}/` : ""}${code}`;
 
     if (minErrConfig.urlErrorParamsEnabled) {
       for (
@@ -123,8 +123,7 @@ export function minErr(module) {
         i < templateArgs.length;
         i++, paramPrefix = "&"
       ) {
-        message +=
-          paramPrefix + "p" + i + "=" + encodeURIComponent(templateArgs[i]);
+        message += `${paramPrefix}p${i}=${encodeURIComponent(templateArgs[i])}`;
       }
     }
 

@@ -1,16 +1,16 @@
-let $resourceMinErr = angular.$$minErr("$resource");
+const $resourceMinErr = angular.$$minErr("$resource");
 
 // Helper functions and regex to lookup a dotted path on an object
 // stopping at undefined/null.  The path must be composed of ASCII
 // identifiers (just like $parse)
-let MEMBER_NAME_REGEX = /^(\.[a-zA-Z_$@][0-9a-zA-Z_$@]*)+$/;
+const MEMBER_NAME_REGEX = /^(\.[a-zA-Z_$@][0-9a-zA-Z_$@]*)+$/;
 
 function isValidDottedPath(path) {
   return (
     path != null &&
     path !== "" &&
     path !== "hasOwnProperty" &&
-    MEMBER_NAME_REGEX.test("." + path)
+    MEMBER_NAME_REGEX.test(`.${path}`)
   );
 }
 
@@ -22,9 +22,9 @@ function lookupDottedPath(obj, path) {
       path,
     );
   }
-  let keys = path.split(".");
+  const keys = path.split(".");
   for (let i = 0, ii = keys.length; i < ii && angular.isDefined(obj); i++) {
-    let key = keys[i];
+    const key = keys[i];
     obj = obj !== null ? obj[key] : undefined;
   }
   return obj;
@@ -36,11 +36,11 @@ function lookupDottedPath(obj, path) {
 function shallowClearAndCopy(src, dst) {
   dst = dst || {};
 
-  angular.forEach(dst, function (value, key) {
+  angular.forEach(dst, (value, key) => {
     delete dst[key];
   });
 
-  for (let key in src) {
+  for (const key in src) {
     if (
       src.hasOwnProperty(key) &&
       !(key.charAt(0) === "$" && key.charAt(1) === "$")
@@ -504,9 +504,9 @@ angular
   .module("ngResource", ["ng"])
   .info({ angularVersion: '"NG_VERSION_FULL"' })
   .provider("$resource", function ResourceProvider() {
-    let PROTOCOL_AND_IPV6_REGEX = /^https?:\/\/\[[^\]]*][^/]*/;
+    const PROTOCOL_AND_IPV6_REGEX = /^https?:\/\/\[[^\]]*][^/]*/;
 
-    let provider = this;
+    const provider = this;
 
     /**
      * @ngdoc property
@@ -596,16 +596,16 @@ angular
       "$q",
       "$timeout",
       function ($http, $log, $q, $timeout) {
-        let noop = angular.noop,
-          forEach = angular.forEach,
-          extend = angular.extend,
-          copy = angular.copy,
-          isArray = angular.isArray,
-          isDefined = angular.isDefined,
-          isFunction = angular.isFunction,
-          isNumber = angular.isNumber,
-          encodeUriQuery = angular.$$encodeUriQuery,
-          encodeUriSegment = angular.$$encodeUriSegment;
+        const { noop } = angular;
+        const { forEach } = angular;
+        const { extend } = angular;
+        const { copy } = angular;
+        const { isArray } = angular;
+        const { isDefined } = angular;
+        const { isFunction } = angular;
+        const { isNumber } = angular;
+        const encodeUriQuery = angular.$$encodeUriQuery;
+        const encodeUriSegment = angular.$$encodeUriSegment;
 
         function Route(template, defaults) {
           this.template = template;
@@ -614,15 +614,15 @@ angular
         }
 
         Route.prototype = {
-          setUrlParams: function (config, params, actionUrl) {
-            let self = this,
-              url = actionUrl || self.template,
-              val,
-              encodedVal,
-              protocolAndIpv6 = "";
+          setUrlParams(config, params, actionUrl) {
+            const self = this;
+            let url = actionUrl || self.template;
+            let val;
+            let encodedVal;
+            let protocolAndIpv6 = "";
 
-            let urlParams = (self.urlParams = Object.create(null));
-            forEach(url.split(/\W/), function (param) {
+            const urlParams = (self.urlParams = Object.create(null));
+            forEach(url.split(/\W/), (param) => {
               if (param === "hasOwnProperty") {
                 throw $resourceMinErr(
                   "badname",
@@ -632,23 +632,23 @@ angular
               if (
                 !new RegExp("^\\d+$").test(param) &&
                 param &&
-                new RegExp("(^|[^\\\\]):" + param + "(\\W|$)").test(url)
+                new RegExp(`(^|[^\\\\]):${param}(\\W|$)`).test(url)
               ) {
                 urlParams[param] = {
                   isQueryParamValue: new RegExp(
-                    "\\?.*=:" + param + "(?:\\W|$)",
+                    `\\?.*=:${param}(?:\\W|$)`,
                   ).test(url),
                 };
               }
             });
             url = url.replace(/\\:/g, ":");
-            url = url.replace(PROTOCOL_AND_IPV6_REGEX, function (match) {
+            url = url.replace(PROTOCOL_AND_IPV6_REGEX, (match) => {
               protocolAndIpv6 = match;
               return "";
             });
 
             params = params || {};
-            forEach(self.urlParams, function (paramInfo, urlParam) {
+            forEach(self.urlParams, (paramInfo, urlParam) => {
               val = params.hasOwnProperty(urlParam)
                 ? params[urlParam]
                 : self.defaults[urlParam];
@@ -659,20 +659,17 @@ angular
                   encodedVal = encodeUriSegment(val);
                 }
                 url = url.replace(
-                  new RegExp(":" + urlParam + "(\\W|$)", "g"),
-                  function (match, p1) {
-                    return encodedVal + p1;
-                  },
+                  new RegExp(`:${urlParam}(\\W|$)`, "g"),
+                  (match, p1) => encodedVal + p1,
                 );
               } else {
                 url = url.replace(
-                  new RegExp("(/?):" + urlParam + "(\\W|$)", "g"),
-                  function (match, leadingSlashes, tail) {
+                  new RegExp(`(/?):${urlParam}(\\W|$)`, "g"),
+                  (match, leadingSlashes, tail) => {
                     if (tail.charAt(0) === "/") {
                       return tail;
-                    } else {
-                      return leadingSlashes + tail;
                     }
+                    return leadingSlashes + tail;
                   },
                 );
               }
@@ -691,7 +688,7 @@ angular
             config.url = protocolAndIpv6 + url.replace(/\/(\\|%5C)\./, "/.");
 
             // set params - delegate param encoding to $http
-            forEach(params, function (value, key) {
+            forEach(params, (value, key) => {
               if (!self.urlParams[key]) {
                 config.params = config.params || {};
                 config.params[key] = value;
@@ -701,14 +698,14 @@ angular
         };
 
         function resourceFactory(url, paramDefaults, actions, options) {
-          let route = new Route(url, options);
+          const route = new Route(url, options);
 
           actions = extend({}, provider.defaults.actions, actions);
 
           function extractParams(data, actionParams) {
-            let ids = {};
+            const ids = {};
             actionParams = extend({}, paramDefaults, actionParams);
-            forEach(actionParams, function (value, key) {
+            forEach(actionParams, (value, key) => {
               if (isFunction(value)) {
                 value = value(data);
               }
@@ -729,20 +726,20 @@ angular
           }
 
           Resource.prototype.toJSON = function () {
-            let data = extend({}, this);
+            const data = extend({}, this);
             delete data.$promise;
             delete data.$resolved;
             delete data.$cancelRequest;
             return data;
           };
 
-          forEach(actions, function (action, name) {
-            let hasBody =
+          forEach(actions, (action, name) => {
+            const hasBody =
               action.hasBody === true ||
               (action.hasBody !== false &&
                 /^(POST|PUT|PATCH)$/i.test(action.method));
             let numericTimeout = action.timeout;
-            let cancellable = isDefined(action.cancellable)
+            const cancellable = isDefined(action.cancellable)
               ? action.cancellable
               : route.defaults.cancellable;
 
@@ -759,10 +756,10 @@ angular
             }
 
             Resource[name] = function (a1, a2, a3, a4) {
-              let params = {},
-                data,
-                onSuccess,
-                onError;
+              let params = {};
+              let data;
+              let onSuccess;
+              let onError;
 
               switch (arguments.length) {
                 case 4:
@@ -803,25 +800,25 @@ angular
                   );
               }
 
-              let isInstanceCall = this instanceof Resource;
-              let value = isInstanceCall
+              const isInstanceCall = this instanceof Resource;
+              const value = isInstanceCall
                 ? data
                 : action.isArray
                   ? []
                   : new Resource(data);
-              let httpConfig = {};
-              let requestInterceptor =
+              const httpConfig = {};
+              const requestInterceptor =
                 (action.interceptor && action.interceptor.request) || undefined;
-              let requestErrorInterceptor =
+              const requestErrorInterceptor =
                 (action.interceptor && action.interceptor.requestError) ||
                 undefined;
-              let responseInterceptor =
+              const responseInterceptor =
                 (action.interceptor && action.interceptor.response) ||
                 defaultResponseInterceptor;
-              let responseErrorInterceptor =
+              const responseErrorInterceptor =
                 (action.interceptor && action.interceptor.responseError) ||
                 $q.reject;
-              let successCallback = onSuccess
+              const successCallback = onSuccess
                 ? function (val) {
                     onSuccess(
                       val,
@@ -831,12 +828,12 @@ angular
                     );
                   }
                 : undefined;
-              let errorCallback = onError || undefined;
+              const errorCallback = onError || undefined;
               let timeoutDeferred;
               let numericTimeoutPromise;
               let response;
 
-              forEach(action, function (value, key) {
+              forEach(action, (value, key) => {
                 switch (key) {
                   default:
                     httpConfig[key] = copy(value);
@@ -876,8 +873,8 @@ angular
                 .then($http);
 
               promise = promise.then(
-                function (resp) {
-                  let data = resp.data;
+                (resp) => {
+                  const { data } = resp;
 
                   if (data) {
                     // Need to convert action.isArray to boolean in case it is undefined
@@ -895,7 +892,7 @@ angular
                     }
                     if (action.isArray) {
                       value.length = 0;
-                      forEach(data, function (item) {
+                      forEach(data, (item) => {
                         if (typeof item === "object") {
                           value.push(new Resource(item));
                         } else {
@@ -906,7 +903,7 @@ angular
                         }
                       });
                     } else {
-                      let promise = value.$promise; // Save the promise
+                      const promise = value.$promise; // Save the promise
                       shallowClearAndCopy(data, value);
                       value.$promise = promise; // Restore the promise
                     }
@@ -916,14 +913,14 @@ angular
                   response = resp;
                   return responseInterceptor(resp);
                 },
-                function (rejectionOrResponse) {
+                (rejectionOrResponse) => {
                   rejectionOrResponse.resource = value;
                   response = rejectionOrResponse;
                   return responseErrorInterceptor(rejectionOrResponse);
                 },
               );
 
-              promise = promise["finally"](function () {
+              promise = promise.finally(() => {
                 value.$resolved = true;
                 if (!isInstanceCall && cancellable) {
                   value.$cancelRequest = noop;
@@ -960,13 +957,13 @@ angular
               }
             };
 
-            Resource.prototype["$" + name] = function (params, success, error) {
+            Resource.prototype[`$${name}`] = function (params, success, error) {
               if (isFunction(params)) {
                 error = success;
                 success = params;
                 params = {};
               }
-              let result = Resource[name].call(
+              const result = Resource[name].call(
                 this,
                 params,
                 this,

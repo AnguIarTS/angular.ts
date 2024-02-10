@@ -9,28 +9,28 @@ module.exports = function errorDocsProcessor(log, errorNamespaceMap, getMinerrIn
   return {
     $runAfter: ['tags-extracted'],
     $runBefore: ['extra-docs-added'],
-    $process: function(docs) {
+    $process(docs) {
 
       // Get the extracted min errors to compare with the error docs, and report any mismatch
-      let collectedErrors = require('../../../build/errors.json').errors;
-      let flatErrors = [];
+      const collectedErrors = require('../../../build/errors.json').errors;
+      const flatErrors = [];
 
-      for (let namespace in collectedErrors) {
-        for (let error in collectedErrors[namespace]) {
-          flatErrors.push(namespace + ':' + error);
+      for (const namespace in collectedErrors) {
+        for (const error in collectedErrors[namespace]) {
+          flatErrors.push(`${namespace  }:${  error}`);
         }
       }
 
       // Create error namespace docs and attach error docs to each
-      docs.forEach(function(doc) {
-        let parts, namespaceDoc;
+      docs.forEach((doc) => {
+        let parts; let namespaceDoc;
 
         if (doc.docType === 'error') {
 
-          let matchingMinErr = flatErrors.indexOf(doc.name);
+          const matchingMinErr = flatErrors.indexOf(doc.name);
 
           if (matchingMinErr === -1) {
-            log.warn('Error doc: ' + doc.name + ' has no matching min error');
+            log.warn(`Error doc: ${  doc.name  } has no matching min error`);
           } else {
             flatErrors.splice(matchingMinErr, 1);
           }
@@ -59,11 +59,11 @@ module.exports = function errorDocsProcessor(log, errorNamespaceMap, getMinerrIn
         }
       });
 
-      flatErrors.forEach(function(value) {
-        log.warn('No error doc exists for min error: ' + value);
+      flatErrors.forEach((value) => {
+        log.warn(`No error doc exists for min error: ${  value}`);
       });
 
-      errorNamespaceMap.forEach(function(errorNamespace) {
+      errorNamespaceMap.forEach((errorNamespace) => {
         docs.push(errorNamespace);
       });
     }

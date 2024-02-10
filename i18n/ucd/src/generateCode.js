@@ -9,8 +9,8 @@ function generateCode(validRanges) {
              ' *                                                    *\n' +
              ' *****************************************************/\n' +
              '"use strict";\n';
-  let keys = Object.keys(validRanges);
-  for (let i in keys) {
+  const keys = Object.keys(validRanges);
+  for (const i in keys) {
     code += generateFunction(validRanges[keys[i]], keys[i]);
   }
   return code;
@@ -18,9 +18,9 @@ function generateCode(validRanges) {
 
 
 function generateFunction(positiveElements, functionName) {
-  let result = [];
+  const result = [];
   result.push('function ', functionName, '(cp) {\n');
-  positiveElements.forEach(function(range) {
+  positiveElements.forEach((range) => {
     if (range[0] === range[1]) {
       result.push('  if (cp === 0x', range[0], ')');
     } else {

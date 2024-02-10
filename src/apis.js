@@ -22,11 +22,11 @@ function hashKey(obj, nextUidFn) {
     return key;
   }
 
-  let objType = typeof obj;
+  const objType = typeof obj;
   if (objType === "function" || (objType === "object" && obj !== null)) {
-    key = obj.$$hashKey = objType + ":" + (nextUidFn || nextUid)();
+    key = obj.$$hashKey = `${objType}:${(nextUidFn || nextUid)()}`;
   } else {
-    key = objType + ":" + obj;
+    key = `${objType}:${obj}`;
   }
 
   return key;
@@ -36,7 +36,7 @@ function hashKey(obj, nextUidFn) {
 // Should be bug/feature equivalent to the native implementations of supported browsers
 // (for the features required in Angular).
 // See https://kangax.github.io/compat-table/es6/#test-Map
-let nanKey = Object.create(null);
+const nanKey = Object.create(null);
 function NgMapShim() {
   this._keys = [];
   this._values = [];
@@ -44,29 +44,29 @@ function NgMapShim() {
   this._lastIndex = -1;
 }
 NgMapShim.prototype = {
-  _idx: function (key) {
+  _idx(key) {
     if (key !== this._lastKey) {
       this._lastKey = key;
       this._lastIndex = this._keys.indexOf(key);
     }
     return this._lastIndex;
   },
-  _transformKey: function (key) {
+  _transformKey(key) {
     return isNumberNaN(key) ? nanKey : key;
   },
-  get: function (key) {
+  get(key) {
     key = this._transformKey(key);
-    let idx = this._idx(key);
+    const idx = this._idx(key);
     if (idx !== -1) {
       return this._values[idx];
     }
   },
-  has: function (key) {
+  has(key) {
     key = this._transformKey(key);
-    let idx = this._idx(key);
+    const idx = this._idx(key);
     return idx !== -1;
   },
-  set: function (key, value) {
+  set(key, value) {
     key = this._transformKey(key);
     let idx = this._idx(key);
     if (idx === -1) {
@@ -78,9 +78,9 @@ NgMapShim.prototype = {
     // Support: IE11
     // Do not `return this` to simulate the partial IE11 implementation
   },
-  delete: function (key) {
+  delete(key) {
     key = this._transformKey(key);
-    let idx = this._idx(key);
+    const idx = this._idx(key);
     if (idx === -1) {
       return false;
     }
@@ -95,9 +95,9 @@ NgMapShim.prototype = {
 // For now, always use `NgMapShim`, even if `window.Map` is available. Some native implementations
 // are still buggy (often in subtle ways) and can cause hard-to-debug failures. When native `Map`
 // implementations get more stable, we can reconsider switching to `window.Map` (when available).
-let NgMap = NgMapShim;
+const NgMap = NgMapShim;
 
-let $$MapProvider = [
+const $$MapProvider = [
   /** @this */ function () {
     this.$get = [
       function () {

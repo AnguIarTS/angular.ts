@@ -1,9 +1,9 @@
 
 
-describe('a', function() {
-  let element, $compile, $rootScope;
+describe('a', () => {
+  let element; let $compile; let $rootScope;
 
-  beforeEach(module(function($compileProvider) {
+  beforeEach(module(($compileProvider) => {
     $compileProvider.
       directive('linkTo', valueFn({
         restrict: 'A',
@@ -23,21 +23,21 @@ describe('a', function() {
       }));
   }));
 
-  beforeEach(inject(function(_$compile_, _$rootScope_) {
+  beforeEach(inject((_$compile_, _$rootScope_) => {
     $compile = _$compile_;
     $rootScope = _$rootScope_;
   }));
 
 
-  afterEach(function() {
+  afterEach(() => {
     dealoc(element);
   });
 
 
-  it('should prevent default action to be executed when href is empty', function() {
-    let orgLocation = window.document.location.href,
-        preventDefaultCalled = false,
-        event;
+  it('should prevent default action to be executed when href is empty', () => {
+    const orgLocation = window.document.location.href;
+        let preventDefaultCalled = false;
+        let event;
 
     element = $compile('<a href="">empty link</a>')($rootScope);
 
@@ -59,7 +59,7 @@ describe('a', function() {
   });
 
 
-  it('should prevent IE for changing text content when setting attribute', function() {
+  it('should prevent IE for changing text content when setting attribute', () => {
     // see issue #1949
     element = jqLite('<a href="">hello@you</a>');
     $compile(element);
@@ -69,10 +69,10 @@ describe('a', function() {
   });
 
 
-  it('should not link and hookup an event if href is present at compile', function() {
-    let jq = jQuery || jqLite;
+  it('should not link and hookup an event if href is present at compile', () => {
+    const jq = jQuery || jqLite;
     element = jq('<a href="//a.com">hello@you</a>');
-    let linker = $compile(element);
+    const linker = $compile(element);
 
     spyOn(jq.prototype, 'on');
 
@@ -82,34 +82,34 @@ describe('a', function() {
   });
 
 
-  it('should not preventDefault if anchor element is replaced with href-containing element', function() {
+  it('should not preventDefault if anchor element is replaced with href-containing element', () => {
     spyOn(jqLite.prototype, 'on').and.callThrough();
     element = $compile('<a link-to="https://www.google.com">')($rootScope);
     $rootScope.$digest();
 
-    let child = element.children('a');
-    let preventDefault = jasmine.createSpy('preventDefault');
+    const child = element.children('a');
+    const preventDefault = jasmine.createSpy('preventDefault');
 
     child.triggerHandler({
       type: 'click',
-      preventDefault: preventDefault
+      preventDefault
     });
 
     expect(preventDefault).not.toHaveBeenCalled();
   });
 
 
-  it('should preventDefault if anchor element is replaced with element without href attribute', function() {
+  it('should preventDefault if anchor element is replaced with element without href attribute', () => {
     spyOn(jqLite.prototype, 'on').and.callThrough();
     element = $compile('<a link-not="https://www.google.com">')($rootScope);
     $rootScope.$digest();
 
-    let child = element.children('a');
-    let preventDefault = jasmine.createSpy('preventDefault');
+    const child = element.children('a');
+    const preventDefault = jasmine.createSpy('preventDefault');
 
     child.triggerHandler({
       type: 'click',
-      preventDefault: preventDefault
+      preventDefault
     });
 
     expect(preventDefault).toHaveBeenCalled();
@@ -117,12 +117,12 @@ describe('a', function() {
 
 
   if (isDefined(window.SVGElement)) {
-    describe('SVGAElement', function() {
-      it('should prevent default action to be executed when href is empty', function() {
-        let orgLocation = window.document.location.href,
-            preventDefaultCalled = false,
-            event,
-            child;
+    describe('SVGAElement', () => {
+      it('should prevent default action to be executed when href is empty', () => {
+        const orgLocation = window.document.location.href;
+            let preventDefaultCalled = false;
+            let event;
+            let child;
 
         element = $compile('<svg><a xlink:href="">empty link</a></svg>')($rootScope);
         child = element.children('a');
@@ -144,10 +144,10 @@ describe('a', function() {
       });
 
 
-      it('should not link and hookup an event if xlink:href is present at compile', function() {
-        let jq = jQuery || jqLite;
+      it('should not link and hookup an event if xlink:href is present at compile', () => {
+        const jq = jQuery || jqLite;
         element = jq('<svg><a xlink:href="bobby">hello@you</a></svg>');
-        let linker = $compile(element);
+        const linker = $compile(element);
 
         spyOn(jq.prototype, 'on');
 

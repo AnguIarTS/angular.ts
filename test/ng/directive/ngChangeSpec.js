@@ -2,20 +2,20 @@
 
 /* globals generateInputCompilerHelper: false */
 
-describe('ngChange', function() {
+describe('ngChange', () => {
 
-  let helper = {}, $rootScope;
+  const helper = {}; let $rootScope;
 
   generateInputCompilerHelper(helper);
 
-  beforeEach(inject(function(_$rootScope_) {
+  beforeEach(inject((_$rootScope_) => {
     $rootScope = _$rootScope_;
   }));
 
-  it('should $eval expression after new value is set in the model', function() {
+  it('should $eval expression after new value is set in the model', () => {
     helper.compileInput('<input type="text" ng-model="value" ng-change="change()" />');
 
-    $rootScope.change = jasmine.createSpy('change').and.callFake(function() {
+    $rootScope.change = jasmine.createSpy('change').and.callFake(() => {
       expect($rootScope.value).toBe('new value');
     });
 
@@ -24,7 +24,7 @@ describe('ngChange', function() {
   });
 
 
-  it('should not $eval the expression if changed from model', function() {
+  it('should not $eval the expression if changed from model', () => {
     helper.compileInput('<input type="text" ng-model="value" ng-change="change()" />');
 
     $rootScope.change = jasmine.createSpy('change');
@@ -34,8 +34,8 @@ describe('ngChange', function() {
   });
 
 
-  it('should $eval ngChange expression on checkbox', function() {
-    let inputElm = helper.compileInput('<input type="checkbox" ng-model="foo" ng-change="changeFn()">');
+  it('should $eval ngChange expression on checkbox', () => {
+    const inputElm = helper.compileInput('<input type="checkbox" ng-model="foo" ng-change="changeFn()">');
 
     $rootScope.changeFn = jasmine.createSpy('changeFn');
     expect($rootScope.changeFn).not.toHaveBeenCalled();
@@ -45,8 +45,8 @@ describe('ngChange', function() {
   });
 
 
-  it('should be able to change the model and via that also update the view', function() {
-    let inputElm = helper.compileInput('<input type="text" ng-model="value" ng-change="value=\'b\'" />');
+  it('should be able to change the model and via that also update the view', () => {
+    const inputElm = helper.compileInput('<input type="text" ng-model="value" ng-change="value=\'b\'" />');
 
     helper.changeInputValueTo('a');
     expect(inputElm.val()).toBe('b');

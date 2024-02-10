@@ -173,43 +173,43 @@
       </file>
     </example>
  */
-let ngPluralizeDirective = [
+const ngPluralizeDirective = [
   "$locale",
   "$interpolate",
   "$log",
   function ($locale, $interpolate, $log) {
-    let BRACE = /{}/g,
-      IS_WHEN = /^when(Minus)?(.+)$/;
+    const BRACE = /{}/g;
+    const IS_WHEN = /^when(Minus)?(.+)$/;
 
     return {
-      link: function (scope, element, attr) {
-        let numberExp = attr.count,
-          whenExp = attr.$attr.when && element.attr(attr.$attr.when), // we have {{}} in attrs
-          offset = attr.offset || 0,
-          whens = scope.$eval(whenExp) || {},
-          whensExpFns = {},
-          startSymbol = $interpolate.startSymbol(),
-          endSymbol = $interpolate.endSymbol(),
-          braceReplacement = startSymbol + numberExp + "-" + offset + endSymbol,
-          watchRemover = angular.noop,
-          lastCount;
+      link(scope, element, attr) {
+        const numberExp = attr.count;
+        const whenExp = attr.$attr.when && element.attr(attr.$attr.when); // we have {{}} in attrs
+        const offset = attr.offset || 0;
+        const whens = scope.$eval(whenExp) || {};
+        const whensExpFns = {};
+        const startSymbol = $interpolate.startSymbol();
+        const endSymbol = $interpolate.endSymbol();
+        const braceReplacement = `${startSymbol + numberExp}-${offset}${endSymbol}`;
+        let watchRemover = angular.noop;
+        let lastCount;
 
-        forEach(attr, function (expression, attributeName) {
-          let tmpMatch = IS_WHEN.exec(attributeName);
+        forEach(attr, (expression, attributeName) => {
+          const tmpMatch = IS_WHEN.exec(attributeName);
           if (tmpMatch) {
-            let whenKey = (tmpMatch[1] ? "-" : "") + lowercase(tmpMatch[2]);
+            const whenKey = (tmpMatch[1] ? "-" : "") + lowercase(tmpMatch[2]);
             whens[whenKey] = element.attr(attr.$attr[attributeName]);
           }
         });
-        forEach(whens, function (expression, key) {
+        forEach(whens, (expression, key) => {
           whensExpFns[key] = $interpolate(
             expression.replace(BRACE, braceReplacement),
           );
         });
 
-        scope.$watch(numberExp, function ngPluralizeWatchAction(newVal) {
+        scope.$watch(numberExp, (newVal) => {
           let count = parseFloat(newVal);
-          let countIsNaN = isNumberNaN(count);
+          const countIsNaN = isNumberNaN(count);
 
           if (!countIsNaN && !(count in whens)) {
             // If an explicit number rule such as 1, 2, 3... is defined, just use it.
@@ -221,14 +221,11 @@ let ngPluralizeDirective = [
           // In JS `NaN !== NaN`, so we have to explicitly check.
           if (count !== lastCount && !(countIsNaN && isNumberNaN(lastCount))) {
             watchRemover();
-            let whenExpFn = whensExpFns[count];
+            const whenExpFn = whensExpFns[count];
             if (isUndefined(whenExpFn)) {
               if (newVal != null) {
                 $log.debug(
-                  "ngPluralize: no rule defined for '" +
-                    count +
-                    "' in " +
-                    whenExp,
+                  `ngPluralize: no rule defined for '${count}' in ${whenExp}`,
                 );
               }
               watchRemover = noop;

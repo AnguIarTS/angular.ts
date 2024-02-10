@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 /**
  * @param {string} path - The path to parse. (It is assumed to have query and hash stripped off.)
  * @param {Object} opts - Options.
@@ -11,17 +12,16 @@
  * Originally inspired by `pathRexp` in `visionmedia/express/lib/utils.js`.
  */
 export function routeToRegExp(path, opts) {
-  let keys = [];
+  const keys = [];
 
   let pattern = path
     .replace(/([().])/g, "\\$1")
-    .replace(/(\/)?:(\w+)(\*\?|[?*])?/g, function (_, slash, key, option) {
-      let optional = option === "?" || option === "*?";
-      let star = option === "*" || option === "*?";
-      keys.push({ name: key, optional: optional });
-      slash = slash || "";
+    .replace(/(\/)?:(\w+)(\*\?|[?*])?/g, (_, slash, key, option) => {
+      const optional = option === "?" || option === "*?";
+      const star = option === "*" || option === "*?";
+      keys.push({ name: key, optional });
       return (
-        (optional ? "(?:" + slash : slash + "(?:") +
+        (optional ? `(?:${slash || ""}` : `${slash || ""}(?:`) +
         (star ? "(.+?)" : "([^/]+)") +
         (optional ? "?)?" : ")")
       );
@@ -29,13 +29,13 @@ export function routeToRegExp(path, opts) {
     .replace(/([/$*])/g, "\\$1");
 
   if (opts.ignoreTrailingSlashes) {
-    pattern = pattern.replace(/\/+$/, "") + "/*";
+    pattern = `${pattern.replace(/\/+$/, "")}/*`;
   }
 
   return {
-    keys: keys,
+    keys,
     regexp: new RegExp(
-      "^" + pattern + "(?:[?#]|$)",
+      `^${pattern}(?:[?#]|$)`,
       opts.caseInsensitiveMatch ? "i" : "",
     ),
   };

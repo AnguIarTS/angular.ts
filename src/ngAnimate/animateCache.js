@@ -1,16 +1,17 @@
 /** @this */
-let $$AnimateCacheProvider = function () {
-  let KEY = "$$ngAnimateParentKey";
+const $$AnimateCacheProvider = function () {
+  const KEY = "$$ngAnimateParentKey";
   let parentCounter = 0;
   let cache = Object.create(null);
 
   this.$get = [
     function () {
       return {
-        cacheKey: function (node, method, addClass, removeClass) {
-          let parentNode = node.parentNode;
-          let parentID = parentNode[KEY] || (parentNode[KEY] = ++parentCounter);
-          let parts = [parentID, method, node.getAttribute("class")];
+        cacheKey(node, method, addClass, removeClass) {
+          const { parentNode } = node;
+          const parentID =
+            parentNode[KEY] || (parentNode[KEY] = ++parentCounter);
+          const parts = [parentID, method, node.getAttribute("class")];
           if (addClass) {
             parts.push(addClass);
           }
@@ -20,31 +21,31 @@ let $$AnimateCacheProvider = function () {
           return parts.join(" ");
         },
 
-        containsCachedAnimationWithoutDuration: function (key) {
-          let entry = cache[key];
+        containsCachedAnimationWithoutDuration(key) {
+          const entry = cache[key];
 
           // nothing cached, so go ahead and animate
           // otherwise it should be a valid animation
           return (entry && !entry.isValid) || false;
         },
 
-        flush: function () {
+        flush() {
           cache = Object.create(null);
         },
 
-        count: function (key) {
-          let entry = cache[key];
+        count(key) {
+          const entry = cache[key];
           return entry ? entry.total : 0;
         },
 
-        get: function (key) {
-          let entry = cache[key];
+        get(key) {
+          const entry = cache[key];
           return entry && entry.value;
         },
 
-        put: function (key, value, isValid) {
+        put(key, value, isValid) {
           if (!cache[key]) {
-            cache[key] = { total: 1, value: value, isValid: isValid };
+            cache[key] = { total: 1, value, isValid };
           } else {
             cache[key].total++;
             cache[key].value = value;

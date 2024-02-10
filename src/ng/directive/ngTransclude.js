@@ -156,15 +156,15 @@
  *   </file>
  * </example>
  */
-let ngTranscludeMinErr = minErr("ngTransclude");
-let ngTranscludeDirective = [
+const ngTranscludeMinErr = minErr("ngTransclude");
+const ngTranscludeDirective = [
   "$compile",
   function ($compile) {
     return {
       restrict: "EAC",
       compile: function ngTranscludeCompile(tElement) {
         // Remove and cache any original content to act as a fallback
-        let fallbackLinkFn = $compile(tElement.contents());
+        const fallbackLinkFn = $compile(tElement.contents());
         tElement.empty();
 
         return function ngTranscludePostLink(
@@ -188,7 +188,7 @@ let ngTranscludeDirective = [
           if ($attrs.ngTransclude === $attrs.$attr.ngTransclude) {
             $attrs.ngTransclude = "";
           }
-          let slotName = $attrs.ngTransclude || $attrs.ngTranscludeSlot;
+          const slotName = $attrs.ngTransclude || $attrs.ngTranscludeSlot;
 
           // If the slot is required and no transclusion content is provided then this call will throw an error
           $transclude(ngTranscludeCloneAttachFn, null, slotName);
@@ -212,14 +212,14 @@ let ngTranscludeDirective = [
           function useFallbackContent() {
             // Since this is the fallback content rather than the transcluded content,
             // we link against the scope of this directive rather than the transcluded scope
-            fallbackLinkFn($scope, function (clone) {
+            fallbackLinkFn($scope, (clone) => {
               $element.append(clone);
             });
           }
 
           function notWhitespace(nodes) {
             for (let i = 0, ii = nodes.length; i < ii; i++) {
-              let node = nodes[i];
+              const node = nodes[i];
               if (node.nodeType !== NODE_TYPE_TEXT || node.nodeValue.trim()) {
                 return true;
               }

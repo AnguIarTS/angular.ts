@@ -87,30 +87,30 @@ function createHttpBackend(
     url = url || $browser.url();
 
     if (lowercase(method) === "jsonp") {
-      let callbackPath = callbacks.createCallback(url);
-      let jsonpDone = jsonpReq(url, callbackPath, function (status, text) {
+      const callbackPath = callbacks.createCallback(url);
+      const jsonpDone = jsonpReq(url, callbackPath, (status, text) => {
         // jsonpReq only ever sets status to 200 (OK), 404 (ERROR) or -1 (WAITING)
-        let response = status === 200 && callbacks.getResponse(callbackPath);
+        const response = status === 200 && callbacks.getResponse(callbackPath);
         completeRequest(callback, status, response, "", text, "complete");
         callbacks.removeCallback(callbackPath);
       });
     } else {
-      let xhr = createXhr(method, url);
-      let abortedByTimeout = false;
+      const xhr = createXhr(method, url);
+      const abortedByTimeout = false;
 
       xhr.open(method, url, true);
-      forEach(headers, function (value, key) {
+      forEach(headers, (value, key) => {
         if (isDefined(value)) {
           xhr.setRequestHeader(key, value);
         }
       });
 
       xhr.onload = function requestLoaded() {
-        let statusText = xhr.statusText || "";
+        const statusText = xhr.statusText || "";
 
         // responseText is the old-school way of retrieving response (supported by IE9)
         // response/responseType properties were introduced in XHR Level2 spec (supported by IE10)
-        let response = "response" in xhr ? xhr.response : xhr.responseText;
+        const response = "response" in xhr ? xhr.response : xhr.responseText;
 
         // normalize IE9 bug (http://bugs.jquery.com/ticket/1450)
         let status = xhr.status === 1223 ? 204 : xhr.status;
@@ -136,13 +136,13 @@ function createHttpBackend(
         );
       };
 
-      let requestError = function () {
+      const requestError = function () {
         // The response is always empty
         // See https://xhr.spec.whatwg.org/#request-error-steps and https://fetch.spec.whatwg.org/#concept-network-error
         completeRequest(callback, -1, null, null, "", "error");
       };
 
-      let requestAborted = function () {
+      const requestAborted = function () {
         completeRequest(
           callback,
           -1,
@@ -153,7 +153,7 @@ function createHttpBackend(
         );
       };
 
-      let requestTimeout = function () {
+      const requestTimeout = function () {
         // The response is always empty
         // See https://xhr.spec.whatwg.org/#request-error-steps and https://fetch.spec.whatwg.org/#concept-network-error
         completeRequest(callback, -1, null, null, "", "timeout");
@@ -163,11 +163,11 @@ function createHttpBackend(
       xhr.ontimeout = requestTimeout;
       xhr.onabort = requestAborted;
 
-      forEach(eventHandlers, function (value, key) {
+      forEach(eventHandlers, (value, key) => {
         xhr.addEventListener(key, value);
       });
 
-      forEach(uploadEventHandlers, function (value, key) {
+      forEach(uploadEventHandlers, (value, key) => {
         xhr.upload.addEventListener(key, value);
       });
 
@@ -204,11 +204,11 @@ function createHttpBackend(
     // xhr.abort()                        abort (The xhr object is normally inaccessible, but
     //                                    can be exposed with the xhrFactory)
     if (timeout > 0) {
-      let timeoutId = $browserDefer(function () {
+      const timeoutId = $browserDefer(() => {
         timeoutRequest("timeout");
       }, timeout);
     } else if (isPromiseLike(timeout)) {
-      timeout.then(function () {
+      timeout.then(() => {
         timeoutRequest(isDefined(timeout.$$timeoutId) ? "timeout" : "abort");
       });
     }
@@ -246,8 +246,8 @@ function createHttpBackend(
     // we can't use jQuery/jqLite here because jQuery does crazy stuff with script elements, e.g.:
     // - fetches local scripts via XHR and evals them
     // - adds and immediately removes script elements from the document
-    let script = rawDocument.createElement("script"),
-      callback = null;
+    let script = rawDocument.createElement("script");
+    let callback = null;
     script.type = "text/javascript";
     script.src = url;
     script.async = true;

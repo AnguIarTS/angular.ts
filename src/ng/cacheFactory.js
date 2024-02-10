@@ -82,7 +82,7 @@
  */
 export function $CacheFactoryProvider() {
   this.$get = function () {
-    let caches = {};
+    const caches = {};
 
     function cacheFactory(cacheId, options) {
       if (cacheId in caches) {
@@ -93,13 +93,13 @@ export function $CacheFactoryProvider() {
         );
       }
 
-      let size = 0,
-        stats = extend({}, options, { id: cacheId }),
-        data = createMap(),
-        capacity = (options && options.capacity) || Number.MAX_VALUE,
-        lruHash = createMap(),
-        freshEnd = null,
-        staleEnd = null;
+      let size = 0;
+      let stats = extend({}, options, { id: cacheId });
+      let data = createMap();
+      const capacity = (options && options.capacity) || Number.MAX_VALUE;
+      let lruHash = createMap();
+      let freshEnd = null;
+      let staleEnd = null;
 
       /**
        * @ngdoc type
@@ -159,10 +159,10 @@ export function $CacheFactoryProvider() {
          *    will not be stored.
          * @returns {*} the value stored.
          */
-        put: function (key, value) {
+        put(key, value) {
           if (isUndefined(value)) return;
           if (capacity < Number.MAX_VALUE) {
-            let lruEntry = lruHash[key] || (lruHash[key] = { key: key });
+            const lruEntry = lruHash[key] || (lruHash[key] = { key });
 
             refresh(lruEntry);
           }
@@ -188,9 +188,9 @@ export function $CacheFactoryProvider() {
          * @param {string} key the key of the data to be retrieved
          * @returns {*} the value stored.
          */
-        get: function (key) {
+        get(key) {
           if (capacity < Number.MAX_VALUE) {
-            let lruEntry = lruHash[key];
+            const lruEntry = lruHash[key];
 
             if (!lruEntry) return;
 
@@ -210,9 +210,9 @@ export function $CacheFactoryProvider() {
          *
          * @param {string} key the key of the entry to be removed
          */
-        remove: function (key) {
+        remove(key) {
           if (capacity < Number.MAX_VALUE) {
-            let lruEntry = lruHash[key];
+            const lruEntry = lruHash[key];
 
             if (!lruEntry) return;
 
@@ -237,7 +237,7 @@ export function $CacheFactoryProvider() {
          * @description
          * Clears the cache object of any entries.
          */
-        removeAll: function () {
+        removeAll() {
           data = createMap();
           size = 0;
           lruHash = createMap();
@@ -253,7 +253,7 @@ export function $CacheFactoryProvider() {
          * Destroys the {@link $cacheFactory.Cache Cache} object entirely,
          * removing it from the {@link $cacheFactory $cacheFactory} set.
          */
-        destroy: function () {
+        destroy() {
           data = null;
           stats = null;
           lruHash = null;
@@ -276,8 +276,8 @@ export function $CacheFactoryProvider() {
          *       cache.</li>
          *   </ul>
          */
-        info: function () {
-          return extend({}, stats, { size: size });
+        info() {
+          return extend({}, stats, { size });
         },
       });
 
@@ -304,8 +304,8 @@ export function $CacheFactoryProvider() {
        */
       function link(nextEntry, prevEntry) {
         if (nextEntry !== prevEntry) {
-          if (nextEntry) nextEntry.p = prevEntry; //p stands for previous, 'prev' didn't minify
-          if (prevEntry) prevEntry.n = nextEntry; //n stands for next, 'next' didn't minify
+          if (nextEntry) nextEntry.p = prevEntry; // p stands for previous, 'prev' didn't minify
+          if (prevEntry) prevEntry.n = nextEntry; // n stands for next, 'next' didn't minify
         }
       }
     }
@@ -320,8 +320,8 @@ export function $CacheFactoryProvider() {
      * @returns {Object} - key-value map of `cacheId` to the result of calling `cache#info`
      */
     cacheFactory.info = function () {
-      let info = {};
-      forEach(caches, function (cache, cacheId) {
+      const info = {};
+      forEach(caches, (cache, cacheId) => {
         info[cacheId] = cache.info();
       });
       return info;

@@ -5,8 +5,8 @@
 // doesn't know about mocked locations and resolves URLs to the real document - which is
 // exactly the behavior needed here.  There is little value is mocking these out for this
 // service.
-let urlParsingNode = window.document.createElement("a");
-let originUrl = urlResolve(window.location.href);
+const urlParsingNode = window.document.createElement("a");
+const originUrl = urlResolve(window.location.href);
 let baseUrlParsingNode;
 
 urlParsingNode.href = "http://[::1]";
@@ -14,7 +14,7 @@ urlParsingNode.href = "http://[::1]";
 // Support: IE 9-11 only, Edge 16-17 only (fixed in 18 Preview)
 // IE/Edge don't wrap IPv6 addresses' hostnames in square brackets
 // when parsed out of an anchor element.
-let ipv6InBrackets = urlParsingNode.hostname === "[::1]";
+const ipv6InBrackets = urlParsingNode.hostname === "[::1]";
 
 /**
  *
@@ -65,14 +65,14 @@ let ipv6InBrackets = urlParsingNode.hostname === "[::1]";
 export function urlResolve(url) {
   if (!isString(url)) return url;
 
-  let href = url;
+  const href = url;
 
   urlParsingNode.setAttribute("href", href);
 
-  let hostname = urlParsingNode.hostname;
+  let { hostname } = urlParsingNode;
 
   if (!ipv6InBrackets && hostname.indexOf(":") > -1) {
-    hostname = "[" + hostname + "]";
+    hostname = `[${hostname}]`;
   }
 
   return {
@@ -85,12 +85,12 @@ export function urlResolve(url) {
       ? urlParsingNode.search.replace(/^\?/, "")
       : "",
     hash: urlParsingNode.hash ? urlParsingNode.hash.replace(/^#/, "") : "",
-    hostname: hostname,
+    hostname,
     port: urlParsingNode.port,
     pathname:
       urlParsingNode.pathname.charAt(0) === "/"
         ? urlParsingNode.pathname
-        : "/" + urlParsingNode.pathname,
+        : `/${urlParsingNode.pathname}`,
   };
 }
 
@@ -130,7 +130,7 @@ export function urlIsSameOriginAsBaseUrl(requestUrl) {
  *     whether it is of an allowed origin.
  */
 export function urlIsAllowedOriginFactory(trustedOriginUrls) {
-  let parsedAllowedOriginUrls = [originUrl].concat(
+  const parsedAllowedOriginUrls = [originUrl].concat(
     trustedOriginUrls.map(urlResolve),
   );
 
@@ -145,7 +145,7 @@ export function urlIsAllowedOriginFactory(trustedOriginUrls) {
    * @returns {boolean} - Whether the specified URL is of an allowed origin.
    */
   return function urlIsAllowedOrigin(requestUrl) {
-    let parsedUrl = urlResolve(requestUrl);
+    const parsedUrl = urlResolve(requestUrl);
     return parsedAllowedOriginUrls.some(
       urlsAreSameOrigin.bind(null, parsedUrl),
     );

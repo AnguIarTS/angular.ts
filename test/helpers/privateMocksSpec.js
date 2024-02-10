@@ -1,11 +1,11 @@
 
 
-describe('private mocks', function() {
+describe('private mocks', () => {
 
-  describe('Jasmine extensions', function() {
+  describe('Jasmine extensions', () => {
 
-    describe('they', function() {
-      it('should call `it` for each item in an array', function() {
+    describe('they', () => {
+      it('should call `it` for each item in an array', () => {
         spyOn(window, 'it');
 
         they('should do stuff with $prop', ['a', 'b', 'c']);
@@ -15,23 +15,23 @@ describe('private mocks', function() {
         expect(window.it).toHaveBeenCalledWith('should do stuff with "c"', jasmine.any(Function));
       });
 
-      it('should replace multiple occurrences of `$prop`', function() {
+      it('should replace multiple occurrences of `$prop`', () => {
         spyOn(window, 'it');
 
         they('should fight $prop with $prop', ['fire']);
         expect(window.it).toHaveBeenCalledWith('should fight "fire" with "fire"', jasmine.any(Function));
       });
 
-      it('should handle replacement strings containing `$&` correctly', function() {
+      it('should handle replacement strings containing `$&` correctly', () => {
         spyOn(window, 'it');
 
         they('should replace dollar-prop with $prop', ['$&']);
         expect(window.it).toHaveBeenCalledWith('should replace dollar-prop with "$&"', jasmine.any(Function));
       });
 
-      it('should pass each item in an array to the handler', function() {
-        let handlerSpy = jasmine.createSpy('handler');
-        spyOn(window, 'it').and.callFake(function(msg, handler) {
+      it('should pass each item in an array to the handler', () => {
+        const handlerSpy = jasmine.createSpy('handler');
+        spyOn(window, 'it').and.callFake((msg, handler) => {
           handler();
         });
         they('should do stuff with $prop', ['a', 'b', 'c'], handlerSpy);
@@ -41,7 +41,7 @@ describe('private mocks', function() {
       });
 
 
-      it('should call `it` for each key-value pair an object', function() {
+      it('should call `it` for each key-value pair an object', () => {
         spyOn(window, 'it');
 
         they('should do stuff with $prop', {a: 1, b:2, c:3});
@@ -52,9 +52,9 @@ describe('private mocks', function() {
       });
 
 
-      it('should pass each key-value pair in an object to the handler', function() {
-        let handlerSpy = jasmine.createSpy('handler');
-        spyOn(window, 'it').and.callFake(function(msg, handler) {
+      it('should pass each key-value pair in an object to the handler', () => {
+        const handlerSpy = jasmine.createSpy('handler');
+        spyOn(window, 'it').and.callFake((msg, handler) => {
           handler();
         });
         they('should do stuff with $prop', {a: 1, b:2, c:3}, handlerSpy);
@@ -64,11 +64,11 @@ describe('private mocks', function() {
       });
 
 
-      it('should call handler with correct `this`', function() {
-        let handlerSpy = jasmine.createSpy('handler');
-        let dummyThis = { name: 'dummyThis' };
+      it('should call handler with correct `this`', () => {
+        const handlerSpy = jasmine.createSpy('handler');
+        const dummyThis = { name: 'dummyThis' };
 
-        spyOn(window, 'it').and.callFake(function(msg, handler) {
+        spyOn(window, 'it').and.callFake((msg, handler) => {
           handler.call(dummyThis);
         });
 
@@ -79,8 +79,8 @@ describe('private mocks', function() {
     });
 
 
-    describe('fthey', function() {
-      it('should call `fit` for each item in an array', function() {
+    describe('fthey', () => {
+      it('should call `fit` for each item in an array', () => {
         spyOn(window, 'fit');
 
         fthey('should do stuff with $prop', ['a', 'b', 'c']);
@@ -91,9 +91,9 @@ describe('private mocks', function() {
       });
 
 
-      it('should pass each item in an array to the handler', function() {
-        let handlerSpy = jasmine.createSpy('handler');
-        spyOn(window, 'fit').and.callFake(function(msg, handler) {
+      it('should pass each item in an array to the handler', () => {
+        const handlerSpy = jasmine.createSpy('handler');
+        spyOn(window, 'fit').and.callFake((msg, handler) => {
           handler();
         });
         fthey('should do stuff with $prop', ['a', 'b', 'c'], handlerSpy);
@@ -103,7 +103,7 @@ describe('private mocks', function() {
       });
 
 
-      it('should call `it` for each key-value pair an object', function() {
+      it('should call `it` for each key-value pair an object', () => {
         spyOn(window, 'fit');
 
         fthey('should do stuff with $prop', {a: 1, b:2, c:3});
@@ -114,9 +114,9 @@ describe('private mocks', function() {
       });
 
 
-      it('should pass each key-value pair in an object to the handler', function() {
-        let handlerSpy = jasmine.createSpy('handler');
-        spyOn(window, 'fit').and.callFake(function(msg, handler) {
+      it('should pass each key-value pair in an object to the handler', () => {
+        const handlerSpy = jasmine.createSpy('handler');
+        spyOn(window, 'fit').and.callFake((msg, handler) => {
           handler();
         });
         fthey('should do stuff with $prop', {a: 1, b:2, c:3}, handlerSpy);
@@ -126,11 +126,11 @@ describe('private mocks', function() {
       });
 
 
-      it('should call handler with correct `this`', function() {
-        let handlerSpy = jasmine.createSpy('handler');
-        let dummyThis = { name: 'dummyThis' };
+      it('should call handler with correct `this`', () => {
+        const handlerSpy = jasmine.createSpy('handler');
+        const dummyThis = { name: 'dummyThis' };
 
-        spyOn(window, 'fit').and.callFake(function(msg, handler) {
+        spyOn(window, 'fit').and.callFake((msg, handler) => {
           handler.call(dummyThis);
         });
 
@@ -141,8 +141,8 @@ describe('private mocks', function() {
     });
 
 
-    describe('xthey', function() {
-      it('should call `xit` for each item in an array', function() {
+    describe('xthey', () => {
+      it('should call `xit` for each item in an array', () => {
         spyOn(window, 'xit');
 
         xthey('should do stuff with $prop', ['a', 'b', 'c']);
@@ -153,9 +153,9 @@ describe('private mocks', function() {
       });
 
 
-      it('should pass each item in an array to the handler', function() {
-        let handlerSpy = jasmine.createSpy('handler');
-        spyOn(window, 'xit').and.callFake(function(msg, handler) {
+      it('should pass each item in an array to the handler', () => {
+        const handlerSpy = jasmine.createSpy('handler');
+        spyOn(window, 'xit').and.callFake((msg, handler) => {
           handler();
         });
         xthey('should do stuff with $prop', ['a', 'b', 'c'], handlerSpy);
@@ -165,7 +165,7 @@ describe('private mocks', function() {
       });
 
 
-      it('should call `it` for each key-value pair an object', function() {
+      it('should call `it` for each key-value pair an object', () => {
         spyOn(window, 'xit');
 
         xthey('should do stuff with $prop', {a: 1, b:2, c:3});
@@ -176,9 +176,9 @@ describe('private mocks', function() {
       });
 
 
-      it('should pass each key-value pair in an object to the handler', function() {
-        let handlerSpy = jasmine.createSpy('handler');
-        spyOn(window, 'xit').and.callFake(function(msg, handler) {
+      it('should pass each key-value pair in an object to the handler', () => {
+        const handlerSpy = jasmine.createSpy('handler');
+        spyOn(window, 'xit').and.callFake((msg, handler) => {
           handler();
         });
         xthey('should do stuff with $prop', {a: 1, b:2, c:3}, handlerSpy);
@@ -188,11 +188,11 @@ describe('private mocks', function() {
       });
 
 
-      it('should call handler with correct `this`', function() {
-        let handlerSpy = jasmine.createSpy('handler');
-        let dummyThis = { name: 'dummyThis' };
+      it('should call handler with correct `this`', () => {
+        const handlerSpy = jasmine.createSpy('handler');
+        const dummyThis = { name: 'dummyThis' };
 
-        spyOn(window, 'xit').and.callFake(function(msg, handler) {
+        spyOn(window, 'xit').and.callFake((msg, handler) => {
           handler.call(dummyThis);
         });
 
@@ -204,18 +204,18 @@ describe('private mocks', function() {
   });
 
 
-  describe('createMockStyleSheet', function() {
+  describe('createMockStyleSheet', () => {
 
-    it('should allow custom styles to be created and removed when the stylesheet is destroyed', function(done) {
-      inject(function($compile, $document, $window, $rootElement, $rootScope) {
+    it('should allow custom styles to be created and removed when the stylesheet is destroyed', (done) => {
+      inject(($compile, $document, $window, $rootElement, $rootScope) => {
 
-        let doc = $document[0];
-        let count = doc.styleSheets.length;
-        let stylesheet = createMockStyleSheet($document);
+        const doc = $document[0];
+        const count = doc.styleSheets.length;
+        const stylesheet = createMockStyleSheet($document);
         let elm;
-        let job = createAsync(done);
+        const job = createAsync(done);
         job
-        .runs(function() {
+        .runs(() => {
           expect(doc.styleSheets.length).toBe(count + 1);
 
           angular.element(doc.body).append($rootElement);
@@ -227,10 +227,8 @@ describe('private mocks', function() {
 
           stylesheet.addRule('.padded', 'padding-top:2px');
         })
-        .waitsFor(function() {
-          return getStyle(elm, 'paddingTop') === '2px';
-        })
-        .runs(function() {
+        .waitsFor(() => getStyle(elm, 'paddingTop') === '2px')
+        .runs(() => {
           stylesheet.destroy();
 
           expect(getStyle(elm, 'paddingTop')).toBe('0px');
@@ -239,7 +237,7 @@ describe('private mocks', function() {
         job.start();
 
         function getStyle(element, key) {
-          let node = element[0];
+          const node = element[0];
           return node.currentStyle ?
             node.currentStyle[key] :
             $window.getComputedStyle(node)[key];

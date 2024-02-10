@@ -14,18 +14,16 @@
  * @this
  */
 function $$TaskTrackerFactoryProvider() {
-  this.$get = valueFn(function (log) {
-    return new TaskTracker(log);
-  });
+  this.$get = valueFn((log) => new TaskTracker(log));
 }
 
 function TaskTracker(log) {
-  let self = this;
-  let taskCounts = {};
-  let taskCallbacks = [];
+  const self = this;
+  const taskCounts = {};
+  const taskCallbacks = [];
 
-  let ALL_TASKS_TYPE = (self.ALL_TASKS_TYPE = "$$all$$");
-  let DEFAULT_TASK_TYPE = (self.DEFAULT_TASK_TYPE = "$$default$$");
+  const ALL_TASKS_TYPE = (self.ALL_TASKS_TYPE = "$$all$$");
+  const DEFAULT_TASK_TYPE = (self.DEFAULT_TASK_TYPE = "$$default$$");
 
   /**
    * Execute the specified function and decrement the appropriate `taskCounts` counter.
@@ -63,12 +61,12 @@ function TaskTracker(log) {
     } finally {
       decTaskCount(taskType);
 
-      let countForType = taskCounts[taskType];
-      let countForAll = taskCounts[ALL_TASKS_TYPE];
+      const countForType = taskCounts[taskType];
+      const countForAll = taskCounts[ALL_TASKS_TYPE];
 
       // If at least one of the queues (`ALL_TASKS_TYPE` or `taskType`) is empty, run callbacks.
       if (!countForAll || !countForType) {
-        let getNextCallback = !countForAll
+        const getNextCallback = !countForAll
           ? getLastCallback
           : getLastCallbackForType;
         let nextCb;
@@ -93,13 +91,13 @@ function TaskTracker(log) {
   }
 
   function getLastCallback() {
-    let cbInfo = taskCallbacks.pop();
+    const cbInfo = taskCallbacks.pop();
     return cbInfo && cbInfo.cb;
   }
 
   function getLastCallbackForType(taskType) {
     for (let i = taskCallbacks.length - 1; i >= 0; --i) {
-      let cbInfo = taskCallbacks[i];
+      const cbInfo = taskCallbacks[i];
       if (cbInfo.type === taskType) {
         taskCallbacks.splice(i, 1);
         return cbInfo.cb;

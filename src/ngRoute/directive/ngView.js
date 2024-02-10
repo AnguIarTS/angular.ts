@@ -180,12 +180,12 @@ function ngViewFactory($route, $anchorScroll, $animate) {
     terminal: true,
     priority: 400,
     transclude: "element",
-    link: function (scope, $element, attr, ctrl, $transclude) {
-      let currentScope,
-        currentElement,
-        previousLeaveAnimation,
-        autoScrollExp = attr.autoscroll,
-        onloadExp = attr.onload || "";
+    link(scope, $element, attr, ctrl, $transclude) {
+      let currentScope;
+      let currentElement;
+      let previousLeaveAnimation;
+      const autoScrollExp = attr.autoscroll;
+      const onloadExp = attr.onload || "";
 
       scope.$on("$routeChangeSuccess", update);
       update();
@@ -202,7 +202,7 @@ function ngViewFactory($route, $anchorScroll, $animate) {
         }
         if (currentElement) {
           previousLeaveAnimation = $animate.leave(currentElement);
-          previousLeaveAnimation.done(function (response) {
+          previousLeaveAnimation.done((response) => {
             if (response !== false) previousLeaveAnimation = null;
           });
           currentElement = null;
@@ -210,12 +210,12 @@ function ngViewFactory($route, $anchorScroll, $animate) {
       }
 
       function update() {
-        let locals = $route.current && $route.current.locals,
-          template = locals && locals.$template;
+        const locals = $route.current && $route.current.locals;
+        const template = locals && locals.$template;
 
         if (angular.isDefined(template)) {
-          let newScope = scope.$new();
-          let current = $route.current;
+          const newScope = scope.$new();
+          const { current } = $route;
 
           // Note: This will also link all children of ng-view that were contained in the original
           // html. If that content contains controllers, ... they could pollute/change the scope.
@@ -223,10 +223,10 @@ function ngViewFactory($route, $anchorScroll, $animate) {
           // Note: We can't remove them in the cloneAttchFn of $transclude as that
           // function is called before linking the content, which would apply child
           // directives to non existing elements.
-          let clone = $transclude(newScope, function (clone) {
+          const clone = $transclude(newScope, (clone) => {
             $animate
               .enter(clone, null, currentElement || $element)
-              .done(function onNgViewEnter(response) {
+              .done((response) => {
                 if (
                   response !== false &&
                   angular.isDefined(autoScrollExp) &&
@@ -260,17 +260,17 @@ function ngViewFillContentFactory($compile, $controller, $route) {
   return {
     restrict: "ECA",
     priority: -400,
-    link: function (scope, $element) {
-      let current = $route.current,
-        locals = current.locals;
+    link(scope, $element) {
+      const { current } = $route;
+      const { locals } = current;
 
       $element.html(locals.$template);
 
-      let link = $compile($element.contents());
+      const link = $compile($element.contents());
 
       if (current.controller) {
         locals.$scope = scope;
-        let controller = $controller(current.controller, locals);
+        const controller = $controller(current.controller, locals);
         if (current.controllerAs) {
           scope[current.controllerAs] = controller;
         }

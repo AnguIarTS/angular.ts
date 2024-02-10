@@ -1,6 +1,6 @@
 
 
-describe('Binder', function() {
+describe('Binder', () => {
 
   let element;
 
@@ -11,7 +11,7 @@ describe('Binder', function() {
   beforeEach(function() {
     this.compileToHtml = function(content) {
       let html;
-      inject(function($rootScope, $compile) {
+      inject(($rootScope, $compile) => {
         content = jqLite(content);
         $compile(content)($rootScope);
         html = sortedHtml(content);
@@ -25,31 +25,31 @@ describe('Binder', function() {
     dealoc(this.element);
   });
 
-  it('BindUpdate', inject(function($rootScope, $compile) {
+  it('BindUpdate', inject(($rootScope, $compile) => {
     $compile('<div ng-init="a=123"/>')($rootScope);
     $rootScope.$digest();
     expect($rootScope.a).toBe(123);
   }));
 
-  it('ExecuteInitialization', inject(function($rootScope, $compile) {
+  it('ExecuteInitialization', inject(($rootScope, $compile) => {
     $compile('<div ng-init="a=123">')($rootScope);
     expect($rootScope.a).toBe(123);
   }));
 
-  it('ExecuteInitializationStatements', inject(function($rootScope, $compile) {
+  it('ExecuteInitializationStatements', inject(($rootScope, $compile) => {
     $compile('<div ng-init="a=123;b=345">')($rootScope);
     expect($rootScope.a).toBe(123);
     expect($rootScope.b).toBe(345);
   }));
 
-  it('ApplyTextBindings', inject(function($rootScope, $compile) {
+  it('ApplyTextBindings', inject(($rootScope, $compile) => {
     element = $compile('<div ng-bind="model.a">x</div>')($rootScope);
     $rootScope.model = {a:123};
     $rootScope.$apply();
     expect(element.text()).toBe('123');
   }));
 
-  it('InputTypeButtonActionExecutesInScope', inject(function($rootScope, $compile) {
+  it('InputTypeButtonActionExecutesInScope', inject(($rootScope, $compile) => {
     let savedCalled = false;
     element = $compile(
       '<input type="button" ng-click="person.save()" value="Apply">')($rootScope);
@@ -61,7 +61,7 @@ describe('Binder', function() {
     expect(savedCalled).toBe(true);
   }));
 
-  it('InputTypeButtonActionExecutesInScope2', inject(function($rootScope, $compile) {
+  it('InputTypeButtonActionExecutesInScope2', inject(($rootScope, $compile) => {
     let log = '';
     element = $compile('<input type="image" ng-click="action()">')($rootScope);
     $rootScope.action = function() {
@@ -72,7 +72,7 @@ describe('Binder', function() {
     expect(log).toEqual('click;');
   }));
 
-  it('ButtonElementActionExecutesInScope', inject(function($rootScope, $compile) {
+  it('ButtonElementActionExecutesInScope', inject(($rootScope, $compile) => {
     let savedCalled = false;
     element = $compile('<button ng-click="person.save()">Apply</button>')($rootScope);
     $rootScope.person = {};
@@ -83,13 +83,13 @@ describe('Binder', function() {
     expect(savedCalled).toBe(true);
   }));
 
-  it('RepeaterUpdateBindings', inject(function($rootScope, $compile) {
-    let form = $compile(
+  it('RepeaterUpdateBindings', inject(($rootScope, $compile) => {
+    const form = $compile(
       '<ul>' +
         '<LI ng-repeat="item in model.items" ng-bind="item.a"></LI>' +
       '</ul>')($rootScope);
-    let items = [{a: 'A'}, {a: 'B'}];
-    $rootScope.model = {items: items};
+    const items = [{a: 'A'}, {a: 'B'}];
+    $rootScope.model = {items};
 
     $rootScope.$apply();
     expect(sortedHtml(form)).toBe(
@@ -130,7 +130,7 @@ describe('Binder', function() {
     $rootScope.$apply();
   }));
 
-  it('RepeaterContentDoesNotBind', inject(function($rootScope, $compile) {
+  it('RepeaterContentDoesNotBind', inject(($rootScope, $compile) => {
     element = $compile(
       '<ul>' +
         '<LI ng-repeat="item in model.items"><span ng-bind="item.a"></span></li>' +
@@ -146,13 +146,13 @@ describe('Binder', function() {
   }));
 
   it('DoNotOverwriteCustomAction', function() {
-    let html = this.compileToHtml('<input type="submit" value="Save" action="foo();">');
+    const html = this.compileToHtml('<input type="submit" value="Save" action="foo();">');
     expect(html.indexOf('action="foo();"')).toBeGreaterThan(0);
   });
 
-  it('ItShouldRemoveExtraChildrenWhenIteratingOverHash', inject(function($rootScope, $compile) {
+  it('ItShouldRemoveExtraChildrenWhenIteratingOverHash', inject(($rootScope, $compile) => {
     element = $compile('<div><div ng-repeat="i in items">{{i}}</div></div>')($rootScope);
-    let items = {};
+    const items = {};
     $rootScope.items = items;
 
     $rootScope.$apply();
@@ -167,30 +167,30 @@ describe('Binder', function() {
     expect(element[0].childNodes.length).toEqual(1);
   }));
 
-  it('IfAttrBindingThrowsErrorDecorateTheAttribute', function() {
-    module(function($exceptionHandlerProvider) {
+  it('IfAttrBindingThrowsErrorDecorateTheAttribute', () => {
+    module(($exceptionHandlerProvider) => {
       $exceptionHandlerProvider.mode('log');
     });
-    inject(function($rootScope, $exceptionHandler, $compile) {
+    inject(($rootScope, $exceptionHandler, $compile) => {
       $compile('<div attr="before {{error.throw()}} after"></div>', null, true)($rootScope);
-      let errorLogs = $exceptionHandler.errors;
+      const errorLogs = $exceptionHandler.errors;
       let count = 0;
 
       $rootScope.error = {
-        'throw': function() {throw new Error('ErrorMsg' + (++count));}
+        'throw': function() {throw new Error(`ErrorMsg${  ++count}`);}
       };
       $rootScope.$apply();
       expect(errorLogs.length).not.toEqual(0);
       expect(errorLogs.shift()).toMatch(/ErrorMsg1/);
       errorLogs.length = 0;
 
-      $rootScope.error['throw'] =  function() { return 'X';};
+      $rootScope.error.throw =  function() { return 'X';};
       $rootScope.$apply();
       expect(errorLogs.length).toMatch('0');
     });
   });
 
-  it('NestedRepeater', inject(function($rootScope, $compile) {
+  it('NestedRepeater', inject(($rootScope, $compile) => {
     element = $compile(
       '<div>' +
         '<div ng-repeat="m in model" name="{{m.name}}">' +
@@ -223,7 +223,7 @@ describe('Binder', function() {
         '</div>');
   }));
 
-  it('HideBindingExpression', inject(function($rootScope, $compile) {
+  it('HideBindingExpression', inject(($rootScope, $compile) => {
     element = $compile('<div ng-hide="hidden === 3"/>')($rootScope);
 
     $rootScope.hidden = 3;
@@ -237,7 +237,7 @@ describe('Binder', function() {
     assertVisible(element);
   }));
 
-  it('HideBinding', inject(function($rootScope, $compile) {
+  it('HideBinding', inject(($rootScope, $compile) => {
     element = $compile('<div ng-hide="hidden"/>')($rootScope);
 
     $rootScope.hidden = 'true';
@@ -266,7 +266,7 @@ describe('Binder', function() {
     assertVisible(element);
   }));
 
-  it('ShowBinding', inject(function($rootScope, $compile) {
+  it('ShowBinding', inject(($rootScope, $compile) => {
     element = $compile('<div ng-show="show"/>')($rootScope);
 
     $rootScope.show = 'true';
@@ -296,7 +296,7 @@ describe('Binder', function() {
   }));
 
 
-  it('BindClass', inject(function($rootScope, $compile) {
+  it('BindClass', inject(($rootScope, $compile) => {
     element = $compile('<div ng-class="clazz"/>')($rootScope);
 
     $rootScope.clazz = 'testClass';
@@ -310,15 +310,15 @@ describe('Binder', function() {
     expect(sortedHtml(element)).toBe('<div class="a b" ng-class="clazz"></div>');
   }));
 
-  it('BindClassEvenOdd', inject(function($rootScope, $compile) {
+  it('BindClassEvenOdd', inject(($rootScope, $compile) => {
     element = $compile(
       '<div>' +
         '<div ng-repeat="i in [0,1]" ng-class-even="\'e\'" ng-class-odd="\'o\'"></div>' +
       '</div>')($rootScope);
     $rootScope.$apply();
 
-    let d1 = jqLite(element[0].childNodes[1]);
-    let d2 = jqLite(element[0].childNodes[3]);
+    const d1 = jqLite(element[0].childNodes[1]);
+    const d2 = jqLite(element[0].childNodes[3]);
     expect(d1.hasClass('o')).toBeTruthy();
     expect(d2.hasClass('e')).toBeTruthy();
     expect(sortedHtml(element)).toBe(
@@ -331,7 +331,7 @@ describe('Binder', function() {
         '</div>');
   }));
 
-  it('BindStyle', inject(function($rootScope, $compile) {
+  it('BindStyle', inject(($rootScope, $compile) => {
     element = $compile('<div ng-style="style"/>')($rootScope);
 
     $rootScope.$eval('style={height: "10px"}');
@@ -343,12 +343,12 @@ describe('Binder', function() {
     $rootScope.$apply();
   }));
 
-  it('ActionOnAHrefThrowsError', function() {
-    module(function($exceptionHandlerProvider) {
+  it('ActionOnAHrefThrowsError', () => {
+    module(($exceptionHandlerProvider) => {
       $exceptionHandlerProvider.mode('log');
     });
-    inject(function($rootScope, $exceptionHandler, $compile) {
-      let input = $compile('<a ng-click="action()">Add Phone</a>')($rootScope);
+    inject(($rootScope, $exceptionHandler, $compile) => {
+      const input = $compile('<a ng-click="action()">Add Phone</a>')($rootScope);
       $rootScope.action = function() {
         throw new Error('MyError');
       };
@@ -357,7 +357,7 @@ describe('Binder', function() {
     });
   });
 
-  it('ShouldIgnoreVbNonBindable', inject(function($rootScope, $compile) {
+  it('ShouldIgnoreVbNonBindable', inject(($rootScope, $compile) => {
     element = $compile(
       '<div>{{a}}' +
         '<div ng-non-bindable>{{a}}</div>' +
@@ -369,7 +369,7 @@ describe('Binder', function() {
     expect(element.text()).toBe('123{{a}}{{b}}{{c}}');
   }));
 
-  it('ShouldTemplateBindPreElements', inject(function($rootScope, $compile) {
+  it('ShouldTemplateBindPreElements', inject(($rootScope, $compile) => {
     element = $compile('<pre>Hello {{name}}!</pre>')($rootScope);
     $rootScope.name = 'World';
     $rootScope.$apply();
@@ -377,7 +377,7 @@ describe('Binder', function() {
     expect(sortedHtml(element)).toBe('<pre>Hello World!</pre>');
   }));
 
-  it('FillInOptionValueWhenMissing', inject(function($rootScope, $compile) {
+  it('FillInOptionValueWhenMissing', inject(($rootScope, $compile) => {
     element = $compile(
         '<select ng-model="foo">' +
           '<option selected="true">{{a}}</option>' +
@@ -387,9 +387,9 @@ describe('Binder', function() {
     $rootScope.a = 'A';
     $rootScope.b = 'B';
     $rootScope.$apply();
-    let optionA = childNode(element, 0);
-    let optionB = childNode(element, 1);
-    let optionC = childNode(element, 2);
+    const optionA = childNode(element, 0);
+    const optionB = childNode(element, 1);
+    const optionC = childNode(element, 2);
 
     expect(optionA.attr('value')).toEqual('A');
     expect(optionA.text()).toEqual('A');
@@ -401,7 +401,7 @@ describe('Binder', function() {
     expect(optionC.text()).toEqual('C');
   }));
 
-  it('ItShouldSelectTheCorrectRadioBox', inject(function($rootScope, $compile, $rootElement, $document) {
+  it('ItShouldSelectTheCorrectRadioBox', inject(($rootScope, $compile, $rootElement, $document) => {
     element = $compile(
       '<div>' +
         '<input type="radio" ng-model="sex" value="female">' +
@@ -412,8 +412,8 @@ describe('Binder', function() {
     // Support: Chrome, Safari 8, 9
     jqLite($document[0].body).append($rootElement.append(element));
 
-    let female = jqLite(element[0].childNodes[0]);
-    let male = jqLite(element[0].childNodes[1]);
+    const female = jqLite(element[0].childNodes[0]);
+    const male = jqLite(element[0].childNodes[1]);
 
     browserTrigger(female);
     expect($rootScope.sex).toBe('female');
@@ -428,7 +428,7 @@ describe('Binder', function() {
     expect(male.val()).toBe('male');
   }));
 
-  it('ItShouldRepeatOnHashes', inject(function($rootScope, $compile) {
+  it('ItShouldRepeatOnHashes', inject(($rootScope, $compile) => {
     element = $compile(
       '<ul>' +
         '<li ng-repeat="(k,v) in {a:0,b:1}" ng-bind="k + v"></li>' +
@@ -444,10 +444,10 @@ describe('Binder', function() {
         '</ul>');
   }));
 
-  it('ItShouldFireChangeListenersBeforeUpdate', inject(function($rootScope, $compile) {
+  it('ItShouldFireChangeListenersBeforeUpdate', inject(($rootScope, $compile) => {
     element = $compile('<div ng-bind="name"></div>')($rootScope);
     $rootScope.name = '';
-    $rootScope.$watch('watched', function() {
+    $rootScope.$watch('watched', () => {
       $rootScope.name = 123;
     });
     $rootScope.watched = 'change';
@@ -456,7 +456,7 @@ describe('Binder', function() {
     expect(sortedHtml(element)).toBe('<div ng-bind="name">123</div>');
   }));
 
-  it('ItShouldHandleMultilineBindings', inject(function($rootScope, $compile) {
+  it('ItShouldHandleMultilineBindings', inject(($rootScope, $compile) => {
     element = $compile('<div>{{\n 1 \n + \n 2 \n}}</div>')($rootScope);
     $rootScope.$apply();
     expect(element.text()).toBe('3');

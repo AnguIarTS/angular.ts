@@ -11,21 +11,21 @@ import { minErr } from "./minErr";
 import { isDefined, isFunction, isObject } from "./ng/utils";
 
 export function setupModuleLoader(window) {
-  let $injectorMinErr = minErr("$injector");
-  let ngMinErr = minErr("ng");
+  const $injectorMinErr = minErr("$injector");
+  const ngMinErr = minErr("ng");
 
   function ensure(obj, name, factory) {
     return obj[name] || (obj[name] = factory());
   }
 
-  let angular = ensure(window, "angular", Object);
+  const angular = ensure(window, "angular", Object);
 
   // We need to expose `angular.$$minErr` to modules such as `ngResource` that reference it during bootstrap
   angular.$$minErr = angular.$$minErr || minErr;
 
-  return ensure(angular, "module", function () {
+  return ensure(angular, "module", () => {
     /** @type {Object.<string, angular.Module>} */
-    let modules = {};
+    const modules = {};
 
     /**
      * @ngdoc function
@@ -81,7 +81,7 @@ export function setupModuleLoader(window) {
     return function module(name, requires, configFn) {
       let info = {};
 
-      let assertNotHasOwnProperty = function (name, context) {
+      const assertNotHasOwnProperty = function (name, context) {
         if (name === "hasOwnProperty") {
           throw ngMinErr(
             "badname",
@@ -95,7 +95,7 @@ export function setupModuleLoader(window) {
       if (requires && modules.hasOwnProperty(name)) {
         modules[name] = null;
       }
-      return ensure(modules, name, function () {
+      return ensure(modules, name, () => {
         if (!requires) {
           throw $injectorMinErr(
             "nomod",
@@ -107,18 +107,18 @@ export function setupModuleLoader(window) {
         }
 
         /** @type {!Array.<Array.<*>>} */
-        let invokeQueue = [];
+        const invokeQueue = [];
 
         /** @type {!Array.<Function>} */
-        let configBlocks = [];
+        const configBlocks = [];
 
         /** @type {!Array.<Function>} */
-        let runBlocks = [];
+        const runBlocks = [];
 
-        let config = invokeLater("$injector", "invoke", "push", configBlocks);
+        const config = invokeLater("$injector", "invoke", "push", configBlocks);
 
         /** @type {angular.Module} */
-        let moduleInstance = {
+        const moduleInstance = {
           // Private state
           _invokeQueue: invokeQueue,
           _configBlocks: configBlocks,
@@ -154,7 +154,7 @@ export function setupModuleLoader(window) {
            * let version = $injector.modules['myModule'].info().version;
            * ```
            */
-          info: function (value) {
+          info(value) {
             if (isDefined(value)) {
               if (!isObject(value))
                 throw ngMinErr(
@@ -177,7 +177,7 @@ export function setupModuleLoader(window) {
            * Holds the list of modules which the injector will load before the current module is
            * loaded.
            */
-          requires: requires,
+          requires,
 
           /**
            * @ngdoc property
@@ -187,7 +187,7 @@ export function setupModuleLoader(window) {
            * @description
            * Name of the module.
            */
-          name: name,
+          name,
 
           /**
            * @ngdoc method
@@ -382,7 +382,7 @@ export function setupModuleLoader(window) {
            * For more about how to configure services, see
            * {@link providers#provider-recipe Provider Recipe}.
            */
-          config: config,
+          config,
 
           /**
            * @ngdoc method
@@ -394,7 +394,7 @@ export function setupModuleLoader(window) {
            * Use this method to register work which should be performed when the injector is done
            * loading all modules.
            */
-          run: function (block) {
+          run(block) {
             runBlocks.push(block);
             return this;
           },

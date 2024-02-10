@@ -1,7 +1,7 @@
 /* global getHash: true, stripHash: false */
 
 export function getHash(url) {
-  let index = url.indexOf("#");
+  const index = url.indexOf("#");
   return index === -1 ? "" : url.substr(index);
 }
 
@@ -37,19 +37,19 @@ export function Browser(
   $sniffer,
   $$taskTrackerFactory,
 ) {
-  let self = this,
-    location = window.location,
-    history = window.history,
-    setTimeout = window.setTimeout,
-    clearTimeout = window.clearTimeout,
-    pendingDeferIds = {},
-    taskTracker = $$taskTrackerFactory($log);
+  const self = this;
+  let { location } = window;
+  let { history } = window;
+  const { setTimeout } = window;
+  const { clearTimeout } = window;
+  const pendingDeferIds = {};
+  const taskTracker = $$taskTrackerFactory($log);
 
   self.isMock = false;
 
-  //////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////
   // Task-tracking API
-  //////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////
 
   // TODO(vojta): remove this temporary api
   self.$$completeOutstandingRequest = taskTracker.completeTask;
@@ -58,20 +58,20 @@ export function Browser(
   // TODO(vojta): prefix this method with $$ ?
   self.notifyWhenNoOutstandingRequests = taskTracker.notifyWhenNoPendingTasks;
 
-  //////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////
   // URL API
-  //////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////
 
-  let cachedState,
-    lastHistoryState,
-    lastBrowserUrl = location.href,
-    baseElement = document.find("base"),
-    pendingLocation = null,
-    getCurrentState = !$sniffer.history
-      ? noop
-      : function getCurrentState() {
-          return history.state;
-        };
+  let cachedState;
+  let lastHistoryState;
+  let lastBrowserUrl = location.href;
+  const baseElement = document.find("base");
+  let pendingLocation = null;
+  const getCurrentState = !$sniffer.history
+    ? noop
+    : function getCurrentState() {
+        return history.state;
+      };
 
   cacheState();
 
@@ -110,7 +110,7 @@ export function Browser(
 
     // setter
     if (url) {
-      let sameState = lastHistoryState === state;
+      const sameState = lastHistoryState === state;
 
       // Normalize the inputted URL
       url = urlResolve(url).href;
@@ -121,7 +121,7 @@ export function Browser(
       if (lastBrowserUrl === url && (!$sniffer.history || sameState)) {
         return self;
       }
-      let sameBase =
+      const sameBase =
         lastBrowserUrl && stripHash(lastBrowserUrl) === stripHash(url);
       lastBrowserUrl = url;
       lastHistoryState = state;
@@ -152,12 +152,11 @@ export function Browser(
       }
       return self;
       // getter
-    } else {
-      // - pendingLocation is needed as browsers don't allow to read out
-      //   the new location.href if a reload happened or if there is a bug like in iOS 9 (see
-      //   https://openradar.appspot.com/22186109).
-      return trimEmptyHash(pendingLocation || location.href);
     }
+    // - pendingLocation is needed as browsers don't allow to read out
+    //   the new location.href if a reload happened or if there is a bug like in iOS 9 (see
+    //   https://openradar.appspot.com/22186109).
+    return trimEmptyHash(pendingLocation || location.href);
   };
 
   /**
@@ -174,8 +173,8 @@ export function Browser(
     return cachedState;
   };
 
-  let urlChangeListeners = [],
-    urlChangeInit = false;
+  const urlChangeListeners = [];
+  let urlChangeInit = false;
 
   function cacheStateAndFireUrlChange() {
     pendingLocation = null;
@@ -199,7 +198,7 @@ export function Browser(
   }
 
   function fireStateOrUrlChange() {
-    let prevLastHistoryState = lastHistoryState;
+    const prevLastHistoryState = lastHistoryState;
     cacheState();
 
     if (lastBrowserUrl === self.url() && prevLastHistoryState === cachedState) {
@@ -208,7 +207,7 @@ export function Browser(
 
     lastBrowserUrl = self.url();
     lastHistoryState = cachedState;
-    forEach(urlChangeListeners, function (listener) {
+    forEach(urlChangeListeners, (listener) => {
       listener(self.url(), cachedState);
     });
   }
@@ -271,9 +270,9 @@ export function Browser(
    */
   self.$$checkUrlChange = fireStateOrUrlChange;
 
-  //////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////
   // Misc API
-  //////////////////////////////////////////////////////////////
+  /// ///////////////////////////////////////////////////////////
 
   /**
    * @name $browser#baseHref
@@ -285,7 +284,7 @@ export function Browser(
    * @returns {string} The current base href
    */
   self.baseHref = function () {
-    let href = baseElement.attr("href");
+    const href = baseElement.attr("href");
     return href ? href.replace(/^(https?:)?\/\/[^/]*/, "") : "";
   };
 
@@ -311,7 +310,7 @@ export function Browser(
     taskType = taskType || taskTracker.DEFAULT_TASK_TYPE;
 
     taskTracker.incTaskCount(taskType);
-    timeoutId = setTimeout(function () {
+    timeoutId = setTimeout(() => {
       delete pendingDeferIds[timeoutId];
       taskTracker.completeTask(fn, taskType);
     }, delay);
@@ -332,7 +331,7 @@ export function Browser(
    */
   self.defer.cancel = function (deferId) {
     if (pendingDeferIds.hasOwnProperty(deferId)) {
-      let taskType = pendingDeferIds[deferId];
+      const taskType = pendingDeferIds[deferId];
       delete pendingDeferIds[deferId];
       clearTimeout(deferId);
       taskTracker.completeTask(noop, taskType);

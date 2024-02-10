@@ -87,24 +87,24 @@
  * </example>
  *
  */
-let ngListDirective = function () {
+const ngListDirective = function () {
   return {
     restrict: "A",
     priority: 100,
     require: "ngModel",
-    link: function (scope, element, attr, ctrl) {
-      let ngList = attr.ngList || ", ";
-      let trimValues = attr.ngTrim !== "false";
-      let separator = trimValues ? trim(ngList) : ngList;
+    link(scope, element, attr, ctrl) {
+      const ngList = attr.ngList || ", ";
+      const trimValues = attr.ngTrim !== "false";
+      const separator = trimValues ? trim(ngList) : ngList;
 
-      let parse = function (viewValue) {
+      const parse = function (viewValue) {
         // If the viewValue is invalid (say required but empty) it will be `undefined`
         if (isUndefined(viewValue)) return;
 
-        let list = [];
+        const list = [];
 
         if (viewValue) {
-          forEach(viewValue.split(separator), function (value) {
+          forEach(viewValue.split(separator), (value) => {
             if (value) list.push(trimValues ? trim(value) : value);
           });
         }
@@ -113,7 +113,7 @@ let ngListDirective = function () {
       };
 
       ctrl.$parsers.push(parse);
-      ctrl.$formatters.push(function (value) {
+      ctrl.$formatters.push((value) => {
         if (isArray(value)) {
           return value.join(ngList);
         }

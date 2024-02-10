@@ -9,9 +9,9 @@
  *     Or gives undesired access to variables likes document or window?    *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-let $parseMinErr = minErr("$parse");
+const $parseMinErr = minErr("$parse");
 
-let objectValueOf = {}.constructor.prototype.valueOf;
+const objectValueOf = {}.constructor.prototype.valueOf;
 
 // Sandboxing AngularJS Expressions
 // ------------------------------
@@ -42,17 +42,17 @@ function getStringValue(name) {
   // For performance reasons, we don't catch this error here and allow it to propagate up the call
   // stack. Note that you'll get the same error in JavaScript if you try to access a property using
   // such a 'broken' object as a key.
-  return name + "";
+  return `${name}`;
 }
 
-let OPERATORS = createMap();
+const OPERATORS = createMap();
 forEach(
   "+ - * / % === !== == != < > <= >= && || ! = |".split(" "),
-  function (operator) {
+  (operator) => {
     OPERATORS[operator] = true;
   },
 );
-let ESCAPE = {
+const ESCAPE = {
   n: "\n",
   f: "\f",
   r: "\r",
@@ -62,25 +62,25 @@ let ESCAPE = {
   '"': '"',
 };
 
-/////////////////////////////////////////
+/// //////////////////////////////////////
 
 /**
  * @constructor
  */
-let Lexer = function Lexer(options) {
+const Lexer = function Lexer(options) {
   this.options = options;
 };
 
 Lexer.prototype = {
   constructor: Lexer,
 
-  lex: function (text) {
+  lex(text) {
     this.text = text;
     this.index = 0;
     this.tokens = [];
 
     while (this.index < this.text.length) {
-      let ch = this.text.charAt(this.index);
+      const ch = this.text.charAt(this.index);
       if (ch === '"' || ch === "'") {
         this.readString(ch);
       } else if (
@@ -96,13 +96,13 @@ Lexer.prototype = {
       } else if (this.isWhitespace(ch)) {
         this.index++;
       } else {
-        let ch2 = ch + this.peek();
-        let ch3 = ch2 + this.peek(2);
-        let op1 = OPERATORS[ch];
-        let op2 = OPERATORS[ch2];
-        let op3 = OPERATORS[ch3];
+        const ch2 = ch + this.peek();
+        const ch3 = ch2 + this.peek(2);
+        const op1 = OPERATORS[ch];
+        const op2 = OPERATORS[ch2];
+        const op3 = OPERATORS[ch3];
         if (op1 || op2 || op3) {
-          let token = op3 ? ch3 : op2 ? ch2 : ch;
+          const token = op3 ? ch3 : op2 ? ch2 : ch;
           this.tokens.push({ index: this.index, text: token, operator: true });
           this.index += token.length;
         } else {
@@ -117,22 +117,22 @@ Lexer.prototype = {
     return this.tokens;
   },
 
-  is: function (ch, chars) {
+  is(ch, chars) {
     return chars.indexOf(ch) !== -1;
   },
 
-  peek: function (i) {
-    let num = i || 1;
+  peek(i) {
+    const num = i || 1;
     return this.index + num < this.text.length
       ? this.text.charAt(this.index + num)
       : false;
   },
 
-  isNumber: function (ch) {
-    return "0" <= ch && ch <= "9" && typeof ch === "string";
+  isNumber(ch) {
+    return ch >= "0" && ch <= "9" && typeof ch === "string";
   },
 
-  isWhitespace: function (ch) {
+  isWhitespace(ch) {
     // IE treats non-breaking space as \u00A0
     return (
       ch === " " ||
@@ -144,66 +144,60 @@ Lexer.prototype = {
     );
   },
 
-  isIdentifierStart: function (ch) {
+  isIdentifierStart(ch) {
     return this.options.isIdentifierStart
       ? this.options.isIdentifierStart(ch, this.codePointAt(ch))
       : this.isValidIdentifierStart(ch);
   },
 
-  isValidIdentifierStart: function (ch) {
+  isValidIdentifierStart(ch) {
     return (
-      ("a" <= ch && ch <= "z") ||
-      ("A" <= ch && ch <= "Z") ||
-      "_" === ch ||
+      (ch >= "a" && ch <= "z") ||
+      (ch >= "A" && ch <= "Z") ||
+      ch === "_" ||
       ch === "$"
     );
   },
 
-  isIdentifierContinue: function (ch) {
+  isIdentifierContinue(ch) {
     return this.options.isIdentifierContinue
       ? this.options.isIdentifierContinue(ch, this.codePointAt(ch))
       : this.isValidIdentifierContinue(ch);
   },
 
-  isValidIdentifierContinue: function (ch, cp) {
+  isValidIdentifierContinue(ch, cp) {
     return this.isValidIdentifierStart(ch, cp) || this.isNumber(ch);
   },
 
-  codePointAt: function (ch) {
+  codePointAt(ch) {
     if (ch.length === 1) return ch.charCodeAt(0);
     // eslint-disable-next-line no-bitwise
     return (ch.charCodeAt(0) << 10) + ch.charCodeAt(1) - 0x35fdc00;
   },
 
-  peekMultichar: function () {
-    let ch = this.text.charAt(this.index);
-    let peek = this.peek();
+  peekMultichar() {
+    const ch = this.text.charAt(this.index);
+    const peek = this.peek();
     if (!peek) {
       return ch;
     }
-    let cp1 = ch.charCodeAt(0);
-    let cp2 = peek.charCodeAt(0);
+    const cp1 = ch.charCodeAt(0);
+    const cp2 = peek.charCodeAt(0);
     if (cp1 >= 0xd800 && cp1 <= 0xdbff && cp2 >= 0xdc00 && cp2 <= 0xdfff) {
       return ch + peek;
     }
     return ch;
   },
 
-  isExpOperator: function (ch) {
+  isExpOperator(ch) {
     return ch === "-" || ch === "+" || this.isNumber(ch);
   },
 
-  throwError: function (error, start, end) {
+  throwError(error, start, end) {
     end = end || this.index;
-    let colStr = isDefined(start)
-      ? "s " +
-        start +
-        "-" +
-        this.index +
-        " [" +
-        this.text.substring(start, end) +
-        "]"
-      : " " + end;
+    const colStr = isDefined(start)
+      ? `s ${start}-${this.index} [${this.text.substring(start, end)}]`
+      : ` ${end}`;
     throw $parseMinErr(
       "lexerr",
       "Lexer Error: {0} at column{1} in expression [{2}].",
@@ -213,15 +207,15 @@ Lexer.prototype = {
     );
   },
 
-  readNumber: function () {
+  readNumber() {
     let number = "";
-    let start = this.index;
+    const start = this.index;
     while (this.index < this.text.length) {
-      let ch = lowercase(this.text.charAt(this.index));
+      const ch = lowercase(this.text.charAt(this.index));
       if (ch === "." || this.isNumber(ch)) {
         number += ch;
       } else {
-        let peekCh = this.peek();
+        const peekCh = this.peek();
         if (ch === "e" && this.isExpOperator(peekCh)) {
           number += ch;
         } else if (
@@ -251,11 +245,11 @@ Lexer.prototype = {
     });
   },
 
-  readIdent: function () {
-    let start = this.index;
+  readIdent() {
+    const start = this.index;
     this.index += this.peekMultichar().length;
     while (this.index < this.text.length) {
-      let ch = this.peekMultichar();
+      const ch = this.peekMultichar();
       if (!this.isIdentifierContinue(ch)) {
         break;
       }
@@ -268,26 +262,26 @@ Lexer.prototype = {
     });
   },
 
-  readString: function (quote) {
-    let start = this.index;
+  readString(quote) {
+    const start = this.index;
     this.index++;
     let string = "";
     let rawString = quote;
     let escape = false;
     while (this.index < this.text.length) {
-      let ch = this.text.charAt(this.index);
+      const ch = this.text.charAt(this.index);
       rawString += ch;
       if (escape) {
         if (ch === "u") {
-          let hex = this.text.substring(this.index + 1, this.index + 5);
+          const hex = this.text.substring(this.index + 1, this.index + 5);
           if (!hex.match(/[\da-f]{4}/i)) {
-            this.throwError("Invalid unicode escape [\\u" + hex + "]");
+            this.throwError(`Invalid unicode escape [\\u${hex}]`);
           }
           this.index += 4;
           string += String.fromCharCode(parseInt(hex, 16));
         } else {
-          let rep = ESCAPE[ch];
-          string = string + (rep || ch);
+          const rep = ESCAPE[ch];
+          string += rep || ch;
         }
         escape = false;
       } else if (ch === "\\") {
@@ -310,7 +304,7 @@ Lexer.prototype = {
   },
 };
 
-let AST = function AST(lexer, options) {
+const AST = function AST(lexer, options) {
   this.lexer = lexer;
   this.options = options;
 };
@@ -336,11 +330,11 @@ AST.LocalsExpression = "LocalsExpression";
 AST.NGValueParameter = "NGValueParameter";
 
 AST.prototype = {
-  ast: function (text) {
+  ast(text) {
     this.text = text;
     this.tokens = this.lexer.lex(text);
 
-    let value = this.program();
+    const value = this.program();
 
     if (this.tokens.length !== 0) {
       this.throwError("is an unexpected token", this.tokens[0]);
@@ -349,22 +343,22 @@ AST.prototype = {
     return value;
   },
 
-  program: function () {
-    let body = [];
+  program() {
+    const body = [];
     while (true) {
       if (this.tokens.length > 0 && !this.peek("}", ")", ";", "]"))
         body.push(this.expressionStatement());
       if (!this.expect(";")) {
-        return { type: AST.Program, body: body };
+        return { type: AST.Program, body };
       }
     }
   },
 
-  expressionStatement: function () {
+  expressionStatement() {
     return { type: AST.ExpressionStatement, expression: this.filterChain() };
   },
 
-  filterChain: function () {
+  filterChain() {
     let left = this.expression();
     while (this.expect("|")) {
       left = this.filter(left);
@@ -372,11 +366,11 @@ AST.prototype = {
     return left;
   },
 
-  expression: function () {
+  expression() {
     return this.assignment();
   },
 
-  assignment: function () {
+  assignment() {
     let result = this.ternary();
     if (this.expect("=")) {
       if (!isAssignable(result)) {
@@ -393,8 +387,8 @@ AST.prototype = {
     return result;
   },
 
-  ternary: function () {
-    let test = this.logicalOR();
+  ternary() {
+    const test = this.logicalOR();
     let alternate;
     let consequent;
     if (this.expect("?")) {
@@ -403,98 +397,98 @@ AST.prototype = {
         consequent = this.expression();
         return {
           type: AST.ConditionalExpression,
-          test: test,
-          alternate: alternate,
-          consequent: consequent,
+          test,
+          alternate,
+          consequent,
         };
       }
     }
     return test;
   },
 
-  logicalOR: function () {
+  logicalOR() {
     let left = this.logicalAND();
     while (this.expect("||")) {
       left = {
         type: AST.LogicalExpression,
         operator: "||",
-        left: left,
+        left,
         right: this.logicalAND(),
       };
     }
     return left;
   },
 
-  logicalAND: function () {
+  logicalAND() {
     let left = this.equality();
     while (this.expect("&&")) {
       left = {
         type: AST.LogicalExpression,
         operator: "&&",
-        left: left,
+        left,
         right: this.equality(),
       };
     }
     return left;
   },
 
-  equality: function () {
+  equality() {
     let left = this.relational();
     let token;
     while ((token = this.expect("==", "!=", "===", "!=="))) {
       left = {
         type: AST.BinaryExpression,
         operator: token.text,
-        left: left,
+        left,
         right: this.relational(),
       };
     }
     return left;
   },
 
-  relational: function () {
+  relational() {
     let left = this.additive();
     let token;
     while ((token = this.expect("<", ">", "<=", ">="))) {
       left = {
         type: AST.BinaryExpression,
         operator: token.text,
-        left: left,
+        left,
         right: this.additive(),
       };
     }
     return left;
   },
 
-  additive: function () {
+  additive() {
     let left = this.multiplicative();
     let token;
     while ((token = this.expect("+", "-"))) {
       left = {
         type: AST.BinaryExpression,
         operator: token.text,
-        left: left,
+        left,
         right: this.multiplicative(),
       };
     }
     return left;
   },
 
-  multiplicative: function () {
+  multiplicative() {
     let left = this.unary();
     let token;
     while ((token = this.expect("*", "/", "%"))) {
       left = {
         type: AST.BinaryExpression,
         operator: token.text,
-        left: left,
+        left,
         right: this.unary(),
       };
     }
     return left;
   },
 
-  unary: function () {
+  unary() {
     let token;
     if ((token = this.expect("+", "-", "!"))) {
       return {
@@ -503,12 +497,11 @@ AST.prototype = {
         prefix: true,
         argument: this.unary(),
       };
-    } else {
-      return this.primary();
     }
+    return this.primary();
   },
 
-  primary: function () {
+  primary() {
     let primary;
     if (this.expect("(")) {
       primary = this.filterChain();
@@ -563,9 +556,9 @@ AST.prototype = {
     return primary;
   },
 
-  filter: function (baseExpression) {
-    let args = [baseExpression];
-    let result = {
+  filter(baseExpression) {
+    const args = [baseExpression];
+    const result = {
       type: AST.CallExpression,
       callee: this.identifier(),
       arguments: args,
@@ -579,8 +572,8 @@ AST.prototype = {
     return result;
   },
 
-  parseArguments: function () {
-    let args = [];
+  parseArguments() {
+    const args = [];
     if (this.peekToken().text !== ")") {
       do {
         args.push(this.filterChain());
@@ -589,21 +582,21 @@ AST.prototype = {
     return args;
   },
 
-  identifier: function () {
-    let token = this.consume();
+  identifier() {
+    const token = this.consume();
     if (!token.identifier) {
       this.throwError("is not a valid identifier", token);
     }
     return { type: AST.Identifier, name: token.text };
   },
 
-  constant: function () {
+  constant() {
     // TODO check that it is a constant
     return { type: AST.Literal, value: this.consume().value };
   },
 
-  arrayDeclaration: function () {
-    let elements = [];
+  arrayDeclaration() {
+    const elements = [];
     if (this.peekToken().text !== "]") {
       do {
         if (this.peek("]")) {
@@ -615,12 +608,12 @@ AST.prototype = {
     }
     this.consume("]");
 
-    return { type: AST.ArrayExpression, elements: elements };
+    return { type: AST.ArrayExpression, elements };
   },
 
-  object: function () {
-    let properties = [],
-      property;
+  object() {
+    const properties = [];
+    let property;
     if (this.peekToken().text !== "}") {
       do {
         if (this.peek("}")) {
@@ -657,10 +650,10 @@ AST.prototype = {
     }
     this.consume("}");
 
-    return { type: AST.ObjectExpression, properties: properties };
+    return { type: AST.ObjectExpression, properties };
   },
 
-  throwError: function (msg, token) {
+  throwError(msg, token) {
     throw $parseMinErr(
       "syntax",
       "Syntax Error: Token '{0}' {1} at column {2} of the expression [{3}] starting at [{4}].",
@@ -672,7 +665,7 @@ AST.prototype = {
     );
   },
 
-  consume: function (e1) {
+  consume(e1) {
     if (this.tokens.length === 0) {
       throw $parseMinErr(
         "ueoe",
@@ -681,14 +674,14 @@ AST.prototype = {
       );
     }
 
-    let token = this.expect(e1);
+    const token = this.expect(e1);
     if (!token) {
-      this.throwError("is unexpected, expecting [" + e1 + "]", this.peek());
+      this.throwError(`is unexpected, expecting [${e1}]`, this.peek());
     }
     return token;
   },
 
-  peekToken: function () {
+  peekToken() {
     if (this.tokens.length === 0) {
       throw $parseMinErr(
         "ueoe",
@@ -699,14 +692,14 @@ AST.prototype = {
     return this.tokens[0];
   },
 
-  peek: function (e1, e2, e3, e4) {
+  peek(e1, e2, e3, e4) {
     return this.peekAhead(0, e1, e2, e3, e4);
   },
 
-  peekAhead: function (i, e1, e2, e3, e4) {
+  peekAhead(i, e1, e2, e3, e4) {
     if (this.tokens.length > i) {
-      let token = this.tokens[i];
-      let t = token.text;
+      const token = this.tokens[i];
+      const t = token.text;
       if (
         t === e1 ||
         t === e2 ||
@@ -720,8 +713,8 @@ AST.prototype = {
     return false;
   },
 
-  expect: function (e1, e2, e3, e4) {
-    let token = this.peek(e1, e2, e3, e4);
+  expect(e1, e2, e3, e4) {
+    const token = this.peek(e1, e2, e3, e4);
     if (token) {
       this.tokens.shift();
       return token;
@@ -746,12 +739,12 @@ function plusFn(l, r) {
 }
 
 function isStateless($filter, filterName) {
-  let fn = $filter(filterName);
+  const fn = $filter(filterName);
   return !fn.$stateful;
 }
 
-let PURITY_ABSOLUTE = 1;
-let PURITY_RELATIVE = 2;
+const PURITY_ABSOLUTE = 1;
+const PURITY_RELATIVE = 2;
 
 // Detect nodes which could depend on non-shallow state of objects
 function isPure(node, parentIsPure) {
@@ -784,12 +777,12 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
   let argsToWatch;
   let isStatelessFilter;
 
-  let astIsPure = (ast.isPure = isPure(ast, parentIsPure));
+  const astIsPure = (ast.isPure = isPure(ast, parentIsPure));
 
   switch (ast.type) {
     case AST.Program:
       allConstants = true;
-      forEach(ast.body, function (expr) {
+      forEach(ast.body, (expr) => {
         findConstantAndWatchExpressions(expr.expression, $filter, astIsPure);
         allConstants = allConstants && expr.expression.constant;
       });
@@ -843,7 +836,7 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
         : false;
       allConstants = isStatelessFilter;
       argsToWatch = [];
-      forEach(ast.arguments, function (expr) {
+      forEach(ast.arguments, (expr) => {
         findConstantAndWatchExpressions(expr, $filter, astIsPure);
         allConstants = allConstants && expr.constant;
         argsToWatch.push.apply(argsToWatch, expr.toWatch);
@@ -860,7 +853,7 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
     case AST.ArrayExpression:
       allConstants = true;
       argsToWatch = [];
-      forEach(ast.elements, function (expr) {
+      forEach(ast.elements, (expr) => {
         findConstantAndWatchExpressions(expr, $filter, astIsPure);
         allConstants = allConstants && expr.constant;
         argsToWatch.push.apply(argsToWatch, expr.toWatch);
@@ -871,16 +864,16 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
     case AST.ObjectExpression:
       allConstants = true;
       argsToWatch = [];
-      forEach(ast.properties, function (property) {
+      forEach(ast.properties, (property) => {
         findConstantAndWatchExpressions(property.value, $filter, astIsPure);
         allConstants = allConstants && property.value.constant;
         argsToWatch.push.apply(argsToWatch, property.value.toWatch);
         if (property.computed) {
-          //`{[key]: value}` implicitly does `key.toString()` which may be non-pure
+          // `{[key]: value}` implicitly does `key.toString()` which may be non-pure
           findConstantAndWatchExpressions(
             property.key,
             $filter,
-            /*parentIsPure=*/ false,
+            /* parentIsPure= */ false,
           );
           allConstants = allConstants && property.key.constant;
           argsToWatch.push.apply(argsToWatch, property.key.toWatch);
@@ -902,8 +895,8 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
 
 function getInputs(body) {
   if (body.length !== 1) return;
-  let lastExpression = body[0].expression;
-  let candidate = lastExpression.toWatch;
+  const lastExpression = body[0].expression;
+  const candidate = lastExpression.toWatch;
   if (candidate.length !== 1) return candidate;
   return candidate[0] !== lastExpression ? candidate : undefined;
 }
@@ -942,8 +935,8 @@ function ASTCompiler($filter) {
 }
 
 ASTCompiler.prototype = {
-  compile: function (ast) {
-    let self = this;
+  compile(ast) {
+    const self = this;
     this.state = {
       nextId: 0,
       filters: {},
@@ -957,18 +950,18 @@ ASTCompiler.prototype = {
     this.stage = "assign";
     if ((assignable = assignableAST(ast))) {
       this.state.computing = "assign";
-      let result = this.nextId();
+      const result = this.nextId();
       this.recurse(assignable, result);
       this.return_(result);
-      extra = "fn.assign=" + this.generateFunction("assign", "s,v,l");
+      extra = `fn.assign=${this.generateFunction("assign", "s,v,l")}`;
     }
-    let toWatch = getInputs(ast.body);
+    const toWatch = getInputs(ast.body);
     self.stage = "inputs";
-    forEach(toWatch, function (watch, key) {
-      let fnKey = "fn" + key;
+    forEach(toWatch, (watch, key) => {
+      const fnKey = `fn${key}`;
       self.state[fnKey] = { vars: [], body: [], own: {} };
       self.state.computing = fnKey;
-      let intoId = self.nextId();
+      const intoId = self.nextId();
       self.recurse(watch, intoId);
       self.return_(intoId);
       self.state.inputs.push({ name: fnKey, isPure: watch.isPure });
@@ -977,23 +970,18 @@ ASTCompiler.prototype = {
     this.state.computing = "fn";
     this.stage = "main";
     this.recurse(ast);
-    let fnString =
+    const fnString =
       // The build and minification steps remove the string "use strict" from the code, but this is done using a regex.
       // This is a workaround for this until we do a better job at only removing the prefix only when we should.
-      '"' +
-      this.USE +
-      " " +
-      this.STRICT +
-      '";\n' +
-      this.filterPrefix() +
-      "let fn=" +
-      this.generateFunction("fn", "s,l,a,i") +
-      extra +
-      this.watchFns() +
-      "return fn;";
+      `"${this.USE} ${
+        this.STRICT
+      }";\n${this.filterPrefix()}let fn=${this.generateFunction(
+        "fn",
+        "s,l,a,i",
+      )}${extra}${this.watchFns()}return fn;`;
 
     // eslint-disable-next-line no-new-func
-    let fn = new Function(
+    const fn = new Function(
       "$filter",
       "getStringValue",
       "ifDefined",
@@ -1008,80 +996,55 @@ ASTCompiler.prototype = {
 
   STRICT: "strict",
 
-  watchFns: function () {
-    let result = [];
-    let inputs = this.state.inputs;
-    let self = this;
-    forEach(inputs, function (input) {
+  watchFns() {
+    const result = [];
+    const { inputs } = this.state;
+    const self = this;
+    forEach(inputs, (input) => {
       result.push(
-        "let " + input.name + "=" + self.generateFunction(input.name, "s"),
+        `let ${input.name}=${self.generateFunction(input.name, "s")}`,
       );
       if (input.isPure) {
-        result.push(
-          input.name,
-          ".isPure=" + JSON.stringify(input.isPure) + ";",
-        );
+        result.push(input.name, `.isPure=${JSON.stringify(input.isPure)};`);
       }
     });
     if (inputs.length) {
-      result.push(
-        "fn.inputs=[" +
-          inputs
-            .map(function (i) {
-              return i.name;
-            })
-            .join(",") +
-          "];",
-      );
+      result.push(`fn.inputs=[${inputs.map((i) => i.name).join(",")}];`);
     }
     return result.join("");
   },
 
-  generateFunction: function (name, params) {
-    return (
-      "function(" +
-      params +
-      "){" +
-      this.varsPrefix(name) +
-      this.body(name) +
-      "};"
-    );
+  generateFunction(name, params) {
+    return `function(${params}){${this.varsPrefix(name)}${this.body(name)}};`;
   },
 
-  filterPrefix: function () {
-    let parts = [];
-    let self = this;
-    forEach(this.state.filters, function (id, filter) {
-      parts.push(id + "=$filter(" + self.escape(filter) + ")");
+  filterPrefix() {
+    const parts = [];
+    const self = this;
+    forEach(this.state.filters, (id, filter) => {
+      parts.push(`${id}=$filter(${self.escape(filter)})`);
     });
-    if (parts.length) return "let " + parts.join(",") + ";";
+    if (parts.length) return `let ${parts.join(",")};`;
     return "";
   },
 
-  varsPrefix: function (section) {
+  varsPrefix(section) {
     return this.state[section].vars.length
-      ? "let " + this.state[section].vars.join(",") + ";"
+      ? `let ${this.state[section].vars.join(",")};`
       : "";
   },
 
-  body: function (section) {
+  body(section) {
     return this.state[section].body.join("");
   },
 
-  recurse: function (
-    ast,
-    intoId,
-    nameId,
-    recursionFn,
-    create,
-    skipWatchIdCheck,
-  ) {
-    let left,
-      right,
-      self = this,
-      args,
-      expression,
-      computed;
+  recurse(ast, intoId, nameId, recursionFn, create, skipWatchIdCheck) {
+    let left;
+    let right;
+    const self = this;
+    let args;
+    let expression;
+    let computed;
     recursionFn = recursionFn || noop;
     if (!skipWatchIdCheck && isDefined(ast.watchId)) {
       intoId = intoId || this.nextId();
@@ -1094,15 +1057,10 @@ ASTCompiler.prototype = {
     }
     switch (ast.type) {
       case AST.Program:
-        forEach(ast.body, function (expression, pos) {
-          self.recurse(
-            expression.expression,
-            undefined,
-            undefined,
-            function (expr) {
-              right = expr;
-            },
-          );
+        forEach(ast.body, (expression, pos) => {
+          self.recurse(expression.expression, undefined, undefined, (expr) => {
+            right = expr;
+          });
           if (pos !== ast.body.length - 1) {
             self.current().body.push(right, ";");
           } else {
@@ -1116,18 +1074,18 @@ ASTCompiler.prototype = {
         recursionFn(intoId || expression);
         break;
       case AST.UnaryExpression:
-        this.recurse(ast.argument, undefined, undefined, function (expr) {
+        this.recurse(ast.argument, undefined, undefined, (expr) => {
           right = expr;
         });
-        expression = ast.operator + "(" + this.ifDefined(right, 0) + ")";
+        expression = `${ast.operator}(${this.ifDefined(right, 0)})`;
         this.assign(intoId, expression);
         recursionFn(expression);
         break;
       case AST.BinaryExpression:
-        this.recurse(ast.left, undefined, undefined, function (expr) {
+        this.recurse(ast.left, undefined, undefined, (expr) => {
           left = expr;
         });
-        this.recurse(ast.right, undefined, undefined, function (expr) {
+        this.recurse(ast.right, undefined, undefined, (expr) => {
           right = expr;
         });
         if (ast.operator === "+") {
@@ -1136,7 +1094,7 @@ ASTCompiler.prototype = {
           expression =
             this.ifDefined(left, 0) + ast.operator + this.ifDefined(right, 0);
         } else {
-          expression = "(" + left + ")" + ast.operator + "(" + right + ")";
+          expression = `(${left})${ast.operator}(${right})`;
         }
         this.assign(intoId, expression);
         recursionFn(expression);
@@ -1168,7 +1126,7 @@ ASTCompiler.prototype = {
               ? "s"
               : this.assign(
                   this.nextId(),
-                  this.getHasOwnProperty("l", ast.name) + "?l:s",
+                  `${this.getHasOwnProperty("l", ast.name)}?l:s`,
                 );
           nameId.computed = false;
           nameId.name = ast.name;
@@ -1176,8 +1134,8 @@ ASTCompiler.prototype = {
         self.if_(
           self.stage === "inputs" ||
             self.not(self.getHasOwnProperty("l", ast.name)),
-          function () {
-            self.if_(self.stage === "inputs" || "s", function () {
+          () => {
+            self.if_(self.stage === "inputs" || "s", () => {
               if (create && create !== 1) {
                 self.if_(
                   self.isNull(self.nonComputedMember("s", ast.name)),
@@ -1199,10 +1157,10 @@ ASTCompiler.prototype = {
           ast.object,
           left,
           undefined,
-          function () {
+          () => {
             self.if_(
               self.notNull(left),
-              function () {
+              () => {
                 if (ast.computed) {
                   right = self.nextId();
                   self.recurse(ast.property, right);
@@ -1239,7 +1197,7 @@ ASTCompiler.prototype = {
                   }
                 }
               },
-              function () {
+              () => {
                 self.assign(intoId, "undefined");
               },
             );
@@ -1253,44 +1211,44 @@ ASTCompiler.prototype = {
         if (ast.filter) {
           right = self.filter(ast.callee.name);
           args = [];
-          forEach(ast.arguments, function (expr) {
-            let argument = self.nextId();
+          forEach(ast.arguments, (expr) => {
+            const argument = self.nextId();
             self.recurse(expr, argument);
             args.push(argument);
           });
-          expression = right + "(" + args.join(",") + ")";
+          expression = `${right}(${args.join(",")})`;
           self.assign(intoId, expression);
           recursionFn(intoId);
         } else {
           right = self.nextId();
           left = {};
           args = [];
-          self.recurse(ast.callee, right, left, function () {
+          self.recurse(ast.callee, right, left, () => {
             self.if_(
               self.notNull(right),
-              function () {
-                forEach(ast.arguments, function (expr) {
+              () => {
+                forEach(ast.arguments, (expr) => {
                   self.recurse(
                     expr,
                     ast.constant ? undefined : self.nextId(),
                     undefined,
-                    function (argument) {
+                    (argument) => {
                       args.push(argument);
                     },
                   );
                 });
                 if (left.name) {
-                  expression =
-                    self.member(left.context, left.name, left.computed) +
-                    "(" +
-                    args.join(",") +
-                    ")";
+                  expression = `${self.member(
+                    left.context,
+                    left.name,
+                    left.computed,
+                  )}(${args.join(",")})`;
                 } else {
-                  expression = right + "(" + args.join(",") + ")";
+                  expression = `${right}(${args.join(",")})`;
                 }
                 self.assign(intoId, expression);
               },
-              function () {
+              () => {
                 self.assign(intoId, "undefined");
               },
             );
@@ -1305,8 +1263,8 @@ ASTCompiler.prototype = {
           ast.left,
           undefined,
           left,
-          function () {
-            self.if_(self.notNull(left.context), function () {
+          () => {
+            self.if_(self.notNull(left.context), () => {
               self.recurse(ast.right, right);
               expression =
                 self.member(left.context, left.name, left.computed) +
@@ -1321,24 +1279,24 @@ ASTCompiler.prototype = {
         break;
       case AST.ArrayExpression:
         args = [];
-        forEach(ast.elements, function (expr) {
+        forEach(ast.elements, (expr) => {
           self.recurse(
             expr,
             ast.constant ? undefined : self.nextId(),
             undefined,
-            function (argument) {
+            (argument) => {
               args.push(argument);
             },
           );
         });
-        expression = "[" + args.join(",") + "]";
+        expression = `[${args.join(",")}]`;
         this.assign(intoId, expression);
         recursionFn(intoId || expression);
         break;
       case AST.ObjectExpression:
         args = [];
         computed = false;
-        forEach(ast.properties, function (property) {
+        forEach(ast.properties, (property) => {
           if (property.computed) {
             computed = true;
           }
@@ -1346,7 +1304,7 @@ ASTCompiler.prototype = {
         if (computed) {
           intoId = intoId || this.nextId();
           this.assign(intoId, "{}");
-          forEach(ast.properties, function (property) {
+          forEach(ast.properties, (property) => {
             if (property.computed) {
               left = self.nextId();
               self.recurse(property.key, left);
@@ -1354,32 +1312,30 @@ ASTCompiler.prototype = {
               left =
                 property.key.type === AST.Identifier
                   ? property.key.name
-                  : "" + property.key.value;
+                  : `${property.key.value}`;
             }
             right = self.nextId();
             self.recurse(property.value, right);
             self.assign(self.member(intoId, left, property.computed), right);
           });
         } else {
-          forEach(ast.properties, function (property) {
+          forEach(ast.properties, (property) => {
             self.recurse(
               property.value,
               ast.constant ? undefined : self.nextId(),
               undefined,
-              function (expr) {
+              (expr) => {
                 args.push(
-                  self.escape(
+                  `${self.escape(
                     property.key.type === AST.Identifier
                       ? property.key.name
-                      : "" + property.key.value,
-                  ) +
-                    ":" +
-                    expr,
+                      : `${property.key.value}`,
+                  )}:${expr}`,
                 );
               },
             );
           });
-          expression = "{" + args.join(",") + "}";
+          expression = `{${args.join(",")}}`;
           this.assign(intoId, expression);
         }
         recursionFn(intoId || expression);
@@ -1399,48 +1355,48 @@ ASTCompiler.prototype = {
     }
   },
 
-  getHasOwnProperty: function (element, property) {
-    let key = element + "." + property;
-    let own = this.current().own;
+  getHasOwnProperty(element, property) {
+    const key = `${element}.${property}`;
+    const { own } = this.current();
     if (!own.hasOwnProperty(key)) {
       own[key] = this.nextId(
         false,
-        element + "&&(" + this.escape(property) + " in " + element + ")",
+        `${element}&&(${this.escape(property)} in ${element})`,
       );
     }
     return own[key];
   },
 
-  assign: function (id, value) {
+  assign(id, value) {
     if (!id) return;
     this.current().body.push(id, "=", value, ";");
     return id;
   },
 
-  filter: function (filterName) {
+  filter(filterName) {
     if (!this.state.filters.hasOwnProperty(filterName)) {
       this.state.filters[filterName] = this.nextId(true);
     }
     return this.state.filters[filterName];
   },
 
-  ifDefined: function (id, defaultValue) {
-    return "ifDefined(" + id + "," + this.escape(defaultValue) + ")";
+  ifDefined(id, defaultValue) {
+    return `ifDefined(${id},${this.escape(defaultValue)})`;
   },
 
-  plus: function (left, right) {
-    return "plus(" + left + "," + right + ")";
+  plus(left, right) {
+    return `plus(${left},${right})`;
   },
 
-  return_: function (id) {
+  return_(id) {
     this.current().body.push("return ", id, ";");
   },
 
-  if_: function (test, alternate, consequent) {
+  if_(test, alternate, consequent) {
     if (test === true) {
       alternate();
     } else {
-      let body = this.current().body;
+      const { body } = this.current();
       body.push("if(", test, "){");
       alternate();
       body.push("}");
@@ -1452,62 +1408,52 @@ ASTCompiler.prototype = {
     }
   },
 
-  not: function (expression) {
-    return "!(" + expression + ")";
+  not(expression) {
+    return `!(${expression})`;
   },
 
-  isNull: function (expression) {
-    return expression + "==null";
+  isNull(expression) {
+    return `${expression}==null`;
   },
 
-  notNull: function (expression) {
-    return expression + "!=null";
+  notNull(expression) {
+    return `${expression}!=null`;
   },
 
-  nonComputedMember: function (left, right) {
-    let SAFE_IDENTIFIER = /^[$_a-zA-Z][$_a-zA-Z0-9]*$/;
-    let UNSAFE_CHARACTERS = /[^$_a-zA-Z0-9]/g;
+  nonComputedMember(left, right) {
+    const SAFE_IDENTIFIER = /^[$_a-zA-Z][$_a-zA-Z0-9]*$/;
+    const UNSAFE_CHARACTERS = /[^$_a-zA-Z0-9]/g;
     if (SAFE_IDENTIFIER.test(right)) {
-      return left + "." + right;
-    } else {
-      return (
-        left +
-        '["' +
-        right.replace(UNSAFE_CHARACTERS, this.stringEscapeFn) +
-        '"]'
-      );
+      return `${left}.${right}`;
     }
+    return `${left}["${right.replace(
+      UNSAFE_CHARACTERS,
+      this.stringEscapeFn,
+    )}"]`;
   },
 
-  computedMember: function (left, right) {
-    return left + "[" + right + "]";
+  computedMember(left, right) {
+    return `${left}[${right}]`;
   },
 
-  member: function (left, right, computed) {
+  member(left, right, computed) {
     if (computed) return this.computedMember(left, right);
     return this.nonComputedMember(left, right);
   },
 
-  getStringValue: function (item) {
-    this.assign(item, "getStringValue(" + item + ")");
+  getStringValue(item) {
+    this.assign(item, `getStringValue(${item})`);
   },
 
-  lazyRecurse: function (
-    ast,
-    intoId,
-    nameId,
-    recursionFn,
-    create,
-    skipWatchIdCheck,
-  ) {
-    let self = this;
+  lazyRecurse(ast, intoId, nameId, recursionFn, create, skipWatchIdCheck) {
+    const self = this;
     return function () {
       self.recurse(ast, intoId, nameId, recursionFn, create, skipWatchIdCheck);
     };
   },
 
-  lazyAssign: function (id, value) {
-    let self = this;
+  lazyAssign(id, value) {
+    const self = this;
     return function () {
       self.assign(id, value);
     };
@@ -1515,15 +1461,13 @@ ASTCompiler.prototype = {
 
   stringEscapeRegex: /[^ a-zA-Z0-9]/g,
 
-  stringEscapeFn: function (c) {
-    return "\\u" + ("0000" + c.charCodeAt(0).toString(16)).slice(-4);
+  stringEscapeFn(c) {
+    return `\\u${`0000${c.charCodeAt(0).toString(16)}`.slice(-4)}`;
   },
 
-  escape: function (value) {
+  escape(value) {
     if (isString(value))
-      return (
-        "'" + value.replace(this.stringEscapeRegex, this.stringEscapeFn) + "'"
-      );
+      return `'${value.replace(this.stringEscapeRegex, this.stringEscapeFn)}'`;
     if (isNumber(value)) return value.toString();
     if (value === true) return "true";
     if (value === false) return "false";
@@ -1533,15 +1477,15 @@ ASTCompiler.prototype = {
     throw $parseMinErr("esc", "IMPOSSIBLE");
   },
 
-  nextId: function (skip, init) {
-    let id = "v" + this.state.nextId++;
+  nextId(skip, init) {
+    const id = `v${this.state.nextId++}`;
     if (!skip) {
-      this.current().vars.push(id + (init ? "=" + init : ""));
+      this.current().vars.push(id + (init ? `=${init}` : ""));
     }
     return id;
   },
 
-  current: function () {
+  current() {
     return this.state[this.state.computing];
   },
 };
@@ -1551,38 +1495,38 @@ function ASTInterpreter($filter) {
 }
 
 ASTInterpreter.prototype = {
-  compile: function (ast) {
-    let self = this;
+  compile(ast) {
+    const self = this;
     findConstantAndWatchExpressions(ast, self.$filter);
     let assignable;
     let assign;
     if ((assignable = assignableAST(ast))) {
       assign = this.recurse(assignable);
     }
-    let toWatch = getInputs(ast.body);
+    const toWatch = getInputs(ast.body);
     let inputs;
     if (toWatch) {
       inputs = [];
-      forEach(toWatch, function (watch, key) {
-        let input = self.recurse(watch);
+      forEach(toWatch, (watch, key) => {
+        const input = self.recurse(watch);
         input.isPure = watch.isPure;
         watch.input = input;
         inputs.push(input);
         watch.watchId = key;
       });
     }
-    let expressions = [];
-    forEach(ast.body, function (expression) {
+    const expressions = [];
+    forEach(ast.body, (expression) => {
       expressions.push(self.recurse(expression.expression));
     });
-    let fn =
+    const fn =
       ast.body.length === 0
         ? noop
         : ast.body.length === 1
           ? expressions[0]
           : function (scope, locals) {
               let lastValue;
-              forEach(expressions, function (exp) {
+              forEach(expressions, (exp) => {
                 lastValue = exp(scope, locals);
               });
               return lastValue;
@@ -1598,11 +1542,11 @@ ASTInterpreter.prototype = {
     return fn;
   },
 
-  recurse: function (ast, context, create) {
-    let left,
-      right,
-      self = this,
-      args;
+  recurse(ast, context, create) {
+    let left;
+    let right;
+    const self = this;
+    let args;
     if (ast.input) {
       return this.inputs(ast.input, ast.watchId);
     }
@@ -1611,15 +1555,15 @@ ASTInterpreter.prototype = {
         return this.value(ast.value, context);
       case AST.UnaryExpression:
         right = this.recurse(ast.argument);
-        return this["unary" + ast.operator](right, context);
+        return this[`unary${ast.operator}`](right, context);
       case AST.BinaryExpression:
         left = this.recurse(ast.left);
         right = this.recurse(ast.right);
-        return this["binary" + ast.operator](left, right, context);
+        return this[`binary${ast.operator}`](left, right, context);
       case AST.LogicalExpression:
         left = this.recurse(ast.left);
         right = this.recurse(ast.right);
-        return this["binary" + ast.operator](left, right, context);
+        return this[`binary${ast.operator}`](left, right, context);
       case AST.ConditionalExpression:
         return this["ternary?:"](
           this.recurse(ast.test),
@@ -1640,58 +1584,58 @@ ASTInterpreter.prototype = {
           : this.nonComputedMember(left, right, context, create);
       case AST.CallExpression:
         args = [];
-        forEach(ast.arguments, function (expr) {
+        forEach(ast.arguments, (expr) => {
           args.push(self.recurse(expr));
         });
         if (ast.filter) right = this.$filter(ast.callee.name);
         if (!ast.filter) right = this.recurse(ast.callee, true);
         return ast.filter
           ? function (scope, locals, assign, inputs) {
-              let values = [];
+              const values = [];
               for (let i = 0; i < args.length; ++i) {
                 values.push(args[i](scope, locals, assign, inputs));
               }
-              let value = right.apply(undefined, values, inputs);
+              const value = right.apply(undefined, values, inputs);
               return context
-                ? { context: undefined, name: undefined, value: value }
+                ? { context: undefined, name: undefined, value }
                 : value;
             }
           : function (scope, locals, assign, inputs) {
-              let rhs = right(scope, locals, assign, inputs);
+              const rhs = right(scope, locals, assign, inputs);
               let value;
               if (rhs.value != null) {
-                let values = [];
+                const values = [];
                 for (let i = 0; i < args.length; ++i) {
                   values.push(args[i](scope, locals, assign, inputs));
                 }
                 value = rhs.value.apply(rhs.context, values);
               }
-              return context ? { value: value } : value;
+              return context ? { value } : value;
             };
       case AST.AssignmentExpression:
         left = this.recurse(ast.left, true, 1);
         right = this.recurse(ast.right);
         return function (scope, locals, assign, inputs) {
-          let lhs = left(scope, locals, assign, inputs);
-          let rhs = right(scope, locals, assign, inputs);
+          const lhs = left(scope, locals, assign, inputs);
+          const rhs = right(scope, locals, assign, inputs);
           lhs.context[lhs.name] = rhs;
           return context ? { value: rhs } : rhs;
         };
       case AST.ArrayExpression:
         args = [];
-        forEach(ast.elements, function (expr) {
+        forEach(ast.elements, (expr) => {
           args.push(self.recurse(expr));
         });
         return function (scope, locals, assign, inputs) {
-          let value = [];
+          const value = [];
           for (let i = 0; i < args.length; ++i) {
             value.push(args[i](scope, locals, assign, inputs));
           }
-          return context ? { value: value } : value;
+          return context ? { value } : value;
         };
       case AST.ObjectExpression:
         args = [];
-        forEach(ast.properties, function (property) {
+        forEach(ast.properties, (property) => {
           if (property.computed) {
             args.push({
               key: self.recurse(property.key),
@@ -1703,14 +1647,14 @@ ASTInterpreter.prototype = {
               key:
                 property.key.type === AST.Identifier
                   ? property.key.name
-                  : "" + property.key.value,
+                  : `${property.key.value}`,
               computed: false,
               value: self.recurse(property.value),
             });
           }
         });
         return function (scope, locals, assign, inputs) {
-          let value = {};
+          const value = {};
           for (let i = 0; i < args.length; ++i) {
             if (args[i].computed) {
               value[args[i].key(scope, locals, assign, inputs)] = args[i].value(
@@ -1723,7 +1667,7 @@ ASTInterpreter.prototype = {
               value[args[i].key] = args[i].value(scope, locals, assign, inputs);
             }
           }
-          return context ? { value: value } : value;
+          return context ? { value } : value;
         };
       case AST.ThisExpression:
         return function (scope) {
@@ -1764,29 +1708,29 @@ ASTInterpreter.prototype = {
   },
   "unary!": function (argument, context) {
     return function (scope, locals, assign, inputs) {
-      let arg = !argument(scope, locals, assign, inputs);
+      const arg = !argument(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
     };
   },
   "binary+": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let lhs = left(scope, locals, assign, inputs);
-      let rhs = right(scope, locals, assign, inputs);
-      let arg = plusFn(lhs, rhs);
+      const lhs = left(scope, locals, assign, inputs);
+      const rhs = right(scope, locals, assign, inputs);
+      const arg = plusFn(lhs, rhs);
       return context ? { value: arg } : arg;
     };
   },
   "binary-": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let lhs = left(scope, locals, assign, inputs);
-      let rhs = right(scope, locals, assign, inputs);
-      let arg = (isDefined(lhs) ? lhs : 0) - (isDefined(rhs) ? rhs : 0);
+      const lhs = left(scope, locals, assign, inputs);
+      const rhs = right(scope, locals, assign, inputs);
+      const arg = (isDefined(lhs) ? lhs : 0) - (isDefined(rhs) ? rhs : 0);
       return context ? { value: arg } : arg;
     };
   },
   "binary*": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) *
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1794,7 +1738,7 @@ ASTInterpreter.prototype = {
   },
   "binary/": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) /
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1802,7 +1746,7 @@ ASTInterpreter.prototype = {
   },
   "binary%": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) %
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1810,7 +1754,7 @@ ASTInterpreter.prototype = {
   },
   "binary===": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) ===
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1818,7 +1762,7 @@ ASTInterpreter.prototype = {
   },
   "binary!==": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) !==
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1827,7 +1771,7 @@ ASTInterpreter.prototype = {
   "binary==": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
       // eslint-disable-next-line eqeqeq
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) ==
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1836,7 +1780,7 @@ ASTInterpreter.prototype = {
   "binary!=": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
       // eslint-disable-next-line eqeqeq
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) !=
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1844,7 +1788,7 @@ ASTInterpreter.prototype = {
   },
   "binary<": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) <
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1852,7 +1796,7 @@ ASTInterpreter.prototype = {
   },
   "binary>": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) >
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1860,7 +1804,7 @@ ASTInterpreter.prototype = {
   },
   "binary<=": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) <=
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1868,7 +1812,7 @@ ASTInterpreter.prototype = {
   },
   "binary>=": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) >=
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1876,7 +1820,7 @@ ASTInterpreter.prototype = {
   },
   "binary&&": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) &&
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1884,7 +1828,7 @@ ASTInterpreter.prototype = {
   },
   "binary||": function (left, right, context) {
     return function (scope, locals, assign, inputs) {
-      let arg =
+      const arg =
         left(scope, locals, assign, inputs) ||
         right(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
@@ -1892,36 +1836,33 @@ ASTInterpreter.prototype = {
   },
   "ternary?:": function (test, alternate, consequent, context) {
     return function (scope, locals, assign, inputs) {
-      let arg = test(scope, locals, assign, inputs)
+      const arg = test(scope, locals, assign, inputs)
         ? alternate(scope, locals, assign, inputs)
         : consequent(scope, locals, assign, inputs);
       return context ? { value: arg } : arg;
     };
   },
-  value: function (value, context) {
+  value(value, context) {
     return function () {
-      return context
-        ? { context: undefined, name: undefined, value: value }
-        : value;
+      return context ? { context: undefined, name: undefined, value } : value;
     };
   },
-  identifier: function (name, context, create) {
+  identifier(name, context, create) {
     return function (scope, locals, assign, inputs) {
-      let base = locals && name in locals ? locals : scope;
+      const base = locals && name in locals ? locals : scope;
       if (create && create !== 1 && base && base[name] == null) {
         base[name] = {};
       }
-      let value = base ? base[name] : undefined;
+      const value = base ? base[name] : undefined;
       if (context) {
-        return { context: base, name: name, value: value };
-      } else {
-        return value;
+        return { context: base, name, value };
       }
+      return value;
     };
   },
-  computedMember: function (left, right, context, create) {
+  computedMember(left, right, context, create) {
     return function (scope, locals, assign, inputs) {
-      let lhs = left(scope, locals, assign, inputs);
+      const lhs = left(scope, locals, assign, inputs);
       let rhs;
       let value;
       if (lhs != null) {
@@ -1935,29 +1876,27 @@ ASTInterpreter.prototype = {
         value = lhs[rhs];
       }
       if (context) {
-        return { context: lhs, name: rhs, value: value };
-      } else {
-        return value;
+        return { context: lhs, name: rhs, value };
       }
+      return value;
     };
   },
-  nonComputedMember: function (left, right, context, create) {
+  nonComputedMember(left, right, context, create) {
     return function (scope, locals, assign, inputs) {
-      let lhs = left(scope, locals, assign, inputs);
+      const lhs = left(scope, locals, assign, inputs);
       if (create && create !== 1) {
         if (lhs && lhs[right] == null) {
           lhs[right] = {};
         }
       }
-      let value = lhs != null ? lhs[right] : undefined;
+      const value = lhs != null ? lhs[right] : undefined;
       if (context) {
-        return { context: lhs, name: right, value: value };
-      } else {
-        return value;
+        return { context: lhs, name: right, value };
       }
+      return value;
     };
   },
-  inputs: function (input, watchId) {
+  inputs(input, watchId) {
     return function (scope, value, locals, inputs) {
       if (inputs) return inputs[watchId];
       return input(scope, value, locals);
@@ -1978,16 +1917,16 @@ function Parser(lexer, $filter, options) {
 Parser.prototype = {
   constructor: Parser,
 
-  parse: function (text) {
-    let ast = this.getAst(text);
-    let fn = this.astCompiler.compile(ast.ast);
+  parse(text) {
+    const ast = this.getAst(text);
+    const fn = this.astCompiler.compile(ast.ast);
     fn.literal = isLiteral(ast.ast);
     fn.constant = isConstant(ast.ast);
     fn.oneTime = ast.oneTime;
     return fn;
   },
 
-  getAst: function (exp) {
+  getAst(exp) {
     let oneTime = false;
     exp = exp.trim();
 
@@ -1997,7 +1936,7 @@ Parser.prototype = {
     }
     return {
       ast: this.ast.ast(exp),
-      oneTime: oneTime,
+      oneTime,
     };
   },
 };
@@ -2008,7 +1947,7 @@ function getValueOf(value) {
     : objectValueOf.call(value);
 }
 
-///////////////////////////////////
+/// ////////////////////////////////
 
 /**
  * @ngdoc service
@@ -2060,14 +1999,15 @@ function getValueOf(value) {
  *  service.
  */
 function $ParseProvider() {
-  let cache = createMap();
-  let literals = {
+  const cache = createMap();
+  const literals = {
     true: true,
     false: false,
     null: null,
-    undefined: undefined,
+    undefined,
   };
-  let identStart, identContinue;
+  let identStart;
+  let identContinue;
 
   /**
    * @ngdoc method
@@ -2079,7 +2019,7 @@ function $ParseProvider() {
    * @param {string} literalName Token for the literal value. The literal name value must be a valid literal name.
    * @param {*} literalValue Value for this literal. All literal values must be primitives or `undefined`.
    *
-   **/
+   * */
   this.addLiteral = function (literalName, literalValue) {
     literals[literalName] = literalValue;
   };
@@ -2117,8 +2057,8 @@ function $ParseProvider() {
   this.$get = [
     "$filter",
     function ($filter) {
-      let noUnsafeEval = csp().noUnsafeEval;
-      let $parseOptions = {
+      const { noUnsafeEval } = csp();
+      const $parseOptions = {
         csp: noUnsafeEval,
         literals: copy(literals),
         isIdentifierStart: isFunction(identStart) && identStart,
@@ -2128,7 +2068,8 @@ function $ParseProvider() {
       return $parse;
 
       function $parse(exp, interceptorFn) {
-        let parsedExpression, cacheKey;
+        let parsedExpression;
+        let cacheKey;
 
         switch (typeof exp) {
           case "string":
@@ -2138,8 +2079,8 @@ function $ParseProvider() {
             parsedExpression = cache[cacheKey];
 
             if (!parsedExpression) {
-              let lexer = new Lexer($parseOptions);
-              let parser = new Parser(lexer, $filter, $parseOptions);
+              const lexer = new Lexer($parseOptions);
+              const parser = new Parser(lexer, $filter, $parseOptions);
               parsedExpression = parser.parse(exp);
 
               cache[cacheKey] = addWatchDelegate(parsedExpression);
@@ -2155,8 +2096,8 @@ function $ParseProvider() {
       }
 
       function $$getAst(exp) {
-        let lexer = new Lexer($parseOptions);
-        let parser = new Parser(lexer, $filter, $parseOptions);
+        const lexer = new Lexer($parseOptions);
+        const parser = new Parser(lexer, $filter, $parseOptions);
         return parser.getAst(exp).ast;
       }
 
@@ -2184,7 +2125,7 @@ function $ParseProvider() {
           // fall-through to the primitive equality check
         }
 
-        //Primitive or NaN
+        // Primitive or NaN
         // eslint-disable-next-line no-self-compare
         return (
           newValue === oldValueOfValue ||
@@ -2206,8 +2147,8 @@ function $ParseProvider() {
           let oldInputValueOf = expressionInputDirtyCheck; // init to something unique so that equals check fails
           inputExpressions = inputExpressions[0];
           return scope.$watch(
-            function expressionInputWatch(scope) {
-              let newInputValue = inputExpressions(scope);
+            (scope) => {
+              const newInputValue = inputExpressions(scope);
               if (
                 !expressionInputDirtyCheck(
                   newInputValue,
@@ -2228,19 +2169,19 @@ function $ParseProvider() {
           );
         }
 
-        let oldInputValueOfValues = [];
-        let oldInputValues = [];
+        const oldInputValueOfValues = [];
+        const oldInputValues = [];
         for (let i = 0, ii = inputExpressions.length; i < ii; i++) {
           oldInputValueOfValues[i] = expressionInputDirtyCheck; // init to something unique so that equals check fails
           oldInputValues[i] = null;
         }
 
         return scope.$watch(
-          function expressionInputsWatch(scope) {
+          (scope) => {
             let changed = false;
 
             for (let i = 0, ii = inputExpressions.length; i < ii; i++) {
-              let newInputValue = inputExpressions[i](scope);
+              const newInputValue = inputExpressions[i](scope);
               if (
                 changed ||
                 (changed = !expressionInputDirtyCheck(
@@ -2279,13 +2220,14 @@ function $ParseProvider() {
         parsedExpression,
         prettyPrintExpression,
       ) {
-        let isDone = parsedExpression.literal ? isAllDefined : isDefined;
-        let unwatch, lastValue;
+        const isDone = parsedExpression.literal ? isAllDefined : isDefined;
+        let unwatch;
+        let lastValue;
 
-        let exp = parsedExpression.$$intercepted || parsedExpression;
-        let post = parsedExpression.$$interceptor || identity;
+        const exp = parsedExpression.$$intercepted || parsedExpression;
+        const post = parsedExpression.$$interceptor || identity;
 
-        let useInputs = parsedExpression.inputs && !exp.inputs;
+        const useInputs = parsedExpression.inputs && !exp.inputs;
 
         // Propagate the literal/inputs/constant attributes
         // ... but not oneTime since we are handling it
@@ -2325,7 +2267,7 @@ function $ParseProvider() {
 
       function isAllDefined(value) {
         let allDefined = true;
-        forEach(value, function (val) {
+        forEach(value, (val) => {
           if (!isDefined(val)) allDefined = false;
         });
         return allDefined;
@@ -2337,8 +2279,8 @@ function $ParseProvider() {
         objectEquality,
         parsedExpression,
       ) {
-        let unwatch = scope.$watch(
-          function constantWatch(scope) {
+        const unwatch = scope.$watch(
+          (scope) => {
             unwatch();
             return parsedExpression(scope);
           },
@@ -2385,8 +2327,13 @@ function $ParseProvider() {
 
         let useInputs = false;
 
-        let fn = function interceptedExpression(scope, locals, assign, inputs) {
-          let value =
+        const fn = function interceptedExpression(
+          scope,
+          locals,
+          assign,
+          inputs,
+        ) {
+          const value =
             useInputs && inputs
               ? inputs[0]
               : parsedExpression(scope, locals, assign, inputs);
@@ -2412,7 +2359,7 @@ function $ParseProvider() {
             : [parsedExpression];
 
           if (!interceptorFn.$$pure) {
-            fn.inputs = fn.inputs.map(function (e) {
+            fn.inputs = fn.inputs.map((e) => {
               // Remove the isPure flag of inputs when it is not absolute because they are now wrapped in a
               // non-pure interceptor function.
               if (e.isPure === PURITY_RELATIVE) {

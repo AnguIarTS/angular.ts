@@ -2,7 +2,7 @@
 
 angular.
   module('test', []).
-  run(function($sce) {
+  run(($sce) => {
     window.isTrustedUrl = function(url) {
       try {
         $sce.getTrustedResourceUrl(url);

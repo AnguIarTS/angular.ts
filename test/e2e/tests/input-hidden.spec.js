@@ -1,7 +1,7 @@
 
 
-describe('hidden thingy', function() {
-  it('should pass', function() {
+describe('hidden thingy', () => {
+  it('should pass', () => {
 
     loadFixture('input-hidden');
     expect(element(by.css('input')).getAttribute('value')).toEqual('');
@@ -11,11 +11,11 @@ describe('hidden thingy', function() {
 
     loadFixture('sample');
     browser.driver.executeScript('history.back()');
-    let expectedValue = browser.params.browser === 'safari' ? '{{ 7 * 6 }}' : '';
+    const expectedValue = browser.params.browser === 'safari' ? '{{ 7 * 6 }}' : '';
     expect(element(by.css('input')).getAttribute('value')).toEqual(expectedValue);
   });
 
-  it('should prevent browser autofill on browser.refresh', function() {
+  it('should prevent browser autofill on browser.refresh', () => {
 
     loadFixture('back2dom');
     expect(element(by.css('#input1')).getAttribute('value')).toEqual('');
@@ -31,7 +31,7 @@ describe('hidden thingy', function() {
     expect(element(by.css('body')).getAttribute('class')).toBe('');
   });
 
-  it('should prevent browser autofill on location.reload', function() {
+  it('should prevent browser autofill on location.reload', () => {
 
     loadFixture('back2dom');
     expect(element(by.css('#input1')).getAttribute('value')).toEqual('');
@@ -47,7 +47,7 @@ describe('hidden thingy', function() {
     expect(element(by.css('body')).getAttribute('class')).toBe('');
   });
 
-  it('should prevent browser autofill on history.back', function() {
+  it('should prevent browser autofill on history.back', () => {
 
     loadFixture('back2dom');
     expect(element(by.css('#input1')).getAttribute('value')).toEqual('');
@@ -65,7 +65,7 @@ describe('hidden thingy', function() {
     expect(element(by.css('body')).getAttribute('class')).toBe('');
   });
 
-  it('should prevent browser autofill on history.forward', function() {
+  it('should prevent browser autofill on history.forward', () => {
 
     loadFixture('sample');
     loadFixture('back2dom');

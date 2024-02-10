@@ -1,7 +1,7 @@
 
 
-describe('require parent controller on html element', function() {
-  it('should not use the html element as the parent element', function() {
+describe('require parent controller on html element', () => {
+  it('should not use the html element as the parent element', () => {
 
     loadFixture('directive-require-html');
 

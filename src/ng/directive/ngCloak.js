@@ -50,8 +50,8 @@
    </example>
  *
  */
-let ngCloakDirective = ngDirective({
-  compile: function (element, attr) {
+const ngCloakDirective = ngDirective({
+  compile(element, attr) {
     attr.$set("ngCloak", undefined);
     element.removeClass("ng-cloak");
   },

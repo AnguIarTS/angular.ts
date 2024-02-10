@@ -1,4 +1,5 @@
-import { jqLite } from "../jqLite";
+import { jqLite, getBooleanAttrName, getAliasedAttrName } from "../jqLite";
+// eslint-disable-next-line camelcase
 import { snake_case } from "./utils";
 
 /* ! VARIABLE/FUNCTION NAMING CONVENTIONS THAT APPLY TO THIS FILE!
@@ -1353,10 +1354,10 @@ import { snake_case } from "./utils";
  * </example>
  */
 
-let $compileMinErr = minErr("$compile");
+const $compileMinErr = minErr("$compile");
 
 function UNINITIALIZED_VALUE() {}
-let _UNINITIALIZED_VALUE = new UNINITIALIZED_VALUE();
+const _UNINITIALIZED_VALUE = new UNINITIALIZED_VALUE();
 
 /**
  * @ngdoc provider
@@ -1367,32 +1368,32 @@ let _UNINITIALIZED_VALUE = new UNINITIALIZED_VALUE();
 $CompileProvider.$inject = ["$provide", "$$sanitizeUriProvider"];
 /** @this */
 function $CompileProvider($provide, $$sanitizeUriProvider) {
-  let hasDirectives = {},
-    Suffix = "Directive",
-    COMMENT_DIRECTIVE_REGEXP = /^\s*directive:\s*([\w-]+)\s+(.*)$/,
-    CLASS_DIRECTIVE_REGEXP = /(([\w-]+)(?::([^;]+))?;?)/,
-    ALL_OR_NOTHING_ATTRS = ["ngSrc", "ngSrcset", "src", "srcset"],
-    REQUIRE_PREFIX_REGEXP = /^(?:(\^\^?)?(\?)?(\^\^?)?)?/;
+  const hasDirectives = {};
+  const Suffix = "Directive";
+  const COMMENT_DIRECTIVE_REGEXP = /^\s*directive:\s*([\w-]+)\s+(.*)$/;
+  const CLASS_DIRECTIVE_REGEXP = /(([\w-]+)(?::([^;]+))?;?)/;
+  const ALL_OR_NOTHING_ATTRS = ["ngSrc", "ngSrcset", "src", "srcset"];
+  const REQUIRE_PREFIX_REGEXP = /^(?:(\^\^?)?(\?)?(\^\^?)?)?/;
 
   // Ref: http://developers.whatwg.org/webappapis.html#event-handler-idl-attributes
   // The assumption is that future DOM event attribute names will begin with
   // 'on' and be composed of only English letters.
-  let EVENT_HANDLER_ATTR_REGEXP = /^(on[a-z]+|formaction)$/;
-  let bindingCache = createMap();
+  const EVENT_HANDLER_ATTR_REGEXP = /^(on[a-z]+|formaction)$/;
+  const bindingCache = createMap();
 
   function parseIsolateBindings(scope, directiveName, isController) {
-    let LOCAL_REGEXP = /^([@&]|[=<](\*?))(\??)\s*([\w$]*)$/;
+    const LOCAL_REGEXP = /^([@&]|[=<](\*?))(\??)\s*([\w$]*)$/;
 
-    let bindings = createMap();
+    const bindings = createMap();
 
-    forEach(scope, function (definition, scopeName) {
+    forEach(scope, (definition, scopeName) => {
       definition = definition.trim();
 
       if (definition in bindingCache) {
         bindings[scopeName] = bindingCache[definition];
         return;
       }
-      let match = definition.match(LOCAL_REGEXP);
+      const match = definition.match(LOCAL_REGEXP);
 
       if (!match) {
         throw $compileMinErr(
@@ -1423,7 +1424,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
   }
 
   function parseDirectiveBindings(directive, directiveName) {
-    let bindings = {
+    const bindings = {
       isolateScope: null,
       bindToController: null,
     };
@@ -1462,7 +1463,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
   }
 
   function assertValidDirectiveName(name) {
-    let letter = name.charAt(0);
+    const letter = name.charAt(0);
     if (!letter || letter !== lowercase(letter)) {
       throw $compileMinErr(
         "baddir",
@@ -1480,12 +1481,13 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
   }
 
   function getDirectiveRequire(directive) {
-    let require = directive.require || (directive.controller && directive.name);
+    const require =
+      directive.require || (directive.controller && directive.name);
 
     if (!isArray(require) && isObject(require)) {
-      forEach(require, function (value, key) {
-        let match = value.match(REQUIRE_PREFIX_REGEXP);
-        let name = value.substring(match[0].length);
+      forEach(require, (value, key) => {
+        const match = value.match(REQUIRE_PREFIX_REGEXP);
+        const name = value.substring(match[0].length);
         if (!name) require[key] = match[0] + key;
       });
     }
@@ -1533,8 +1535,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           "$injector",
           "$exceptionHandler",
           function ($injector, $exceptionHandler) {
-            let directives = [];
-            forEach(hasDirectives[name], function (directiveFactory, index) {
+            const directives = [];
+            forEach(hasDirectives[name], (directiveFactory, index) => {
               try {
                 let directive = $injector.invoke(directiveFactory);
                 if (isFunction(directive)) {
@@ -1660,7 +1662,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       return this;
     }
 
-    let controller = options.controller || function () {};
+    const controller = options.controller || function () {};
 
     function factory($injector) {
       function makeInjectable(fn) {
@@ -1671,15 +1673,14 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               $attrs: tAttrs,
             });
           };
-        } else {
-          return fn;
         }
+        return fn;
       }
 
-      let template =
+      const template =
         !options.template && !options.templateUrl ? "" : options.template;
-      let ddo = {
-        controller: controller,
+      const ddo = {
+        controller,
         controllerAs:
           identifierForController(options.controller) ||
           options.controllerAs ||
@@ -1694,7 +1695,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       };
 
       // Copy annotations (starting with $) over to the DDO
-      forEach(options, function (val, key) {
+      forEach(options, (val, key) => {
         if (key.charAt(0) === "$") ddo[key] = val;
       });
 
@@ -1708,7 +1709,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
     // Copy any annotation properties (starting with $) over to the factory and controller constructor functions
     // These could be used by libraries such as the new component router
-    forEach(options, function (val, key) {
+    forEach(options, (val, key) => {
       if (key.charAt(0) === "$") {
         factory[key] = val;
         // Don't try to copy over annotations to named controller
@@ -1745,9 +1746,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
     if (isDefined(regexp)) {
       $$sanitizeUriProvider.aHrefSanitizationTrustedUrlList(regexp);
       return this;
-    } else {
-      return $$sanitizeUriProvider.aHrefSanitizationTrustedUrlList();
     }
+    return $$sanitizeUriProvider.aHrefSanitizationTrustedUrlList();
   };
 
   /**
@@ -1762,10 +1762,10 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
    * aHrefSanitizationTrustedUrlList} instead.
    */
   Object.defineProperty(this, "aHrefSanitizationWhitelist", {
-    get: function () {
+    get() {
       return this.aHrefSanitizationTrustedUrlList;
     },
-    set: function (value) {
+    set(value) {
       this.aHrefSanitizationTrustedUrlList = value;
     },
   });
@@ -1794,9 +1794,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
     if (isDefined(regexp)) {
       $$sanitizeUriProvider.imgSrcSanitizationTrustedUrlList(regexp);
       return this;
-    } else {
-      return $$sanitizeUriProvider.imgSrcSanitizationTrustedUrlList();
     }
+    return $$sanitizeUriProvider.imgSrcSanitizationTrustedUrlList();
   };
 
   /**
@@ -1811,10 +1810,10 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
    * imgSrcSanitizationTrustedUrlList} instead.
    */
   Object.defineProperty(this, "imgSrcSanitizationWhitelist", {
-    get: function () {
+    get() {
       return this.imgSrcSanitizationTrustedUrlList;
     },
-    set: function (value) {
+    set(value) {
       this.imgSrcSanitizationTrustedUrlList = value;
     },
   });
@@ -1973,7 +1972,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
    * The security context of DOM Properties.
    * @private
    */
-  let PROP_CONTEXTS = createMap();
+  const PROP_CONTEXTS = createMap();
 
   /**
    * @ngdoc method
@@ -1988,7 +1987,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
    * @returns {object} `this` for chaining
    */
   this.addPropertySecurityContext = function (elementName, propertyName, ctx) {
-    let key = elementName.toLowerCase() + "|" + propertyName.toLowerCase();
+    const key = `${elementName.toLowerCase()}|${propertyName.toLowerCase()}`;
 
     if (key in PROP_CONTEXTS && PROP_CONTEXTS[key] !== ctx) {
       throw $compileMinErr(
@@ -2016,7 +2015,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
    */
   (function registerNativePropertyContexts() {
     function registerContext(ctx, values) {
-      forEach(values, function (v) {
+      forEach(values, (v) => {
         PROP_CONTEXTS[v.toLowerCase()] = ctx;
       });
     }
@@ -2089,11 +2088,11 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       $sce,
       $animate,
     ) {
-      let SIMPLE_ATTR_NAME = /^\w/;
-      let specialAttrHolder = window.document.createElement("div");
+      const SIMPLE_ATTR_NAME = /^\w/;
+      const specialAttrHolder = window.document.createElement("div");
 
-      let commentDirectivesEnabled = commentDirectivesEnabledConfig;
-      let cssClassDirectivesEnabled = cssClassDirectivesEnabledConfig;
+      const commentDirectivesEnabled = commentDirectivesEnabledConfig;
+      const cssClassDirectivesEnabled = cssClassDirectivesEnabledConfig;
 
       let onChangesTtl = TTL;
       // The onChanges hooks should all be run together in a single digest
@@ -2113,7 +2112,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             );
           }
           // We must run this hook in an apply since the $$postDigest runs outside apply
-          $rootScope.$apply(function () {
+          $rootScope.$apply(() => {
             for (let i = 0, ii = onChangesQueue.length; i < ii; ++i) {
               try {
                 onChangesQueue[i]();
@@ -2153,41 +2152,43 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         let result = "";
 
         // first check if there are spaces because it's not the same pattern
-        let trimmedSrcset = trim(value);
+        const trimmedSrcset = trim(value);
         //                (   999x   ,|   999w   ,|   ,|,   )
-        let srcPattern = /(\s+\d+x\s*,|\s+\d+w\s*,|\s+,|,\s+)/;
-        let pattern = /\s/.test(trimmedSrcset) ? srcPattern : /(,)/;
+        const srcPattern = /(\s+\d+x\s*,|\s+\d+w\s*,|\s+,|,\s+)/;
+        const pattern = /\s/.test(trimmedSrcset) ? srcPattern : /(,)/;
 
         // split srcset into tuple of uri and descriptor except for the last item
-        let rawUris = trimmedSrcset.split(pattern);
+        const rawUris = trimmedSrcset.split(pattern);
 
         // for each tuples
-        let nbrUrisWith2parts = Math.floor(rawUris.length / 2);
+        const nbrUrisWith2parts = Math.floor(rawUris.length / 2);
         for (let i = 0; i < nbrUrisWith2parts; i++) {
-          let innerIdx = i * 2;
+          const innerIdx = i * 2;
           // sanitize the uri
           result += $sce.getTrustedMediaUrl(trim(rawUris[innerIdx]));
           // add the descriptor
-          result += " " + trim(rawUris[innerIdx + 1]);
+          result += ` ${trim(rawUris[innerIdx + 1])}`;
         }
 
         // split the last item into uri and descriptor
-        let lastTuple = trim(rawUris[i * 2]).split(/\s/);
+        const lastTuple = trim(rawUris[i * 2]).split(/\s/);
 
         // sanitize the last uri
         result += $sce.getTrustedMediaUrl(trim(lastTuple[0]));
 
         // and add the last descriptor if any
         if (lastTuple.length === 2) {
-          result += " " + trim(lastTuple[1]);
+          result += ` ${trim(lastTuple[1])}`;
         }
         return result;
       }
 
       function Attributes(element, attributesToCopy) {
         if (attributesToCopy) {
-          let keys = Object.keys(attributesToCopy);
-          let i, l, key;
+          const keys = Object.keys(attributesToCopy);
+          let i;
+          let l;
+          let key;
 
           for (i = 0, l = keys.length; i < l; i++) {
             key = keys[i];
@@ -2229,7 +2230,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
          *
          * @param {string} classVal The className value that will be added to the element
          */
-        $addClass: function (classVal) {
+        $addClass(classVal) {
           if (classVal && classVal.length > 0) {
             $animate.addClass(this.$$element, classVal);
           }
@@ -2246,7 +2247,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
          *
          * @param {string} classVal The className value that will be removed from the element
          */
-        $removeClass: function (classVal) {
+        $removeClass(classVal) {
           if (classVal && classVal.length > 0) {
             $animate.removeClass(this.$$element, classVal);
           }
@@ -2264,13 +2265,13 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
          * @param {string} newClasses The current CSS className value
          * @param {string} oldClasses The former CSS className value
          */
-        $updateClass: function (newClasses, oldClasses) {
-          let toAdd = tokenDifference(newClasses, oldClasses);
+        $updateClass(newClasses, oldClasses) {
+          const toAdd = tokenDifference(newClasses, oldClasses);
           if (toAdd && toAdd.length) {
             $animate.addClass(this.$$element, toAdd);
           }
 
-          let toRemove = tokenDifference(oldClasses, newClasses);
+          const toRemove = tokenDifference(oldClasses, newClasses);
           if (toRemove && toRemove.length) {
             $animate.removeClass(this.$$element, toRemove);
           }
@@ -2285,16 +2286,16 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
          *     Defaults to true.
          * @param {string=} attrName Optional none normalized name. Defaults to key.
          */
-        $set: function (key, value, writeAttr, attrName) {
+        $set(key, value, writeAttr, attrName) {
           // TODO: decide whether or not to throw an error if "class"
           // is set through this function since it may cause $updateClass to
           // become unstable.
 
-          let node = this.$$element[0],
-            booleanKey = getBooleanAttrName(node, key),
-            aliasedKey = getAliasedAttrName(key),
-            observer = key,
-            nodeName;
+          const node = this.$$element[0];
+          const booleanKey = getBooleanAttrName(node, key);
+          const aliasedKey = getAliasedAttrName(key);
+          let observer = key;
+          let nodeName;
 
           if (booleanKey) {
             this.$$element.prop(key, value);
@@ -2325,29 +2326,27 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
           if (writeAttr !== false) {
             if (value === null || isUndefined(value)) {
-              this.$$element.removeAttr(attrName);
-            } else {
-              if (SIMPLE_ATTR_NAME.test(attrName)) {
-                // jQuery skips special boolean attrs treatment in XML nodes for
-                // historical reasons and hence AngularJS cannot freely call
-                // `.attr(attrName, false) with such attributes. To avoid issues
-                // in XHTML, call `removeAttr` in such cases instead.
-                // See https://github.com/jquery/jquery/issues/4249
-                if (booleanKey && value === false) {
-                  this.$$element.removeAttr(attrName);
-                } else {
-                  this.$$element.attr(attrName, value);
-                }
+              this.$$element.removeAttribute(attrName);
+            } else if (SIMPLE_ATTR_NAME.test(attrName)) {
+              // jQuery skips special boolean attrs treatment in XML nodes for
+              // historical reasons and hence AngularJS cannot freely call
+              // `.attr(attrName, false) with such attributes. To avoid issues
+              // in XHTML, call `removeAttr` in such cases instead.
+              // See https://github.com/jquery/jquery/issues/4249
+              if (booleanKey && value === false) {
+                this.$$element.removeAttribute(attrName);
               } else {
-                setSpecialAttr(this.$$element[0], attrName, value);
+                this.$$element.attr(attrName, value);
               }
+            } else {
+              setSpecialAttr(this.$$element[0], attrName, value);
             }
           }
 
           // fire observers
-          let $$observers = this.$$observers;
+          const { $$observers } = this;
           if ($$observers) {
-            forEach($$observers[observer], function (fn) {
+            forEach($$observers[observer], (fn) => {
               try {
                 fn(value);
               } catch (e) {
@@ -2376,14 +2375,14 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
        *        guide} for more info.
        * @returns {function()} Returns a deregistration function for this observer.
        */
-        $observe: function (key, fn) {
-          let attrs = this,
-            $$observers =
-              attrs.$$observers || (attrs.$$observers = createMap()),
-            listeners = $$observers[key] || ($$observers[key] = []);
+        $observe(key, fn) {
+          const attrs = this;
+          const $$observers =
+            attrs.$$observers || (attrs.$$observers = createMap());
+          const listeners = $$observers[key] || ($$observers[key] = []);
 
           listeners.push(fn);
-          $rootScope.$evalAsync(function () {
+          $rootScope.$evalAsync(() => {
             if (
               !listeners.$$inter &&
               attrs.hasOwnProperty(key) &&
@@ -2404,9 +2403,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         // Attributes names that do not start with letters (such as `(click)`) cannot be set using `setAttribute`
         // so we have to jump through some hoops to get such an attribute
         // https://github.com/angular/angular.js/pull/13318
-        specialAttrHolder.innerHTML = "<span " + attrName + ">";
-        let attributes = specialAttrHolder.firstChild.attributes;
-        let attribute = attributes[0];
+        specialAttrHolder.innerHTML = `<span ${attrName}>`;
+        const { attributes } = specialAttrHolder.firstChild;
+        const attribute = attributes[0];
         // We have to remove the attribute from its container element before we can add it to the destination element
         attributes.removeNamedItem(attribute.name);
         attribute.value = value;
@@ -2422,18 +2421,18 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         }
       }
 
-      let startSymbol = $interpolate.startSymbol(),
-        endSymbol = $interpolate.endSymbol(),
-        denormalizeTemplate =
-          startSymbol === "{{" && endSymbol === "}}"
-            ? identity
-            : function denormalizeTemplate(template) {
-                return template
-                  .replace(/\{\{/g, startSymbol)
-                  .replace(/}}/g, endSymbol);
-              },
-        NG_PREFIX_BINDING = /^ng(Attr|Prop|On)([A-Z].*)$/;
-      let MULTI_ELEMENT_DIR_RE = /^(.+)Start$/;
+      const startSymbol = $interpolate.startSymbol();
+      const endSymbol = $interpolate.endSymbol();
+      const denormalizeTemplate =
+        startSymbol === "{{" && endSymbol === "}}"
+          ? identity
+          : function denormalizeTemplate(template) {
+              return template
+                .replace(/\{\{/g, startSymbol)
+                .replace(/}}/g, endSymbol);
+            };
+      const NG_PREFIX_BINDING = /^ng(Attr|Prop|On)([A-Z].*)$/;
+      const MULTI_ELEMENT_DIR_RE = /^(.+)Start$/;
 
       compile.$$addBindingInfo = debugInfoEnabled
         ? function $$addBindingInfo($element, binding) {
@@ -2457,7 +2456,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
       compile.$$addScopeInfo = debugInfoEnabled
         ? function $$addScopeInfo($element, scope, isolated, noTemplate) {
-            let dataName = isolated
+            const dataName = isolated
               ? noTemplate
                 ? "$isolateScopeNoTemplate"
                 : "$isolateScope"
@@ -2475,15 +2474,15 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       compile.$$createComment = function (directiveName, comment) {
         let content = "";
         if (debugInfoEnabled) {
-          content = " " + (directiveName || "") + ": ";
-          if (comment) content += comment + " ";
+          content = ` ${directiveName || ""}: `;
+          if (comment) content += `${comment} `;
         }
         return window.document.createComment(content);
       };
 
       return compile;
 
-      //================================
+      //= ===============================
 
       function compile(
         $compileNodes,
@@ -2525,9 +2524,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           }
 
           options = options || {};
-          let parentBoundTranscludeFn = options.parentBoundTranscludeFn,
-            transcludeControllers = options.transcludeControllers,
-            futureParentElement = options.futureParentElement;
+          let { parentBoundTranscludeFn } = options;
+          const { transcludeControllers } = options;
+          const { futureParentElement } = options;
 
           // When `parentBoundTranscludeFn` is passed, it is a
           // `controllersBoundTransclude` function (it was previously passed
@@ -2565,9 +2564,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           }
 
           if (transcludeControllers) {
-            for (let controllerName in transcludeControllers) {
+            for (const controllerName in transcludeControllers) {
               $linkNode.data(
-                "$" + controllerName + "Controller",
+                `$${controllerName}Controller`,
                 transcludeControllers[controllerName].instance,
               );
             }
@@ -2593,15 +2592,14 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
       function detectNamespaceForChildElements(parentElement) {
         // TODO: Make this detect MathML as well...
-        let node = parentElement && parentElement[0];
+        const node = parentElement && parentElement[0];
         if (!node) {
           return "html";
-        } else {
-          return nodeName_(node) !== "foreignobject" &&
-            toString.call(node).match(/SVG/)
-            ? "svg"
-            : "html";
         }
+        return nodeName_(node) !== "foreignobject" &&
+          toString.call(node).match(/SVG/)
+          ? "svg"
+          : "html";
       }
 
       /**
@@ -2627,17 +2625,17 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         ignoreDirective,
         previousCompileContext,
       ) {
-        let linkFns = [],
-          // `nodeList` can be either an element's `.childNodes` (live NodeList)
-          // or a jqLite/jQuery collection or an array
-          notLiveList = isArray(nodeList) || nodeList instanceof jqLite,
-          attrs,
-          directives,
-          nodeLinkFn,
-          childNodes,
-          childLinkFn,
-          linkFnFound,
-          nodeLinkFnFound;
+        const linkFns = [];
+        // `nodeList` can be either an element's `.childNodes` (live NodeList)
+        // or a jqLite/jQuery collection or an array
+        const notLiveList = isArray(nodeList) || nodeList instanceof jqLite;
+        let attrs;
+        let directives;
+        let nodeLinkFn;
+        let childNodes;
+        let childLinkFn;
+        let linkFnFound;
+        let nodeLinkFnFound;
 
         for (let i = 0; i < nodeList.length; i++) {
           attrs = new Attributes();
@@ -2690,7 +2688,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             nodeLinkFnFound = nodeLinkFnFound || nodeLinkFn;
           }
 
-          //use the previous context only for the first element in the virtual group
+          // use the previous context only for the first element in the virtual group
           previousCompileContext = null;
         }
 
@@ -2703,20 +2701,20 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           $rootElement,
           parentBoundTranscludeFn,
         ) {
-          let nodeLinkFn,
-            childLinkFn,
-            node,
-            childScope,
-            i,
-            ii,
-            idx,
-            childBoundTranscludeFn;
+          let nodeLinkFn;
+          let childLinkFn;
+          let node;
+          let childScope;
+          let i;
+          let ii;
+          let idx;
+          let childBoundTranscludeFn;
           let stableNodeList;
 
           if (nodeLinkFnFound) {
             // copy nodeList so that if a nodeLinkFn removes or adds an element at this DOM level our
             // offsets don't get screwed up
-            let nodeListLength = nodeList.length;
+            const nodeListLength = nodeList.length;
             stableNodeList = new Array(nodeListLength);
 
             // create a sparse array by only copying the elements which have a linkFn
@@ -2781,8 +2779,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       }
 
       function mergeConsecutiveTextNodes(nodeList, idx, notLiveList) {
-        let node = nodeList[idx];
-        let parent = node.parentNode;
+        const node = nodeList[idx];
+        const parent = node.parentNode;
         let sibling;
 
         if (node.nodeType !== NODE_TYPE_TEXT) {
@@ -2795,7 +2793,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             break;
           }
 
-          node.nodeValue = node.nodeValue + sibling.nodeValue;
+          node.nodeValue += sibling.nodeValue;
 
           if (sibling.parentNode) {
             sibling.parentNode.removeChild(sibling);
@@ -2826,14 +2824,14 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           return transcludeFn(transcludedScope, cloneFn, {
             parentBoundTranscludeFn: previousBoundTranscludeFn,
             transcludeControllers: controllers,
-            futureParentElement: futureParentElement,
+            futureParentElement,
           });
         }
 
         // We need  to attach the transclusion slots onto the `boundTranscludeFn`
         // so that they are available inside the `controllersBoundTransclude` function
-        let boundSlots = (boundTranscludeFn.$$slots = createMap());
-        for (let slotName in transcludeFn.$$slots) {
+        const boundSlots = (boundTranscludeFn.$$slots = createMap());
+        for (const slotName in transcludeFn.$$slots) {
           if (transcludeFn.$$slots[slotName]) {
             boundSlots[slotName] = createBoundTranscludeFn(
               scope,
@@ -2865,11 +2863,11 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         maxPriority,
         ignoreDirective,
       ) {
-        let nodeType = node.nodeType,
-          attrsMap = attrs.$attr,
-          match,
-          nodeName,
-          className;
+        const { nodeType } = node;
+        const attrsMap = attrs.$attr;
+        let match;
+        let nodeName;
+        let className;
 
         switch (nodeType) {
           case NODE_TYPE_ELEMENT /* Element */:
@@ -2900,9 +2898,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               let attrStartName = false;
               let attrEndName = false;
 
-              let isNgAttr = false,
-                isNgProp = false,
-                isNgEvent = false;
+              let isNgAttr = false;
+              let isNgProp = false;
+              let isNgEvent = false;
               let multiElementMatch;
 
               attr = nAttrs[j];
@@ -2922,9 +2920,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                   .replace(PREFIX_REGEXP, "")
                   .toLowerCase()
                   .substr(4 + ngPrefixMatch[1].length)
-                  .replace(/_(.)/g, function (match, letter) {
-                    return letter.toUpperCase();
-                  });
+                  .replace(/_(.)/g, (match, letter) => letter.toUpperCase());
 
                 // Support *-start / *-end multi element directives
               } else if (
@@ -2932,7 +2928,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                 directiveIsMultiElement(multiElementMatch[1])
               ) {
                 attrStartName = name;
-                attrEndName = name.substr(0, name.length - 5) + "end";
+                attrEndName = `${name.substr(0, name.length - 5)}end`;
                 name = name.substr(0, name.length - 6);
               }
 
@@ -3040,9 +3036,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         // function created because of performance, try/catch disables
         // the optimization of the whole function #14848
         try {
-          let match = COMMENT_DIRECTIVE_REGEXP.exec(node.nodeValue);
+          const match = COMMENT_DIRECTIVE_REGEXP.exec(node.nodeValue);
           if (match) {
-            let nName = directiveNormalize(match[1]);
+            const nName = directiveNormalize(match[1]);
             if (
               addDirective(directives, nName, "M", maxPriority, ignoreDirective)
             ) {
@@ -3065,7 +3061,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
        * @returns {*}
        */
       function groupScan(node, attrStart, attrEnd) {
-        let nodes = [];
+        const nodes = [];
         let depth = 0;
         if (attrStart && node.hasAttribute && node.hasAttribute(attrStart)) {
           do {
@@ -3196,34 +3192,31 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       ) {
         previousCompileContext = previousCompileContext || {};
 
-        let terminalPriority = -Number.MAX_VALUE,
-          newScopeDirective = previousCompileContext.newScopeDirective,
-          controllerDirectives = previousCompileContext.controllerDirectives,
-          newIsolateScopeDirective =
-            previousCompileContext.newIsolateScopeDirective,
-          templateDirective = previousCompileContext.templateDirective,
-          nonTlbTranscludeDirective =
-            previousCompileContext.nonTlbTranscludeDirective,
-          hasTranscludeDirective = false,
-          hasTemplate = false,
-          hasElementTranscludeDirective =
-            previousCompileContext.hasElementTranscludeDirective,
-          $compileNode = (templateAttrs.$$element = jqLite(compileNode)),
-          directive,
-          directiveName,
-          $template,
-          replaceDirective = originalReplaceDirective,
-          childTranscludeFn = transcludeFn,
-          linkFn,
-          didScanForMultipleTransclusion = false,
-          mightHaveMultipleTransclusionError = false,
-          directiveValue;
+        let terminalPriority = -Number.MAX_VALUE;
+        let { newScopeDirective } = previousCompileContext;
+        let { controllerDirectives } = previousCompileContext;
+        let { newIsolateScopeDirective } = previousCompileContext;
+        let { templateDirective } = previousCompileContext;
+        let { nonTlbTranscludeDirective } = previousCompileContext;
+        let hasTranscludeDirective = false;
+        let hasTemplate = false;
+        let { hasElementTranscludeDirective } = previousCompileContext;
+        let $compileNode = (templateAttrs.$$element = jqLite(compileNode));
+        let directive;
+        let directiveName;
+        let $template;
+        let replaceDirective = originalReplaceDirective;
+        let childTranscludeFn = transcludeFn;
+        let linkFn;
+        let didScanForMultipleTransclusion = false;
+        let mightHaveMultipleTransclusionError = false;
+        let directiveValue;
 
         // executes all directives on the current element
         for (let i = 0, ii = directives.length; i < ii; i++) {
           directive = directives[i];
-          let attrStart = directive.$$start;
-          let attrEnd = directive.$$end;
+          const attrStart = directive.$$start;
+          const attrEnd = directive.$$end;
 
           // collect multiblock sections
           if (attrStart) {
@@ -3304,7 +3297,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           if (!directive.templateUrl && directive.controller) {
             controllerDirectives = controllerDirectives || createMap();
             assertNoDuplicate(
-              "'" + directiveName + "' controller",
+              `'${directiveName}' controller`,
               controllerDirectives[directiveName],
               directive,
               $compileNode,
@@ -3357,11 +3350,11 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                   //
                   // We need only nonTlbTranscludeDirective so that we prevent putting transclusion
                   // on the same element more than once.
-                  nonTlbTranscludeDirective: nonTlbTranscludeDirective,
+                  nonTlbTranscludeDirective,
                 },
               );
             } else {
-              let slots = createMap();
+              const slots = createMap();
 
               if (!isObject(directiveValue)) {
                 $template = jqLite(jqLiteClone(compileNode)).contents();
@@ -3370,13 +3363,13 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                 // collect them up, compile them and store their transclusion functions
                 $template = window.document.createDocumentFragment();
 
-                let slotMap = createMap();
-                let filledSlots = createMap();
+                const slotMap = createMap();
+                const filledSlots = createMap();
 
                 // Parse the element selectors
-                forEach(directiveValue, function (elementSelector, slotName) {
+                forEach(directiveValue, (elementSelector, slotName) => {
                   // If an element selector starts with a ? then it is optional
-                  let optional = elementSelector.charAt(0) === "?";
+                  const optional = elementSelector.charAt(0) === "?";
                   elementSelector = optional
                     ? elementSelector.substring(1)
                     : elementSelector;
@@ -3394,8 +3387,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                 });
 
                 // Add the matching elements into their slot
-                forEach($compileNode.contents(), function (node) {
-                  let slotName = slotMap[directiveNormalize(nodeName_(node))];
+                forEach($compileNode.contents(), (node) => {
+                  const slotName = slotMap[directiveNormalize(nodeName_(node))];
                   if (slotName) {
                     filledSlots[slotName] = true;
                     slots[slotName] =
@@ -3408,7 +3401,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                 });
 
                 // Check for required slots that were not filled
-                forEach(filledSlots, function (filled, slotName) {
+                forEach(filledSlots, (filled, slotName) => {
                   if (!filled) {
                     throw $compileMinErr(
                       "reqslot",
@@ -3418,10 +3411,10 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                   }
                 });
 
-                for (let slotName in slots) {
+                for (const slotName in slots) {
                   if (slots[slotName]) {
                     // Only define a transclusion function if the slot was filled
-                    let slotCompileNodes = jqLite(slots[slotName].childNodes);
+                    const slotCompileNodes = jqLite(slots[slotName].childNodes);
                     slots[slotName] = compilationGenerator(
                       mightHaveMultipleTransclusionError,
                       slotCompileNodes,
@@ -3493,19 +3486,19 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
               replaceWith(jqCollection, $compileNode, compileNode);
 
-              let newTemplateAttrs = { $attr: {} };
+              const newTemplateAttrs = { $attr: {} };
 
               // combine directives from the original node and from the template:
               // - take the array of directives for this element
               // - split it into two parts, those that already applied (processed) and those that weren't (unprocessed)
               // - collect directives from the template and sort them by priority
               // - combine directives as: processed + template + unprocessed
-              let templateDirectives = collectDirectives(
+              const templateDirectives = collectDirectives(
                 compileNode,
                 [],
                 newTemplateAttrs,
               );
-              let unprocessedDirectives = directives.splice(
+              const unprocessedDirectives = directives.splice(
                 i + 1,
                 directives.length - (i + 1),
               );
@@ -3555,12 +3548,12 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               preLinkFns,
               postLinkFns,
               {
-                controllerDirectives: controllerDirectives,
+                controllerDirectives,
                 newScopeDirective:
                   newScopeDirective !== directive && newScopeDirective,
-                newIsolateScopeDirective: newIsolateScopeDirective,
-                templateDirective: templateDirective,
-                nonTlbTranscludeDirective: nonTlbTranscludeDirective,
+                newIsolateScopeDirective,
+                templateDirective,
+                nonTlbTranscludeDirective,
               },
             );
             ii = directives.length;
@@ -3571,7 +3564,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                 templateAttrs,
                 childTranscludeFn,
               );
-              let context = directive.$$originalDirective || directive;
+              const context = directive.$$originalDirective || directive;
               if (isFunction(linkFn)) {
                 addLinkFns(null, bind(context, linkFn), attrStart, attrEnd);
               } else if (linkFn) {
@@ -3605,7 +3598,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         // might be normal or delayed nodeLinkFn depending on if templateUrl is present
         return nodeLinkFn;
 
-        ////////////////////
+        /// /////////////////
 
         function addLinkFns(pre, post, attrStart, attrEnd) {
           if (pre) {
@@ -3643,16 +3636,16 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           $rootElement,
           boundTranscludeFn,
         ) {
-          let i,
-            ii,
-            linkFn,
-            isolateScope,
-            controllerScope,
-            elementControllers,
-            transcludeFn,
-            $element,
-            attrs,
-            scopeBindingInfo;
+          let i;
+          let ii;
+          let linkFn;
+          let isolateScope;
+          let controllerScope;
+          let elementControllers;
+          let transcludeFn;
+          let $element;
+          let attrs;
+          let scopeBindingInfo;
 
           if (compileNode === linkNode) {
             attrs = templateAttrs;
@@ -3721,14 +3714,14 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           }
 
           // Initialize bindToController bindings
-          for (let name in elementControllers) {
-            let controllerDirective = controllerDirectives[name];
-            let controller = elementControllers[name];
-            let bindings = controllerDirective.$$bindings.bindToController;
+          for (const name in elementControllers) {
+            const controllerDirective = controllerDirectives[name];
+            const controller = elementControllers[name];
+            const bindings = controllerDirective.$$bindings.bindToController;
 
             controller.instance = controller();
             $element.data(
-              "$" + controllerDirective.name + "Controller",
+              `$${controllerDirective.name}Controller`,
               controller.instance,
             );
             controller.bindingInfo = initializeDirectiveBindings(
@@ -3741,8 +3734,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           }
 
           // Bind the required controllers to the controller, if `require` is an object and `bindToController` is truthy
-          forEach(controllerDirectives, function (controllerDirective, name) {
-            let require = controllerDirective.require;
+          forEach(controllerDirectives, (controllerDirective, name) => {
+            const { require } = controllerDirective;
             if (
               controllerDirective.bindToController &&
               !isArray(require) &&
@@ -3756,8 +3749,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           });
 
           // Handle the init and destroy lifecycle hooks on all controllers that have them
-          forEach(elementControllers, function (controller) {
-            let controllerInstance = controller.instance;
+          forEach(elementControllers, (controller) => {
+            const controllerInstance = controller.instance;
             if (isFunction(controllerInstance.$onChanges)) {
               try {
                 controllerInstance.$onChanges(
@@ -3775,13 +3768,13 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               }
             }
             if (isFunction(controllerInstance.$doCheck)) {
-              controllerScope.$watch(function () {
+              controllerScope.$watch(() => {
                 controllerInstance.$doCheck();
               });
               controllerInstance.$doCheck();
             }
             if (isFunction(controllerInstance.$onDestroy)) {
-              controllerScope.$on("$destroy", function callOnDestroyHook() {
+              controllerScope.$on("$destroy", () => {
                 controllerInstance.$onDestroy();
               });
             }
@@ -3846,8 +3839,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           }
 
           // Trigger $postLink lifecycle hooks
-          forEach(elementControllers, function (controller) {
-            let controllerInstance = controller.instance;
+          forEach(elementControllers, (controller) => {
+            const controllerInstance = controller.instance;
             if (isFunction(controllerInstance.$postLink)) {
               controllerInstance.$postLink();
             }
@@ -3883,7 +3876,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               //  * a transclude function - a filled slot
               //  * `null` - an optional slot that was not filled
               //  * `undefined` - a slot that was not declared (i.e. invalid)
-              let slotTranscludeFn = boundTranscludeFn.$$slots[slotName];
+              const slotTranscludeFn = boundTranscludeFn.$$slots[slotName];
               if (slotTranscludeFn) {
                 return slotTranscludeFn(
                   scope,
@@ -3892,7 +3885,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                   futureParentElement,
                   scopeToChild,
                 );
-              } else if (isUndefined(slotTranscludeFn)) {
+              }
+              if (isUndefined(slotTranscludeFn)) {
                 throw $compileMinErr(
                   "noslot",
                   'No parent directive that requires a transclusion with slot name "{0}". ' +
@@ -3923,23 +3917,23 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         let value;
 
         if (isString(require)) {
-          let match = require.match(REQUIRE_PREFIX_REGEXP);
-          let name = require.substring(match[0].length);
-          let inheritType = match[1] || match[3];
-          let optional = match[2] === "?";
+          const match = require.match(REQUIRE_PREFIX_REGEXP);
+          const name = require.substring(match[0].length);
+          const inheritType = match[1] || match[3];
+          const optional = match[2] === "?";
 
-          //If only parents then start at the parent element
+          // If only parents then start at the parent element
           if (inheritType === "^^") {
             $element = $element.parent();
-            //Otherwise attempt getting the controller from elementControllers in case
-            //the element is transcluded (and has no data) and to avoid .data if possible
+            // Otherwise attempt getting the controller from elementControllers in case
+            // the element is transcluded (and has no data) and to avoid .data if possible
           } else {
             value = elementControllers && elementControllers[name];
             value = value && value.instance;
           }
 
           if (!value) {
-            let dataName = "$" + name + "Controller";
+            const dataName = `$${name}Controller`;
 
             if (
               inheritType === "^^" &&
@@ -3976,7 +3970,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           }
         } else if (isObject(require)) {
           value = {};
-          forEach(require, function (controller, property) {
+          forEach(require, (controller, property) => {
             value[property] = getControllers(
               directiveName,
               controller,
@@ -3998,25 +3992,25 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         scope,
         newIsolateScopeDirective,
       ) {
-        let elementControllers = createMap();
-        for (let controllerKey in controllerDirectives) {
-          let directive = controllerDirectives[controllerKey];
-          let locals = {
+        const elementControllers = createMap();
+        for (const controllerKey in controllerDirectives) {
+          const directive = controllerDirectives[controllerKey];
+          const locals = {
             $scope:
               directive === newIsolateScopeDirective || directive.$$isolateScope
                 ? isolateScope
                 : scope,
-            $element: $element,
+            $element,
             $attrs: attrs,
             $transclude: transcludeFn,
           };
 
-          let controller = directive.controller;
+          let { controller } = directive;
           if (controller === "@") {
             controller = attrs[directive.name];
           }
 
-          let controllerInstance = $controller(
+          const controllerInstance = $controller(
             controller,
             locals,
             true,
@@ -4029,7 +4023,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           // later, once we have the actual element.
           elementControllers[directive.name] = controllerInstance;
           $element.data(
-            "$" + directive.name + "Controller",
+            `$${directive.name}Controller`,
             controllerInstance.instance,
           );
         }
@@ -4097,7 +4091,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                 });
               }
               if (!directive.$$bindings) {
-                let bindings = (directive.$$bindings = parseDirectiveBindings(
+                const bindings = (directive.$$bindings = parseDirectiveBindings(
                   directive,
                   directive.name,
                 ));
@@ -4149,11 +4143,11 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
        * @param {object} src source attributes (from the directive template)
        */
       function mergeTemplateAttributes(dst, src) {
-        let srcAttr = src.$attr,
-          dstAttr = dst.$attr;
+        const srcAttr = src.$attr;
+        const dstAttr = dst.$attr;
 
         // reapply the old attributes to the new element
-        forEach(dst, function (value, key) {
+        forEach(dst, (value, key) => {
           if (key.charAt(0) !== "$") {
             if (src[key] && src[key] !== value) {
               if (value.length) {
@@ -4167,7 +4161,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         });
 
         // copy the new attributes on the old attrs object
-        forEach(src, function (value, key) {
+        forEach(src, (value, key) => {
           // Check if we already set this attribute in the loop above.
           // `dst` will never contain hasOwnProperty as DOM parser won't let it.
           // You will get an "InvalidCharacterError: DOM Exception 5" error if you
@@ -4192,30 +4186,30 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         postLinkFns,
         previousCompileContext,
       ) {
-        let linkQueue = [],
-          afterTemplateNodeLinkFn,
-          afterTemplateChildLinkFn,
-          beforeTemplateCompileNode = $compileNode[0],
-          origAsyncDirective = directives.shift(),
-          derivedSyncDirective = inherit(origAsyncDirective, {
-            templateUrl: null,
-            transclude: null,
-            replace: null,
-            $$originalDirective: origAsyncDirective,
-          }),
-          templateUrl = isFunction(origAsyncDirective.templateUrl)
-            ? origAsyncDirective.templateUrl($compileNode, tAttrs)
-            : origAsyncDirective.templateUrl,
-          templateNamespace = origAsyncDirective.templateNamespace;
+        let linkQueue = [];
+        let afterTemplateNodeLinkFn;
+        let afterTemplateChildLinkFn;
+        const beforeTemplateCompileNode = $compileNode[0];
+        const origAsyncDirective = directives.shift();
+        const derivedSyncDirective = inherit(origAsyncDirective, {
+          templateUrl: null,
+          transclude: null,
+          replace: null,
+          $$originalDirective: origAsyncDirective,
+        });
+        const templateUrl = isFunction(origAsyncDirective.templateUrl)
+          ? origAsyncDirective.templateUrl($compileNode, tAttrs)
+          : origAsyncDirective.templateUrl;
+        const { templateNamespace } = origAsyncDirective;
 
         $compileNode.empty();
 
         $templateRequest(templateUrl)
-          .then(function (content) {
-            let compileNode,
-              tempTemplateAttrs,
-              $template,
-              childBoundTranscludeFn;
+          .then((content) => {
+            let compileNode;
+            let tempTemplateAttrs;
+            let $template;
+            let childBoundTranscludeFn;
 
             content = denormalizeTemplate(content);
 
@@ -4243,7 +4237,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
               tempTemplateAttrs = { $attr: {} };
               replaceWith($rootElement, $compileNode, compileNode);
-              let templateDirectives = collectDirectives(
+              const templateDirectives = collectDirectives(
                 compileNode,
                 [],
                 tempTemplateAttrs,
@@ -4274,7 +4268,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               postLinkFns,
               previousCompileContext,
             );
-            forEach($rootElement, function (node, i) {
+            forEach($rootElement, (node, i) => {
               if (node === compileNode) {
                 $rootElement[i] = $compileNode[0];
               }
@@ -4285,16 +4279,16 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             );
 
             while (linkQueue.length) {
-              let scope = linkQueue.shift(),
-                beforeTemplateLinkNode = linkQueue.shift(),
-                linkRootElement = linkQueue.shift(),
-                boundTranscludeFn = linkQueue.shift(),
-                linkNode = $compileNode[0];
+              const scope = linkQueue.shift();
+              const beforeTemplateLinkNode = linkQueue.shift();
+              const linkRootElement = linkQueue.shift();
+              const boundTranscludeFn = linkQueue.shift();
+              let linkNode = $compileNode[0];
 
               if (scope.$$destroyed) continue;
 
               if (beforeTemplateLinkNode !== beforeTemplateCompileNode) {
-                let oldClasses = beforeTemplateLinkNode.className;
+                const oldClasses = beforeTemplateLinkNode.className;
 
                 if (
                   !(
@@ -4333,7 +4327,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             }
             linkQueue = null;
           })
-          .catch(function (error) {
+          .catch((error) => {
             if (isError(error)) {
               $exceptionHandler(error);
             }
@@ -4373,7 +4367,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
        * Sorting function for bound directives.
        */
       function byPriority(a, b) {
-        let diff = b.priority - a.priority;
+        const diff = b.priority - a.priority;
         if (diff !== 0) return diff;
         if (a.name !== b.name) return a.name < b.name ? -1 : 1;
         return a.index - b.index;
@@ -4381,7 +4375,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
       function assertNoDuplicate(what, previousDirective, directive, element) {
         function wrapModuleNameIfDefined(moduleName) {
-          return moduleName ? " (module: " + moduleName + ")" : "";
+          return moduleName ? ` (module: ${moduleName})` : "";
         }
 
         if (previousDirective) {
@@ -4399,13 +4393,13 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       }
 
       function addTextInterpolateDirective(directives, text) {
-        let interpolateFn = $interpolate(text, true);
+        const interpolateFn = $interpolate(text, true);
         if (interpolateFn) {
           directives.push({
             priority: 0,
             compile: function textInterpolateCompileFn(templateNode) {
-              let templateNodeParent = templateNode.parent(),
-                hasCompileParent = !!templateNodeParent.length;
+              const templateNodeParent = templateNode.parent();
+              const hasCompileParent = !!templateNodeParent.length;
 
               // When transcluding a template that has bindings in the root
               // we don't have a parent and thus need to add the class during linking fn.
@@ -4413,15 +4407,12 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                 compile.$$addBindingClass(templateNodeParent);
 
               return function textInterpolateLinkFn(scope, node) {
-                let parent = node.parent();
+                const parent = node.parent();
                 if (!hasCompileParent) compile.$$addBindingClass(parent);
                 compile.$$addBindingInfo(parent, interpolateFn.expressions);
-                scope.$watch(
-                  interpolateFn,
-                  function interpolateFnWatchAction(value) {
-                    node[0].nodeValue = value;
-                  },
-                );
+                scope.$watch(interpolateFn, (value) => {
+                  node[0].nodeValue = value;
+                });
               };
             },
           });
@@ -4433,8 +4424,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         switch (type) {
           case "svg":
           case "math":
-            let wrapper = window.document.createElement("div");
-            wrapper.innerHTML = "<" + type + ">" + template + "</" + type + ">";
+            const wrapper = window.document.createElement("div");
+            wrapper.innerHTML = `<${type}>${template}</${type}>`;
             return wrapper.childNodes[0].childNodes;
           default:
             return template;
@@ -4455,12 +4446,14 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             return $sce.RESOURCE_URL;
           }
           return $sce.MEDIA_URL;
-        } else if (attrNormalizedName === "xlinkHref") {
+        }
+        if (attrNormalizedName === "xlinkHref") {
           // Some xlink:href are okay, most aren't
           if (nodeName === "image") return $sce.MEDIA_URL;
           if (nodeName === "a") return $sce.URL;
           return $sce.RESOURCE_URL;
-        } else if (
+        }
+        if (
           // Formaction
           (nodeName === "form" && attrNormalizedName === "action") ||
           // If relative URLs can go where they are not expected to, then
@@ -4470,7 +4463,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           (nodeName === "link" && attrNormalizedName === "href")
         ) {
           return $sce.RESOURCE_URL;
-        } else if (
+        }
+        if (
           nodeName === "a" &&
           (attrNormalizedName === "href" || attrNormalizedName === "ngHref")
         ) {
@@ -4479,9 +4473,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
       }
 
       function getTrustedPropContext(nodeName, propNormalizedName) {
-        let prop = propNormalizedName.toLowerCase();
+        const prop = propNormalizedName.toLowerCase();
         return (
-          PROP_CONTEXTS[nodeName + "|" + prop] || PROP_CONTEXTS["*|" + prop]
+          PROP_CONTEXTS[`${nodeName}|${prop}`] || PROP_CONTEXTS[`*|${prop}`]
         );
       }
 
@@ -4496,8 +4490,8 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
           );
         }
 
-        let nodeName = nodeName_(node);
-        let trustedContext = getTrustedPropContext(nodeName, propName);
+        const nodeName = nodeName_(node);
+        const trustedContext = getTrustedPropContext(nodeName, propName);
 
         let sanitizer = identity;
         // Sanitize img[srcset] + source[srcset] values.
@@ -4513,16 +4507,16 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         directives.push({
           priority: 100,
           compile: function ngPropCompileFn(_, attr) {
-            let ngPropGetter = $parse(attr[attrName]);
-            let ngPropWatch = $parse(attr[attrName], function sceValueOf(val) {
+            const ngPropGetter = $parse(attr[attrName]);
+            const ngPropWatch = $parse(attr[attrName], (val) =>
               // Unwrap the value to compare the actual inner safe value, not the wrapper object.
-              return $sce.valueOf(val);
-            });
+              $sce.valueOf(val),
+            );
 
             return {
               pre: function ngPropPreLinkFn(scope, $element) {
                 function applyPropValue() {
-                  let propValue = ngPropGetter(scope);
+                  const propValue = ngPropGetter(scope);
                   $element[0][propName] = sanitizer(propValue);
                 }
 
@@ -4542,7 +4536,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             $exceptionHandler,
             attrName,
             eventName,
-            /*forceAsync=*/ false,
+            /* forceAsync= */ false,
           ),
         );
       }
@@ -4554,9 +4548,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         name,
         isNgAttr,
       ) {
-        let nodeName = nodeName_(node);
-        let trustedContext = getTrustedAttrContext(nodeName, name);
-        let mustHaveExpression = !isNgAttr;
+        const nodeName = nodeName_(node);
+        const trustedContext = getTrustedAttrContext(nodeName, name);
+        const mustHaveExpression = !isNgAttr;
         const allOrNothing = ALL_OR_NOTHING_ATTRS.includes(name) || isNgAttr;
 
         let interpolateFn = $interpolate(
@@ -4586,14 +4580,14 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
         directives.push({
           priority: 100,
-          compile: function () {
+          compile() {
             return {
               pre: function attrInterpolatePreLinkFn(scope, element, attr) {
-                let $$observers =
+                const $$observers =
                   attr.$$observers || (attr.$$observers = createMap());
 
                 // If the attribute has changed since last $interpolate()ed
-                let newValue = attr[name];
+                const newValue = attr[name];
                 if (newValue !== value) {
                   // we need to interpolate again since the attribute value has been updated
                   // (e.g. by another directive's compile function)
@@ -4617,22 +4611,19 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                 (
                   (attr.$$observers && attr.$$observers[name].$$scope) ||
                   scope
-                ).$watch(
-                  interpolateFn,
-                  function interpolateFnWatchAction(newValue, oldValue) {
-                    //special case for class attribute addition + removal
-                    //so that class changes can tap into the animation
-                    //hooks provided by the $animate service. Be sure to
-                    //skip animations when the first digest occurs (when
-                    //both the new and the old values are the same) since
-                    //the CSS classes are the non-interpolated values
-                    if (name === "class" && newValue !== oldValue) {
-                      attr.$updateClass(newValue, oldValue);
-                    } else {
-                      attr.$set(name, newValue);
-                    }
-                  },
-                );
+                ).$watch(interpolateFn, (newValue, oldValue) => {
+                  // special case for class attribute addition + removal
+                  // so that class changes can tap into the animation
+                  // hooks provided by the $animate service. Be sure to
+                  // skip animations when the first digest occurs (when
+                  // both the new and the old values are the same) since
+                  // the CSS classes are the non-interpolated values
+                  if (name === "class" && newValue !== oldValue) {
+                    attr.$updateClass(newValue, oldValue);
+                  } else {
+                    attr.$set(name, newValue);
+                  }
+                });
               },
             };
           },
@@ -4650,11 +4641,11 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
        * @param {Node} newNode The new DOM node.
        */
       function replaceWith($rootElement, elementsToRemove, newNode) {
-        let firstElementToRemove = elementsToRemove[0],
-          removeCount = elementsToRemove.length,
-          parent = firstElementToRemove.parentNode,
-          i,
-          ii;
+        const firstElementToRemove = elementsToRemove[0];
+        const removeCount = elementsToRemove.length;
+        const parent = firstElementToRemove.parentNode;
+        let i;
+        let ii;
 
         if ($rootElement) {
           for (i = 0, ii = $rootElement.length; i < ii; i++) {
@@ -4692,7 +4683,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         // - remove them from the DOM
         // - allow them to still be traversed with .nextSibling
         // - allow a single fragment.qSA to fetch all elements being removed
-        let fragment = window.document.createDocumentFragment();
+        const fragment = window.document.createDocumentFragment();
         for (i = 0; i < removeCount; i++) {
           fragment.appendChild(elementsToRemove[i]);
         }
@@ -4763,19 +4754,19 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         bindings,
         directive,
       ) {
-        let removeWatchCollection = [];
-        let initialChanges = {};
+        const removeWatchCollection = [];
+        const initialChanges = {};
         let changes;
 
-        forEach(bindings, function initializeBinding(definition, scopeName) {
-          let attrName = definition.attrName,
-            optional = definition.optional,
-            mode = definition.mode, // @, =, <, or &
-            lastValue,
-            parentGet,
-            parentSet,
-            compare,
-            removeWatch;
+        forEach(bindings, (definition, scopeName) => {
+          const { attrName } = definition;
+          const { optional } = definition;
+          const { mode } = definition; // @, =, <, or &
+          let lastValue;
+          let parentGet;
+          let parentSet;
+          let compare;
+          let removeWatch;
 
           switch (mode) {
             case "@":
@@ -4783,9 +4774,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                 strictBindingsCheck(attrName, directive.name);
                 destination[scopeName] = attrs[attrName] = undefined;
               }
-              removeWatch = attrs.$observe(attrName, function (value) {
+              removeWatch = attrs.$observe(attrName, (value) => {
                 if (isString(value) || isBoolean(value)) {
-                  let oldValue = destination[scopeName];
+                  const oldValue = destination[scopeName];
                   recordChanges(scopeName, value, oldValue);
                   destination[scopeName] = value;
                 }
@@ -4836,7 +4827,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
                   );
                 };
               lastValue = destination[scopeName] = parentGet(scope);
-              let parentValueWatch = function parentValueWatch(parentValue) {
+              const parentValueWatch = function parentValueWatch(parentValue) {
                 if (!compare(parentValue, destination[scopeName])) {
                   // we are out of sync and need to copy
                   if (!compare(parentValue, lastValue)) {
@@ -4875,9 +4866,9 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               if (optional && !attrs[attrName]) break;
 
               parentGet = $parse(attrs[attrName]);
-              let isLiteral = parentGet.literal;
+              const isLiteral = parentGet.literal;
 
-              let initialValue = (destination[scopeName] = parentGet(scope));
+              const initialValue = (destination[scopeName] = parentGet(scope));
               initialChanges[scopeName] = new SimpleChange(
                 _UNINITIALIZED_VALUE,
                 destination[scopeName],
@@ -4885,7 +4876,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
               removeWatch = scope[
                 definition.collection ? "$watchCollection" : "$watch"
-              ](parentGet, function parentValueWatchAction(newValue, oldValue) {
+              ](parentGet, (newValue, oldValue) => {
                 if (oldValue === newValue) {
                   if (
                     oldValue === initialValue ||
@@ -4952,7 +4943,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         }
 
         return {
-          initialChanges: initialChanges,
+          initialChanges,
           removeWatches:
             removeWatchCollection.length &&
             function removeWatches() {
@@ -4975,7 +4966,7 @@ SimpleChange.prototype.isFirstChange = function () {
 };
 
 let PREFIX_REGEXP = /^((?:x|data)[:\-_])/i;
-let SPECIAL_CHARS_REGEXP = /[:\-_]+(.)/g;
+const SPECIAL_CHARS_REGEXP = /[:\-_]+(.)/g;
 
 /**
  * Converts all accepted directives format into proper directive name.
@@ -4984,9 +4975,9 @@ let SPECIAL_CHARS_REGEXP = /[:\-_]+(.)/g;
 function directiveNormalize(name) {
   return name
     .replace(PREFIX_REGEXP, "")
-    .replace(SPECIAL_CHARS_REGEXP, function (_, letter, offset) {
-      return offset ? letter.toUpperCase() : letter;
-    });
+    .replace(SPECIAL_CHARS_REGEXP, (_, letter, offset) =>
+      offset ? letter.toUpperCase() : letter,
+    );
 }
 
 /**
@@ -5047,12 +5038,12 @@ function directiveLinkingFn(
 ) {}
 
 function tokenDifference(str1, str2) {
-  let values = "",
-    tokens1 = str1.split(/\s+/),
-    tokens2 = str2.split(/\s+/);
+  let values = "";
+  const tokens1 = str1.split(/\s+/);
+  const tokens2 = str2.split(/\s+/);
 
   outer: for (let i = 0; i < tokens1.length; i++) {
-    let token = tokens1[i];
+    const token = tokens1[i];
     for (let j = 0; j < tokens2.length; j++) {
       if (token === tokens2[j]) continue outer;
     }
@@ -5070,7 +5061,7 @@ function removeComments(jqNodes) {
   }
 
   while (i--) {
-    let node = jqNodes[i];
+    const node = jqNodes[i];
     if (
       node.nodeType === NODE_TYPE_COMMENT ||
       (node.nodeType === NODE_TYPE_TEXT && node.nodeValue.trim() === "")

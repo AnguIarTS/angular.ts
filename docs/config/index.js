@@ -1,9 +1,10 @@
 
 
-let path = require('canonical-path');
-let packagePath = __dirname;
+const path = require('canonical-path');
 
-let Package = require('dgeni').Package;
+const packagePath = __dirname;
+
+const {Package} = require('dgeni');
 
 // Create and export a new Dgeni package called angularjs. This package depends upon
 // the ngdoc, nunjucks, and examples packages defined in the dgeni-packages node module.
@@ -35,7 +36,7 @@ module.exports = new Package('angularjs', [
 .processor(require('./processors/sitemap'))
 
 
-.config(function(dgeni, log, readFilesProcessor, writeFilesProcessor) {
+.config((dgeni, log, readFilesProcessor, writeFilesProcessor) => {
 
   dgeni.stopOnValidationError = true;
   dgeni.stopOnProcessingError = true;
@@ -53,7 +54,7 @@ module.exports = new Package('angularjs', [
 })
 
 
-.config(function(parseTagsProcessor) {
+.config((parseTagsProcessor) => {
   parseTagsProcessor.tagDefinitions.push(require('./tag-defs/deprecated')); // this will override the jsdoc version
   parseTagsProcessor.tagDefinitions.push(require('./tag-defs/tutorial-step'));
   parseTagsProcessor.tagDefinitions.push(require('./tag-defs/sortOrder'));
@@ -63,12 +64,12 @@ module.exports = new Package('angularjs', [
 })
 
 
-.config(function(inlineTagProcessor, typeInlineTagDef) {
+.config((inlineTagProcessor, typeInlineTagDef) => {
   inlineTagProcessor.inlineTagDefinitions.push(typeInlineTagDef);
 })
 
 
-.config(function(templateFinder, renderDocsProcessor, gitData) {
+.config((templateFinder, renderDocsProcessor, gitData) => {
   // We are completely overwriting the folders
   templateFinder.templateFolders.length = 0;
   templateFinder.templateFolders.unshift(path.resolve(packagePath, 'templates/examples'));
@@ -78,7 +79,7 @@ module.exports = new Package('angularjs', [
 })
 
 
-.config(function(computePathsProcessor, computeIdsProcessor) {
+.config((computePathsProcessor, computeIdsProcessor) => {
 
   computePathsProcessor.pathTemplates.push({
     docTypes: ['error'],
@@ -94,7 +95,7 @@ module.exports = new Package('angularjs', [
 
   computePathsProcessor.pathTemplates.push({
     docTypes: ['overview', 'tutorial'],
-    getPath: function(doc) {
+    getPath(doc) {
       let docPath = path.dirname(doc.fileInfo.relativePath);
       if (doc.fileInfo.baseName !== 'index') {
         docPath = path.join(docPath, doc.fileInfo.baseName);
@@ -106,7 +107,7 @@ module.exports = new Package('angularjs', [
 
   computePathsProcessor.pathTemplates.push({
     docTypes: ['e2e-test'],
-    getPath: function() {},
+    getPath() {},
     outputPathTemplate: 'ptore2e/${example.id}/${deployment.name}_test.js'
   });
 
@@ -129,24 +130,24 @@ module.exports = new Package('angularjs', [
 
   computeIdsProcessor.idTemplates.push({
     docTypes: ['overview', 'tutorial', 'e2e-test', 'indexPage'],
-    getId: function(doc) { return doc.fileInfo.baseName; },
-    getAliases: function(doc) { return [doc.id]; }
+    getId(doc) { return doc.fileInfo.baseName; },
+    getAliases(doc) { return [doc.id]; }
   });
 
   computeIdsProcessor.idTemplates.push({
     docTypes: ['error'],
-    getId: function(doc) { return 'error:' + doc.namespace + ':' + doc.name; },
-    getAliases: function(doc) { return [doc.name, doc.namespace + ':' + doc.name, doc.id]; }
+    getId(doc) { return `error:${  doc.namespace  }:${  doc.name}`; },
+    getAliases(doc) { return [doc.name, `${doc.namespace  }:${  doc.name}`, doc.id]; }
   },
   {
     docTypes: ['errorNamespace'],
-    getId: function(doc) { return 'error:' + doc.name; },
-    getAliases: function(doc) { return [doc.id]; }
+    getId(doc) { return `error:${  doc.name}`; },
+    getAliases(doc) { return [doc.id]; }
   }
   );
 })
 
-.config(function(checkAnchorLinksProcessor) {
+.config((checkAnchorLinksProcessor) => {
   checkAnchorLinksProcessor.base = '/';
   checkAnchorLinksProcessor.errorOnUnmatchedLinks = true;
   // We are only interested in docs that have an area (i.e. they are pages)
@@ -154,13 +155,13 @@ module.exports = new Package('angularjs', [
 })
 
 
-.config(function(
+.config((
   generateIndexPagesProcessor,
   generateProtractorTestsProcessor,
   generateExamplesProcessor,
   debugDeployment, defaultDeployment,
   jqueryDeployment, testDeployment,
-  productionDeployment) {
+  productionDeployment) => {
 
   generateIndexPagesProcessor.deployments = [
     debugDeployment,
@@ -185,6 +186,6 @@ module.exports = new Package('angularjs', [
   ];
 })
 
-.config(function(generateKeywordsProcessor) {
+.config((generateKeywordsProcessor) => {
   generateKeywordsProcessor.docTypesToIgnore = ['componentGroup'];
 });

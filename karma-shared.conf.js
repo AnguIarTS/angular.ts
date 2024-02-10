@@ -172,28 +172,28 @@ module.exports = function(config, specificOptions) {
   // Terrible hack to workaround inflexibility of log4js:
   // - ignore web-server's 404 warnings,
   // - ignore DEBUG logs (on CI), we log them into a file instead.
-  let IGNORED_404 = [
+  const IGNORED_404 = [
     '/favicon.ico',
     '/%7B%7BtestUrl%7D%7D',
     '/someSanitizedUrl',
     '/{{testUrl}}'
   ];
-  let log4js = require('log4js');
-  let layouts = require('log4js/lib/layouts');
-  let originalConfigure = log4js.configure;
+  const log4js = require('log4js');
+  const layouts = require('log4js/lib/layouts');
+  const originalConfigure = log4js.configure;
   log4js.configure = function(log4jsConfig) {
-    let consoleAppender = log4jsConfig.appenders.shift();
-    let originalResult = originalConfigure.call(log4js, log4jsConfig);
-    let layout = layouts.layout(consoleAppender.layout.type, consoleAppender.layout);
+    const consoleAppender = log4jsConfig.appenders.shift();
+    const originalResult = originalConfigure.call(log4js, log4jsConfig);
+    const layout = layouts.layout(consoleAppender.layout.type, consoleAppender.layout);
 
 
 
-    log4js.addAppender(function(log) {
-      let msg = log.data[0];
+    log4js.addAppender((log) => {
+      const msg = log.data[0];
 
       // ignore web-server's 404s
       if (log.categoryName === 'web-server' && log.level.levelStr === config.LOG_WARN &&
-          IGNORED_404.some(function(ignoredLog) {return msg.indexOf(ignoredLog) !== -1;})) {
+          IGNORED_404.some((ignoredLog) => msg.indexOf(ignoredLog) !== -1)) {
         return;
       }
 

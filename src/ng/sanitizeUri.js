@@ -1,12 +1,17 @@
+/* eslint-disable import/prefer-default-export */
+
+import { isDefined } from "./utils";
+import { urlResolve } from "./urlUtils";
+
 /**
  * @this
  * @description
  * Private service to sanitize uris for links and images. Used by $compile and $sanitize.
  */
 export function $$SanitizeUriProvider() {
-  let aHrefSanitizationTrustedUrlList = /^\s*(https?|s?ftp|mailto|tel|file):/,
-    imgSrcSanitizationTrustedUrlList =
-      /^\s*((https?|ftp|file|blob):|data:image\/)/;
+  let aHrefSanitizationTrustedUrlList = /^\s*(https?|s?ftp|mailto|tel|file):/;
+  let imgSrcSanitizationTrustedUrlList =
+    /^\s*((https?|ftp|file|blob):|data:image\/)/;
 
   /**
    * @description
@@ -69,12 +74,12 @@ export function $$SanitizeUriProvider() {
   this.$get = function () {
     return function sanitizeUri(uri, isMediaUrl) {
       // if (!uri) return uri;
-      let regex = isMediaUrl
+      const regex = isMediaUrl
         ? imgSrcSanitizationTrustedUrlList
         : aHrefSanitizationTrustedUrlList;
-      let normalizedVal = urlResolve(uri && uri.trim()).href;
+      const normalizedVal = urlResolve(uri && uri.trim()).href;
       if (normalizedVal !== "" && !normalizedVal.match(regex)) {
-        return "unsafe:" + normalizedVal;
+        return `unsafe:${normalizedVal}`;
       }
       return uri;
     };

@@ -1,14 +1,14 @@
 /* exported $$AnimationProvider */
 
-let $$AnimationProvider = [
+const $$AnimationProvider = [
   "$animateProvider",
   /** @this */ function ($animateProvider) {
-    let NG_ANIMATE_REF_ATTR = "ng-animate-ref";
+    const NG_ANIMATE_REF_ATTR = "ng-animate-ref";
 
-    let drivers = (this.drivers = []);
+    const drivers = (this.drivers = []);
 
-    let RUNNER_STORAGE_KEY = "$$animationRunner";
-    let PREPARE_CLASSES_KEY = "$$animatePrepareClasses";
+    const RUNNER_STORAGE_KEY = "$$animationRunner";
+    const PREPARE_CLASSES_KEY = "$$animatePrepareClasses";
 
     function setRunner(element, runner) {
       element.data(RUNNER_STORAGE_KEY, runner);
@@ -39,18 +39,18 @@ let $$AnimationProvider = [
         $$rAFScheduler,
         $$animateCache,
       ) {
-        let animationQueue = [];
-        let applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
+        const animationQueue = [];
+        const applyAnimationClasses = applyAnimationClassesFactory($$jqLite);
 
         function sortAnimations(animations) {
-          let tree = { children: [] };
-          let i,
-            lookup = new $$Map();
+          const tree = { children: [] };
+          let i;
+          const lookup = new $$Map();
 
           // this is done first beforehand so that the map
           // is filled with a list of the elements that will be animated
           for (i = 0; i < animations.length; i++) {
-            let animation = animations[i];
+            const animation = animations[i];
             lookup.set(
               animation.domNode,
               (animations[i] = {
@@ -72,8 +72,8 @@ let $$AnimationProvider = [
             if (entry.processed) return entry;
             entry.processed = true;
 
-            let elementNode = entry.domNode;
-            let parentNode = elementNode.parentNode;
+            const elementNode = entry.domNode;
+            let { parentNode } = elementNode;
             lookup.set(elementNode, entry);
 
             let parentEntry;
@@ -93,8 +93,8 @@ let $$AnimationProvider = [
           }
 
           function flatten(tree) {
-            let result = [];
-            let queue = [];
+            const result = [];
+            const queue = [];
             let i;
 
             for (i = 0; i < tree.children.length; i++) {
@@ -106,7 +106,7 @@ let $$AnimationProvider = [
             let row = [];
 
             for (i = 0; i < queue.length; i++) {
-              let entry = queue[i];
+              const entry = queue[i];
               if (remainingLevelEntries <= 0) {
                 remainingLevelEntries = nextLevelEntries;
                 nextLevelEntries = 0;
@@ -114,7 +114,7 @@ let $$AnimationProvider = [
                 row = [];
               }
               row.push(entry);
-              entry.children.forEach(function (childEntry) {
+              entry.children.forEach((childEntry) => {
                 nextLevelEntries++;
                 queue.push(childEntry);
               });
@@ -132,17 +132,17 @@ let $$AnimationProvider = [
         // TODO(matsko): document the signature in a better way
         return function (element, event, options) {
           options = prepareAnimationOptions(options);
-          let isStructural = ["enter", "move", "leave"].indexOf(event) >= 0;
+          const isStructural = ["enter", "move", "leave"].indexOf(event) >= 0;
 
           // there is no animation at the current moment, however
           // these runner methods will get later updated with the
           // methods leading into the driver's end/cancel methods
           // for now they just stop the animation from starting
-          let runner = new $$AnimateRunner({
-            end: function () {
+          const runner = new $$AnimateRunner({
+            end() {
               close();
             },
-            cancel: function () {
+            cancel() {
               close(true);
             },
           });
@@ -156,16 +156,16 @@ let $$AnimationProvider = [
             element.attr("class"),
             mergeClasses(options.addClass, options.removeClass),
           );
-          let tempClasses = options.tempClasses;
+          let { tempClasses } = options;
           if (tempClasses) {
-            classes += " " + tempClasses;
+            classes += ` ${tempClasses}`;
             options.tempClasses = null;
           }
 
           if (isStructural) {
             element.data(
               PREPARE_CLASSES_KEY,
-              "ng-" + event + PREPARE_CLASS_SUFFIX,
+              `ng-${event}${PREPARE_CLASS_SUFFIX}`,
             );
           }
 
@@ -174,13 +174,13 @@ let $$AnimationProvider = [
           animationQueue.push({
             // this data is used by the postDigest code and passed into
             // the driver step function
-            element: element,
-            classes: classes,
-            event: event,
+            element,
+            classes,
+            event,
             structural: isStructural,
-            options: options,
-            beforeStart: beforeStart,
-            close: close,
+            options,
+            beforeStart,
+            close,
           });
 
           element.on("$destroy", handleDestroyedElement);
@@ -190,9 +190,9 @@ let $$AnimationProvider = [
           // were apart of the same postDigest flush call.
           if (animationQueue.length > 1) return runner;
 
-          $rootScope.$$postDigest(function () {
-            let animations = [];
-            forEach(animationQueue, function (entry) {
+          $rootScope.$$postDigest(() => {
+            const animations = [];
+            forEach(animationQueue, (entry) => {
               // the element was destroyed early on which removed the runner
               // form its storage. This means we can't animate this element
               // at all and it already has been closed due to destruction.
@@ -206,18 +206,18 @@ let $$AnimationProvider = [
             // now any future animations will be in another postDigest
             animationQueue.length = 0;
 
-            let groupedAnimations = groupAnimations(animations);
-            let toBeSortedAnimations = [];
+            const groupedAnimations = groupAnimations(animations);
+            const toBeSortedAnimations = [];
 
-            forEach(groupedAnimations, function (animationEntry) {
-              let element = animationEntry.from
+            forEach(groupedAnimations, (animationEntry) => {
+              const element = animationEntry.from
                 ? animationEntry.from.element
                 : animationEntry.element;
               let extraClasses = options.addClass;
 
               extraClasses =
-                (extraClasses ? extraClasses + " " : "") + NG_ANIMATE_CLASSNAME;
-              let cacheKey = $$animateCache.cacheKey(
+                (extraClasses ? `${extraClasses} ` : "") + NG_ANIMATE_CLASSNAME;
+              const cacheKey = $$animateCache.cacheKey(
                 element[0],
                 animationEntry.event,
                 extraClasses,
@@ -225,11 +225,11 @@ let $$AnimationProvider = [
               );
 
               toBeSortedAnimations.push({
-                element: element,
+                element,
                 domNode: getDomNode(element),
                 fn: function triggerAnimationStart() {
-                  let startAnimationFn,
-                    closeFn = animationEntry.close;
+                  let startAnimationFn;
+                  const closeFn = animationEntry.close;
 
                   // in the event that we've cached the animation status for this element
                   // and it's in fact an invalid animation (something that has duration = 0)
@@ -250,12 +250,12 @@ let $$AnimationProvider = [
 
                   // in the event that the element was removed before the digest runs or
                   // during the RAF sequencing then we should not trigger the animation.
-                  let targetElement = animationEntry.anchors
+                  const targetElement = animationEntry.anchors
                     ? animationEntry.from.element || animationEntry.to.element
                     : animationEntry.element;
 
                   if (getRunner(targetElement)) {
-                    let operation = invokeFirstDriver(animationEntry);
+                    const operation = invokeFirstDriver(animationEntry);
                     if (operation) {
                       startAnimationFn = operation.start;
                     }
@@ -264,8 +264,8 @@ let $$AnimationProvider = [
                   if (!startAnimationFn) {
                     closeFn();
                   } else {
-                    let animationRunner = startAnimationFn();
-                    animationRunner.done(function (status) {
+                    const animationRunner = startAnimationFn();
+                    animationRunner.done((status) => {
                       closeFn(!status);
                     });
                     updateAnimationRunners(animationEntry, animationRunner);
@@ -277,12 +277,12 @@ let $$AnimationProvider = [
             // we need to sort each of the animations in order of parent to child
             // relationships. This ensures that the child classes are applied at the
             // right time.
-            let finalAnimations = sortAnimations(toBeSortedAnimations);
+            const finalAnimations = sortAnimations(toBeSortedAnimations);
             for (let i = 0; i < finalAnimations.length; i++) {
-              let innerArray = finalAnimations[i];
+              const innerArray = finalAnimations[i];
               for (let j = 0; j < innerArray.length; j++) {
-                let entry = innerArray[j];
-                let element = entry.element;
+                const entry = innerArray[j];
+                const { element } = entry;
 
                 // the RAFScheduler code only uses functions
                 finalAnimations[i][j] = entry.fn;
@@ -295,7 +295,7 @@ let $$AnimationProvider = [
                   continue;
                 }
 
-                let prepareClassName = element.data(PREPARE_CLASSES_KEY);
+                const prepareClassName = element.data(PREPARE_CLASSES_KEY);
                 if (prepareClassName) {
                   $$jqLite.addClass(element, prepareClassName);
                 }
@@ -309,13 +309,13 @@ let $$AnimationProvider = [
 
           // TODO(matsko): change to reference nodes
           function getAnchorNodes(node) {
-            let SELECTOR = "[" + NG_ANIMATE_REF_ATTR + "]";
-            let items = node.hasAttribute(NG_ANIMATE_REF_ATTR)
+            const SELECTOR = `[${NG_ANIMATE_REF_ATTR}]`;
+            const items = node.hasAttribute(NG_ANIMATE_REF_ATTR)
               ? [node]
               : node.querySelectorAll(SELECTOR);
-            let anchors = [];
-            forEach(items, function (node) {
-              let attr = node.getAttribute(NG_ANIMATE_REF_ATTR);
+            const anchors = [];
+            forEach(items, (node) => {
+              const attr = node.getAttribute(NG_ANIMATE_REF_ATTR);
               if (attr && attr.length) {
                 anchors.push(node);
               }
@@ -324,22 +324,22 @@ let $$AnimationProvider = [
           }
 
           function groupAnimations(animations) {
-            let preparedAnimations = [];
-            let refLookup = {};
-            forEach(animations, function (animation, index) {
-              let element = animation.element;
-              let node = getDomNode(element);
-              let event = animation.event;
-              let enterOrMove = ["enter", "move"].indexOf(event) >= 0;
-              let anchorNodes = animation.structural
+            const preparedAnimations = [];
+            const refLookup = {};
+            forEach(animations, (animation, index) => {
+              const { element } = animation;
+              const node = getDomNode(element);
+              const { event } = animation;
+              const enterOrMove = ["enter", "move"].indexOf(event) >= 0;
+              const anchorNodes = animation.structural
                 ? getAnchorNodes(node)
                 : [];
 
               if (anchorNodes.length) {
-                let direction = enterOrMove ? "to" : "from";
+                const direction = enterOrMove ? "to" : "from";
 
-                forEach(anchorNodes, function (anchor) {
-                  let key = anchor.getAttribute(NG_ANIMATE_REF_ATTR);
+                forEach(anchorNodes, (anchor) => {
+                  const key = anchor.getAttribute(NG_ANIMATE_REF_ATTR);
                   refLookup[key] = refLookup[key] || {};
                   refLookup[key][direction] = {
                     animationID: index,
@@ -351,17 +351,17 @@ let $$AnimationProvider = [
               }
             });
 
-            let usedIndicesLookup = {};
-            let anchorGroups = {};
-            forEach(refLookup, function (operations, key) {
-              let from = operations.from;
-              let to = operations.to;
+            const usedIndicesLookup = {};
+            const anchorGroups = {};
+            forEach(refLookup, (operations, key) => {
+              const { from } = operations;
+              const { to } = operations;
 
               if (!from || !to) {
                 // only one of these is set therefore we can't have an
                 // anchor animation since all three pieces are required
-                let index = from ? from.animationID : to.animationID;
-                let indexKey = index.toString();
+                const index = from ? from.animationID : to.animationID;
+                const indexKey = index.toString();
                 if (!usedIndicesLookup[indexKey]) {
                   usedIndicesLookup[indexKey] = true;
                   preparedAnimations.push(animations[index]);
@@ -369,17 +369,17 @@ let $$AnimationProvider = [
                 return;
               }
 
-              let fromAnimation = animations[from.animationID];
-              let toAnimation = animations[to.animationID];
-              let lookupKey = from.animationID.toString();
+              const fromAnimation = animations[from.animationID];
+              const toAnimation = animations[to.animationID];
+              const lookupKey = from.animationID.toString();
               if (!anchorGroups[lookupKey]) {
-                let group = (anchorGroups[lookupKey] = {
+                const group = (anchorGroups[lookupKey] = {
                   structural: true,
-                  beforeStart: function () {
+                  beforeStart() {
                     fromAnimation.beforeStart();
                     toAnimation.beforeStart();
                   },
-                  close: function () {
+                  close() {
                     fromAnimation.close();
                     toAnimation.close();
                   },
@@ -415,10 +415,10 @@ let $$AnimationProvider = [
           function cssClassesIntersection(a, b) {
             a = a.split(" ");
             b = b.split(" ");
-            let matches = [];
+            const matches = [];
 
             for (let i = 0; i < a.length; i++) {
-              let aa = a[i];
+              const aa = a[i];
               if (aa.substring(0, 3) === "ng-") continue;
 
               for (let j = 0; j < b.length; j++) {
@@ -436,9 +436,9 @@ let $$AnimationProvider = [
             // we loop in reverse order since the more general drivers (like CSS and JS)
             // may attempt more elements, but custom drivers are more particular
             for (let i = drivers.length - 1; i >= 0; i--) {
-              let driverName = drivers[i];
-              let factory = $injector.get(driverName);
-              let driver = factory(animationDetails);
+              const driverName = drivers[i];
+              const factory = $injector.get(driverName);
+              const driver = factory(animationDetails);
               if (driver) {
                 return driver;
               }
@@ -447,7 +447,7 @@ let $$AnimationProvider = [
 
           function beforeStart() {
             tempClasses =
-              (tempClasses ? tempClasses + " " : "") + NG_ANIMATE_CLASSNAME;
+              (tempClasses ? `${tempClasses} ` : "") + NG_ANIMATE_CLASSNAME;
             $$jqLite.addClass(element, tempClasses);
 
             let prepareClassName = element.data(PREPARE_CLASSES_KEY);
@@ -466,13 +466,13 @@ let $$AnimationProvider = [
             }
 
             function update(element) {
-              let runner = getRunner(element);
+              const runner = getRunner(element);
               if (runner) runner.setHost(newRunner);
             }
           }
 
           function handleDestroyedElement() {
-            let runner = getRunner(element);
+            const runner = getRunner(element);
             if (runner && (event !== "leave" || !options.$$domOperationFired)) {
               runner.end();
             }

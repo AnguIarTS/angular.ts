@@ -1,4 +1,5 @@
-let $interpolateMinErr = (angular.$interpolateMinErr = minErr("$interpolate"));
+const $interpolateMinErr = (angular.$interpolateMinErr =
+  minErr("$interpolate"));
 $interpolateMinErr.throwNoconcat = function (text) {
   throw $interpolateMinErr(
     "noconcat",
@@ -105,13 +106,16 @@ export function $InterpolateProvider() {
     "$exceptionHandler",
     "$sce",
     function ($parse, $exceptionHandler, $sce) {
-      let startSymbolLength = startSymbol.length,
-        endSymbolLength = endSymbol.length,
-        escapedStartRegexp = new RegExp(startSymbol.replace(/./g, escape), "g"),
-        escapedEndRegexp = new RegExp(endSymbol.replace(/./g, escape), "g");
+      const startSymbolLength = startSymbol.length;
+      const endSymbolLength = endSymbol.length;
+      const escapedStartRegexp = new RegExp(
+        startSymbol.replace(/./g, escape),
+        "g",
+      );
+      const escapedEndRegexp = new RegExp(endSymbol.replace(/./g, escape), "g");
 
       function escape(ch) {
-        return "\\\\\\" + ch;
+        return `\\\\\\${ch}`;
       }
 
       function unescapeText(text) {
@@ -127,8 +131,8 @@ export function $InterpolateProvider() {
         objectEquality,
         constantInterp,
       ) {
-        let unwatch = scope.$watch(
-          function constantInterpolateWatch(scope) {
+        const unwatch = scope.$watch(
+          (scope) => {
             unwatch();
             return constantInterp(scope);
           },
@@ -262,7 +266,7 @@ export function $InterpolateProvider() {
         trustedContext,
         allOrNothing,
       ) {
-        let contextAllowsConcatenation =
+        const contextAllowsConcatenation =
           trustedContext === $sce.URL || trustedContext === $sce.MEDIA_URL;
 
         // Provide a quick exit and simplified result function for text with no interpolation
@@ -273,7 +277,7 @@ export function $InterpolateProvider() {
           if (contextAllowsConcatenation) {
             unescapedText = $sce.getTrusted(trustedContext, unescapedText);
           }
-          let constantInterp = valueFn(unescapedText);
+          const constantInterp = valueFn(unescapedText);
           constantInterp.exp = text;
           constantInterp.expressions = [];
           constantInterp.$$watchDelegate = constantWatchDelegate;
@@ -282,16 +286,16 @@ export function $InterpolateProvider() {
         }
 
         allOrNothing = !!allOrNothing;
-        let startIndex,
-          endIndex,
-          index = 0,
-          expressions = [],
-          parseFns,
-          textLength = text.length,
-          exp,
-          concat = [],
-          expressionPositions = [],
-          singleExpression;
+        let startIndex;
+        let endIndex;
+        let index = 0;
+        const expressions = [];
+        let parseFns;
+        const textLength = text.length;
+        let exp;
+        const concat = [];
+        const expressionPositions = [];
+        let singleExpression;
 
         while (index < textLength) {
           if (
@@ -323,13 +327,11 @@ export function $InterpolateProvider() {
         // Intercept expression if we need to stringify concatenated inputs, which may be SCE trusted
         // objects rather than simple strings
         // (we don't modify the expression if the input consists of only a single trusted input)
-        let interceptor =
+        const interceptor =
           contextAllowsConcatenation && singleExpression
             ? undefined
             : parseStringifyInterceptor;
-        parseFns = expressions.map(function (exp) {
-          return $parse(exp, interceptor);
-        });
+        parseFns = expressions.map((exp) => $parse(exp, interceptor));
 
         // Concatenating expressions makes it hard to reason about whether some combination of
         // concatenated values are unsafe to use and could easily lead to XSS.  By requiring that a
@@ -345,7 +347,7 @@ export function $InterpolateProvider() {
         // only used in srcdoc attributes, this would not be very useful.
 
         if (!mustHaveExpression || expressions.length) {
-          let compute = function (values) {
+          const compute = function (values) {
             for (let i = 0, ii = expressions.length; i < ii; i++) {
               if (allOrNothing && isUndefined(values[i])) return;
               concat[expressionPositions[i]] = values[i];
@@ -357,7 +359,8 @@ export function $InterpolateProvider() {
                 trustedContext,
                 singleExpression ? concat[0] : concat.join(""),
               );
-            } else if (trustedContext && concat.length > 1) {
+            }
+            if (trustedContext && concat.length > 1) {
               // This context does not allow more than one part, e.g. expr + string or exp + exp.
               $interpolateMinErr.throwNoconcat(text);
             }
@@ -366,10 +369,10 @@ export function $InterpolateProvider() {
           };
 
           return extend(
-            function interpolationFn(context) {
+            (context) => {
               let i = 0;
-              let ii = expressions.length;
-              let values = new Array(ii);
+              const ii = expressions.length;
+              const values = new Array(ii);
 
               try {
                 for (; i < ii; i++) {
@@ -383,9 +386,9 @@ export function $InterpolateProvider() {
             },
             {
               // all of these properties are undocumented for now
-              exp: text, //just for compatibility with regular watchers created via $watch
-              expressions: expressions,
-              $$watchDelegate: function (scope, listener) {
+              exp: text, // just for compatibility with regular watchers created via $watch
+              expressions,
+              $$watchDelegate(scope, listener) {
                 let lastValue;
                 return scope.$watchGroup(
                   parseFns,
@@ -393,7 +396,7 @@ export function $InterpolateProvider() {
                     values,
                     oldValues,
                   ) {
-                    let currValue = compute(values);
+                    const currValue = compute(values);
                     listener.call(
                       this,
                       currValue,

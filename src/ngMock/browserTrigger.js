@@ -63,13 +63,13 @@
     if (!element) return;
 
     eventData = eventData || {};
-    let relatedTarget = eventData.relatedTarget || element;
-    let keys = eventData.keys;
-    let x = eventData.x;
-    let y = eventData.y;
+    const relatedTarget = eventData.relatedTarget || element;
+    let { keys } = eventData;
+    let { x } = eventData;
+    let { y } = eventData;
 
-    let inputType = element.type ? element.type.toLowerCase() : null,
-      nodeName = element.nodeName.toLowerCase();
+    const inputType = element.type ? element.type.toLowerCase() : null;
+    const nodeName = element.nodeName.toLowerCase();
     if (!eventType) {
       eventType = {
         text: "change",
@@ -202,9 +202,8 @@
       isAttachedToDocument(element)
     ) {
       return element.dispatchEvent(evnt);
-    } else {
-      triggerForPath(element, evnt);
     }
+    triggerForPath(element, evnt);
   };
 
   function supportsTouchEvents() {
@@ -226,11 +225,11 @@
   }
 
   function createTouchEvent(element, eventType, x, y) {
-    let evnt = new window.Event(eventType);
+    const evnt = new window.Event(eventType);
     x = x || 0;
     y = y || 0;
 
-    let touch = window.document.createTouch(
+    const touch = window.document.createTouch(
       window,
       element,
       Date.now(),
@@ -239,7 +238,7 @@
       x,
       y,
     );
-    let touches = window.document.createTouchList(touch);
+    const touches = window.document.createTouchList(touch);
 
     evnt.touches = touches;
 
@@ -251,15 +250,15 @@
       return supportsEventBubblingInDetachedTree._cached;
     }
     supportsEventBubblingInDetachedTree._cached = false;
-    let doc = window.document;
+    const doc = window.document;
     if (doc) {
-      let parent = doc.createElement("div"),
-        child = parent.cloneNode();
+      const parent = doc.createElement("div");
+      const child = parent.cloneNode();
       parent.appendChild(child);
-      parent.addEventListener("e", function () {
+      parent.addEventListener("e", () => {
         supportsEventBubblingInDetachedTree._cached = true;
       });
-      let evnt = window.document.createEvent("Events");
+      const evnt = window.document.createEvent("Events");
       evnt.initEvent("e", true, true);
       child.dispatchEvent(evnt);
     }
@@ -269,7 +268,7 @@
   function triggerForPath(element, evnt) {
     let stop = false;
 
-    let _stopPropagation = evnt.stopPropagation;
+    const _stopPropagation = evnt.stopPropagation;
     evnt.stopPropagation = function () {
       stop = true;
       _stopPropagation.apply(evnt, arguments);
@@ -284,7 +283,7 @@
   function patchEventTargetForBubbling(event, target) {
     event._target = target;
     Object.defineProperty(event, "target", {
-      get: function () {
+      get() {
         return this._target;
       },
     });

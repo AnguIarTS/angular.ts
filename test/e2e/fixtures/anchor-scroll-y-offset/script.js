@@ -2,7 +2,7 @@
 
 angular.
   module('test', []).
-  controller('TestController', function($anchorScroll, $location, $scope) {
+  controller('TestController', ($anchorScroll, $location, $scope) => {
     $anchorScroll.yOffset = 50;
 
     $scope.scrollTo = function(target) {

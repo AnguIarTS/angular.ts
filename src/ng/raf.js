@@ -1,27 +1,27 @@
 export function $$RAFProvider() {
-  //rAF
+  // rAF
   this.$get = [
     "$window",
     "$timeout",
     function ($window, $timeout) {
-      let requestAnimationFrame =
+      const requestAnimationFrame =
         $window.requestAnimationFrame || $window.webkitRequestAnimationFrame;
 
-      let cancelAnimationFrame =
+      const cancelAnimationFrame =
         $window.cancelAnimationFrame ||
         $window.webkitCancelAnimationFrame ||
         $window.webkitCancelRequestAnimationFrame;
 
-      let rafSupported = !!requestAnimationFrame;
-      let raf = rafSupported
+      const rafSupported = !!requestAnimationFrame;
+      const raf = rafSupported
         ? function (fn) {
-            let id = requestAnimationFrame(fn);
+            const id = requestAnimationFrame(fn);
             return function () {
               cancelAnimationFrame(id);
             };
           }
         : function (fn) {
-            let timer = $timeout(fn, 16.66, false); // 1000 / 60 = 16.666
+            const timer = $timeout(fn, 16.66, false); // 1000 / 60 = 16.666
             return function () {
               $timeout.cancel(timer);
             };

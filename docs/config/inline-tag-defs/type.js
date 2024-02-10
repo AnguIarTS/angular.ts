@@ -1,7 +1,7 @@
 
 
 // eslint-disable-next-line new-cap
-let encoder = new require('node-html-encoder').Encoder();
+const encoder = new require('node-html-encoder').Encoder();
 
 /**
  * @dgService typeInlineTagDef
@@ -11,8 +11,8 @@ let encoder = new require('node-html-encoder').Encoder();
 module.exports = function typeInlineTagDef(getTypeClass) {
   return {
     name: 'type',
-    handler: function(doc, tagName, tagDescription) {
-      return '<a href="" class="' + getTypeClass(tagDescription) + '">' + encoder.htmlEncode(tagDescription) + '</a>';
+    handler(doc, tagName, tagDescription) {
+      return `<a href="" class="${  getTypeClass(tagDescription)  }">${  encoder.htmlEncode(tagDescription)  }</a>`;
     }
   };
 };

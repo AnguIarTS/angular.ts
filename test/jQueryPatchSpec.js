@@ -3,14 +3,14 @@
 
 if (window.jQuery) {
 
-  describe('jQuery patch', function() {
+  describe('jQuery patch', () => {
 
     let doc = null;
     let divSpy = null;
     let spy1 = null;
     let spy2 = null;
 
-    beforeEach(function() {
+    beforeEach(() => {
       divSpy = jasmine.createSpy('div.$destroy');
       spy1 = jasmine.createSpy('span1.$destroy');
       spy2 = jasmine.createSpy('span2.$destroy');
@@ -19,7 +19,7 @@ if (window.jQuery) {
       doc.find('span.second').on('$destroy', spy2);
     });
 
-    afterEach(function() {
+    afterEach(() => {
       expect(divSpy).not.toHaveBeenCalled();
 
       expect(spy1).toHaveBeenCalled();
@@ -28,42 +28,42 @@ if (window.jQuery) {
       expect(spy2).toHaveBeenCalledTimes(1);
     });
 
-    describe('$destroy event', function() {
+    describe('$destroy event', () => {
 
-      it('should fire on remove()', function() {
+      it('should fire on remove()', () => {
         doc.find('span').remove();
       });
 
-      it('should fire on replaceWith()', function() {
+      it('should fire on replaceWith()', () => {
         doc.find('span').replaceWith('<b>bla</b>');
       });
 
-      it('should fire on replaceAll()', function() {
+      it('should fire on replaceAll()', () => {
         $('<b>bla</b>').replaceAll(doc.find('span'));
       });
 
-      it('should fire on empty()', function() {
+      it('should fire on empty()', () => {
         doc.empty();
       });
 
-      it('should fire on html(param)', function() {
+      it('should fire on html(param)', () => {
         doc.html('abc');
       });
 
-      it('should fire on html(\'\')', function() {
+      it('should fire on html(\'\')', () => {
         doc.html('');
       });
     });
   });
 
-  describe('jQuery patch eagerness', function() {
+  describe('jQuery patch eagerness', () => {
 
     let doc = null;
     let divSpy = null;
     let spy1 = null;
     let spy2 = null;
 
-    beforeEach(function() {
+    beforeEach(() => {
       divSpy = jasmine.createSpy('div.$destroy');
       spy1 = jasmine.createSpy('span1.$destroy');
       spy2 = jasmine.createSpy('span2.$destroy');
@@ -72,20 +72,20 @@ if (window.jQuery) {
       doc.find('span.second').on('$destroy', spy2);
     });
 
-    afterEach(function() {
+    afterEach(() => {
       expect(divSpy).not.toHaveBeenCalled();
       expect(spy1).not.toHaveBeenCalled();
     });
 
-    describe('$destroy event is not invoked in too many cases', function() {
+    describe('$destroy event is not invoked in too many cases', () => {
 
-      it('should fire only on matched elements on remove(selector)', function() {
+      it('should fire only on matched elements on remove(selector)', () => {
         doc.find('span').remove('.second');
         expect(spy2).toHaveBeenCalled();
         expect(spy2).toHaveBeenCalledTimes(1);
       });
 
-      it('should not fire on html()', function() {
+      it('should not fire on html()', () => {
         doc.html();
         expect(spy2).not.toHaveBeenCalled();
       });

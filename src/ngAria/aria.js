@@ -53,9 +53,9 @@
  * It is possible to make `ngAria` ignore a specific element, by adding the `ng-aria-disable`
  * attribute on it. Note that only the element itself (and not its child elements) will be ignored.
  */
-let ARIA_DISABLE_ATTR = "ngAriaDisable";
+const ARIA_DISABLE_ATTR = "ngAriaDisable";
 
-let ngAriaModule = angular
+const ngAriaModule = angular
   .module("ngAria", ["ng"])
   .info({ angularVersion: '"NG_VERSION_FULL"' })
   .provider("$aria", $AriaProvider);
@@ -63,7 +63,7 @@ let ngAriaModule = angular
 /**
  * Internal Utilities
  */
-let nativeAriaNodeNames = [
+const nativeAriaNodeNames = [
   "BUTTON",
   "A",
   "INPUT",
@@ -73,7 +73,7 @@ let nativeAriaNodeNames = [
   "SUMMARY",
 ];
 
-let isNodeOneOf = function (elem, nodeTypeArray) {
+const isNodeOneOf = function (elem, nodeTypeArray) {
   if (nodeTypeArray.indexOf(elem[0].nodeName) !== -1) {
     return true;
   }
@@ -147,13 +147,13 @@ function $AriaProvider() {
     return function (scope, elem, attr) {
       if (attr.hasOwnProperty(ARIA_DISABLE_ATTR)) return;
 
-      let ariaCamelName = attr.$normalize(ariaAttr);
+      const ariaCamelName = attr.$normalize(ariaAttr);
       if (
         config[ariaCamelName] &&
         !isNodeOneOf(elem, nativeAriaNodeNames) &&
         !attr[ariaCamelName]
       ) {
-        scope.$watch(attr[attrName], function (boolVal) {
+        scope.$watch(attr[attrName], (boolVal) => {
           // ensure boolean value
           boolVal = negate ? !boolVal : !!boolVal;
           elem.attr(ariaAttr, boolVal);
@@ -212,7 +212,7 @@ function $AriaProvider() {
    */
   this.$get = function () {
     return {
-      config: function (key) {
+      config(key) {
         return config[key];
       },
       $$watchExpr: watchExpr,
@@ -301,8 +301,8 @@ ngAriaModule
       }
 
       function getShape(attr, elem) {
-        let type = attr.type,
-          role = attr.role;
+        const { type } = attr;
+        const { role } = attr;
 
         return (type || role) === "checkbox" || role === "menuitemcheckbox"
           ? "checkbox"
@@ -316,15 +316,15 @@ ngAriaModule
       return {
         restrict: "A",
         require: "ngModel",
-        priority: 200, //Make sure watches are fired after any other directives that affect the ngModel value
-        compile: function (elem, attr) {
+        priority: 200, // Make sure watches are fired after any other directives that affect the ngModel value
+        compile(elem, attr) {
           if (attr.hasOwnProperty(ARIA_DISABLE_ATTR)) return;
 
-          let shape = getShape(attr, elem);
+          const shape = getShape(attr, elem);
 
           return {
-            post: function (scope, elem, attr, ngModel) {
-              let needsTabIndex = shouldAttachAttr(
+            post(scope, elem, attr, ngModel) {
+              const needsTabIndex = shouldAttachAttr(
                 "tabindex",
                 "tabindex",
                 elem,
@@ -338,7 +338,7 @@ ngAriaModule
               function getRadioReaction(newVal) {
                 // Strict comparison would cause a BC
                 // eslint-disable-next-line eqeqeq
-                let boolVal = attr.value == ngModel.$viewValue;
+                const boolVal = attr.value == ngModel.$viewValue;
                 elem.attr("aria-checked", boolVal);
               }
 
@@ -374,39 +374,30 @@ ngAriaModule
                     elem.attr("role", "slider");
                   }
                   if ($aria.config("ariaValue")) {
-                    let needsAriaValuemin =
+                    const needsAriaValuemin =
                       !elem.attr("aria-valuemin") &&
                       (attr.hasOwnProperty("min") ||
                         attr.hasOwnProperty("ngMin"));
-                    let needsAriaValuemax =
+                    const needsAriaValuemax =
                       !elem.attr("aria-valuemax") &&
                       (attr.hasOwnProperty("max") ||
                         attr.hasOwnProperty("ngMax"));
-                    let needsAriaValuenow = !elem.attr("aria-valuenow");
+                    const needsAriaValuenow = !elem.attr("aria-valuenow");
 
                     if (needsAriaValuemin) {
-                      attr.$observe(
-                        "min",
-                        function ngAriaValueMinReaction(newVal) {
-                          elem.attr("aria-valuemin", newVal);
-                        },
-                      );
+                      attr.$observe("min", (newVal) => {
+                        elem.attr("aria-valuemin", newVal);
+                      });
                     }
                     if (needsAriaValuemax) {
-                      attr.$observe(
-                        "max",
-                        function ngAriaValueMinReaction(newVal) {
-                          elem.attr("aria-valuemax", newVal);
-                        },
-                      );
+                      attr.$observe("max", (newVal) => {
+                        elem.attr("aria-valuemax", newVal);
+                      });
                     }
                     if (needsAriaValuenow) {
-                      scope.$watch(
-                        ngAriaWatchModelValue,
-                        function ngAriaValueNowReaction(newVal) {
-                          elem.attr("aria-valuenow", newVal);
-                        },
-                      );
+                      scope.$watch(ngAriaWatchModelValue, (newVal) => {
+                        elem.attr("aria-valuenow", newVal);
+                      });
                     }
                   }
                   if (needsTabIndex) {
@@ -421,17 +412,15 @@ ngAriaModule
                 shouldAttachAttr("aria-required", "ariaRequired", elem, false)
               ) {
                 // ngModel.$error.required is undefined on custom controls
-                attr.$observe("required", function () {
-                  elem.attr("aria-required", !!attr["required"]);
+                attr.$observe("required", () => {
+                  elem.attr("aria-required", !!attr.required);
                 });
               }
 
               if (shouldAttachAttr("aria-invalid", "ariaInvalid", elem, true)) {
                 scope.$watch(
-                  function ngAriaInvalidWatch() {
-                    return ngModel.$invalid;
-                  },
-                  function ngAriaInvalidReaction(newVal) {
+                  () => ngModel.$invalid,
+                  (newVal) => {
                     elem.attr("aria-invalid", !!newVal);
                   },
                 );
@@ -453,29 +442,27 @@ ngAriaModule
       );
     },
   ])
-  .directive("ngMessages", function () {
-    return {
-      restrict: "A",
-      require: "?ngMessages",
-      link: function (scope, elem, attr, ngMessages) {
-        if (attr.hasOwnProperty(ARIA_DISABLE_ATTR)) return;
+  .directive("ngMessages", () => ({
+    restrict: "A",
+    require: "?ngMessages",
+    link(scope, elem, attr, ngMessages) {
+      if (attr.hasOwnProperty(ARIA_DISABLE_ATTR)) return;
 
-        if (!elem.attr("aria-live")) {
-          elem.attr("aria-live", "assertive");
-        }
-      },
-    };
-  })
+      if (!elem.attr("aria-live")) {
+        elem.attr("aria-live", "assertive");
+      }
+    },
+  }))
   .directive("ngClick", [
     "$aria",
     "$parse",
     function ($aria, $parse) {
       return {
         restrict: "A",
-        compile: function (elem, attr) {
+        compile(elem, attr) {
           if (attr.hasOwnProperty(ARIA_DISABLE_ATTR)) return;
 
-          let fn = $parse(attr.ngClick);
+          const fn = $parse(attr.ngClick);
           return function (scope, elem, attr) {
             if (!isNodeOneOf(elem, nativeAriaNodeNames)) {
               if ($aria.config("bindRoleForClick") && !elem.attr("role")) {
@@ -492,8 +479,8 @@ ngAriaModule
                 !attr.ngKeypress &&
                 !attr.ngKeyup
               ) {
-                elem.on("keydown", function (event) {
-                  let keyCode = event.which || event.keyCode;
+                elem.on("keydown", (event) => {
+                  const keyCode = event.which || event.keyCode;
 
                   if (keyCode === 13 || keyCode === 32) {
                     // If the event is triggered on a non-interactive element ...

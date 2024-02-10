@@ -1,9 +1,7 @@
 import { createInjector } from "./auto/injector";
 import { jqLite } from "./jqLite";
 import { setupModuleLoader } from "./loader";
-
-const { bootstrap, reloadWithDebugInfo, getTestability } = require("./Angular");
-const { errorHandlingConfig, minErr } = require("./minErr");
+import { $$CookieReaderProvider } from "./ng/cookieReader";
 import {
   extend,
   copy,
@@ -31,6 +29,9 @@ import {
   uppercase,
 } from "./ng/utils";
 
+const { bootstrap, reloadWithDebugInfo, getTestability } = require("./Angular");
+const { errorHandlingConfig, minErr } = require("./minErr");
+
 /**
  * @ngdoc object
  * @name angular.version
@@ -46,7 +47,7 @@ import {
  * - `dot` – `{number}` – Dot version number, such as "18".
  * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
  */
-let version = {
+const version = {
   // These placeholder strings will be replaced by grunt's `build` task.
   // They need to be double- or single-quoted.
   full: '"NG_VERSION_FULL"',
@@ -58,33 +59,33 @@ let version = {
 
 export function publishExternalAPI(angular) {
   extend(angular, {
-    errorHandlingConfig: errorHandlingConfig,
-    bootstrap: bootstrap,
-    copy: copy,
-    extend: extend,
-    merge: merge,
-    equals: equals,
+    errorHandlingConfig,
+    bootstrap,
+    copy,
+    extend,
+    merge,
+    equals,
     element: jqLite,
-    forEach: forEach,
+    forEach,
     injector: createInjector,
-    noop: noop,
-    bind: bind,
-    toJson: toJson,
-    fromJson: fromJson,
-    identity: identity,
-    isUndefined: isUndefined,
-    isDefined: isDefined,
-    isString: isString,
-    isFunction: isFunction,
-    isObject: isObject,
-    isNumber: isNumber,
-    isElement: isElement,
-    isArray: isArray,
-    version: version,
-    isDate: isDate,
+    noop,
+    bind,
+    toJson,
+    fromJson,
+    identity,
+    isUndefined,
+    isDefined,
+    isString,
+    isFunction,
+    isObject,
+    isNumber,
+    isElement,
+    isArray,
+    version,
+    isDate,
     callbacks: { $$counter: 0 },
-    getTestability: getTestability,
-    reloadWithDebugInfo: reloadWithDebugInfo,
+    getTestability,
+    reloadWithDebugInfo,
     $$minErr: minErr,
     $$csp: csp,
     $$encodeUriSegment: encodeUriSegment,

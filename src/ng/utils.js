@@ -189,7 +189,7 @@ export function isArray(arr) {
  * @returns {boolean} True if `value` is an `Error`.
  */
 export function isError(value) {
-  let tag = toString.call(value);
+  const tag = toString.call(value);
   switch (tag) {
     case "[object Error]":
       return true;
@@ -320,9 +320,10 @@ export function trim(value) {
 
 export function snake_case(name, separator) {
   separator = separator || "_";
-  return name.replace(/[A-Z]/g, function (letter, pos) {
-    return (pos ? separator : "") + letter.toLowerCase();
-  });
+  return name.replace(
+    /[A-Z]/g,
+    (letter, pos) => (pos ? separator : "") + letter.toLowerCase(),
+  );
 }
 
 /**
@@ -358,7 +359,8 @@ export function snake_case(name, separator) {
  * @returns {Object|Array} Reference to `obj`.
  */
 export function forEach(obj, iterator, context) {
-  let key, length;
+  let key;
+  let length;
   if (obj) {
     if (isFunction(obj)) {
       for (key in obj) {
@@ -372,7 +374,7 @@ export function forEach(obj, iterator, context) {
         }
       }
     } else if (isArray(obj) || isArrayLike(obj)) {
-      let isPrimitive = typeof obj !== "object";
+      const isPrimitive = typeof obj !== "object";
       for (key = 0, length = obj.length; key < length; key++) {
         if (isPrimitive || key in obj) {
           iterator.call(context, obj[key], key, obj);
@@ -398,7 +400,7 @@ export function forEach(obj, iterator, context) {
 }
 
 export function forEachSorted(obj, iterator, context) {
-  let keys = Object.keys(obj).sort();
+  const keys = Object.keys(obj).sort();
   for (const element of keys) {
     iterator.call(context, obj[element], element);
   }
@@ -430,15 +432,15 @@ export function setHashKey(obj, h) {
 }
 
 export function baseExtend(dst, objs, deep) {
-  let h = dst.$$hashKey;
+  const h = dst.$$hashKey;
 
   for (let i = 0, ii = objs.length; i < ii; ++i) {
-    let obj = objs[i];
+    const obj = objs[i];
     if (!isObject(obj) && !isFunction(obj)) continue;
-    let keys = Object.keys(obj);
+    const keys = Object.keys(obj);
     for (let j = 0, jj = keys.length; j < jj; j++) {
-      let key = keys[j];
-      let src = obj[key];
+      const key = keys[j];
+      const src = obj[key];
 
       if (deep && isObject(src)) {
         if (isDate(src)) {
@@ -449,11 +451,9 @@ export function baseExtend(dst, objs, deep) {
           dst[key] = src.cloneNode(true);
         } else if (isElement(src)) {
           dst[key] = src.clone();
-        } else {
-          if (key !== "__proto__") {
-            if (!isObject(dst[key])) dst[key] = isArray(src) ? [] : {};
-            baseExtend(dst[key], [src], true);
-          }
+        } else if (key !== "__proto__") {
+          if (!isObject(dst[key])) dst[key] = isArray(src) ? [] : {};
+          baseExtend(dst[key], [src], true);
         }
       } else {
         dst[key] = src;
@@ -641,7 +641,7 @@ export function includes(array, obj) {
 }
 
 export function arrayRemove(array, value) {
-  let index = array.indexOf(value);
+  const index = array.indexOf(value);
   if (index >= 0) {
     array.splice(index, 1);
   }
@@ -736,8 +736,8 @@ export function arrayRemove(array, value) {
   </example>
  */
 export function copy(source, destination, maxDepth) {
-  let stackSource = [];
-  let stackDest = [];
+  const stackSource = [];
+  const stackDest = [];
   maxDepth = isValidObjectMaxDepth(maxDepth) ? maxDepth : NaN;
 
   if (destination) {
@@ -758,7 +758,7 @@ export function copy(source, destination, maxDepth) {
     if (isArray(destination)) {
       destination.length = 0;
     } else {
-      forEach(destination, function (value, key) {
+      forEach(destination, (value, key) => {
         if (key !== "$$hashKey") {
           delete destination[key];
         }
@@ -777,7 +777,7 @@ export function copy(source, destination, maxDepth) {
     if (maxDepth < 0) {
       return "...";
     }
-    let h = destination.$$hashKey;
+    const h = destination.$$hashKey;
     let key;
     if (isArray(source)) {
       for (let i = 0, ii = source.length; i < ii; i++) {
@@ -807,7 +807,7 @@ export function copy(source, destination, maxDepth) {
     }
 
     // Already copied values
-    let index = stackSource.indexOf(source);
+    const index = stackSource.indexOf(source);
     if (index !== -1) {
       return stackDest[index];
     }
@@ -859,7 +859,7 @@ export function copy(source, destination, maxDepth) {
         if (!source.slice) {
           // If we're in this case we know the environment supports ArrayBuffer
           /* eslint-disable no-undef */
-          let copied = new ArrayBuffer(source.byteLength);
+          const copied = new ArrayBuffer(source.byteLength);
           new Uint8Array(copied).set(new Uint8Array(source));
           /* eslint-enable */
           return copied;
@@ -873,7 +873,7 @@ export function copy(source, destination, maxDepth) {
         return new source.constructor(source.valueOf());
 
       case "[object RegExp]":
-        let re = new RegExp(
+        const re = new RegExp(
           source.source,
           source.toString().match(/[^/]*$/)[0],
         );
@@ -962,11 +962,11 @@ export function equals(o1, o2) {
   if (o1 === null || o2 === null) return false;
   // eslint-disable-next-line no-self-compare
   if (o1 !== o1 && o2 !== o2) return true; // NaN === NaN
-  let t1 = typeof o1,
-    t2 = typeof o2,
-    length,
-    key,
-    keySet;
+  const t1 = typeof o1;
+  const t2 = typeof o2;
+  let length;
+  let key;
+  let keySet;
   if (t1 === t2 && t1 === "object") {
     if (isArray(o1)) {
       if (!isArray(o2)) return false;
@@ -1016,12 +1016,12 @@ export function equals(o1, o2) {
 
 export function csp() {
   if (!isDefined(csp.rules)) {
-    let ngCspElement =
+    const ngCspElement =
       window.document.querySelector("[ng-csp]") ||
       window.document.querySelector("[data-ng-csp]");
 
     if (ngCspElement) {
-      let ngCspAttribute =
+      const ngCspAttribute =
         ngCspElement.getAttribute("ng-csp") ||
         ngCspElement.getAttribute("data-ng-csp");
       csp.rules = {
@@ -1073,13 +1073,13 @@ export function assertNotHasOwnProperty(name, context) {
  * @param {boolean} [bindFnToScope=true]
  * @returns {Object} value as accessible by path
  */
-//TODO(misko): this function needs to be removed
+// TODO(misko): this function needs to be removed
 export function getter(obj, path, bindFnToScope) {
   if (!path) return obj;
-  let keys = path.split(".");
+  const keys = path.split(".");
   let key;
   let lastInstance = obj;
-  let len = keys.length;
+  const len = keys.length;
 
   for (let i = 0; i < len; i++) {
     key = keys[i];
@@ -1101,7 +1101,7 @@ export function getter(obj, path, bindFnToScope) {
 export function getBlockNodes(nodes) {
   // TODO(perf): update `nodes` instead of creating a new object?
   let node = nodes[0];
-  let endNode = nodes[nodes.length - 1];
+  const endNode = nodes[nodes.length - 1];
   let blockNodes;
 
   for (let i = 1; node !== endNode && (node = node.nextSibling); i++) {
@@ -1140,7 +1140,7 @@ export function stringify(value) {
     case "string":
       break;
     case "number":
-      value = "" + value;
+      value = `${value}`;
       break;
     default:
       if (hasCustomToString(value) && !isArray(value) && !isDate(value)) {
@@ -1186,7 +1186,7 @@ export function sliceArgs(args, startIndex) {
  * @returns {function()} Function that wraps the `fn` with all the specified bindings.
  */
 export function bind(self, fn) {
-  let curryArgs = arguments.length > 2 ? sliceArgs(arguments, 2) : [];
+  const curryArgs = arguments.length > 2 ? sliceArgs(arguments, 2) : [];
   if (isFunction(fn) && !(fn instanceof RegExp)) {
     return curryArgs.length
       ? function () {
@@ -1197,10 +1197,9 @@ export function bind(self, fn) {
       : function () {
           return arguments.length ? fn.apply(self, arguments) : fn.call(self);
         };
-  } else {
-    // In IE, native methods are not functions so they cannot be bound (note: they don't need to be).
-    return fn;
   }
+  // In IE, native methods are not functions so they cannot be bound (note: they don't need to be).
+  return fn;
 }
 
 export function toJsonReplacer(key, value) {
@@ -1279,29 +1278,28 @@ export function fromJson(json) {
   return isString(json) ? JSON.parse(json) : json;
 }
 
-let ALL_COLONS = /:/g;
-function timezoneToOffset(timezone, fallback) {
-  // Support: IE 9-11 only, Edge 13-15+
-  // IE/Edge do not "understand" colon (`:`) in timezone
-  timezone = timezone.replace(ALL_COLONS, "");
-  let requestedTimezoneOffset =
-    Date.parse("Jan 01, 1970 00:00:00 " + timezone) / 60000;
+export function timezoneToOffset(timezone, fallback) {
+  const requestedTimezoneOffset =
+    Date.parse(`Jan 01, 1970 00:00:00 ${timezone}`) / 60000;
   return isNumberNaN(requestedTimezoneOffset)
     ? fallback
     : requestedTimezoneOffset;
 }
 
 export function addDateMinutes(date, minutes) {
-  date = new Date(date.getTime());
-  date.setMinutes(date.getMinutes() + minutes);
-  return date;
+  const newDate = new Date(date.getTime());
+  newDate.setMinutes(newDate.getMinutes() + minutes);
+  return newDate;
 }
 
 export function convertTimezoneToLocal(date, timezone, reverse) {
-  reverse = reverse ? -1 : 1;
-  let dateTimezoneOffset = date.getTimezoneOffset();
-  let timezoneOffset = timezoneToOffset(timezone, dateTimezoneOffset);
-  return addDateMinutes(date, reverse * (timezoneOffset - dateTimezoneOffset));
+  const doReverse = reverse ? -1 : 1;
+  const dateTimezoneOffset = date.getTimezoneOffset();
+  const timezoneOffset = timezoneToOffset(timezone, dateTimezoneOffset);
+  return addDateMinutes(
+    date,
+    doReverse * (timezoneOffset - dateTimezoneOffset),
+  );
 }
 
 /**
@@ -1316,15 +1314,16 @@ export function startingTag(element) {
 
   // Append the cloned element to the temp div and get its HTML
   tempDiv.appendChild(clonedElement);
-  let elemHtml = tempDiv.innerHTML;
+  const elemHtml = tempDiv.innerHTML;
   try {
     return element[0].nodeType === NODE_TYPE_TEXT
       ? lowercase(elemHtml)
       : elemHtml
           .match(/^(<[^>]+>)/)[1]
-          .replace(/^<([\w-]+)/, function (match, nodeName) {
-            return "<" + lowercase(nodeName);
-          });
+          .replace(
+            /^<([\w-]+)/,
+            (match, nodeName) => `<${lowercase(nodeName)}`,
+          );
   } catch (e) {
     return lowercase(elemHtml);
   }
@@ -1334,10 +1333,12 @@ export function startingTag(element) {
  * Parses an escaped url query string into key-value pairs.
  * @returns {Object.<string,boolean|Array>}
  */
-export function parseKeyValue(/**string*/ keyValue) {
-  let obj = {};
-  forEach((keyValue || "").split("&"), function (keyValue) {
-    let splitPoint, key, val;
+export function parseKeyValue(/** string */ keyValue) {
+  const obj = {};
+  forEach((keyValue || "").split("&"), (keyValue) => {
+    let splitPoint;
+    let key;
+    let val;
     if (keyValue) {
       key = keyValue = keyValue.replace(/\+/g, "%20");
       splitPoint = keyValue.indexOf("=");
@@ -1362,19 +1363,19 @@ export function parseKeyValue(/**string*/ keyValue) {
 }
 
 export function toKeyValue(obj) {
-  let parts = [];
-  forEach(obj, function (value, key) {
+  const parts = [];
+  forEach(obj, (value, key) => {
     if (isArray(value)) {
-      forEach(value, function (arrayValue) {
+      forEach(value, (arrayValue) => {
         parts.push(
           encodeUriQuery(key, true) +
-            (arrayValue === true ? "" : "=" + encodeUriQuery(arrayValue, true)),
+            (arrayValue === true ? "" : `=${encodeUriQuery(arrayValue, true)}`),
         );
       });
     } else {
       parts.push(
         encodeUriQuery(key, true) +
-          (value === true ? "" : "=" + encodeUriQuery(value, true)),
+          (value === true ? "" : `=${encodeUriQuery(value, true)}`),
       );
     }
   });
@@ -1440,9 +1441,9 @@ export function encodeUriQuery(val, pctEncodeSpaces) {
 export const ngAttrPrefixes = ["ng-", "data-ng-", "ng:", "x-ng-"];
 
 export function getNgAttribute(element, ngAttr) {
-  let attr,
-    i,
-    ii = ngAttrPrefixes.length;
+  let attr;
+  let i;
+  const ii = ngAttrPrefixes.length;
   for (i = 0; i < ii; ++i) {
     attr = ngAttrPrefixes[i] + ngAttr;
     if (isString((attr = element.getAttribute(attr)))) {
@@ -1471,7 +1472,7 @@ export function shallowCopy(src, dst) {
   } else if (isObject(src)) {
     dst = dst || {};
 
-    for (let key in src) {
+    for (const key in src) {
       if (!(key.startsWith("$") && key.charAt(1) === "$")) {
         dst[key] = src[key];
       }

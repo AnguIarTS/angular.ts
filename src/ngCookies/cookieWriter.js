@@ -10,11 +10,12 @@
  * @param {Object=} options Object with options that need to be stored for the cookie.
  */
 function $$CookieWriter($document, $log, $browser) {
-  let cookiePath = $browser.baseHref();
-  let rawDocument = $document[0];
+  const cookiePath = $browser.baseHref();
+  const rawDocument = $document[0];
 
   function buildCookieString(name, value, options) {
-    let path, expires;
+    let path;
+    let expires;
     options = options || {};
     expires = options.expires;
     path = angular.isDefined(options.path) ? options.path : cookiePath;
@@ -26,25 +27,21 @@ function $$CookieWriter($document, $log, $browser) {
       expires = new Date(expires);
     }
 
-    let str = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-    str += path ? ";path=" + path : "";
-    str += options.domain ? ";domain=" + options.domain : "";
-    str += expires ? ";expires=" + expires.toUTCString() : "";
+    let str = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
+    str += path ? `;path=${path}` : "";
+    str += options.domain ? `;domain=${options.domain}` : "";
+    str += expires ? `;expires=${expires.toUTCString()}` : "";
     str += options.secure ? ";secure" : "";
-    str += options.samesite ? ";samesite=" + options.samesite : "";
+    str += options.samesite ? `;samesite=${options.samesite}` : "";
 
     // per http://www.ietf.org/rfc/rfc2109.txt browser must allow at minimum:
     // - 300 cookies
     // - 20 cookies per unique domain
     // - 4096 bytes per cookie
-    let cookieLength = str.length + 1;
+    const cookieLength = str.length + 1;
     if (cookieLength > 4096) {
       $log.warn(
-        "Cookie '" +
-          name +
-          "' possibly not set or overflowed because it was too large (" +
-          cookieLength +
-          " > 4096 bytes)!",
+        `Cookie '${name}' possibly not set or overflowed because it was too large (${cookieLength} > 4096 bytes)!`,
       );
     }
 

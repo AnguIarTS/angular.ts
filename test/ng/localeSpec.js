@@ -1,23 +1,23 @@
 
 
-describe('$locale', function() {
+describe('$locale', () => {
   /* global $LocaleProvider: false */
 
   let $locale;
-  beforeEach(inject(function(_$locale_) {
+  beforeEach(inject((_$locale_) => {
     $locale = _$locale_;
   }));
 
-  it('should have locale id set to en-us', function() {
+  it('should have locale id set to en-us', () => {
     expect($locale.id).toBe('en-us');
   });
 
 
-  it('should have NUMBER_FORMATS', function() {
-    let numberFormats = $locale.NUMBER_FORMATS;
+  it('should have NUMBER_FORMATS', () => {
+    const numberFormats = $locale.NUMBER_FORMATS;
     expect(numberFormats).toBeDefined();
     expect(numberFormats.PATTERNS.length).toBe(2);
-    angular.forEach(numberFormats.PATTERNS, function(pattern) {
+    angular.forEach(numberFormats.PATTERNS, (pattern) => {
       expect(pattern.minInt).toBeDefined();
       expect(pattern.minFrac).toBeDefined();
       expect(pattern.maxFrac).toBeDefined();
@@ -31,8 +31,8 @@ describe('$locale', function() {
   });
 
 
-  it('should have DATETIME_FORMATS', function() {
-    let datetime = $locale.DATETIME_FORMATS;
+  it('should have DATETIME_FORMATS', () => {
+    const datetime = $locale.DATETIME_FORMATS;
     expect(datetime).toBeDefined();
     expect(datetime.DAY.length).toBe(7);
     expect(datetime.SHORTDAY.length).toBe(7);
@@ -42,7 +42,7 @@ describe('$locale', function() {
   });
 
 
-  it('should return correct plural types', function() {
+  it('should return correct plural types', () => {
     expect($locale.pluralCat(-1)).toBe('other');
     expect($locale.pluralCat(0)).toBe('other');
     expect($locale.pluralCat(2)).toBe('other');

@@ -36,11 +36,11 @@ const TIME_REGEXP = /^(\d\d):(\d\d)(?::(\d\d)(\.\d{1,3})?)?$/;
 
 const PARTIAL_VALIDATION_EVENTS = "keydown wheel mousedown";
 const PARTIAL_VALIDATION_TYPES = createMap();
-forEach("date,datetime-local,month,time,week".split(","), function (type) {
+forEach("date,datetime-local,month,time,week".split(","), (type) => {
   PARTIAL_VALIDATION_TYPES[type] = true;
 });
 
-let inputType = {
+const inputType = {
   /**
    * @ngdoc input
    * @name input[text]
@@ -1296,9 +1296,9 @@ let inputType = {
 };
 
 function stringBasedInputType(ctrl) {
-  ctrl.$formatters.push(function (value) {
-    return ctrl.$isEmpty(value) ? value : value.toString();
-  });
+  ctrl.$formatters.push((value) =>
+    ctrl.$isEmpty(value) ? value : value.toString(),
+  );
 }
 
 function textInputType(scope, element, attr, ctrl, $sniffer, $browser) {
@@ -1307,7 +1307,7 @@ function textInputType(scope, element, attr, ctrl, $sniffer, $browser) {
 }
 
 function baseInputType(scope, element, attr, ctrl, $sniffer, $browser) {
-  let type = lowercase(element[0].type);
+  const type = lowercase(element[0].type);
 
   // In composition mode, users are still inputting intermediate text buffer,
   // hold the listener until composition is done.
@@ -1315,12 +1315,12 @@ function baseInputType(scope, element, attr, ctrl, $sniffer, $browser) {
   if (!$sniffer.android) {
     let composing = false;
 
-    element.on("compositionstart", function () {
+    element.on("compositionstart", () => {
       composing = true;
     });
 
     // Support: IE9+
-    element.on("compositionupdate", function (ev) {
+    element.on("compositionupdate", (ev) => {
       // End composition when ev.data is empty string on 'compositionupdate' event.
       // When the input de-focusses (e.g. by clicking away), IE triggers 'compositionupdate'
       // instead of 'compositionend'.
@@ -1329,7 +1329,7 @@ function baseInputType(scope, element, attr, ctrl, $sniffer, $browser) {
       }
     });
 
-    element.on("compositionend", function () {
+    element.on("compositionend", () => {
       composing = false;
       listener();
     });
@@ -1343,8 +1343,8 @@ function baseInputType(scope, element, attr, ctrl, $sniffer, $browser) {
       timeout = null;
     }
     if (composing) return;
-    let value = element.val(),
-      event = ev && ev.type;
+    let value = element.val();
+    const event = ev && ev.type;
 
     // By default we will trim the value
     // If the attribute ng-trim exists we will avoid trimming
@@ -1369,9 +1369,9 @@ function baseInputType(scope, element, attr, ctrl, $sniffer, $browser) {
   if ($sniffer.hasEvent("input")) {
     element.on("input", listener);
   } else {
-    let deferListener = function (ev, input, origValue) {
+    const deferListener = function (ev, input, origValue) {
       if (!timeout) {
-        timeout = $browser.defer(function () {
+        timeout = $browser.defer(() => {
           timeout = null;
           if (!input || input.value !== origValue) {
             listener(ev);
@@ -1383,11 +1383,11 @@ function baseInputType(scope, element, attr, ctrl, $sniffer, $browser) {
     element.on(
       "keydown",
       /** @this */ function (event) {
-        let key = event.keyCode;
+        const key = event.keyCode;
 
         // ignore
         //    command            modifiers                   arrows
-        if (key === 91 || (15 < key && key < 19) || (37 <= key && key <= 40))
+        if (key === 91 || (key > 15 && key < 19) || (key >= 37 && key <= 40))
           return;
 
         deferListener(event, this, this.value);
@@ -1417,10 +1417,10 @@ function baseInputType(scope, element, attr, ctrl, $sniffer, $browser) {
       PARTIAL_VALIDATION_EVENTS,
       /** @this */ function (ev) {
         if (!timeout) {
-          let validity = this[VALIDITY_STATE_PROPERTY];
-          let origBadInput = validity.badInput;
-          let origTypeMismatch = validity.typeMismatch;
-          timeout = $browser.defer(function () {
+          const validity = this[VALIDITY_STATE_PROPERTY];
+          const origBadInput = validity.badInput;
+          const origTypeMismatch = validity.typeMismatch;
+          timeout = $browser.defer(() => {
             timeout = null;
             if (
               validity.badInput !== origBadInput ||
@@ -1436,7 +1436,7 @@ function baseInputType(scope, element, attr, ctrl, $sniffer, $browser) {
 
   ctrl.$render = function () {
     // Workaround for Firefox validation #12102.
-    let value = ctrl.$isEmpty(ctrl.$viewValue) ? "" : ctrl.$viewValue;
+    const value = ctrl.$isEmpty(ctrl.$viewValue) ? "" : ctrl.$viewValue;
     if (element.val() !== value) {
       element.val(value);
     }
@@ -1450,16 +1450,16 @@ export function weekParser(isoWeek, existingDate) {
 
   if (isString(isoWeek)) {
     WEEK_REGEXP.lastIndex = 0;
-    let parts = WEEK_REGEXP.exec(isoWeek);
+    const parts = WEEK_REGEXP.exec(isoWeek);
     if (parts) {
-      let year = +parts[1],
-        week = +parts[2],
-        hours = 0,
-        minutes = 0,
-        seconds = 0,
-        milliseconds = 0,
-        firstThurs = getFirstThursdayOfYear(year),
-        addDays = (week - 1) * 7;
+      const year = +parts[1];
+      const week = +parts[2];
+      let hours = 0;
+      let minutes = 0;
+      let seconds = 0;
+      let milliseconds = 0;
+      const firstThurs = getFirstThursdayOfYear(year);
+      const addDays = (week - 1) * 7;
 
       if (existingDate) {
         hours = existingDate.getHours();
@@ -1485,7 +1485,8 @@ export function weekParser(isoWeek, existingDate) {
 
 export function createDateParser(regexp, mapping) {
   return function (iso, previousDate) {
-    let parts, map;
+    let parts;
+    let map;
 
     if (isDate(iso)) {
       return iso;
@@ -1520,13 +1521,13 @@ export function createDateParser(regexp, mapping) {
           map = { yyyy: 1970, MM: 1, dd: 1, HH: 0, mm: 0, ss: 0, sss: 0 };
         }
 
-        forEach(parts, function (part, index) {
+        forEach(parts, (part, index) => {
           if (index < mapping.length) {
             map[mapping[index]] = +part;
           }
         });
 
-        let date = new Date(
+        const date = new Date(
           map.yyyy,
           map.MM - 1,
           map.dd,
@@ -1563,11 +1564,11 @@ export function createDateInputType(type, regexp, parseDate, format) {
     badInputChecker(scope, element, attr, ctrl, type);
     baseInputType(scope, element, attr, ctrl, $sniffer, $browser);
 
-    let isTimeType = type === "time" || type === "datetimelocal";
+    const isTimeType = type === "time" || type === "datetimelocal";
     let previousDate;
     let previousTimezone;
 
-    ctrl.$parsers.push(function (value) {
+    ctrl.$parsers.push((value) => {
       if (ctrl.$isEmpty(value)) return null;
 
       if (regexp.test(value)) {
@@ -1580,13 +1581,13 @@ export function createDateInputType(type, regexp, parseDate, format) {
       return undefined;
     });
 
-    ctrl.$formatters.push(function (value) {
+    ctrl.$formatters.push((value) => {
       if (value && !isDate(value)) {
         throw ngModelMinErr("datefmt", "Expected `{0}` to be a date", value);
       }
       if (isValidDate(value)) {
         previousDate = value;
-        let timezone = ctrl.$options.getOption("timezone");
+        const timezone = ctrl.$options.getOption("timezone");
 
         if (timezone) {
           previousTimezone = timezone;
@@ -1594,11 +1595,10 @@ export function createDateInputType(type, regexp, parseDate, format) {
         }
 
         return formatter(value, timezone);
-      } else {
-        previousDate = null;
-        previousTimezone = null;
-        return "";
       }
+      previousDate = null;
+      previousTimezone = null;
+      return "";
     });
 
     if (isDefined(attr.min) || attr.ngMin) {
@@ -1612,7 +1612,7 @@ export function createDateInputType(type, regexp, parseDate, format) {
           parseDate(value) >= parsedMinVal
         );
       };
-      attr.$observe("min", function (val) {
+      attr.$observe("min", (val) => {
         if (val !== minVal) {
           parsedMinVal = parseObservedDateValue(val);
           minVal = val;
@@ -1632,7 +1632,7 @@ export function createDateInputType(type, regexp, parseDate, format) {
           parseDate(value) <= parsedMaxVal
         );
       };
-      attr.$observe("max", function (val) {
+      attr.$observe("max", (val) => {
         if (val !== maxVal) {
           parsedMaxVal = parseObservedDateValue(val);
           maxVal = val;
@@ -1653,7 +1653,7 @@ export function createDateInputType(type, regexp, parseDate, format) {
     }
 
     function parseDateAndConvertTimeZoneToLocal(value, previousDate) {
-      let timezone = ctrl.$options.getOption("timezone");
+      const timezone = ctrl.$options.getOption("timezone");
 
       if (previousTimezone && previousTimezone !== timezone) {
         // If the timezone has changed, adjust the previousDate to the default timezone
@@ -1696,11 +1696,13 @@ export function createDateInputType(type, regexp, parseDate, format) {
 }
 
 export function badInputChecker(scope, element, attr, ctrl, parserName) {
-  let node = element[0];
-  let nativeValidation = (ctrl.$$hasNativeValidators = isObject(node.validity));
+  const node = element[0];
+  const nativeValidation = (ctrl.$$hasNativeValidators = isObject(
+    node.validity,
+  ));
   if (nativeValidation) {
-    ctrl.$parsers.push(function (value) {
-      let validity = element.prop(VALIDITY_STATE_PROPERTY) || {};
+    ctrl.$parsers.push((value) => {
+      const validity = element.prop(VALIDITY_STATE_PROPERTY) || {};
       if (validity.badInput || validity.typeMismatch) {
         ctrl.$$parserName = parserName;
         return undefined;
@@ -1712,7 +1714,7 @@ export function badInputChecker(scope, element, attr, ctrl, parserName) {
 }
 
 export function numberFormatterParser(ctrl) {
-  ctrl.$parsers.push(function (value) {
+  ctrl.$parsers.push((value) => {
     if (ctrl.$isEmpty(value)) return null;
     if (NUMBER_REGEXP.test(value)) return parseFloat(value);
 
@@ -1720,7 +1722,7 @@ export function numberFormatterParser(ctrl) {
     return undefined;
   });
 
-  ctrl.$formatters.push(function (value) {
+  ctrl.$formatters.push((value) => {
     if (!ctrl.$isEmpty(value)) {
       if (!isNumber(value)) {
         throw ngModelMinErr("numfmt", "Expected `{0}` to be a number", value);
@@ -1747,13 +1749,13 @@ export function isNumberInteger(num) {
 }
 
 export function countDecimals(num) {
-  let numString = num.toString();
-  let decimalSymbolIndex = numString.indexOf(".");
+  const numString = num.toString();
+  const decimalSymbolIndex = numString.indexOf(".");
 
   if (decimalSymbolIndex === -1) {
-    if (-1 < num && num < 1) {
+    if (num > -1 && num < 1) {
       // It may be in the exponential notation format (`1e-X`)
-      let match = /e-(\d+)$/.exec(numString);
+      const match = /e-(\d+)$/.exec(numString);
 
       if (match) {
         return Number(match[1]);
@@ -1771,23 +1773,27 @@ export function isValidForStep(viewValue, stepBase, step) {
   // and `viewValue` is expected to be a valid stringified number.
   let value = Number(viewValue);
 
-  let isNonIntegerValue = !isNumberInteger(value);
-  let isNonIntegerStepBase = !isNumberInteger(stepBase);
-  let isNonIntegerStep = !isNumberInteger(step);
+  const isNonIntegerValue = !isNumberInteger(value);
+  const isNonIntegerStepBase = !isNumberInteger(stepBase);
+  const isNonIntegerStep = !isNumberInteger(step);
 
   // Due to limitations in Floating Point Arithmetic (e.g. `0.3 - 0.2 !== 0.1` or
   // `0.5 % 0.1 !== 0`), we need to convert all numbers to integers.
   if (isNonIntegerValue || isNonIntegerStepBase || isNonIntegerStep) {
-    let valueDecimals = isNonIntegerValue ? countDecimals(value) : 0;
-    let stepBaseDecimals = isNonIntegerStepBase ? countDecimals(stepBase) : 0;
-    let stepDecimals = isNonIntegerStep ? countDecimals(step) : 0;
+    const valueDecimals = isNonIntegerValue ? countDecimals(value) : 0;
+    const stepBaseDecimals = isNonIntegerStepBase ? countDecimals(stepBase) : 0;
+    const stepDecimals = isNonIntegerStep ? countDecimals(step) : 0;
 
-    let decimalCount = Math.max(valueDecimals, stepBaseDecimals, stepDecimals);
-    let multiplier = Math.pow(10, decimalCount);
+    const decimalCount = Math.max(
+      valueDecimals,
+      stepBaseDecimals,
+      stepDecimals,
+    );
+    const multiplier = 10 ** decimalCount;
 
-    value = value * multiplier;
-    stepBase = stepBase * multiplier;
-    step = step * multiplier;
+    value *= multiplier;
+    stepBase *= multiplier;
+    step *= multiplier;
 
     if (isNonIntegerValue) value = Math.round(value);
     if (isNonIntegerStepBase) stepBase = Math.round(stepBase);
@@ -1825,7 +1831,7 @@ export function numberInputType(
       );
     };
 
-    attr.$observe("min", function (val) {
+    attr.$observe("min", (val) => {
       if (val !== minVal) {
         parsedMinVal = parseNumberAttrVal(val);
         minVal = val;
@@ -1847,7 +1853,7 @@ export function numberInputType(
       );
     };
 
-    attr.$observe("max", function (val) {
+    attr.$observe("max", (val) => {
       if (val !== maxVal) {
         parsedMaxVal = parseNumberAttrVal(val);
         maxVal = val;
@@ -1869,7 +1875,7 @@ export function numberInputType(
       );
     };
 
-    attr.$observe("step", function (val) {
+    attr.$observe("step", (val) => {
       // TODO(matsko): implement validateLater to reduce number of validations
       if (val !== stepVal) {
         parsedStepVal = parseNumberAttrVal(val);
@@ -1885,23 +1891,24 @@ export function rangeInputType(scope, element, attr, ctrl, $sniffer, $browser) {
   numberFormatterParser(ctrl);
   baseInputType(scope, element, attr, ctrl, $sniffer, $browser);
 
-  let supportsRange = ctrl.$$hasNativeValidators && element[0].type === "range",
-    minVal = supportsRange ? 0 : undefined,
-    maxVal = supportsRange ? 100 : undefined,
-    stepVal = supportsRange ? 1 : undefined,
-    validity = element[0].validity,
-    hasMinAttr = isDefined(attr.min),
-    hasMaxAttr = isDefined(attr.max),
-    hasStepAttr = isDefined(attr.step);
+  const supportsRange =
+    ctrl.$$hasNativeValidators && element[0].type === "range";
+  let minVal = supportsRange ? 0 : undefined;
+  let maxVal = supportsRange ? 100 : undefined;
+  let stepVal = supportsRange ? 1 : undefined;
+  const { validity } = element[0];
+  const hasMinAttr = isDefined(attr.min);
+  const hasMaxAttr = isDefined(attr.max);
+  const hasStepAttr = isDefined(attr.step);
 
-  let originalRender = ctrl.$render;
+  const originalRender = ctrl.$render;
 
   ctrl.$render =
     supportsRange &&
     isDefined(validity.rangeUnderflow) &&
     isDefined(validity.rangeOverflow)
-      ? //Browsers that implement range will set these values automatically, but reading the adjusted values after
-        //$render would cause the min / max validators to be applied with the wrong value
+      ? // Browsers that implement range will set these values automatically, but reading the adjusted values after
+        // $render would cause the min / max validators to be applied with the wrong value
         function rangeRender() {
           originalRender();
           ctrl.$setViewValue(element.val());
@@ -1976,7 +1983,7 @@ export function rangeInputType(scope, element, attr, ctrl, $sniffer, $browser) {
     // input value based on the min/max value
     element.attr(htmlAttrName, attr[htmlAttrName]);
     let oldVal = attr[htmlAttrName];
-    attr.$observe(htmlAttrName, function wrappedObserver(val) {
+    attr.$observe(htmlAttrName, (val) => {
       if (val !== oldVal) {
         oldVal = val;
         changeFn(val);
@@ -2051,7 +2058,7 @@ function urlInputType(scope, element, attr, ctrl, $sniffer, $browser) {
   stringBasedInputType(ctrl);
 
   ctrl.$validators.url = function (modelValue, viewValue) {
-    let value = modelValue || viewValue;
+    const value = modelValue || viewValue;
     return ctrl.$isEmpty(value) || URL_REGEXP.test(value);
   };
 }
@@ -2063,19 +2070,19 @@ function emailInputType(scope, element, attr, ctrl, $sniffer, $browser) {
   stringBasedInputType(ctrl);
 
   ctrl.$validators.email = function (modelValue, viewValue) {
-    let value = modelValue || viewValue;
+    const value = modelValue || viewValue;
     return ctrl.$isEmpty(value) || EMAIL_REGEXP.test(value);
   };
 }
 
 function radioInputType(scope, element, attr, ctrl) {
-  let doTrim = !attr.ngTrim || trim(attr.ngTrim) !== "false";
+  const doTrim = !attr.ngTrim || trim(attr.ngTrim) !== "false";
   // make the name unique, if not defined
   if (isUndefined(attr.name)) {
     element.attr("name", nextUid());
   }
 
-  let listener = function (ev) {
+  const listener = function (ev) {
     let value;
     if (element[0].checked) {
       value = attr.value;
@@ -2089,7 +2096,7 @@ function radioInputType(scope, element, attr, ctrl) {
   element.on("change", listener);
 
   ctrl.$render = function () {
-    let value = attr.value;
+    let { value } = attr;
     if (doTrim) {
       value = trim(value);
     }
@@ -2126,14 +2133,14 @@ function checkboxInputType(
   $filter,
   $parse,
 ) {
-  let trueValue = parseConstantExpr(
+  const trueValue = parseConstantExpr(
     $parse,
     scope,
     "ngTrueValue",
     attr.ngTrueValue,
     true,
   );
-  let falseValue = parseConstantExpr(
+  const falseValue = parseConstantExpr(
     $parse,
     scope,
     "ngFalseValue",
@@ -2141,7 +2148,7 @@ function checkboxInputType(
     false,
   );
 
-  let listener = function (ev) {
+  const listener = function (ev) {
     ctrl.$setViewValue(element[0].checked, ev && ev.type);
   };
 
@@ -2158,13 +2165,9 @@ function checkboxInputType(
     return value === false;
   };
 
-  ctrl.$formatters.push(function (value) {
-    return equals(value, trueValue);
-  });
+  ctrl.$formatters.push((value) => equals(value, trueValue));
 
-  ctrl.$parsers.push(function (value) {
-    return value ? trueValue : falseValue;
-  });
+  ctrl.$parsers.push((value) => (value ? trueValue : falseValue));
 }
 
 /**
@@ -2353,7 +2356,7 @@ function checkboxInputType(
       </file>
     </example>
  */
-let inputDirective = [
+const inputDirective = [
   "$browser",
   "$sniffer",
   "$filter",
@@ -2363,7 +2366,7 @@ let inputDirective = [
       restrict: "E",
       require: ["?ngModel"],
       link: {
-        pre: function (scope, element, attr, ctrls) {
+        pre(scope, element, attr, ctrls) {
           if (ctrls[0]) {
             (inputType[lowercase(attr.type)] || inputType.text)(
               scope,
@@ -2382,14 +2385,14 @@ let inputDirective = [
   },
 ];
 
-let hiddenInputBrowserCacheDirective = function () {
-  let valueProperty = {
+const hiddenInputBrowserCacheDirective = function () {
+  const valueProperty = {
     configurable: true,
     enumerable: false,
-    get: function () {
+    get() {
       return this.getAttribute("value") || "";
     },
-    set: function (val) {
+    set(val) {
       this.setAttribute("value", val);
     },
   };
@@ -2397,14 +2400,14 @@ let hiddenInputBrowserCacheDirective = function () {
   return {
     restrict: "E",
     priority: 200,
-    compile: function (_, attr) {
+    compile(_, attr) {
       if (lowercase(attr.type) !== "hidden") {
         return;
       }
 
       return {
-        pre: function (scope, element, attr, ctrls) {
-          let node = element[0];
+        pre(scope, element, attr, ctrls) {
+          const node = element[0];
 
           // Support: Edge
           // Moving the DOM around prevents autofillling
@@ -2423,7 +2426,7 @@ let hiddenInputBrowserCacheDirective = function () {
   };
 };
 
-let CONSTANT_VALUE_REGEXP = /^(true|false|\d+)$/;
+const CONSTANT_VALUE_REGEXP = /^(true|false|\d+)$/;
 /**
  * @ngdoc directive
  * @name ngValue
@@ -2481,7 +2484,7 @@ let CONSTANT_VALUE_REGEXP = /^(true|false|\d+)$/;
       </file>
     </example>
  */
-let ngValueDirective = function () {
+const ngValueDirective = function () {
   /**
    *  inputs use the value attribute as their default value if the value property is not set.
    *  Once the value property has been set (by adding input), it will not react to changes to
@@ -2491,7 +2494,7 @@ let ngValueDirective = function () {
   function updateElementValue(element, attr, value) {
     // Support: IE9 only
     // In IE9 values are converted to string (e.g. `input.value = null` results in `input.value === 'null'`).
-    let propValue = isDefined(value) ? value : null;
+    const propValue = isDefined(value) ? value : null;
     element.prop("value", propValue);
     attr.$set("value", value);
   }
@@ -2499,19 +2502,18 @@ let ngValueDirective = function () {
   return {
     restrict: "A",
     priority: 100,
-    compile: function (tpl, tplAttr) {
+    compile(tpl, tplAttr) {
       if (CONSTANT_VALUE_REGEXP.test(tplAttr.ngValue)) {
         return function ngValueConstantLink(scope, elm, attr) {
-          let value = scope.$eval(attr.ngValue);
+          const value = scope.$eval(attr.ngValue);
           updateElementValue(elm, attr, value);
         };
-      } else {
-        return function ngValueLink(scope, elm, attr) {
-          scope.$watch(attr.ngValue, function valueWatchAction(value) {
-            updateElementValue(elm, attr, value);
-          });
-        };
       }
+      return function ngValueLink(scope, elm, attr) {
+        scope.$watch(attr.ngValue, (value) => {
+          updateElementValue(elm, attr, value);
+        });
+      };
     },
   };
 };

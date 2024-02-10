@@ -1,6 +1,6 @@
 
 
-let _ = require('lodash');
+const _ = require('lodash');
 
 /**
  * @dgProcessor generateIndexPagesProcessor
@@ -15,25 +15,25 @@ module.exports = function generateIndexPagesProcessor() {
     },
     $runAfter: ['adding-extra-docs'],
     $runBefore: ['extra-docs-added'],
-    $process: function(docs) {
+    $process(docs) {
 
       // Collect up all the areas in the docs
       let areas = {};
-      docs.forEach(function(doc) {
+      docs.forEach((doc) => {
         if (doc.area) {
           areas[doc.area] = doc.area;
         }
       });
       areas = _.keys(areas);
 
-      this.deployments.forEach(function(deployment) {
+      this.deployments.forEach((deployment) => {
 
-        let indexDoc = _.defaults({
+        const indexDoc = _.defaults({
           docType: 'indexPage',
-          areas: areas
+          areas
         }, deployment);
 
-        indexDoc.id = 'index' + (deployment.name === 'default' ? '' : '-' + deployment.name);
+        indexDoc.id = `index${  deployment.name === 'default' ? '' : `-${  deployment.name}`}`;
 
         docs.push(indexDoc);
       });

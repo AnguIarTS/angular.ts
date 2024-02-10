@@ -1,11 +1,11 @@
 
 
-describe('$$rAF', function() {
-  it('should queue and block animation frames', inject(function($$rAF) {
+describe('$$rAF', () => {
+  it('should queue and block animation frames', inject(($$rAF) => {
     if (!$$rAF.supported) return;
 
     let message;
-    $$rAF(function() {
+    $$rAF(() => {
       message = 'yes';
     });
 
@@ -14,11 +14,11 @@ describe('$$rAF', function() {
     expect(message).toBe('yes');
   }));
 
-  it('should provide a cancellation method', inject(function($$rAF) {
+  it('should provide a cancellation method', inject(($$rAF) => {
     if (!$$rAF.supported) return;
 
     let present = true;
-    let cancel = $$rAF(function() {
+    const cancel = $$rAF(() => {
       present = false;
     });
 
@@ -31,23 +31,23 @@ describe('$$rAF', function() {
     expect(present).toBe(true);
   }));
 
-  describe('$timeout fallback', function() {
-    it('it should use a $timeout incase native rAF isn\'t supported', function() {
-      let timeoutSpy = jasmine.createSpy('callback');
+  describe('$timeout fallback', () => {
+    it('it should use a $timeout incase native rAF isn\'t supported', () => {
+      const timeoutSpy = jasmine.createSpy('callback');
 
-      //we need to create our own injector to work around the ngMock overrides
-      let injector = createInjector(['ng', function($provide) {
+      // we need to create our own injector to work around the ngMock overrides
+      const injector = createInjector(['ng', function($provide) {
         $provide.value('$timeout', timeoutSpy);
         $provide.value('$window', {
           location: window.location
         });
       }]);
 
-      let $$rAF = injector.get('$$rAF');
+      const $$rAF = injector.get('$$rAF');
       expect($$rAF.supported).toBe(false);
 
       let message;
-      $$rAF(function() {
+      $$rAF(() => {
         message = 'on';
       });
 
@@ -60,8 +60,8 @@ describe('$$rAF', function() {
     });
   });
 
-  describe('mocks', function() {
-    it('should throw an error if no frames are present', inject(function($$rAF) {
+  describe('mocks', () => {
+    it('should throw an error if no frames are present', inject(($$rAF) => {
       if ($$rAF.supported) {
         let failed = false;
         try {
@@ -74,10 +74,10 @@ describe('$$rAF', function() {
     }));
   });
 
-  describe('mobile', function() {
-    it('should provide a cancellation method for an older version of Android', function() {
-      //we need to create our own injector to work around the ngMock overrides
-      let injector = createInjector(['ng', function($provide) {
+  describe('mobile', () => {
+    it('should provide a cancellation method for an older version of Android', () => {
+      // we need to create our own injector to work around the ngMock overrides
+      const injector = createInjector(['ng', function($provide) {
         $provide.value('$window', {
           location: window.location,
           history: window.history,
@@ -86,9 +86,9 @@ describe('$$rAF', function() {
         });
       }]);
 
-      let $$rAF = injector.get('$$rAF');
-      let $window = injector.get('$window');
-      let cancel = $$rAF(function() {});
+      const $$rAF = injector.get('$$rAF');
+      const $window = injector.get('$window');
+      const cancel = $$rAF(() => {});
 
       expect($$rAF.supported).toBe(true);
 

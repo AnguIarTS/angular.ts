@@ -7,12 +7,12 @@
 exports.ensureDecimalSep = ensureDecimalSep;
 exports.parsePattern = parsePattern;
 
-let PATTERN_SEP  = ';',
-    DECIMAL_SEP  = '.',
-    GROUP_SEP    = ',',
-    DIGIT        = '#',
-    ZERO         = '0',
-    LAST_ZERO_RE = /^(.*0)(?!0)(.*)$/;
+const PATTERN_SEP  = ';';
+    const DECIMAL_SEP  = '.';
+    const GROUP_SEP    = ',';
+    const DIGIT        = '#';
+    const ZERO         = '0';
+    const LAST_ZERO_RE = /^(.*0)(?!0)(.*)$/;
 
 /**
  * Helper function for parser.
@@ -22,7 +22,7 @@ let PATTERN_SEP  = ';',
  */
 function ensureDecimalSep(pattern) {
   return (pattern.indexOf(DECIMAL_SEP) !== -1)
-      ? pattern : pattern.replace(LAST_ZERO_RE, '$1' + DECIMAL_SEP + '$2');
+      ? pattern : pattern.replace(LAST_ZERO_RE, `$1${  DECIMAL_SEP  }$2`);
 }
 
 /**
@@ -30,7 +30,7 @@ function ensureDecimalSep(pattern) {
  * @param str {string} pattern to be parsed (e.g. #,##0.###).
  */
 function parsePattern(pattern) {
-  let p = {
+  const p = {
             minInt: 1,
             minFrac: 0,
             maxFrac: 0,
@@ -42,9 +42,9 @@ function parsePattern(pattern) {
             lgSize: 0
           };
 
-  let patternParts = pattern.split(PATTERN_SEP),
-      positive = patternParts[0],
-      negative = patternParts[1];
+  const patternParts = pattern.split(PATTERN_SEP);
+      const positive = patternParts[0];
+      const negative = patternParts[1];
 
   // The parsing logic further below assumes that there will always be a DECIMAL_SEP in the pattern.
   // However, some locales (e.g. agq_CM) do not have one, thus we add one after the last ZERO
@@ -54,33 +54,33 @@ function parsePattern(pattern) {
   // For example `#,##0$` would be converted to `#,##0.$`, which would (correctly) result in:
   // `minFrac: 0`, `maxFrac: 0`, `posSuf: '$'`
   // Note: We shouldn't modify `positive` directly, because it is used to parse the negative part.)
-  let positiveWithDecimalSep = ensureDecimalSep(positive),
-      positiveParts = positiveWithDecimalSep.split(DECIMAL_SEP),
-      integer = positiveParts[0],
-      fraction = positiveParts[1];
+  const positiveWithDecimalSep = ensureDecimalSep(positive);
+      const positiveParts = positiveWithDecimalSep.split(DECIMAL_SEP);
+      const integer = positiveParts[0];
+      const fraction = positiveParts[1];
 
   p.posPre = integer.substr(0, integer.indexOf(DIGIT));
 
   for (let i = 0; i < fraction.length; i++) {
-    let ch = fraction.charAt(i);
+    const ch = fraction.charAt(i);
     if (ch === ZERO) p.minFrac = p.maxFrac = i + 1;
     else if (ch === DIGIT) p.maxFrac = i + 1;
     else p.posSuf += ch;
   }
 
-  let groups = integer.split(GROUP_SEP);
+  const groups = integer.split(GROUP_SEP);
   p.gSize = groups[1] ? groups[1].length : 0;
   p.lgSize = (groups[2] || groups[1]) ? (groups[2] || groups[1]).length : 0;
 
   if (negative) {
-    let trunkLen = positive.length - p.posPre.length - p.posSuf.length,
-        pos = negative.indexOf(DIGIT);
+    const trunkLen = positive.length - p.posPre.length - p.posSuf.length;
+        const pos = negative.indexOf(DIGIT);
 
     p.negPre = negative.substr(0, pos).replace(/'/g, '');
     p.negSuf = negative.substr(pos + trunkLen).replace(/'/g, '');
   } else {
     // hardcoded '-' sign is fine as all locale use '-' as MINUS_SIGN. (\u2212 is the same as '-')
-    p.negPre = '-' + p.posPre;
+    p.negPre = `-${  p.posPre}`;
     p.negSuf = p.posSuf;
   }
 

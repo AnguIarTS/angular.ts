@@ -1,38 +1,36 @@
 
 
-describe('ngAnimate $$animateJsDriver', function() {
+describe('ngAnimate $$animateJsDriver', () => {
 
   beforeEach(module('ngAnimate'));
   beforeEach(module('ngAnimateMock'));
 
   it('should register the $$animateJsDriver into the list of drivers found in $animateProvider',
-    module(function($animateProvider) {
+    module(($animateProvider) => {
 
     expect($animateProvider.drivers).toContain('$$animateJsDriver');
   }));
 
-  describe('with $$animateJs', function() {
+  describe('with $$animateJs', () => {
     let capturedAnimation = null;
-    let captureLog = [];
+    const captureLog = [];
     let element;
     let driver;
 
-    beforeEach(module(function($provide) {
-      $provide.factory('$$animateJs', function($$AnimateRunner) {
-        return function() {
-          let runner = new $$AnimateRunner();
+    beforeEach(module(($provide) => {
+      $provide.factory('$$animateJs', ($$AnimateRunner) => function() {
+          const runner = new $$AnimateRunner();
           capturedAnimation = arguments;
           captureLog.push({
             args: capturedAnimation,
-            runner: runner
+            runner
           });
           return {
-            start: function() {
+            start() {
               return runner;
             }
           };
-        };
-      });
+        });
 
       captureLog.length = 0;
       element = jqLite('<div></div>');
@@ -47,28 +45,28 @@ describe('ngAnimate $$animateJsDriver', function() {
     }));
 
     it('should trigger a standard animation call to $$animateJs when a regular animation is executed',
-      inject(function($rootScope) {
+      inject(($rootScope) => {
 
       driver({
-        element: element,
+        element,
         event: 'enter'
       });
       $rootScope.$digest();
 
       expect(captureLog.length).toBe(1);
 
-      let args = capturedAnimation;
+      const args = capturedAnimation;
       expect(args[0]).toBe(element);
       expect(args[1]).toBe('enter');
     }));
 
 
     it('should trigger two regular JS animations when a grouped animation is passed in',
-      inject(function($rootScope) {
+      inject(($rootScope) => {
 
-      let child1 = jqLite('<div></div>');
+      const child1 = jqLite('<div></div>');
       element.append(child1);
-      let child2 = jqLite('<div></div>');
+      const child2 = jqLite('<div></div>');
       element.append(child2);
 
       driver({
@@ -87,23 +85,23 @@ describe('ngAnimate $$animateJsDriver', function() {
 
       expect(captureLog.length).toBe(2);
 
-      let first = captureLog[0].args;
+      const first = captureLog[0].args;
       expect(first[0]).toBe(child1);
       expect(first[1]).toBe('leave');
 
-      let second = captureLog[1].args;
+      const second = captureLog[1].args;
       expect(second[0]).toBe(child2);
       expect(second[1]).toBe('enter');
     }));
 
-    they('should $prop both animations when $prop() is called on the runner', ['end', 'cancel'], function(method) {
-      inject(function($rootScope, $animate) {
-        let child1 = jqLite('<div></div>');
+    they('should $prop both animations when $prop() is called on the runner', ['end', 'cancel'], (method) => {
+      inject(($rootScope, $animate) => {
+        const child1 = jqLite('<div></div>');
         element.append(child1);
-        let child2 = jqLite('<div></div>');
+        const child2 = jqLite('<div></div>');
         element.append(child2);
 
-        let animator = driver({
+        const animator = driver({
           from: {
             structural: true,
             element: child1,
@@ -116,11 +114,11 @@ describe('ngAnimate $$animateJsDriver', function() {
           }
         });
 
-        let runner = animator.start();
+        const runner = animator.start();
 
         let animationsClosed = false;
         let status;
-        runner.done(function(s) {
+        runner.done((s) => {
           animationsClosed = true;
           status = s;
         });
@@ -135,14 +133,14 @@ describe('ngAnimate $$animateJsDriver', function() {
       });
     });
 
-    they('should fully $prop when all inner animations are complete', ['end', 'cancel'], function(method) {
-      inject(function($rootScope, $animate) {
-        let child1 = jqLite('<div></div>');
+    they('should fully $prop when all inner animations are complete', ['end', 'cancel'], (method) => {
+      inject(($rootScope, $animate) => {
+        const child1 = jqLite('<div></div>');
         element.append(child1);
-        let child2 = jqLite('<div></div>');
+        const child2 = jqLite('<div></div>');
         element.append(child2);
 
-        let animator = driver({
+        const animator = driver({
           from: {
             structural: true,
             element: child1,
@@ -155,11 +153,11 @@ describe('ngAnimate $$animateJsDriver', function() {
           }
         });
 
-        let runner = animator.start();
+        const runner = animator.start();
 
         let animationsClosed = false;
         let status;
-        runner.done(function(s) {
+        runner.done((s) => {
           animationsClosed = true;
           status = s;
         });

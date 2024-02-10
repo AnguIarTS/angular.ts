@@ -1,34 +1,34 @@
 
 
-describe('$filter', function() {
-  let $filterProvider, $filter;
+describe('$filter', () => {
+  let $filterProvider; let $filter;
 
-  beforeEach(module(function(_$filterProvider_) {
+  beforeEach(module((_$filterProvider_) => {
     $filterProvider = _$filterProvider_;
   }));
 
-  beforeEach(inject(function(_$filter_) {
+  beforeEach(inject((_$filter_) => {
     $filter = _$filter_;
   }));
 
-  describe('provider', function() {
-    it('should allow registration of filters', function() {
-      let FooFilter = function() {
+  describe('provider', () => {
+    it('should allow registration of filters', () => {
+      const FooFilter = function() {
         return function() { return 'foo'; };
       };
 
       $filterProvider.register('foo', FooFilter);
 
-      let fooFilter = $filter('foo');
+      const fooFilter = $filter('foo');
       expect(fooFilter()).toBe('foo');
     });
 
-    it('should allow registration of a map of filters', function() {
-      let FooFilter = function() {
+    it('should allow registration of a map of filters', () => {
+      const FooFilter = function() {
         return function() { return 'foo'; };
       };
 
-      let BarFilter = function() {
+      const BarFilter = function() {
         return function() { return 'bar'; };
       };
 
@@ -37,10 +37,10 @@ describe('$filter', function() {
         'bar': BarFilter
       });
 
-      let fooFilter = $filter('foo');
+      const fooFilter = $filter('foo');
       expect(fooFilter()).toBe('foo');
 
-      let barFilter = $filter('bar');
+      const barFilter = $filter('bar');
       expect(barFilter()).toBe('bar');
     });
   });

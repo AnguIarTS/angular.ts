@@ -1,47 +1,45 @@
 
 
-let serveFavicon = require('serve-favicon');
-let serveStatic = require('serve-static');
-let serveIndex = require('serve-index');
-let files = require('./angularFiles').files;
-let mergeFilesFor = require('./angularFiles').mergeFilesFor;
-let util = require('./lib/grunt/utils.js');
-let versionInfo = require('./lib/versions/version-info');
-let path = require('path');
-let e2e = require('./test/e2e/tools');
+const serveFavicon = require('serve-favicon');
+const serveStatic = require('serve-static');
+const serveIndex = require('serve-index');
+const {exec} = require('shelljs');
+const semver = require('semver');
+const path = require('path');
+const {files} = require('./angularFiles');
+const {mergeFilesFor} = require('./angularFiles');
+const util = require('./lib/grunt/utils.js');
+const versionInfo = require('./lib/versions/version-info');
+const e2e = require('./test/e2e/tools');
 
-let semver = require('semver');
-let exec = require('shelljs').exec;
-let pkg = require(__dirname + '/package.json');
+const pkg = require(`${__dirname  }/package.json`);
 
-let codeScriptFolder = util.codeScriptFolder;
-let docsScriptFolder = util.docsScriptFolder;
+const {codeScriptFolder} = util;
+const {docsScriptFolder} = util;
 
 // Node.js version checks
 if (!semver.satisfies(process.version, pkg.engines.node)) {
-  reportOrFail('Invalid node version (' + process.version + '). ' +
-               'Please use a version that satisfies ' + pkg.engines.node);
+  reportOrFail(`Invalid node version (${  process.version  }). ` +
+               `Please use a version that satisfies ${  pkg.engines.node}`);
 }
 
 // Grunt CLI version checks
-let expectedGruntVersion = pkg.engines['grunt-cli'];
-let currentGruntVersions = exec('grunt --version', {silent: true}).stdout;
-let match = /^grunt-cli v(.+)$/m.exec(currentGruntVersions);
+const expectedGruntVersion = pkg.engines['grunt-cli'];
+const currentGruntVersions = exec('grunt --version', {silent: true}).stdout;
+const match = /^grunt-cli v(.+)$/m.exec(currentGruntVersions);
 if (!match) {
-  reportOrFail('Unable to compute the current grunt-cli version. We found:\n' +
-               currentGruntVersions);
-} else {
-  if (!semver.satisfies(match[1], expectedGruntVersion)) {
-  reportOrFail('Invalid grunt-cli version (' + match[1] + '). ' +
-               'Please use a version that satisfies ' + expectedGruntVersion);
+  reportOrFail(`Unable to compute the current grunt-cli version. We found:\n${ 
+               currentGruntVersions}`);
+} else if (!semver.satisfies(match[1], expectedGruntVersion)) {
+  reportOrFail(`Invalid grunt-cli version (${  match[1]  }). ` +
+               `Please use a version that satisfies ${  expectedGruntVersion}`);
   }
-}
 
 // Ensure Node.js dependencies have been installed
 if (!process.env.CI) {
-  let npmOutput = exec('npm install');
+  const npmOutput = exec('npm install');
   if (npmOutput.code !== 0) {
-    throw new Error('Npm install failed: ' + npmOutput.stderr);
+    throw new Error(`Npm install failed: ${  npmOutput.stderr}`);
   }
 }
 
@@ -55,9 +53,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('angular-benchpress');
 
   // compute version related info for this build
-  let NG_VERSION = versionInfo.currentVersion;
+  const NG_VERSION = versionInfo.currentVersion;
   NG_VERSION.cdn = versionInfo.cdnVersion || pkg.branchVersion;
-  let dist = 'angular-' + NG_VERSION.full;
+  const dist = `angular-${  NG_VERSION.full}`;
 
   let deployVersion = NG_VERSION.full;
 
@@ -70,9 +68,9 @@ module.exports = function(grunt) {
   //                   'Perhaps you want to set the NG1_BUILD_NO_REMOTE_VERSION_REQUESTS environment variable?');
   // }
 
-  //config
+  // config
   grunt.initConfig({
-    NG_VERSION: NG_VERSION,
+    NG_VERSION,
     bp_build: {
       options: {
         buildPath: 'build/benchmarks',
@@ -87,8 +85,8 @@ module.exports = function(grunt) {
           hostname: '0.0.0.0',
           base: '.',
           keepalive: true,
-          middleware: function(connect, options) {
-            let base = Array.isArray(options.base) ? options.base[options.base.length - 1] : options.base;
+          middleware(connect, options) {
+            const base = Array.isArray(options.base) ? options.base[options.base.length - 1] : options.base;
             return [
               util.conditionalCsp(),
               util.rewrite(),
@@ -105,8 +103,8 @@ module.exports = function(grunt) {
           // We start the webserver as a separate process from the E2E tests
           port: 8000,
           hostname: '0.0.0.0',
-          middleware: function(connect, options) {
-            let base = Array.isArray(options.base) ? options.base[options.base.length - 1] : options.base;
+          middleware(connect, options) {
+            const base = Array.isArray(options.base) ? options.base[options.base.length - 1] : options.base;
             return [
               function(req, resp, next) {
                 // cache GET requests to speed up tests
@@ -157,9 +155,9 @@ module.exports = function(grunt) {
       build: ['build'],
       tmp: ['tmp'],
       deploy: [
-        codeScriptFolder + '/deploy',
-        docsScriptFolder + '/deploy',
-        docsScriptFolder + '/functions/content'
+        `${codeScriptFolder  }/deploy`,
+        `${docsScriptFolder  }/deploy`,
+        `${docsScriptFolder  }/functions/content`
       ]
     },
 
@@ -185,7 +183,7 @@ module.exports = function(grunt) {
     build: {
       angular: {
         dest: 'build/angular.js',
-        src: util.wrap([files['angularSrc']], 'angular'),
+        src: util.wrap([files.angularSrc], 'angular'),
         styles: {
           css: ['css/angular.css'],
           generateCspCssFile: true,
@@ -194,11 +192,11 @@ module.exports = function(grunt) {
       },
       loader: {
         dest: 'build/angular-loader.js',
-        src: util.wrap(files['angularLoader'], 'loader')
+        src: util.wrap(files.angularLoader, 'loader')
       },
       touch: {
         dest: 'build/angular-touch.js',
-        src: util.wrap(files['angularModules']['ngTouch'], 'module')
+        src: util.wrap(files.angularModules.ngTouch, 'module')
       },
       touchModuleTestBundle: {
         dest: 'build/test-bundles/angular-touch.js',
@@ -206,12 +204,12 @@ module.exports = function(grunt) {
       },
       mocks: {
         dest: 'build/angular-mocks.js',
-        src: util.wrap(files['angularModules']['ngMock'], 'module'),
+        src: util.wrap(files.angularModules.ngMock, 'module'),
         strict: false
       },
       sanitize: {
         dest: 'build/angular-sanitize.js',
-        src: util.wrap(files['angularModules']['ngSanitize'], 'module')
+        src: util.wrap(files.angularModules.ngSanitize, 'module')
       },
       sanitizeModuleTestBundle: {
         dest: 'build/test-bundles/angular-sanitize.js',
@@ -219,7 +217,7 @@ module.exports = function(grunt) {
       },
       resource: {
         dest: 'build/angular-resource.js',
-        src: util.wrap(files['angularModules']['ngResource'], 'module')
+        src: util.wrap(files.angularModules.ngResource, 'module')
       },
       resourceModuleTestBundle: {
         dest: 'build/test-bundles/angular-resource.js',
@@ -227,7 +225,7 @@ module.exports = function(grunt) {
       },
       messageformat: {
         dest: 'build/angular-message-format.js',
-        src: util.wrap(files['angularModules']['ngMessageFormat'], 'module')
+        src: util.wrap(files.angularModules.ngMessageFormat, 'module')
       },
       messageformatModuleTestBundle: {
         dest: 'build/test-bundles/angular-message-format.js',
@@ -235,7 +233,7 @@ module.exports = function(grunt) {
       },
       messages: {
         dest: 'build/angular-messages.js',
-        src: util.wrap(files['angularModules']['ngMessages'], 'module')
+        src: util.wrap(files.angularModules.ngMessages, 'module')
       },
       messagesModuleTestBundle: {
         dest: 'build/test-bundles/angular-messages.js',
@@ -243,11 +241,11 @@ module.exports = function(grunt) {
       },
       animate: {
         dest: 'build/angular-animate.js',
-        src: util.wrap(files['angularModules']['ngAnimate'], 'module')
+        src: util.wrap(files.angularModules.ngAnimate, 'module')
       },
       route: {
         dest: 'build/angular-route.js',
-        src: util.wrap(files['angularModules']['ngRoute'], 'module')
+        src: util.wrap(files.angularModules.ngRoute, 'module')
       },
       routeModuleTestBundle: {
         dest: 'build/test-bundles/angular-route.js',
@@ -255,7 +253,7 @@ module.exports = function(grunt) {
       },
       cookies: {
         dest: 'build/angular-cookies.js',
-        src: util.wrap(files['angularModules']['ngCookies'], 'module')
+        src: util.wrap(files.angularModules.ngCookies, 'module')
       },
       cookiesModuleTestBundle: {
         dest: 'build/test-bundles/angular-cookies.js',
@@ -263,7 +261,7 @@ module.exports = function(grunt) {
       },
       aria: {
         dest: 'build/angular-aria.js',
-        src: util.wrap(files['angularModules']['ngAria'], 'module')
+        src: util.wrap(files.angularModules.ngAria, 'module')
       },
       ariaModuleTestBundle: {
         dest: 'build/test-bundles/angular-aria.js',
@@ -273,7 +271,7 @@ module.exports = function(grunt) {
       },
       parseext: {
         dest: 'build/angular-parse-ext.js',
-        src: util.wrap(files['angularModules']['ngParseExt'], 'module')
+        src: util.wrap(files.angularModules.ngParseExt, 'module')
       },
       'promises-aplus-adapter': {
         dest:'tmp/promises-aplus-adapter++.js',
@@ -337,7 +335,7 @@ module.exports = function(grunt) {
           {
             cwd: 'build',
             src: '**',
-            dest: codeScriptFolder + '/deploy/' + deployVersion + '/',
+            dest: `${codeScriptFolder  }/deploy/${  deployVersion  }/`,
             expand: true
           }
         ]
@@ -347,28 +345,28 @@ module.exports = function(grunt) {
           // The source files are needed by the embedded examples in the docs app.
           {
             src: ['build/angular*.{js,js.map,min.js}', 'build/sitemap.xml'],
-            dest: docsScriptFolder + '/deploy/',
+            dest: `${docsScriptFolder  }/deploy/`,
             expand: true,
             flatten: true
           },
           {
             cwd: 'build/docs',
             src: ['**', '!ptore2e/**', '!index*.html'],
-            dest: docsScriptFolder + '/deploy/',
+            dest: `${docsScriptFolder  }/deploy/`,
             expand: true
           },
           {
             src: 'build/docs/index-production.html',
-            dest: docsScriptFolder + '/deploy/index.html'
+            dest: `${docsScriptFolder  }/deploy/index.html`
           },
           {
             src: 'build/docs/index-production.html',
-            dest: docsScriptFolder + '/functions/content/index.html'
+            dest: `${docsScriptFolder  }/functions/content/index.html`
           },
           {
             cwd: 'build/docs',
             src: 'partials/**',
-            dest: docsScriptFolder + '/functions/content/',
+            dest: `${docsScriptFolder  }/functions/content/`,
             expand: true
           }
         ]
@@ -378,12 +376,12 @@ module.exports = function(grunt) {
 
     compress: {
       build: {
-        options: {archive: 'build/' + dist + '.zip', mode: 'zip'},
+        options: {archive: `build/${  dist  }.zip`, mode: 'zip'},
         src: ['**'],
         cwd: 'build',
         expand: true,
         dot: true,
-        dest: dist + '/'
+        dest: `${dist  }/`
       }
     },
 
@@ -417,7 +415,7 @@ module.exports = function(grunt) {
     }
   });
 
-  //alias tasks
+  // alias tasks
   grunt.registerTask('test', 'Run unit, docs and e2e tests with Karma', [
     'eslint',
     'package',

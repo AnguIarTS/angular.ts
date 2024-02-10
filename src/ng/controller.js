@@ -1,10 +1,10 @@
-let $controllerMinErr = minErr("$controller");
+const $controllerMinErr = minErr("$controller");
 
-let CNTRL_REG = /^(\S+)(\s+as\s+([\w$]+))?$/;
+const CNTRL_REG = /^(\S+)(\s+as\s+([\w$]+))?$/;
 function identifierForController(controller, ident) {
   if (ident && isString(ident)) return ident;
   if (isString(controller)) {
-    let match = CNTRL_REG.exec(controller);
+    const match = CNTRL_REG.exec(controller);
     if (match) return match[3];
   }
 }
@@ -22,7 +22,7 @@ function identifierForController(controller, ident) {
  * {@link ng.$controllerProvider#register register} method.
  */
 export function $ControllerProvider() {
-  let controllers = {};
+  const controllers = {};
 
   /**
    * @ngdoc method
@@ -86,7 +86,10 @@ export function $ControllerProvider() {
         //                     callback is invoked.
         //   param `ident` --- An optional label which overrides the label parsed from the controller
         //                     expression, if any.
-        let instance, match, constructor, identifier;
+        let instance;
+        let match;
+        let constructor;
+        let identifier;
         later = later === true;
         if (ident && isString(ident)) {
           identifier = ident;
@@ -130,7 +133,7 @@ export function $ControllerProvider() {
           // This feature is not intended for use by applications, and is thus not documented
           // publicly.
           // Object creation: http://jsperf.com/create-constructor/2
-          let controllerPrototype = (
+          const controllerPrototype = (
             isArray(expression) ? expression[expression.length - 1] : expression
           ).prototype;
           instance = Object.create(controllerPrototype || null);
@@ -145,8 +148,8 @@ export function $ControllerProvider() {
           }
 
           return extend(
-            function $controllerInit() {
-              let result = $injector.invoke(
+            () => {
+              const result = $injector.invoke(
                 expression,
                 instance,
                 locals,
@@ -170,8 +173,8 @@ export function $ControllerProvider() {
               return instance;
             },
             {
-              instance: instance,
-              identifier: identifier,
+              instance,
+              identifier,
             },
           );
         }

@@ -13,14 +13,14 @@ function config($compileProvider) {
 }
 
 function BenchmarkController($scope) {
-  let self = this;
-  let itemCount = 1000;
-  let items = (new Array(itemCount + 1)).join('.').split('');
+  const self = this;
+  const itemCount = 1000;
+  const items = (new Array(itemCount + 1)).join('.').split('');
 
   benchmarkSteps.push({
     name: 'create',
-    fn: function() {
-      $scope.$apply(function() {
+    fn() {
+      $scope.$apply(() => {
         self.items = items;
       });
     }
@@ -28,15 +28,15 @@ function BenchmarkController($scope) {
 
   benchmarkSteps.push({
     name: '$digest',
-    fn: function() {
+    fn() {
       $scope.$root.$digest();
     }
   });
 
   benchmarkSteps.push({
     name: 'destroy',
-    fn: function() {
-      $scope.$apply(function() {
+    fn() {
+      $scope.$apply(() => {
         self.items = [];
       });
     }

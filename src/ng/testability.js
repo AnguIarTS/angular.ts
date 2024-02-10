@@ -12,7 +12,7 @@ function $$TestabilityProvider() {
        * The private $$testability service provides a collection of methods for use when debugging
        * or by automated test and debugging tools.
        */
-      let testability = {};
+      const testability = {};
 
       /**
        * @name $$testability#findBindings
@@ -31,23 +31,21 @@ function $$TestabilityProvider() {
         expression,
         opt_exactMatch,
       ) {
-        let bindings = element.getElementsByClassName("ng-binding");
-        let matches = [];
-        forEach(bindings, function (binding) {
-          let dataBinding = angular.element(binding).data("$binding");
+        const bindings = element.getElementsByClassName("ng-binding");
+        const matches = [];
+        forEach(bindings, (binding) => {
+          const dataBinding = angular.element(binding).data("$binding");
           if (dataBinding) {
-            forEach(dataBinding, function (bindingName) {
+            forEach(dataBinding, (bindingName) => {
               if (opt_exactMatch) {
-                let matcher = new RegExp(
-                  "(^|\\s)" + escapeForRegexp(expression) + "(\\s|\\||$)",
+                const matcher = new RegExp(
+                  `(^|\\s)${escapeForRegexp(expression)}(\\s|\\||$)`,
                 );
                 if (matcher.test(bindingName)) {
                   matches.push(binding);
                 }
-              } else {
-                if (bindingName.indexOf(expression) !== -1) {
-                  matches.push(binding);
-                }
+              } else if (bindingName.indexOf(expression) !== -1) {
+                matches.push(binding);
               }
             });
           }
@@ -68,18 +66,11 @@ function $$TestabilityProvider() {
        *     for the expression.
        */
       testability.findModels = function (element, expression, opt_exactMatch) {
-        let prefixes = ["ng-", "data-ng-", "ng\\:"];
+        const prefixes = ["ng-", "data-ng-", "ng\\:"];
         for (let p = 0; p < prefixes.length; ++p) {
-          let attributeEquals = opt_exactMatch ? "=" : "*=";
-          let selector =
-            "[" +
-            prefixes[p] +
-            "model" +
-            attributeEquals +
-            '"' +
-            expression +
-            '"]';
-          let elements = element.querySelectorAll(selector);
+          const attributeEquals = opt_exactMatch ? "=" : "*=";
+          const selector = `[${prefixes[p]}model${attributeEquals}"${expression}"]`;
+          const elements = element.querySelectorAll(selector);
           if (elements.length) {
             return elements;
           }

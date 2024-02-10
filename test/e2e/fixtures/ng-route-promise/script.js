@@ -2,7 +2,7 @@
 
 angular.
   module('lettersApp', ['ngRoute']).
-  config(function($routeProvider) {
+  config(($routeProvider) => {
     $routeProvider.
       otherwise(resolveRedirectTo('/foo1')).
       when('/foo1', resolveRedirectTo('/bar1')).
@@ -23,8 +23,8 @@ angular.
     // Helpers
     function resolveLetters() {
       return {
-        letters: function($q) {
-          return $q(function(resolve) {
+        letters($q) {
+          return $q((resolve) => {
             window.setTimeout(resolve, 2000, ['a', 'b', 'c', 'd', 'e']);
           });
         }
@@ -33,8 +33,8 @@ angular.
 
     function resolveRedirectTo(path) {
       return {
-        resolveRedirectTo: function($q) {
-          return $q(function(resolve) {
+        resolveRedirectTo($q) {
+          return $q((resolve) => {
             window.setTimeout(resolve, 250, path);
           });
         }

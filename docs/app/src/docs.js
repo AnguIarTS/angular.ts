@@ -8,7 +8,7 @@ angular.module('DocsController', ['currentVersionData'])
   function($scope, $rootScope, $location, $window, $cookies,
               NG_PAGES, NG_NAVIGATION, CURRENT_NG_VERSION) {
 
-  let errorPartialPath = 'Error404.html';
+  const errorPartialPath = 'Error404.html';
 
   $scope.navClass = function(navItem) {
     return {
@@ -18,39 +18,39 @@ angular.module('DocsController', ['currentVersionData'])
     };
   };
 
-  $scope.$on('$includeContentLoaded', function() {
-    let pagePath = $scope.currentPage ? $scope.currentPage.path : $location.path();
+  $scope.$on('$includeContentLoaded', () => {
+    const pagePath = $scope.currentPage ? $scope.currentPage.path : $location.path();
     $window._gaq.push(['_trackPageview', pagePath]);
     $scope.loading = false;
   });
 
-  $scope.$on('$includeContentError', function() {
+  $scope.$on('$includeContentError', () => {
     $scope.loading = false;
     $scope.loadingError = true;
   });
 
-  $scope.$watch(function docsPathWatch() {return $location.path(); }, function docsPathWatchAction(path) {
+  $scope.$watch(() => $location.path(), (path) => {
 
     path = path.replace(/^\/?(.+?)(\/index)?\/?$/, '$1');
 
-    let currentPage = $scope.currentPage = NG_PAGES[path];
+    const currentPage = $scope.currentPage = NG_PAGES[path];
 
     $scope.loading = true;
     $scope.loadingError = false;
 
     if (currentPage) {
-      $scope.partialPath = 'partials/' + path + '.html';
+      $scope.partialPath = `partials/${  path  }.html`;
       $scope.currentArea = NG_NAVIGATION[currentPage.area];
-      let pathParts = currentPage.path.split('/');
-      let breadcrumb = $scope.breadcrumb = [];
+      const pathParts = currentPage.path.split('/');
+      const breadcrumb = $scope.breadcrumb = [];
       let breadcrumbPath = '';
-      angular.forEach(pathParts, function(part) {
+      angular.forEach(pathParts, (part) => {
         breadcrumbPath += part;
         breadcrumb.push({ name: (NG_PAGES[breadcrumbPath] && NG_PAGES[breadcrumbPath].name) || part, url: breadcrumbPath });
         breadcrumbPath += '/';
       });
     } else {
-      $scope.currentArea = NG_NAVIGATION['api'];
+      $scope.currentArea = NG_NAVIGATION.api;
       $scope.breadcrumb = [];
       $scope.partialPath = errorPartialPath;
     }
@@ -60,16 +60,16 @@ angular.module('DocsController', ['currentVersionData'])
     return $scope.partialPath === errorPartialPath || $scope.loadingError;
   };
 
-  /**********************************
+  /** ********************************
    Initialize
-   ***********************************/
+   ********************************** */
 
   $scope.versionNumber = CURRENT_NG_VERSION.full;
-  $scope.version = CURRENT_NG_VERSION.full + ' ' + CURRENT_NG_VERSION.codeName;
+  $scope.version = `${CURRENT_NG_VERSION.full  } ${  CURRENT_NG_VERSION.codeName}`;
   $scope.loading = false;
   $scope.loadingError = false;
 
-  let INDEX_PATH = /^(\/|\/index[^.]*.html)$/;
+  const INDEX_PATH = /^(\/|\/index[^.]*.html)$/;
   if (!$location.path() || INDEX_PATH.test($location.path())) {
     $location.path('/api').replace();
   }

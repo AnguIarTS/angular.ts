@@ -1,46 +1,46 @@
 
 
-describe('directives', function() {
-  let compile, scope;
+describe('directives', () => {
+  let compile; let scope;
 
 
   beforeEach(module('directives'));
 
-  beforeEach(module(function($compileProvider) {
+  beforeEach(module(($compileProvider) => {
     $compileProvider.debugInfoEnabled(false);
   }));
 
-  beforeEach(inject(function($rootScope, $compile) {
+  beforeEach(inject(($rootScope, $compile) => {
     scope = $rootScope.$new();
     compile = $compile;
   }));
 
-  describe('code', function() {
-    let prettyPrintOne, oldPP;
-    let any = jasmine.any;
+  describe('code', () => {
+    let prettyPrintOne; let oldPP;
+    const {any} = jasmine;
 
-    beforeEach(function() {
+    beforeEach(() => {
       // Provide stub for pretty print function
       oldPP = window.prettyPrintOne;
       prettyPrintOne = window.prettyPrintOne = jasmine.createSpy();
     });
 
-    afterEach(function() {
+    afterEach(() => {
       window.prettyPrintOne = oldPP;
     });
 
 
-    it('should pretty print innerHTML', function() {
+    it('should pretty print innerHTML', () => {
       compile('<code>let x;</code>')(scope);
       expect(prettyPrintOne).toHaveBeenCalledWith('let x;', null, false);
     });
 
-    it('should allow language declaration', function() {
+    it('should allow language declaration', () => {
       compile('<code class="lang-javascript"></code>')(scope);
       expect(prettyPrintOne).toHaveBeenCalledWith(any(String), 'javascript', false);
     });
 
-    it('supports allow line numbers', function() {
+    it('supports allow line numbers', () => {
       compile('<code class="linenum"></code>')(scope);
       expect(prettyPrintOne).toHaveBeenCalledWith(any(String), null, true);
     });
