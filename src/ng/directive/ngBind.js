@@ -1,3 +1,5 @@
+import { isUndefined, stringify } from "../utils";
+
 /**
  * @ngdoc directive
  * @name ngBind
@@ -49,23 +51,21 @@
      </file>
    </example>
  */
-const ngBindDirective = [
+export const ngBindDirective = [
   "$compile",
-  function ($compile) {
-    return {
-      restrict: "AC",
-      compile: function ngBindCompile(templateElement) {
-        $compile.$$addBindingClass(templateElement);
-        return function ngBindLink(scope, element, attr) {
-          $compile.$$addBindingInfo(element, attr.ngBind);
-          element = element[0];
-          scope.$watch(attr.ngBind, (value) => {
-            element.textContent = stringify(value);
-          });
-        };
-      },
-    };
-  },
+  ($compile) => ({
+    restrict: "AC",
+    compile: function ngBindCompile(templateElement) {
+      $compile.$$addBindingClass(templateElement);
+      return function ngBindLink(scope, element, attr) {
+        $compile.$$addBindingInfo(element, attr.ngBind);
+        element = element[0];
+        scope.$watch(attr.ngBind, (value) => {
+          element.textContent = stringify(value);
+        });
+      };
+    },
+  }),
 ];
 
 /**
@@ -119,26 +119,24 @@ const ngBindDirective = [
      </file>
    </example>
  */
-const ngBindTemplateDirective = [
+export const ngBindTemplateDirective = [
   "$interpolate",
   "$compile",
-  function ($interpolate, $compile) {
-    return {
-      compile: function ngBindTemplateCompile(templateElement) {
-        $compile.$$addBindingClass(templateElement);
-        return function ngBindTemplateLink(scope, element, attr) {
-          const interpolateFn = $interpolate(
-            element.attr(attr.$attr.ngBindTemplate),
-          );
-          $compile.$$addBindingInfo(element, interpolateFn.expressions);
-          element = element[0];
-          attr.$observe("ngBindTemplate", (value) => {
-            element.textContent = isUndefined(value) ? "" : value;
-          });
-        };
-      },
-    };
-  },
+  ($interpolate, $compile) => ({
+    compile: function ngBindTemplateCompile(templateElement) {
+      $compile.$$addBindingClass(templateElement);
+      return function ngBindTemplateLink(scope, element, attr) {
+        const interpolateFn = $interpolate(
+          element.attr(attr.$attr.ngBindTemplate),
+        );
+        $compile.$$addBindingInfo(element, interpolateFn.expressions);
+        element = element[0];
+        attr.$observe("ngBindTemplate", (value) => {
+          element.textContent = isUndefined(value) ? "" : value;
+        });
+      };
+    },
+  }),
 ];
 
 /**
@@ -188,31 +186,29 @@ const ngBindTemplateDirective = [
      </file>
    </example>
  */
-const ngBindHtmlDirective = [
+export const ngBindHtmlDirective = [
   "$sce",
   "$parse",
   "$compile",
-  function ($sce, $parse, $compile) {
-    return {
-      restrict: "A",
-      compile: function ngBindHtmlCompile(tElement, tAttrs) {
-        const ngBindHtmlGetter = $parse(tAttrs.ngBindHtml);
-        const ngBindHtmlWatch = $parse(tAttrs.ngBindHtml, (val) =>
-          // Unwrap the value to compare the actual inner safe value, not the wrapper object.
-          $sce.valueOf(val),
-        );
-        $compile.$$addBindingClass(tElement);
+  ($sce, $parse, $compile) => ({
+    restrict: "A",
+    compile: function ngBindHtmlCompile(tElement, tAttrs) {
+      const ngBindHtmlGetter = $parse(tAttrs.ngBindHtml);
+      const ngBindHtmlWatch = $parse(tAttrs.ngBindHtml, (val) =>
+        // Unwrap the value to compare the actual inner safe value, not the wrapper object.
+        $sce.valueOf(val),
+      );
+      $compile.$$addBindingClass(tElement);
 
-        return function ngBindHtmlLink(scope, element, attr) {
-          $compile.$$addBindingInfo(element, attr.ngBindHtml);
+      return function ngBindHtmlLink(scope, element, attr) {
+        $compile.$$addBindingInfo(element, attr.ngBindHtml);
 
-          scope.$watch(ngBindHtmlWatch, () => {
-            // The watched value is the unwrapped value. To avoid re-escaping, use the direct getter.
-            const value = ngBindHtmlGetter(scope);
-            element.html($sce.getTrustedHtml(value) || "");
-          });
-        };
-      },
-    };
-  },
+        scope.$watch(ngBindHtmlWatch, () => {
+          // The watched value is the unwrapped value. To avoid re-escaping, use the direct getter.
+          const value = ngBindHtmlGetter(scope);
+          element.html($sce.getTrustedHtml(value) || "");
+        });
+      };
+    },
+  }),
 ];

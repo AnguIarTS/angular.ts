@@ -747,7 +747,7 @@ const SelectController = [
  * </example>
  *
  */
-const selectDirective = function () {
+export const selectDirective = function () {
   return {
     restrict: "E",
     require: ["select", "?ngModel"],
@@ -871,7 +871,7 @@ const selectDirective = function () {
 // The option directive is purely designed to communicate the existence (or lack of)
 // of dynamically created (and destroyed) option elements to their containing select
 // directive via its controller.
-const optionDirective = [
+export const optionDirective = [
   "$interpolate",
   function ($interpolate) {
     return {

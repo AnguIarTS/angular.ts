@@ -31,20 +31,18 @@
     </file>
   </example>
  */
-const scriptDirective = [
+export const scriptDirective = [
   "$templateCache",
-  function ($templateCache) {
-    return {
-      restrict: "E",
-      terminal: true,
-      compile(element, attr) {
-        if (attr.type === "text/ng-template") {
-          const templateUrl = attr.id;
-          const { text } = element[0];
+  ($templateCache) => ({
+    restrict: "E",
+    terminal: true,
+    compile(element, attr) {
+      if (attr.type === "text/ng-template") {
+        const templateUrl = attr.id;
+        const { text } = element[0];
 
-          $templateCache.put(templateUrl, text);
-        }
-      },
-    };
-  },
+        $templateCache.put(templateUrl, text);
+      }
+    },
+  }),
 ];
