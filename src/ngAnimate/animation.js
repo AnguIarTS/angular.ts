@@ -27,7 +27,6 @@ const $$AnimationProvider = [
       "$rootScope",
       "$injector",
       "$$AnimateRunner",
-      "$$Map",
       "$$rAFScheduler",
       "$$animateCache",
       function (
@@ -35,7 +34,6 @@ const $$AnimationProvider = [
         $rootScope,
         $injector,
         $$AnimateRunner,
-        $$Map,
         $$rAFScheduler,
         $$animateCache,
       ) {
@@ -45,10 +43,11 @@ const $$AnimationProvider = [
         function sortAnimations(animations) {
           const tree = { children: [] };
           let i;
-          const lookup = new $$Map();
+          const lookup = new Map();
 
           // this is done first beforehand so that the map
           // is filled with a list of the elements that will be animated
+          // eslint-disable-next-line no-plusplus
           for (i = 0; i < animations.length; i++) {
             const animation = animations[i];
             lookup.set(

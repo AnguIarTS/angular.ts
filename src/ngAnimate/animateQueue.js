@@ -125,7 +125,6 @@ const $$AnimateQueueProvider = [
       "$rootScope",
       "$rootElement",
       "$document",
-      "$$Map",
       "$$animation",
       "$$AnimateRunner",
       "$templateRequest",
@@ -137,7 +136,6 @@ const $$AnimateQueueProvider = [
         $rootScope,
         $rootElement,
         $document,
-        $$Map,
         $$animation,
         $$AnimateRunner,
         $templateRequest,
@@ -145,8 +143,8 @@ const $$AnimateQueueProvider = [
         $$forceReflow,
         $$isDocumentHidden,
       ) {
-        const activeAnimationsLookup = new $$Map();
-        const disabledElementsLookup = new $$Map();
+        const activeAnimationsLookup = new Map();
+        const disabledElementsLookup = new Map();
         let animationsEnabled = null;
 
         function removeFromDisabledElementsLookup(evt) {

@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { createInjector } from "./auto/injector";
 import { jqLite } from "./jqLite";
 import { setupModuleLoader } from "./loader";
@@ -27,6 +28,7 @@ import {
   lowercase,
   stringify,
   uppercase,
+  bind,
 } from "./ng/utils";
 
 const { bootstrap, reloadWithDebugInfo, getTestability } = require("./Angular");
@@ -200,7 +202,6 @@ export function publishExternalAPI(angular) {
         $window: $WindowProvider,
         $$rAF: $$RAFProvider,
         $$jqLite: $$jqLiteProvider,
-        $$Map: $$MapProvider,
         $$cookieReader: $$CookieReaderProvider,
       });
     },

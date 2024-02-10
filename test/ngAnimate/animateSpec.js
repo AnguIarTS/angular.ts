@@ -571,10 +571,10 @@ describe('animations', () => {
       }));
 
       it('should remove the element from the `disabledElementsLookup` map on `$destroy`',
-        inject(($$Map, $animate, $rootScope) => {
+        inject(($animate, $rootScope) => {
 
-        const setSpy = spyOn($$Map.prototype, 'set').and.callThrough();
-        const deleteSpy = spyOn($$Map.prototype, 'delete').and.callThrough();
+        const setSpy = spyOn(Map.prototype, 'set').and.callThrough();
+        const deleteSpy = spyOn(Map.prototype, 'delete').and.callThrough();
 
         parent.append(element);
 
