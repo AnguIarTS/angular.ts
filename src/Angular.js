@@ -27,10 +27,6 @@ import { createInjector } from "./auto/injector";
 
 export const REGEX_STRING_REGEXP = /^\/(.+)\/([a-z]*)$/;
 
-// The name of a form control's ValidityState property.
-// This is used so that it's possible for internal tests to create mock ValidityStates.
-export const VALIDITY_STATE_PROPERTY = "validity";
-
 const ngMinErr = minErr("ng");
 /** @name angular */
 const angular = window.angular || (window.angular = {});

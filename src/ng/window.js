@@ -3,8 +3,6 @@ import { valueFn } from "./utils";
 /**
  * @ngdoc service
  * @name $window
- * @this
- *
  * @description
  * A reference to the browser's `window` object. While `window`
  * is globally available in JavaScript, it causes testability problems, because

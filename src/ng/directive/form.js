@@ -653,8 +653,8 @@ const formDirectiveFactory = function (isNgForm) {
   ];
 };
 
-const formDirective = formDirectiveFactory();
-const ngFormDirective = formDirectiveFactory(true);
+export const formDirective = formDirectiveFactory();
+export const ngFormDirective = formDirectiveFactory(true);
 
 // helper methods
 function setupValidity(instance) {

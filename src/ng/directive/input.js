@@ -1,10 +1,14 @@
-/* global
-  VALID_CLASS: false,
-  INVALID_CLASS: false,
-  PRISTINE_CLASS: false,
-  DIRTY_CLASS: false,
-  ngModelMinErr: false
-*/
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-use-before-define */
+import {
+  isDefined,
+  isUndefined,
+  isString,
+  lowercase,
+  trim,
+  isDate,
+} from "../utils";
+import { ngModelMinErr } from "./ngModel";
 
 // Regex code was initially obtained from SO prior to modification: https://stackoverflow.com/questions/3143070/javascript-regex-iso-datetime#answer-3143231
 const ISO_DATE_REGEXP =
@@ -33,11 +37,17 @@ const DATETIMELOCAL_REGEXP =
 const WEEK_REGEXP = /^(\d{4,})-W(\d\d)$/;
 const MONTH_REGEXP = /^(\d{4,})-(\d\d)$/;
 const TIME_REGEXP = /^(\d\d):(\d\d)(?::(\d\d)(\.\d{1,3})?)?$/;
+// The name of a form control's ValidityState property.
+// This is used so that it's possible for internal tests to create mock ValidityStates.
+export const VALIDITY_STATE_PROPERTY = "validity";
 
 const PARTIAL_VALIDATION_EVENTS = "keydown wheel mousedown";
-const PARTIAL_VALIDATION_TYPES = createMap();
-forEach("date,datetime-local,month,time,week".split(","), (type) => {
-  PARTIAL_VALIDATION_TYPES[type] = true;
+/**
+ * @type {Map<string, boolean>}
+ */
+const PARTIAL_VALIDATION_TYPES = new Map();
+"date,datetime-local,month,time,week".split(",").forEach((type) => {
+  PARTIAL_VALIDATION_TYPES.set(type, true);
 });
 
 const inputType = {
@@ -1288,11 +1298,11 @@ const inputType = {
    */
   checkbox: checkboxInputType,
 
-  hidden: noop,
-  button: noop,
-  submit: noop,
-  reset: noop,
-  file: noop,
+  hidden: () => {},
+  button: () => {},
+  submit: () => {},
+  reset: () => {},
+  file: () => {},
 };
 
 function stringBasedInputType(ctrl) {
@@ -1308,25 +1318,13 @@ function textInputType(scope, element, attr, ctrl, $sniffer, $browser) {
 
 function baseInputType(scope, element, attr, ctrl, $sniffer, $browser) {
   const type = lowercase(element[0].type);
-
+  let composing = false;
   // In composition mode, users are still inputting intermediate text buffer,
   // hold the listener until composition is done.
   // More about composition events: https://developer.mozilla.org/en-US/docs/Web/API/CompositionEvent
   if (!$sniffer.android) {
-    let composing = false;
-
     element.on("compositionstart", () => {
       composing = true;
-    });
-
-    // Support: IE9+
-    element.on("compositionupdate", (ev) => {
-      // End composition when ev.data is empty string on 'compositionupdate' event.
-      // When the input de-focusses (e.g. by clicking away), IE triggers 'compositionupdate'
-      // instead of 'compositionend'.
-      if (isUndefined(ev.data) || ev.data === "") {
-        composing = false;
-      }
     });
 
     element.on("compositionend", () => {
@@ -2356,7 +2354,7 @@ function checkboxInputType(
       </file>
     </example>
  */
-const inputDirective = [
+export const inputDirective = [
   "$browser",
   "$sniffer",
   "$filter",
@@ -2484,7 +2482,7 @@ const CONSTANT_VALUE_REGEXP = /^(true|false|\d+)$/;
       </file>
     </example>
  */
-const ngValueDirective = function () {
+export function ngValueDirective() {
   /**
    *  inputs use the value attribute as their default value if the value property is not set.
    *  Once the value property has been set (by adding input), it will not react to changes to
@@ -2516,4 +2514,4 @@ const ngValueDirective = function () {
       };
     },
   };
-};
+}

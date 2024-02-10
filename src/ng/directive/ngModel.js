@@ -19,7 +19,7 @@ const TOUCHED_CLASS = "ng-touched";
 const EMPTY_CLASS = "ng-empty";
 const NOT_EMPTY_CLASS = "ng-not-empty";
 
-const ngModelMinErr = minErr("ngModel");
+export const ngModelMinErr = minErr("ngModel");
 
 /**
  * @ngdoc type

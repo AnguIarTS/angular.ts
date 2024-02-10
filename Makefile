@@ -1,4 +1,5 @@
 setup:
+	@npm i
 	@npm install --global rollup
 
 .PHONY: build
@@ -9,11 +10,11 @@ pretty:
 	@npx prettier ./src --write
 	
 lint:
-	npx eslint ./src --fix
+	@npx eslint ./src --fix
 
 check:
 	@echo "Typechecking Js"
 	./node_modules/.bin/tsc
 
 test-server:
-	@npx  wds --node-resolve --open --watch --app-index test/index.html
+	@python3 -m http.server

@@ -318,11 +318,12 @@ export function trim(value) {
   return isString(value) ? value.trim() : value;
 }
 
+// eslint-disable-next-line camelcase
 export function snake_case(name, separator) {
-  separator = separator || "_";
+  const modseparator = separator || "_";
   return name.replace(
     /[A-Z]/g,
-    (letter, pos) => (pos ? separator : "") + letter.toLowerCase(),
+    (letter, pos) => (pos ? modseparator : "") + letter.toLowerCase(),
   );
 }
 
