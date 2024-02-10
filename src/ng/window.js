@@ -1,3 +1,5 @@
+import { valueFn } from "./utils";
+
 /**
  * @ngdoc service
  * @name $window
@@ -40,6 +42,6 @@
      </file>
    </example>
  */
-function $WindowProvider() {
+export function WindowProvider() {
   this.$get = valueFn(window);
 }

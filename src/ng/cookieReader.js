@@ -67,6 +67,6 @@ export function $$CookieReader($document) {
 
 $$CookieReader.$inject = ["$document"];
 
-export function $$CookieReaderProvider() {
+export function CookieReaderProvider() {
   this.$get = $$CookieReader;
 }

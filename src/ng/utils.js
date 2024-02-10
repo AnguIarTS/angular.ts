@@ -591,9 +591,7 @@ export function identity(value) {
  * @returns {() => *}
  */
 export function valueFn(value) {
-  return function valueRef() {
-    return value;
-  };
+  return () => value;
 }
 
 export function hasCustomToString(obj) {

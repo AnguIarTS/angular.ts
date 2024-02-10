@@ -2,8 +2,11 @@
 import { createInjector } from "./auto/injector";
 import { jqLite } from "./jqLite";
 import { setupModuleLoader } from "./loader";
-import { $$CookieReaderProvider } from "./ng/cookieReader";
+import { htmlAnchorDirective } from "./ng/directive/a";
+import { CookieReaderProvider } from "./ng/cookieReader";
 import { AnimateAsyncRunFactoryProvider } from "./ng/animateRunner";
+import { WindowProvider } from "./ng/window";
+import { $$SanitizeUriProvider } from "./ng/sanitizeUri";
 import {
   extend,
   copy,
@@ -200,9 +203,9 @@ export function publishExternalAPI(angular) {
         $templateRequest: $TemplateRequestProvider,
         $$testability: $$TestabilityProvider,
         $timeout: $TimeoutProvider,
-        $window: $WindowProvider,
+        $window: WindowProvider,
         $$jqLite: $$jqLiteProvider,
-        $$cookieReader: $$CookieReaderProvider,
+        $$cookieReader: CookieReaderProvider,
       });
     },
   ]).info({ angularVersion: '"NG_VERSION_FULL"' });
