@@ -2,6 +2,7 @@
 /* eslint-disable no-use-before-define */
 import { minErr } from "./minErr";
 import {
+  copy,
   extend,
   forEach,
   getNgAttribute,
@@ -10,11 +11,18 @@ import {
   ngAttrPrefixes,
   startingTag,
   isDefined,
+  isArray,
+  isDate,
+  isElement,
+  isNumber,
+  isString,
+  isUndefined,
+  merge,
   bind,
   fromJson,
+  toJson,
   identity,
   equals,
-  isArray,
 } from "./ng/utils";
 import { jqLite } from "./jqLite";
 import { createInjector } from "./auto/injector";
@@ -495,38 +503,6 @@ export function getTestability(rootElement) {
     );
   }
   return injector.get("$$testability");
-}
-
-/**
- * throw error if the argument is falsy.
- */
-export function assertArg(arg, name, reason) {
-  if (!arg) {
-    throw ngMinErr(
-      "areq",
-      "Argument '{0}' is {1}",
-      name || "?",
-      reason || "required",
-    );
-  }
-  return arg;
-}
-
-export function assertArgFn(arg, name, acceptArrayAnnotation) {
-  if (acceptArrayAnnotation && isArray(arg)) {
-    arg = arg[arg.length - 1];
-  }
-
-  assertArg(
-    isFunction(arg),
-    name,
-    `not a function, got ${
-      arg && typeof arg === "object"
-        ? arg.constructor.name || "Object"
-        : typeof arg
-    }`,
-  );
-  return arg;
 }
 
 /**

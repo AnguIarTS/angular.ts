@@ -1,3 +1,13 @@
+import { minErr } from "../minErr";
+import {
+  assertArgFn,
+  assertNotHasOwnProperty,
+  extend,
+  isArray,
+  isObject,
+  isString,
+} from "./utils";
+
 const $controllerMinErr = minErr("$controller");
 
 const CNTRL_REG = /^(\S+)(\s+as\s+([\w$]+))?$/;

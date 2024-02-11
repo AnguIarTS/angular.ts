@@ -4974,7 +4974,7 @@ const SPECIAL_CHARS_REGEXP = /[:\-_]+(.)/g;
  * Converts all accepted directives format into proper directive name.
  * @param name Name to normalize
  */
-function directiveNormalize(name) {
+export function directiveNormalize(name) {
   return name
     .replace(PREFIX_REGEXP, "")
     .replace(SPECIAL_CHARS_REGEXP, (_, letter, offset) =>

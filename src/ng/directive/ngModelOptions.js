@@ -1,3 +1,6 @@
+/* eslint-disable no-use-before-define */
+import { extend, forEach, isDefined } from "../utils";
+
 /* exported defaultModelOptions */
 let defaultModelOptions;
 const DEFAULT_REGEXP = /(\s+|^)default(\s+|$)/;

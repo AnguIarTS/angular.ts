@@ -1,3 +1,6 @@
+/* eslint-disable no-use-before-define */
+import { forEach, isDefined, lowercase } from "./utils";
+
 /**
  * @ngdoc service
  * @name $xhrFactory

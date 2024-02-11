@@ -1,5 +1,7 @@
 /* exported selectDirective, optionDirective */
 
+import { forEach, includes } from "../utils";
+
 const noopNgModelController = { $setViewValue: () => {}, $render: () => {} };
 
 function setOptionSelectedStatus(optionEl, value) {

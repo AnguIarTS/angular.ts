@@ -1,3 +1,6 @@
+import { minErr } from "../../minErr";
+import { isObject } from "../../ng/utils";
+
 /**
  * @ngdoc filter
  * @name linky
@@ -132,11 +135,7 @@ angular.module("ngSanitize").filter("linky", [
       /((s?ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"\u201d\u2019]/i;
     const MAILTO_REGEXP = /^mailto:/i;
 
-    const linkyMinErr = angular.$$minErr("linky");
-    const { isDefined } = angular;
-    const { isFunction } = angular;
-    const { isObject } = angular;
-    const { isString } = angular;
+    const linkyMinErr = minErr("linky");
 
     return function (text, target, attributes) {
       if (text == null || text === "") return text;

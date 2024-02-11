@@ -5,6 +5,13 @@ const NODE_TYPE_COMMENT$1 = 8;
 const NODE_TYPE_DOCUMENT$1 = 9;
 const NODE_TYPE_DOCUMENT_FRAGMENT = 11;
 
+const VALID_CLASS = "ng-valid";
+const INVALID_CLASS = "ng-invalid";
+const PRISTINE_CLASS = "ng-pristine";
+const DIRTY_CLASS = "ng-dirty";
+const UNTOUCHED_CLASS = "ng-untouched";
+const TOUCHED_CLASS = "ng-touched";
+
 /* eslint-disable no-use-before-define */
 
 /**
@@ -371,7 +378,7 @@ function forEach$1(obj, iterator, context) {
 
 function forEachSorted(obj, iterator, context) {
   const keys = Object.keys(obj).sort();
-  keys.forEach(el => iterator.call(context, obj[el], el));
+  keys.forEach((el) => iterator.call(context, obj[el], el));
   return keys;
 }
 
@@ -444,6 +451,15 @@ function extend$1(dst) {
   return baseExtend(dst, Array.prototype.slice.call(arguments, 1), false);
 }
 
+function toInt$1(str) {
+  return parseInt(str, 10);
+}
+
+function isNumberNaN$1(num) {
+  // eslint-disable-next-line no-self-compare
+  return Number.isNaN(num);
+}
+
 /**
  * @module angular
  * @function noop
@@ -494,6 +510,10 @@ function isElement$1(node) {
 
 function nodeName_$1(element) {
   return lowercase$1(element.nodeName || (element[0] && element[0].nodeName));
+}
+
+function includes(array, obj) {
+  return Array.prototype.indexOf.call(array, obj) !== -1;
 }
 
 function arrayRemove$1(array, value) {
@@ -786,7 +806,7 @@ function createMap$1() {
   return Object.create(null);
 }
 
-function stringify$1(value) {
+function stringify(value) {
   if (value == null) {
     // null || undefined
     return "";
@@ -901,6 +921,33 @@ function fromJson(json) {
 }
 
 /**
+ * @returns {string} Returns the string representation of the element.
+ */
+function startingTag$1(element) {
+  const clonedElement = element.cloneNode(true);
+  while (clonedElement.firstChild) {
+    clonedElement.removeChild(clonedElement.firstChild);
+  }
+  const tempDiv = document.createElement("div");
+
+  // Append the cloned element to the temp div and get its HTML
+  tempDiv.appendChild(clonedElement);
+  const elemHtml = tempDiv.innerHTML;
+  try {
+    return element[0].nodeType === NODE_TYPE_TEXT$1
+      ? lowercase$1(elemHtml)
+      : elemHtml
+          .match(/^(<[^>]+>)/)[1]
+          .replace(
+            /^<([\w-]+)/,
+            (match, nodeName) => `<${lowercase$1(nodeName)}`,
+          );
+  } catch (e) {
+    return lowercase$1(elemHtml);
+  }
+}
+
+/**
  * Parses an escaped url query string into key-value pairs.
  * @returns {Object.<string,boolean|Array>}
  */
@@ -998,6 +1045,33 @@ function shallowCopy$1(src, dst) {
   }
 
   return dst || src;
+}
+
+/**
+ * throw error if the argument is falsy.
+ */
+function assertArg$1(arg, name, reason) {
+  if (!arg) {
+    throw ngMinErr();
+  }
+  return arg;
+}
+
+function assertArgFn(arg, name, acceptArrayAnnotation) {
+  if (acceptArrayAnnotation && isArray$1(arg)) {
+    arg = arg[arg.length - 1];
+  }
+
+  assertArg$1(
+    isFunction$1(arg),
+    name,
+    `not a function, got ${
+      arg && typeof arg === "object"
+        ? arg.constructor.name || "Object"
+        : typeof arg
+    }`,
+  );
+  return arg;
 }
 
 function serializeObject(obj, maxDepth) {
@@ -1232,14 +1306,11 @@ function minErr$1(module) {
  * @returns {Object} jQuery object.
  */
 
-
-
 let jqId = 1;
 
 function jqNextId() {
   return ++jqId;
 }
-
 
 const DASH_LOWERCASE_REGEXP = /-([a-z])/g;
 const MS_HACK_REGEXP = /^-ms-/;
@@ -1523,7 +1594,6 @@ JQLite$1._data = function (node) {
   // jQuery always returns an object on cache miss
   return this.cache[node.ng339] || {};
 };
-
 
 JQLite$1._data = undefined;
 
@@ -4535,7 +4605,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
          *
          * @param {string} name Name to normalize
          */
-        $normalize: directiveNormalize$1,
+        $normalize: directiveNormalize,
 
         /**
          * @ngdoc method
@@ -5168,7 +5238,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             // use the node name: <directive>
             addDirective(
               directives,
-              directiveNormalize$1(nodeName),
+              directiveNormalize(nodeName),
               "E",
               maxPriority,
               ignoreDirective,
@@ -5199,7 +5269,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               name = attr.name;
               value = attr.value;
 
-              nName = directiveNormalize$1(name.toLowerCase());
+              nName = directiveNormalize(name.toLowerCase());
 
               // Support ng-attr-*, ng-prop-* and ng-on-*
               if ((ngPrefixMatch = nName.match(NG_PREFIX_BINDING))) {
@@ -5236,7 +5306,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
               } else {
                 // Update nName for cases where a prefix was removed
                 // NOTE: the .toLowerCase() is unnecessary and causes https://github.com/angular/angular.js/issues/16624 for ng-attr-*
-                nName = directiveNormalize$1(name.toLowerCase());
+                nName = directiveNormalize(name.toLowerCase());
                 attrsMap[nName] = name;
 
                 if (isNgAttr || !attrs.hasOwnProperty(nName)) {
@@ -5283,7 +5353,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
             }
             if (isString(className) && className !== "") {
               while ((match = CLASS_DIRECTIVE_REGEXP.exec(className))) {
-                nName = directiveNormalize$1(match[2]);
+                nName = directiveNormalize(match[2]);
                 if (
                   addDirective(
                     directives,
@@ -5330,7 +5400,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
         try {
           const match = COMMENT_DIRECTIVE_REGEXP.exec(node.nodeValue);
           if (match) {
-            const nName = directiveNormalize$1(match[1]);
+            const nName = directiveNormalize(match[1]);
             if (
               addDirective(directives, nName, "M", maxPriority, ignoreDirective)
             ) {
@@ -5680,7 +5750,7 @@ function $CompileProvider($provide, $$sanitizeUriProvider) {
 
                 // Add the matching elements into their slot
                 forEach$1($compileNode.contents(), (node) => {
-                  const slotName = slotMap[directiveNormalize$1(nodeName_(node))];
+                  const slotName = slotMap[directiveNormalize(nodeName_(node))];
                   if (slotName) {
                     filledSlots[slotName] = true;
                     slots[slotName] =
@@ -7264,7 +7334,7 @@ const SPECIAL_CHARS_REGEXP = /[:\-_]+(.)/g;
  * Converts all accepted directives format into proper directive name.
  * @param name Name to normalize
  */
-function directiveNormalize$1(name) {
+function directiveNormalize(name) {
   return name
     .replace(PREFIX_REGEXP, "")
     .replace(SPECIAL_CHARS_REGEXP, (_, letter, offset) =>
@@ -7322,9 +7392,9 @@ function setupModuleLoader(window) {
   const ngMinErr = minErr$1("ng");
 
   /**
-   * 
-   * @param {string} name 
-   * @param {string} context 
+   *
+   * @param {string} name
+   * @param {string} context
    */
   function assertNotHasOwnProperty(name, context) {
     if (name === "hasOwnProperty") {
@@ -7434,7 +7504,7 @@ function setupModuleLoader(window) {
         /** @type {angular.IModule} */
         const moduleInstance = {
           // Private state
-          
+
           // @ts-ignore
           _invokeQueue: invokeQueue,
           _configBlocks: configBlocks,
@@ -7796,8 +7866,6 @@ function htmlAnchorDirective() {
 /* eslint-disable no-use-before-define */
 
 
-/* global -nullFormCtrl, -PENDING_CLASS, -SUBMITTED_CLASS
- */
 const nullFormCtrl$1 = {
   $addControl: () => {},
   $getControls: valueFn$1([]),
@@ -8567,14 +8635,7 @@ function isObjectEmpty(obj) {
   return true;
 }
 
-const VALID_CLASS = "ng-valid";
-const INVALID_CLASS = "ng-invalid";
-const PRISTINE_CLASS = "ng-pristine";
-const DIRTY_CLASS = "ng-dirty";
-const UNTOUCHED_CLASS = "ng-untouched";
-const TOUCHED_CLASS = "ng-touched";
-const EMPTY_CLASS = "ng-empty";
-const NOT_EMPTY_CLASS = "ng-not-empty";
+/* eslint-disable no-use-before-define */
 
 const ngModelMinErr = minErr$1("ngModel");
 
@@ -8947,7 +9008,7 @@ NgModelController.prototype = {
   $isEmpty(value) {
     // eslint-disable-next-line no-self-compare
     return (
-      isUndefined(value) || value === "" || value === null || value !== value
+      isUndefined$1(value) || value === "" || value === null || value !== value
     );
   },
 
@@ -9142,7 +9203,7 @@ NgModelController.prototype = {
    */
   $validate() {
     // ignore $validate before model is initialized
-    if (isNumberNaN(this.$modelValue)) {
+    if (isNumberNaN$1(this.$modelValue)) {
       return;
     }
 
@@ -9195,14 +9256,14 @@ NgModelController.prototype = {
     function processParseErrors() {
       const errorKey = that.$$parserName;
 
-      if (isUndefined(that.$$parserValid)) {
+      if (isUndefined$1(that.$$parserValid)) {
         setValidity(errorKey, null);
       } else {
         if (!that.$$parserValid) {
-          forEach(that.$validators, (v, name) => {
+          forEach$1(that.$validators, (v, name) => {
             setValidity(name, null);
           });
-          forEach(that.$asyncValidators, (v, name) => {
+          forEach$1(that.$asyncValidators, (v, name) => {
             setValidity(name, null);
           });
         }
@@ -9216,13 +9277,13 @@ NgModelController.prototype = {
 
     function processSyncValidators() {
       let syncValidatorsValid = true;
-      forEach(that.$validators, (validator, name) => {
+      forEach$1(that.$validators, (validator, name) => {
         const result = Boolean(validator(modelValue, viewValue));
         syncValidatorsValid = syncValidatorsValid && result;
         setValidity(name, result);
       });
       if (!syncValidatorsValid) {
-        forEach(that.$asyncValidators, (v, name) => {
+        forEach$1(that.$asyncValidators, (v, name) => {
           setValidity(name, null);
         });
         return false;
@@ -9233,9 +9294,9 @@ NgModelController.prototype = {
     function processAsyncValidators() {
       const validatorPromises = [];
       let allValid = true;
-      forEach(that.$asyncValidators, (validator, name) => {
+      forEach$1(that.$asyncValidators, (validator, name) => {
         const promise = validator(modelValue, viewValue);
-        if (!isPromiseLike(promise)) {
+        if (!isPromiseLike$1(promise)) {
           throw ngModelMinErr(
             "nopromise",
             "Expected asynchronous validator to return a promise but got '{0}' instead.",
@@ -9317,7 +9378,7 @@ NgModelController.prototype = {
     let modelValue = viewValue;
     const that = this;
 
-    this.$$parserValid = isUndefined(modelValue) ? undefined : true;
+    this.$$parserValid = isUndefined$1(modelValue) ? undefined : true;
 
     // Reset any previous parse error
     this.$setValidity(this.$$parserName, null);
@@ -9326,13 +9387,13 @@ NgModelController.prototype = {
     if (this.$$parserValid) {
       for (let i = 0; i < this.$parsers.length; i++) {
         modelValue = this.$parsers[i](modelValue);
-        if (isUndefined(modelValue)) {
+        if (isUndefined$1(modelValue)) {
           this.$$parserValid = false;
           break;
         }
       }
     }
-    if (isNumberNaN(this.$modelValue)) {
+    if (isNumberNaN$1(this.$modelValue)) {
       // this.$modelValue has not been touched yet...
       this.$modelValue = this.$$ngModelGet(this.$$scope);
     }
@@ -9371,7 +9432,7 @@ NgModelController.prototype = {
 
   $$writeModelToScope() {
     this.$$ngModelSet(this.$$scope, this.$modelValue);
-    forEach(
+    forEach$1(
       this.$viewChangeListeners,
       function (listener) {
         try {
@@ -9446,14 +9507,14 @@ NgModelController.prototype = {
   $$debounceViewValueCommit(trigger) {
     let debounceDelay = this.$options.getOption("debounce");
 
-    if (isNumber(debounceDelay[trigger])) {
+    if (isNumber$1(debounceDelay[trigger])) {
       debounceDelay = debounceDelay[trigger];
     } else if (
-      isNumber(debounceDelay.default) &&
+      isNumber$1(debounceDelay.default) &&
       this.$options.getOption("updateOn").indexOf(trigger) === -1
     ) {
       debounceDelay = debounceDelay.default;
-    } else if (isNumber(debounceDelay["*"])) {
+    } else if (isNumber$1(debounceDelay["*"])) {
       debounceDelay = debounceDelay["*"];
     }
 
@@ -12543,6 +12604,7 @@ const scriptDirective = [
 
 /* exported selectDirective, optionDirective */
 
+
 const noopNgModelController = { $setViewValue: () => {}, $render: () => {} };
 
 function setOptionSelectedStatus(optionEl, value) {
@@ -13335,7 +13397,7 @@ const selectDirective = function () {
       // Read value now needs to check each option to see if it is selected
       selectCtrl.readValue = function readMultipleValue() {
         const array = [];
-        forEach(element.find("option"), (option) => {
+        forEach$1(element.find("option"), (option) => {
           if (option.selected && !option.disabled) {
             const val = option.value;
             array.push(
@@ -13350,7 +13412,7 @@ const selectDirective = function () {
 
       // Write value now needs to set the selected property of each matching option
       selectCtrl.writeValue = function writeMultipleValue(value) {
-        forEach(element.find("option"), (option) => {
+        forEach$1(element.find("option"), (option) => {
           const shouldBeSelected =
             !!value &&
             (includes(value, option.value) ||
@@ -13520,7 +13582,7 @@ const ngBindDirective = [
         $compile.$$addBindingInfo(element, attr.ngBind);
         element = element[0];
         scope.$watch(attr.ngBind, (value) => {
-          element.textContent = stringify$1(value);
+          element.textContent = stringify(value);
         });
       };
     },
@@ -15722,14 +15784,14 @@ const ngPluralizeDirective = [
         let watchRemover = () => {};
         let lastCount;
 
-        forEach(attr, (expression, attributeName) => {
+        forEach$1(attr, (expression, attributeName) => {
           const tmpMatch = IS_WHEN.exec(attributeName);
           if (tmpMatch) {
-            const whenKey = (tmpMatch[1] ? "-" : "") + lowercase(tmpMatch[2]);
+            const whenKey = (tmpMatch[1] ? "-" : "") + lowercase$1(tmpMatch[2]);
             whens[whenKey] = element.attr(attr.$attr[attributeName]);
           }
         });
-        forEach(whens, (expression, key) => {
+        forEach$1(whens, (expression, key) => {
           whensExpFns[key] = $interpolate(
             expression.replace(BRACE, braceReplacement),
           );
@@ -16016,7 +16078,7 @@ const ngRefDirective = [
     restrict: "A",
     compile(tElement, tAttrs) {
       // Get the expected controller name, converts <data-some-thing> into "someThing"
-      const controllerName = directiveNormalize(nodeName_(tElement));
+      const controllerName = directiveNormalize(nodeName_$1(tElement));
 
       // Get the expression for value binding
       const getter = $parse(tAttrs.ngRef);
@@ -16690,7 +16752,7 @@ const ngRepeatDirective = [
                 nextBlockOrder[index] = block;
               } else if (nextBlockMap[trackById]) {
                 // if collision detected. restore lastBlockMap and throw an error
-                forEach(nextBlockOrder, (block) => {
+                forEach$1(nextBlockOrder, (block) => {
                   if (block && block.scope) lastBlockMap[block.id] = block;
                 });
                 throw ngRepeatMinErr(
@@ -18731,17 +18793,17 @@ const minlengthDirective = [
 function parsePatternAttr(regex, patternExp, elm) {
   if (!regex) return undefined;
 
-  if (isString(regex)) {
+  if (isString$1(regex)) {
     regex = new RegExp(`^${regex}$`);
   }
 
   if (!regex.test) {
-    throw minErr("ngPattern")(
+    throw minErr$1("ngPattern")(
       "noregexp",
       "Expected {0} to be a RegExp but was {1}. Element: {2}",
       patternExp,
       regex,
-      startingTag(elm),
+      startingTag$1(elm),
     );
   }
 
@@ -18749,9 +18811,11 @@ function parsePatternAttr(regex, patternExp, elm) {
 }
 
 function parseLength(val) {
-  const intVal = toInt(val);
-  return isNumberNaN(intVal) ? -1 : intVal;
+  const intVal = toInt$1(val);
+  return isNumberNaN$1(intVal) ? -1 : intVal;
 }
+
+/* eslint-disable no-use-before-define */
 
 /* exported defaultModelOptions */
 let defaultModelOptions$1;
@@ -18790,10 +18854,10 @@ ModelOptions.prototype = {
     let inheritAll = false;
 
     // make a shallow copy
-    options = extend({}, options);
+    options = extend$1({}, options);
 
     // Inherit options from the parent if specified by the value `"$inherit"`
-    forEach(
+    forEach$1(
       options,
       /** @this */ function (option, key) {
         if (option === "$inherit") {
@@ -19329,12 +19393,88 @@ const ngModelOptionsDirective = function () {
 
 // shallow copy over values from `src` that are not already specified on `dst`
 function defaults(dst, src) {
-  forEach(src, (value, key) => {
-    if (!isDefined(dst[key])) {
+  forEach$1(src, (value, key) => {
+    if (!isDefined$1(dst[key])) {
       dst[key] = value;
     }
   });
 }
+
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-use-before-define */
+
+/**
+ * @ngdoc module
+ * @name ng
+
+ * @installation
+ * @description
+ *
+ * The ng module is loaded by default when an AngularJS application is started. The module itself
+ * contains the essential components for an AngularJS application to function. The table below
+ * lists a high level breakdown of each of the services/factories, filters, directives and testing
+ * components available within this core module.
+ *
+ */
+
+const REGEX_STRING_REGEXP$1 = /^\/(.+)\/([a-z]*)$/;
+
+/// //////////////////////////////////////////////
+
+function allowAutoBootstrap(document) {
+  const script = document.currentScript;
+
+  // If the `currentScript` property has been clobbered just return false, since this indicates a probable attack
+  if (
+    !(
+      script instanceof window.HTMLScriptElement ||
+      script instanceof window.SVGScriptElement
+    )
+  ) {
+    return false;
+  }
+
+  const { attributes } = script;
+  const srcs = [
+    attributes.getNamedItem("src"),
+    attributes.getNamedItem("href"),
+    attributes.getNamedItem("xlink:href"),
+  ];
+
+  return srcs.every((src) => {
+    if (!src) {
+      return true;
+    }
+    if (!src.value) {
+      return false;
+    }
+
+    const link = document.createElement("a");
+    link.href = src.value;
+
+    if (document.location.origin === link.origin) {
+      // Same-origin resources are always allowed, even for banned URL schemes.
+      return true;
+    }
+    // Disabled bootstrapping unless angular.js was loaded from a known scheme used on the web.
+    // This is to prevent angular.js bundled with browser extensions from being used to bypass the
+    // content security policy in web pages and other browser extensions.
+    switch (link.protocol) {
+      case "http:":
+      case "https:":
+      case "ftp:":
+      case "blob:":
+      case "file:":
+      case "data:":
+        return true;
+      default:
+        return false;
+    }
+  });
+}
+
+// Cached as it has to run during loading so that document.currentScript is available.
+allowAutoBootstrap(window.document);
 
 /**
  * @ngdoc directive
@@ -19723,7 +19863,7 @@ forEach$1(ALIASED_ATTR, (htmlAttr, ngAttr) => {
         // special case ngPattern when a literal regular expression value
         // is used as the expression (this way we don't have to watch anything).
         if (ngAttr === "ngPattern" && attr.ngPattern.charAt(0) === "/") {
-          const match = attr.ngPattern.match(REGEX_STRING_REGEXP);
+          const match = attr.ngPattern.match(REGEX_STRING_REGEXP$1);
           if (match) {
             attr.$set("ngPattern", new RegExp(match[1], match[2]));
             return;
@@ -19810,6 +19950,8 @@ forEach$1(["src", "srcset", "href"], (attrName) => {
      </file>
    </example>
  */
+
+
 /*
  * A collection of directives that allows creation of custom event handlers that are defined as
  * AngularJS expressions and are compiled and executed within the current scope.
@@ -19823,7 +19965,7 @@ const forceAsyncEvents = {
   blur: true,
   focus: true,
 };
-forEach(
+forEach$1(
   "click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup keypress submit focus blur copy cut paste".split(
     " ",
   ),
@@ -21416,6 +21558,7 @@ const AnimateProvider = [
 
 /* global getHash: true, stripHash: false */
 
+
 function getHash(url) {
   const index = url.indexOf("#");
   return index === -1 ? "" : url.substr(index);
@@ -21623,7 +21766,7 @@ function Browser(
 
     lastBrowserUrl = self.url();
     lastHistoryState = cachedState;
-    forEach(urlChangeListeners, (listener) => {
+    forEach$1(urlChangeListeners, (listener) => {
       listener(self.url(), cachedState);
     });
   }
@@ -21993,7 +22136,7 @@ function AnimateRunnerFactoryProvider() {
       AnimateRunner.all = function (runners, callback) {
         let count = 0;
         let status = true;
-        forEach(runners, (runner) => {
+        forEach$1(runners, (runner) => {
           runner.done(onProgress);
         });
 
@@ -22105,7 +22248,7 @@ function AnimateRunnerFactoryProvider() {
 
         _resolve(response) {
           if (this._state !== DONE_COMPLETE_STATE) {
-            forEach(this._doneCallbacks, (fn) => {
+            forEach$1(this._doneCallbacks, (fn) => {
               fn(response);
             });
             this._doneCallbacks.length = 0;
@@ -22522,7 +22665,7 @@ function TemplateCacheProvider() {
   ];
 }
 
-const $controllerMinErr = minErr("$controller");
+const $controllerMinErr = minErr$1("$controller");
 
 const CNTRL_REG = /^(\S+)(\s+as\s+([\w$]+))?$/;
 
@@ -22559,9 +22702,9 @@ function $ControllerProvider() {
    *    annotations in the array notation).
    */
   this.register = function (name, constructor) {
-    assertNotHasOwnProperty(name, "controller");
-    if (isObject(name)) {
-      extend(controllers, name);
+    assertNotHasOwnProperty$1(name);
+    if (isObject$1(name)) {
+      extend$1(controllers, name);
     } else {
       controllers[name] = constructor;
     }
@@ -22608,11 +22751,11 @@ function $ControllerProvider() {
         let constructor;
         let identifier;
         later = later === true;
-        if (ident && isString(ident)) {
+        if (ident && isString$1(ident)) {
           identifier = ident;
         }
 
-        if (isString(expression)) {
+        if (isString$1(expression)) {
           match = expression.match(CNTRL_REG);
           if (!match) {
             throw $controllerMinErr(
@@ -22651,7 +22794,7 @@ function $ControllerProvider() {
           // publicly.
           // Object creation: http://jsperf.com/create-constructor/2
           const controllerPrototype = (
-            isArray(expression) ? expression[expression.length - 1] : expression
+            isArray$1(expression) ? expression[expression.length - 1] : expression
           ).prototype;
           instance = Object.create(controllerPrototype || null);
 
@@ -22664,7 +22807,7 @@ function $ControllerProvider() {
             );
           }
 
-          return extend(
+          return extend$1(
             () => {
               const result = $injector.invoke(
                 expression,
@@ -22674,7 +22817,7 @@ function $ControllerProvider() {
               );
               if (
                 result !== instance &&
-                (isObject(result) || isFunction(result))
+                (isObject$1(result) || isFunction(result))
               ) {
                 instance = result;
                 if (identifier) {
@@ -22711,8 +22854,8 @@ function $ControllerProvider() {
       };
 
       function addIdentifier(locals, identifier, instance, name) {
-        if (!(locals && isObject(locals.$scope))) {
-          throw minErr("$controller")(
+        if (!(locals && isObject$1(locals.$scope))) {
+          throw minErr$1("$controller")(
             "noscp",
             "Cannot export controller '{0}' as '{1}'! No $scope object provided via `locals`.",
             name,
@@ -22857,6 +23000,7 @@ function $ExceptionHandlerProvider() {
  uppercaseFilter: true,
  */
 
+
 /**
  * @ngdoc provider
  * @name $filterProvider
@@ -22973,9 +23117,9 @@ function $FilterProvider($provide) {
    *    of the registered filter instances.
    */
   function register(name, factory) {
-    if (isObject(name)) {
+    if (isObject$1(name)) {
       const filters = {};
-      forEach(name, (filter, key) => {
+      forEach$1(name, (filter, key) => {
         filters[key] = register(key, filter);
       });
       return filters;
@@ -23004,7 +23148,7 @@ function $FilterProvider($provide) {
   register("uppercase", uppercaseFilter);
 }
 
-const $intervalMinErr = minErr("$interval");
+const $intervalMinErr = minErr$1("$interval");
 
 /** @this */
 function $IntervalProvider() {
@@ -23189,8 +23333,7 @@ function $IntervalProvider() {
   ];
 }
 
-const $interpolateMinErr = (angular.$interpolateMinErr =
-  minErr("$interpolate"));
+const $interpolateMinErr = minErr$1("$interpolate");
 $interpolateMinErr.throwNoconcat = function (text) {
   throw $interpolateMinErr(
     "noconcat",
@@ -23540,7 +23683,7 @@ function $InterpolateProvider() {
         if (!mustHaveExpression || expressions.length) {
           const compute = function (values) {
             for (let i = 0, ii = expressions.length; i < ii; i++) {
-              if (allOrNothing && isUndefined(values[i])) return;
+              if (allOrNothing && isUndefined$1(values[i])) return;
               concat[expressionPositions[i]] = values[i];
             }
 
@@ -23612,7 +23755,7 @@ function $InterpolateProvider() {
               trustedContext && !contextAllowsConcatenation
                 ? $sce.getTrusted(trustedContext, value)
                 : $sce.valueOf(value);
-            return allOrNothing && !isDefined(value) ? value : stringify(value);
+            return allOrNothing && !isDefined$1(value) ? value : stringify(value);
           } catch (err) {
             $exceptionHandler($interpolateMinErr.interr(text, err));
           }
@@ -23742,16 +23885,15 @@ function $$ForceReflowProvider() {
 // cause us to break tests.  In addition, when the browser resolves a URL for XHR, it
 // doesn't know about mocked locations and resolves URLs to the real document - which is
 // exactly the behavior needed here.  There is little value is mocking these out for this
+
+
 // service.
 const urlParsingNode = window.document.createElement("a");
 const originUrl = urlResolve$1(window.location.href);
 
 urlParsingNode.href = "http://[::1]";
 
-// Support: IE 9-11 only, Edge 16-17 only (fixed in 18 Preview)
-// IE/Edge don't wrap IPv6 addresses' hostnames in square brackets
-// when parsed out of an anchor element.
-const ipv6InBrackets = urlParsingNode.hostname === "[::1]";
+
 
 /**
  *
@@ -23800,14 +23942,17 @@ const ipv6InBrackets = urlParsingNode.hostname === "[::1]";
  *
  */
 function urlResolve$1(url) {
-  if (!isString(url)) return url;
+  if (!isString$1(url)) return url;
 
   const href = url;
 
   urlParsingNode.setAttribute("href", href);
 
   let { hostname } = urlParsingNode;
-
+  // Support: IE 9-11 only, Edge 16-17 only (fixed in 18 Preview)
+  // IE/Edge don't wrap IPv6 addresses' hostnames in square brackets
+  // when parsed out of an anchor element.
+  const ipv6InBrackets = urlParsingNode.hostname === "[::1]";
   if (!ipv6InBrackets && hostname.indexOf(":") > -1) {
     hostname = `[${hostname}]`;
   }
@@ -25564,6 +25709,8 @@ function $HttpProvider() {
   ];
 }
 
+/* eslint-disable no-use-before-define */
+
 /**
  * @ngdoc service
  * @name $xhrFactory
@@ -25652,7 +25799,7 @@ function createHttpBackend(
   ) {
     url = url || $browser.url();
 
-    if (lowercase(method) === "jsonp") {
+    if (lowercase$1(method) === "jsonp") {
       const callbackPath = callbacks.createCallback(url);
       jsonpReq(url, callbackPath, (status, text) => {
         // jsonpReq only ever sets status to 200 (OK), 404 (ERROR) or -1 (WAITING)
@@ -25664,8 +25811,8 @@ function createHttpBackend(
       const xhr = createXhr(method, url);
 
       xhr.open(method, url, true);
-      forEach(headers, (value, key) => {
-        if (isDefined(value)) {
+      forEach$1(headers, (value, key) => {
+        if (isDefined$1(value)) {
           xhr.setRequestHeader(key, value);
         }
       });
@@ -25728,11 +25875,11 @@ function createHttpBackend(
       xhr.ontimeout = requestTimeout;
       xhr.onabort = requestAborted;
 
-      forEach(eventHandlers, (value, key) => {
+      forEach$1(eventHandlers, (value, key) => {
         xhr.addEventListener(key, value);
       });
 
-      forEach(uploadEventHandlers, (value, key) => {
+      forEach$1(uploadEventHandlers, (value, key) => {
         xhr.upload.addEventListener(key, value);
       });
 
@@ -25774,7 +25921,7 @@ function createHttpBackend(
       }, timeout);
     } else if (isPromiseLike(timeout)) {
       timeout.then(() => {
-        timeoutRequest(isDefined(timeout.$$timeoutId) ? "timeout" : "abort");
+        timeoutRequest(isDefined$1(timeout.$$timeoutId) ? "timeout" : "abort");
       });
     }
 
@@ -25797,7 +25944,7 @@ function createHttpBackend(
       xhrStatus,
     ) {
       // cancel timeout and subsequent timeout promise resolution
-      if (isDefined(timeoutId)) {
+      if (isDefined$1(timeoutId)) {
         $browserDefer.cancel(timeoutId);
       }
       jsonpDone = xhr = null;
@@ -25928,9 +26075,10 @@ function $jsonpCallbacksProvider() {
 
 /* global stripHash: true */
 
+
 const PATH_MATCH = /^([^?#]*)(\?([^#]*))?(#(.*))?$/;
 const DEFAULT_PORTS = { http: 80, https: 443, ftp: 21 };
-const $locationMinErr = minErr("$location");
+const $locationMinErr = minErr$1("$location");
 
 /**
  * Encode path using encodeUriSegment, ignoring forward slashes
@@ -26495,7 +26643,7 @@ const locationPrototype = {
         } else if (isObject(search)) {
           search = copy(search, {});
           // remove object undefined or null properties
-          forEach(search, (value, key) => {
+          forEach$1(search, (value, key) => {
             if (value == null) delete search[key];
           });
 
@@ -26558,7 +26706,7 @@ const locationPrototype = {
   },
 };
 
-forEach(
+forEach$1(
   [LocationHashbangInHtml5Url, LocationHashbangUrl, LocationHtml5Url],
   (Location) => {
     Location.prototype = Object.create(locationPrototype);
@@ -27178,7 +27326,8 @@ function $LogProvider() {
  *     Or gives undesired access to variables likes document or window?    *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-const $parseMinErr = minErr("$parse");
+
+const $parseMinErr = minErr$1("$parse");
 
 const objectValueOf = {}.constructor.prototype.valueOf;
 
@@ -27214,8 +27363,8 @@ function getStringValue(name) {
   return `${name}`;
 }
 
-const OPERATORS = createMap();
-forEach(
+const OPERATORS = createMap$1();
+forEach$1(
   "+ - * / % === !== == != < > <= >= && || ! = |".split(" "),
   (operator) => {
     OPERATORS[operator] = true;
@@ -27951,7 +28100,7 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
   switch (ast.type) {
     case AST.Program:
       allConstants = true;
-      forEach(ast.body, (expr) => {
+      forEach$1(ast.body, (expr) => {
         findConstantAndWatchExpressions(expr.expression, $filter, astIsPure);
         allConstants = allConstants && expr.expression.constant;
       });
@@ -28005,7 +28154,7 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
         : false;
       allConstants = isStatelessFilter;
       argsToWatch = [];
-      forEach(ast.arguments, (expr) => {
+      forEach$1(ast.arguments, (expr) => {
         findConstantAndWatchExpressions(expr, $filter, astIsPure);
         allConstants = allConstants && expr.constant;
         argsToWatch.push.apply(argsToWatch, expr.toWatch);
@@ -28022,7 +28171,7 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
     case AST.ArrayExpression:
       allConstants = true;
       argsToWatch = [];
-      forEach(ast.elements, (expr) => {
+      forEach$1(ast.elements, (expr) => {
         findConstantAndWatchExpressions(expr, $filter, astIsPure);
         allConstants = allConstants && expr.constant;
         argsToWatch.push.apply(argsToWatch, expr.toWatch);
@@ -28033,7 +28182,7 @@ function findConstantAndWatchExpressions(ast, $filter, parentIsPure) {
     case AST.ObjectExpression:
       allConstants = true;
       argsToWatch = [];
-      forEach(ast.properties, (property) => {
+      forEach$1(ast.properties, (property) => {
         findConstantAndWatchExpressions(property.value, $filter, astIsPure);
         allConstants = allConstants && property.value.constant;
         argsToWatch.push.apply(argsToWatch, property.value.toWatch);
@@ -28126,7 +28275,7 @@ ASTCompiler.prototype = {
     }
     const toWatch = getInputs(ast.body);
     self.stage = "inputs";
-    forEach(toWatch, (watch, key) => {
+    forEach$1(toWatch, (watch, key) => {
       const fnKey = `fn${key}`;
       self.state[fnKey] = { vars: [], body: [], own: {} };
       self.state.computing = fnKey;
@@ -28169,7 +28318,7 @@ ASTCompiler.prototype = {
     const result = [];
     const { inputs } = this.state;
     const self = this;
-    forEach(inputs, (input) => {
+    forEach$1(inputs, (input) => {
       result.push(
         `let ${input.name}=${self.generateFunction(input.name, "s")}`,
       );
@@ -28190,7 +28339,7 @@ ASTCompiler.prototype = {
   filterPrefix() {
     const parts = [];
     const self = this;
-    forEach(this.state.filters, (id, filter) => {
+    forEach$1(this.state.filters, (id, filter) => {
       parts.push(`${id}=$filter(${self.escape(filter)})`);
     });
     if (parts.length) return `let ${parts.join(",")};`;
@@ -28226,7 +28375,7 @@ ASTCompiler.prototype = {
     }
     switch (ast.type) {
       case AST.Program:
-        forEach(ast.body, (expression, pos) => {
+        forEach$1(ast.body, (expression, pos) => {
           self.recurse(expression.expression, undefined, undefined, (expr) => {
             right = expr;
           });
@@ -28380,7 +28529,7 @@ ASTCompiler.prototype = {
         if (ast.filter) {
           right = self.filter(ast.callee.name);
           args = [];
-          forEach(ast.arguments, (expr) => {
+          forEach$1(ast.arguments, (expr) => {
             const argument = self.nextId();
             self.recurse(expr, argument);
             args.push(argument);
@@ -28396,7 +28545,7 @@ ASTCompiler.prototype = {
             self.if_(
               self.notNull(right),
               () => {
-                forEach(ast.arguments, (expr) => {
+                forEach$1(ast.arguments, (expr) => {
                   self.recurse(
                     expr,
                     ast.constant ? undefined : self.nextId(),
@@ -28448,7 +28597,7 @@ ASTCompiler.prototype = {
         break;
       case AST.ArrayExpression:
         args = [];
-        forEach(ast.elements, (expr) => {
+        forEach$1(ast.elements, (expr) => {
           self.recurse(
             expr,
             ast.constant ? undefined : self.nextId(),
@@ -28465,7 +28614,7 @@ ASTCompiler.prototype = {
       case AST.ObjectExpression:
         args = [];
         computed = false;
-        forEach(ast.properties, (property) => {
+        forEach$1(ast.properties, (property) => {
           if (property.computed) {
             computed = true;
           }
@@ -28473,7 +28622,7 @@ ASTCompiler.prototype = {
         if (computed) {
           intoId = intoId || this.nextId();
           this.assign(intoId, "{}");
-          forEach(ast.properties, (property) => {
+          forEach$1(ast.properties, (property) => {
             if (property.computed) {
               left = self.nextId();
               self.recurse(property.key, left);
@@ -28488,7 +28637,7 @@ ASTCompiler.prototype = {
             self.assign(self.member(intoId, left, property.computed), right);
           });
         } else {
-          forEach(ast.properties, (property) => {
+          forEach$1(ast.properties, (property) => {
             self.recurse(
               property.value,
               ast.constant ? undefined : self.nextId(),
@@ -28676,7 +28825,7 @@ ASTInterpreter.prototype = {
     let inputs;
     if (toWatch) {
       inputs = [];
-      forEach(toWatch, (watch, key) => {
+      forEach$1(toWatch, (watch, key) => {
         const input = self.recurse(watch);
         input.isPure = watch.isPure;
         watch.input = input;
@@ -28685,7 +28834,7 @@ ASTInterpreter.prototype = {
       });
     }
     const expressions = [];
-    forEach(ast.body, (expression) => {
+    forEach$1(ast.body, (expression) => {
       expressions.push(self.recurse(expression.expression));
     });
     const fn =
@@ -28695,7 +28844,7 @@ ASTInterpreter.prototype = {
           ? expressions[0]
           : function (scope, locals) {
               let lastValue;
-              forEach(expressions, (exp) => {
+              forEach$1(expressions, (exp) => {
                 lastValue = exp(scope, locals);
               });
               return lastValue;
@@ -28753,7 +28902,7 @@ ASTInterpreter.prototype = {
           : this.nonComputedMember(left, right, context, create);
       case AST.CallExpression:
         args = [];
-        forEach(ast.arguments, (expr) => {
+        forEach$1(ast.arguments, (expr) => {
           args.push(self.recurse(expr));
         });
         if (ast.filter) right = this.$filter(ast.callee.name);
@@ -28792,7 +28941,7 @@ ASTInterpreter.prototype = {
         };
       case AST.ArrayExpression:
         args = [];
-        forEach(ast.elements, (expr) => {
+        forEach$1(ast.elements, (expr) => {
           args.push(self.recurse(expr));
         });
         return function (scope, locals, assign, inputs) {
@@ -28804,7 +28953,7 @@ ASTInterpreter.prototype = {
         };
       case AST.ObjectExpression:
         args = [];
-        forEach(ast.properties, (property) => {
+        forEach$1(ast.properties, (property) => {
           if (property.computed) {
             args.push({
               key: self.recurse(property.key),
@@ -29436,7 +29585,7 @@ function $ParseProvider() {
 
       function isAllDefined(value) {
         let allDefined = true;
-        forEach(value, (val) => {
+        forEach$1(value, (val) => {
           if (!isDefined(val)) allDefined = false;
         });
         return allDefined;
@@ -29572,6 +29721,7 @@ function $ParseProvider() {
  * to construct.
  */
 
+
 /**
  * @ngdoc provider
  * @name $rootScopeProvider
@@ -29616,7 +29766,7 @@ function $ParseProvider() {
  */
 function $RootScopeProvider() {
   let TTL = 10;
-  const $rootScopeMinErr = minErr("$rootScope");
+  const $rootScopeMinErr = minErr$1("$rootScope");
   let lastDirtyWatch = null;
   let applyAsyncId = null;
 
@@ -31338,6 +31488,8 @@ function $RootScopeProvider() {
  *
  * @returns {Promise} The newly created promise.
  */
+
+
 /**
  * @ngdoc provider
  * @name $qProvider
@@ -31418,7 +31570,7 @@ function $$QProvider() {
  * @returns {object} Promise manager.
  */
 function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
-  const $qMinErr = minErr("$q", TypeError);
+  const $qMinErr = minErr$1("$q");
   let queueSize = 0;
   const checkQueue = [];
 
@@ -31758,9 +31910,9 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
   function all(promises) {
     const result = new Promise();
     let counter = 0;
-    const results = isArray(promises) ? [] : {};
+    const results = isArray$1(promises) ? [] : {};
 
-    forEach(promises, (promise, key) => {
+    forEach$1(promises, (promise, key) => {
       counter++;
       when(promise).then(
         (value) => {
@@ -31797,7 +31949,7 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
   function race(promises) {
     const deferred = defer();
 
-    forEach(promises, (promise) => {
+    forEach$1(promises, (promise) => {
       when(promise).then(deferred.resolve, deferred.reject);
     });
 
@@ -31856,9 +32008,10 @@ function markQStateExceptionHandled(state) {
  *     Or gives undesired access to variables likes document or window?    *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+
 /* exported $SceProvider, $SceDelegateProvider */
 
-const $sceMinErr = minErr("$sce");
+const $sceMinErr = minErr$1("$sce");
 
 const SCE_CONTEXTS$1 = {
   // HTML is used when there's HTML rendered (e.g. ng-bind-html, iframe srcdoc binding).
@@ -33217,7 +33370,7 @@ function TaskTracker(log) {
   }
 }
 
-const $templateRequestMinErr = minErr("$templateRequest");
+const $templateRequestMinErr = minErr$1("$templateRequest");
 
 /**
  * @ngdoc provider

@@ -215,6 +215,10 @@
  *
  * @returns {Promise} The newly created promise.
  */
+
+import { minErr } from "../minErr";
+import { forEach, isArray } from "./utils";
+
 /**
  * @ngdoc provider
  * @name $qProvider

@@ -1,3 +1,5 @@
+import { forEach, lowercase } from "../utils";
+
 /**
  * @ngdoc directive
  * @name ngPluralize

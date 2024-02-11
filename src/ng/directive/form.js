@@ -1,10 +1,24 @@
 /* eslint-disable no-use-before-define */
 
-import { valueFn, assertNotHasOwnProperty, shallowCopy, arrayRemove, isBoolean, snakeCase, forEach, extend, isUndefined, noop } from "../utils";
-import { PRISTINE_CLASS, DIRTY_CLASS, VALID_CLASS, INVALID_CLASS } from "./ngModel";
+import {
+  valueFn,
+  assertNotHasOwnProperty,
+  shallowCopy,
+  arrayRemove,
+  isBoolean,
+  snakeCase,
+  forEach,
+  extend,
+  isUndefined,
+  noop,
+} from "../utils";
+import {
+  PRISTINE_CLASS,
+  DIRTY_CLASS,
+  VALID_CLASS,
+  INVALID_CLASS,
+} from "../../constants";
 
-/* global -nullFormCtrl, -PENDING_CLASS, -SUBMITTED_CLASS
- */
 const nullFormCtrl = {
   $addControl: () => {},
   $getControls: valueFn([]),

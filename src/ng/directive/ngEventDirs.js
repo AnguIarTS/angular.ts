@@ -31,6 +31,10 @@
      </file>
    </example>
  */
+
+import { forEach } from "../utils";
+import { directiveNormalize } from "../compile";
+
 /*
  * A collection of directives that allows creation of custom event handlers that are defined as
  * AngularJS expressions and are compiled and executed within the current scope.

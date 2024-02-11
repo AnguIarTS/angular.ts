@@ -15,9 +15,9 @@ export function setupModuleLoader(window) {
   const ngMinErr = minErr("ng");
 
   /**
-   * 
-   * @param {string} name 
-   * @param {string} context 
+   *
+   * @param {string} name
+   * @param {string} context
    */
   function assertNotHasOwnProperty(name, context) {
     if (name === "hasOwnProperty") {
@@ -127,7 +127,7 @@ export function setupModuleLoader(window) {
         /** @type {angular.IModule} */
         const moduleInstance = {
           // Private state
-          
+
           // @ts-ignore
           _invokeQueue: invokeQueue,
           _configBlocks: configBlocks,

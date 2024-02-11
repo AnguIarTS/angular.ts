@@ -142,14 +142,11 @@ import {
  * @returns {Object} jQuery object.
  */
 
-
-
 let jqId = 1;
 
 function jqNextId() {
   return ++jqId;
 }
-
 
 const DASH_LOWERCASE_REGEXP = /-([a-z])/g;
 const MS_HACK_REGEXP = /^-ms-/;
@@ -460,7 +457,6 @@ JQLite._data = function (node) {
   // jQuery always returns an object on cache miss
   return this.cache[node.ng339] || {};
 };
-
 
 JQLite._data = undefined;
 

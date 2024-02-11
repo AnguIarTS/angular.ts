@@ -1,6 +1,6 @@
 import { ngViewFactory, ngViewFillContentFactory } from "./directive/ngView";
 import { $RouteParamsProvider } from "./routeParams";
-
+import { minErr } from "../minErr";
 /**
  * @ngdoc module
  * @name ngRoute
@@ -20,7 +20,7 @@ const ngRouteModule = angular
   // event (unless explicitly disabled). This is necessary in case `ngView` is included in an
   // asynchronously loaded template.
   .run(instantiateRoute);
-const $routeMinErr = angular.$$minErr("ngRoute");
+const $routeMinErr = minErr("ngRoute");
 let isEagerInstantiationEnabled;
 
 /**

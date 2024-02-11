@@ -1,5 +1,7 @@
-const $interpolateMinErr = (angular.$interpolateMinErr =
-  minErr("$interpolate"));
+import { minErr } from "../minErr";
+import { isDefined, isUndefined, stringify } from "./utils";
+
+const $interpolateMinErr = minErr("$interpolate");
 $interpolateMinErr.throwNoconcat = function (text) {
   throw $interpolateMinErr(
     "noconcat",

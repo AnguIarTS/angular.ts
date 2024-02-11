@@ -1,4 +1,6 @@
 import { minErr } from "../../minErr";
+import { directiveNormalize } from "../compile";
+import { nodeName_ } from "../utils";
 
 /**
  * @ngdoc directive

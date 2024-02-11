@@ -4,6 +4,9 @@
 // cause us to break tests.  In addition, when the browser resolves a URL for XHR, it
 // doesn't know about mocked locations and resolves URLs to the real document - which is
 // exactly the behavior needed here.  There is little value is mocking these out for this
+
+import { isString } from "./utils";
+
 // service.
 const urlParsingNode = window.document.createElement("a");
 const originUrl = urlResolve(window.location.href);
@@ -11,10 +14,7 @@ let baseUrlParsingNode;
 
 urlParsingNode.href = "http://[::1]";
 
-// Support: IE 9-11 only, Edge 16-17 only (fixed in 18 Preview)
-// IE/Edge don't wrap IPv6 addresses' hostnames in square brackets
-// when parsed out of an anchor element.
-const ipv6InBrackets = urlParsingNode.hostname === "[::1]";
+
 
 /**
  *
@@ -70,7 +70,10 @@ export function urlResolve(url) {
   urlParsingNode.setAttribute("href", href);
 
   let { hostname } = urlParsingNode;
-
+  // Support: IE 9-11 only, Edge 16-17 only (fixed in 18 Preview)
+  // IE/Edge don't wrap IPv6 addresses' hostnames in square brackets
+  // when parsed out of an anchor element.
+  const ipv6InBrackets = urlParsingNode.hostname === "[::1]";
   if (!ipv6InBrackets && hostname.indexOf(":") > -1) {
     hostname = `[${hostname}]`;
   }

@@ -9,6 +9,8 @@
  *     Or gives undesired access to variables likes document or window?    *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+import { minErr } from "../minErr";
+
 /* exported $SceProvider, $SceDelegateProvider */
 
 const $sceMinErr = minErr("$sce");

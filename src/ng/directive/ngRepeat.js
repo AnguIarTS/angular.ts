@@ -1,3 +1,5 @@
+import { forEach } from "../utils";
+
 /**
  * @ngdoc directive
  * @name ngRepeat

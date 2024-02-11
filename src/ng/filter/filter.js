@@ -1,3 +1,5 @@
+import { minErr } from "../../minErr";
+
 /**
  * @ngdoc filter
  * @name filter

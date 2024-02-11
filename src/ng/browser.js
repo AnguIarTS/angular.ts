@@ -1,5 +1,7 @@
 /* global getHash: true, stripHash: false */
 
+import { forEach } from "./utils";
+
 export function getHash(url) {
   const index = url.indexOf("#");
   return index === -1 ? "" : url.substr(index);

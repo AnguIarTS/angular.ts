@@ -23,6 +23,8 @@
  * to construct.
  */
 
+import { minErr } from "../minErr";
+
 /**
  * @ngdoc provider
  * @name $rootScopeProvider

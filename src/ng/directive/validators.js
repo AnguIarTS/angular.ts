@@ -1,3 +1,6 @@
+import { minErr } from "../../minErr";
+import { isNumberNaN, isString, startingTag, toInt } from "../utils";
+
 /**
  * @ngdoc directive
  * @name ngRequired

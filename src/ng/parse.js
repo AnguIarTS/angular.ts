@@ -9,6 +9,9 @@
  *     Or gives undesired access to variables likes document or window?    *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+import { minErr } from "../minErr";
+import { createMap, forEach } from "./utils";
+
 const $parseMinErr = minErr("$parse");
 
 const objectValueOf = {}.constructor.prototype.valueOf;

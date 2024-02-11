@@ -1,14 +1,20 @@
+/* eslint-disable no-use-before-define */
+import {
+  DIRTY_CLASS,
+  PRISTINE_CLASS,
+  TOUCHED_CLASS,
+  UNTOUCHED_CLASS,
+  VALID_CLASS,
+} from "../../constants";
 import { minErr } from "../../minErr";
+import {
+  forEach,
+  isNumber,
+  isNumberNaN,
+  isPromiseLike,
+  isUndefined,
+} from "../utils";
 import { addSetValidityMethod } from "./form";
-
-export const VALID_CLASS = "ng-valid";
-export const INVALID_CLASS = "ng-invalid";
-export const PRISTINE_CLASS = "ng-pristine";
-export const DIRTY_CLASS = "ng-dirty";
-export const UNTOUCHED_CLASS = "ng-untouched";
-export const TOUCHED_CLASS = "ng-touched";
-export const EMPTY_CLASS = "ng-empty";
-export const NOT_EMPTY_CLASS = "ng-not-empty";
 
 export const ngModelMinErr = minErr("ngModel");
 

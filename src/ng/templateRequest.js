@@ -1,3 +1,5 @@
+import { minErr } from "../minErr";
+
 const $templateRequestMinErr = minErr("$templateRequest");
 
 /**

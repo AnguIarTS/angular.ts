@@ -14,7 +14,7 @@ let uid = 0;
  * @returns {number} an unique alpha-numeric string
  */
 export function nextUid() {
-  uid+=1;
+  uid += 1;
   return uid;
 }
 
@@ -404,7 +404,7 @@ export function forEach(obj, iterator, context) {
 
 export function forEachSorted(obj, iterator, context) {
   const keys = Object.keys(obj).sort();
-  keys.forEach(el => iterator.call(context, obj[el], el));
+  keys.forEach((el) => iterator.call(context, obj[el], el));
   return keys;
 }
 
@@ -1479,4 +1479,36 @@ export function shallowCopy(src, dst) {
   }
 
   return dst || src;
+}
+
+/**
+ * throw error if the argument is falsy.
+ */
+export function assertArg(arg, name, reason) {
+  if (!arg) {
+    throw ngMinErr(
+      "areq",
+      "Argument '{0}' is {1}",
+      name || "?",
+      reason || "required",
+    );
+  }
+  return arg;
+}
+
+export function assertArgFn(arg, name, acceptArrayAnnotation) {
+  if (acceptArrayAnnotation && isArray(arg)) {
+    arg = arg[arg.length - 1];
+  }
+
+  assertArg(
+    isFunction(arg),
+    name,
+    `not a function, got ${
+      arg && typeof arg === "object"
+        ? arg.constructor.name || "Object"
+        : typeof arg
+    }`,
+  );
+  return arg;
 }

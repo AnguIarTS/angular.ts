@@ -97,7 +97,9 @@
     </example>
  */
 
+import { REGEX_STRING_REGEXP } from "../../Angular";
 import { ALIASED_ATTR, BOOLEAN_ATTR } from "../../jqLite";
+import { directiveNormalize } from "../compile";
 import { forEach } from "../utils";
 
 /**

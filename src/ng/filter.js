@@ -9,6 +9,8 @@
  uppercaseFilter: true,
  */
 
+import { forEach, isObject } from "./utils";
+
 /**
  * @ngdoc provider
  * @name $filterProvider
