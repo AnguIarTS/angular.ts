@@ -159,7 +159,7 @@ describe('$route', () => {
 
     module(($routeProvider) => {
       $routeProvider.when('/Book/:book/Chapter/:chapter',
-          {controller: angular.noop, templateUrl: 'Chapter.html'});
+          {controller: () => {}, templateUrl: 'Chapter.html'});
       $routeProvider.when('/Blank', {});
     });
     inject(($route, $location, $rootScope) => {
@@ -203,9 +203,9 @@ describe('$route', () => {
 
     module(($routeProvider) => {
       $routeProvider.when('/Book1/:book/Chapter/:chapter/:highlight*/edit',
-          {controller: angular.noop, templateUrl: 'Chapter.html'});
+          {controller: () => {}, templateUrl: 'Chapter.html'});
       $routeProvider.when('/Book2/:book/:highlight*/Chapter/:chapter',
-          {controller: angular.noop, templateUrl: 'Chapter.html'});
+          {controller: () => {}, templateUrl: 'Chapter.html'});
       $routeProvider.when('/Blank', {});
     });
     inject(($route, $location, $rootScope) => {
@@ -262,9 +262,9 @@ describe('$route', () => {
 
     module(($routeProvider) => {
       $routeProvider.when('/Book1/:book/Chapter/:chapter/:highlight*/edit',
-          {controller: angular.noop, templateUrl: 'Chapter.html', caseInsensitiveMatch: true});
+          {controller: () => {}, templateUrl: 'Chapter.html', caseInsensitiveMatch: true});
       $routeProvider.when('/Book2/:book/:highlight*/Chapter/:chapter',
-          {controller: angular.noop, templateUrl: 'Chapter.html'});
+          {controller: () => {}, templateUrl: 'Chapter.html'});
       $routeProvider.when('/Blank', {});
     });
     inject(($route, $location, $rootScope) => {
@@ -1976,7 +1976,7 @@ describe('$route', () => {
         const reloaded = jasmine.createSpy('route reload');
 
         module(($routeProvider) => {
-          $routeProvider.when('/foo', {controller: angular.noop});
+          $routeProvider.when('/foo', {controller: () => {}});
         });
 
         inject(($route, $location, $rootScope, $routeParams) => {
@@ -2013,7 +2013,7 @@ describe('$route', () => {
             const routeUpdate = jasmine.createSpy('route update');
 
         module(($routeProvider) => {
-          $routeProvider.when('/foo', {controller: angular.noop, reloadOnSearch: false});
+          $routeProvider.when('/foo', {controller: () => {}, reloadOnSearch: false});
         });
 
         inject(($route, $location, $rootScope) => {
@@ -2053,7 +2053,7 @@ describe('$route', () => {
         const routeChange = jasmine.createSpy('route change');
 
         module(($routeProvider) => {
-          $routeProvider.when('/foo/:fooId', {controller: angular.noop, reloadOnSearch: false});
+          $routeProvider.when('/foo/:fooId', {controller: () => {}, reloadOnSearch: false});
         });
 
         inject(($route, $location, $rootScope) => {
@@ -2084,8 +2084,8 @@ describe('$route', () => {
       const routeParamsWatcher = jasmine.createSpy('routeParamsWatcher');
 
       module(($routeProvider) => {
-        $routeProvider.when('/foo', {controller: angular.noop});
-        $routeProvider.when('/bar/:barId', {controller: angular.noop, reloadOnSearch: false});
+        $routeProvider.when('/foo', {controller: () => {}});
+        $routeProvider.when('/bar/:barId', {controller: () => {}, reloadOnSearch: false});
       });
 
       inject(($route, $location, $rootScope, $routeParams) => {
@@ -2288,7 +2288,7 @@ describe('$route', () => {
       const routeChangeSpy = jasmine.createSpy('route change');
 
       module(($routeProvider) => {
-        $routeProvider.when('/bar/:barId', {controller: angular.noop});
+        $routeProvider.when('/bar/:barId', {controller: () => {}});
       });
 
       inject(($route, $routeParams, $location, $rootScope) => {
@@ -2311,7 +2311,7 @@ describe('$route', () => {
       const routeChangeSpy = jasmine.createSpy('route change');
 
       module(($routeProvider) => {
-        $routeProvider.when('/bar/:barId/:fooId/:spamId/:eggId', {controller: angular.noop});
+        $routeProvider.when('/bar/:barId/:fooId/:spamId/:eggId', {controller: () => {}});
       });
 
       inject(($route, $routeParams, $location, $rootScope) => {
@@ -2334,7 +2334,7 @@ describe('$route', () => {
       const routeChangeSpy = jasmine.createSpy('route change');
 
       module(($routeProvider) => {
-        $routeProvider.when('/bar/:barId/:fooId/:spamId/:eggId', {controller: angular.noop});
+        $routeProvider.when('/bar/:barId/:fooId/:spamId/:eggId', {controller: () => {}});
       });
 
       inject(($route, $routeParams, $location, $rootScope) => {
@@ -2358,7 +2358,7 @@ describe('$route', () => {
       const routeChangeSpy = jasmine.createSpy('route change');
 
       module(($routeProvider) => {
-        $routeProvider.when('/bar/:barId/:fooId/:spamId/', {controller: angular.noop});
+        $routeProvider.when('/bar/:barId/:fooId/:spamId/', {controller: () => {}});
       });
 
       inject(($route, $routeParams, $location, $rootScope) => {
@@ -2383,7 +2383,7 @@ describe('$route', () => {
       const routeChangeSpy = jasmine.createSpy('route change');
 
       module(($routeProvider) => {
-        $routeProvider.when('/bar/:barId/:fooId/:spamId/:eggId?', {controller: angular.noop});
+        $routeProvider.when('/bar/:barId/:fooId/:spamId/:eggId?', {controller: () => {}});
       });
 
       inject(($route, $routeParams, $location, $rootScope) => {

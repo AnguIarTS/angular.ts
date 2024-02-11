@@ -66,7 +66,7 @@
 
   app.directive('noop', ($animate) => ({
       link: {
-        pre: angular.noop
+        pre: () => {}
       }
     }));
 

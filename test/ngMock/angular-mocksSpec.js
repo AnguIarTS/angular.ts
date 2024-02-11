@@ -2030,7 +2030,7 @@ describe('ngMock', () => {
         hb.expect('GET', '/url1').respond();
         hb.expect('GET', '/url2').respond();
 
-        hb('GET', '/url1', null, angular.noop);
+        hb('GET', '/url1', null, () => {});
         expect(() => {hb.flush();}).toThrowError('Unsatisfied requests: GET /url2');
       });
     });
@@ -2872,8 +2872,8 @@ describe('ngMockE2E', () => {
 
     describe('passThrough()', () => {
       it('should delegate requests to the real backend when passThrough is invoked', () => {
-        const eventHandlers = {progress: angular.noop};
-        const uploadEventHandlers = {progress: angular.noop};
+        const eventHandlers = {progress: () => {}};
+        const uploadEventHandlers = {progress: () => {}};
 
         hb.when('GET', /\/passThrough\/.*/).passThrough();
         hb('GET', '/passThrough/23', null, callback, {}, null, true, 'blob', eventHandlers, uploadEventHandlers);

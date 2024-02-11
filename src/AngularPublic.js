@@ -7,14 +7,23 @@ import { inputDirective } from "./ng/directive/input";
 import { formDirective, ngFormDirective } from "./ng/directive/form";
 import { scriptDirective } from "./ng/directive/script";
 import { selectDirective, optionDirective } from "./ng/directive/select";
-import { ngBindDirective, ngBindHtmlDirective, ngBindTemplateDirective } from "./ng/directive/ngBind";
-import { ngClassDirective, ngClassEvenDirective, ngClassOddDirective } from "./ng/directive/ngClass";
+import {
+  ngBindDirective,
+  ngBindHtmlDirective,
+  ngBindTemplateDirective,
+} from "./ng/directive/ngBind";
+import {
+  ngClassDirective,
+  ngClassEvenDirective,
+  ngClassOddDirective,
+} from "./ng/directive/ngClass";
 import { ngCloakDirective } from "./ng/directive/ngCloak";
-import { ngControllerDirective }  from "./ng/directive/ngController";
+import { ngControllerDirective } from "./ng/directive/ngController";
 import { ngHideDirective } from "./ng/directive/ngShowHide";
 import { ngIfDirective } from "./ng/directive/ngIf";
 import { ngIncludeDirective } from "./ng/directive/ngInclude";
 import { ngInitDirective } from "./ng/directive/ngInit";
+import { ngNonBindableDirective } from "./ng/directive/ngNonBindable";
 import { CookieReaderProvider } from "./ng/cookieReader";
 import { AnimateAsyncRunFactoryProvider } from "./ng/animateRunner";
 import { WindowProvider } from "./ng/window";

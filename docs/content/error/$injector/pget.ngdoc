@@ -16,7 +16,7 @@ To fix the error, fill in the `$get` method on the provider like so:
 
 ```
 function GoodProvider() {
-  this.$get = angular.noop;
+  this.$get = () => {};
 }
 angular.module("myApp", [])
   .provider('good', GoodProvider);

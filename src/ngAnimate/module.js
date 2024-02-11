@@ -765,7 +765,7 @@ angular
   .module("ngAnimate", [], () => {
     // Access helpers from AngularJS core.
     // Do it inside a `config` block to ensure `window.angular` is available.
-    noop = angular.noop;
+    noop = () => {};
     copy = angular.copy;
     extend = angular.extend;
     jqLite = angular.element;

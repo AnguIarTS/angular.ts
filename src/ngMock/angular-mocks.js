@@ -61,8 +61,8 @@ angular.mock.$Browser = function ($log, $$taskTrackerFactory) {
     return listener;
   };
 
-  self.$$applicationDestroyed = angular.noop;
-  self.$$checkUrlChange = angular.noop;
+  self.$$applicationDestroyed = () => {};
+  self.$$checkUrlChange = () => {};
 
   self.deferredFns = [];
   self.deferredNextId = 0;
@@ -102,7 +102,7 @@ angular.mock.$Browser = function ($log, $$taskTrackerFactory) {
 
     if (angular.isDefined(taskIndex)) {
       const task = self.deferredFns.splice(taskIndex, 1)[0];
-      taskTracker.completeTask(angular.noop, task.type);
+      taskTracker.completeTask(() => {}, task.type);
       return true;
     }
 
@@ -3678,7 +3678,7 @@ angular.mock.$RootScopeDecorator = [
           injector.annotate(blockFns[i]);
         }
         try {
-          injector.invoke(blockFns[i] || angular.noop, this);
+          injector.invoke(blockFns[i] || () => {}, this);
         } catch (e) {
           if (e.stack && errorForStack) {
             throw new ErrorAddingDeclarationLocationStack(e, errorForStack);

@@ -58,7 +58,7 @@ describe('$location', () => {
         port: '',
         protocol: 'file:',
         search: '',
-        setAttribute: angular.noop
+        setAttribute: () => {}
       };
     });
 
@@ -2139,7 +2139,7 @@ describe('$location', () => {
             expect(event).toEqual('click');
             clickHandler = handler;
           },
-          off: angular.noop
+          off: () => {}
         });
         return function($browser) {
           $browser.url(base = 'http://server/');
@@ -2845,8 +2845,8 @@ describe('$location', () => {
             if (url) win.location.href = url;
           }
         };
-        win.addEventListener = angular.noop;
-        win.removeEventListener = angular.noop;
+        win.addEventListener = () => {};
+        win.removeEventListener = () => {};
         win.location = {
           get href() { return this.$$getHref(); },
           $$getHref() { return parser.href; },

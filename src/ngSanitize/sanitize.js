@@ -311,7 +311,7 @@ function $SanitizeProvider() {
   isArray = angular.isArray;
   isDefined = angular.isDefined;
   lowercase = angular.$$lowercase;
-  noop = angular.noop;
+  noop = () => {};
 
   htmlParser = htmlParserImpl;
   htmlSanitizeWriter = htmlSanitizeWriterImpl;

@@ -372,7 +372,7 @@ describe('injector', () => {
 
 
     it('should create $inject', () => {
-      const extraParams = angular.noop;
+      const extraParams = () => {};
       /* eslint-disable space-before-function-paren */
       // keep the multi-line to make sure we can handle it
       function $f_n0 /*

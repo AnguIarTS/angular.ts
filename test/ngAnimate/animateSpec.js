@@ -332,13 +332,13 @@ describe('animations', () => {
 
       it('should clear the `customFilter` if no function is passed',
         module(($animateProvider) => {
-          $animateProvider.customFilter(angular.noop);
+          $animateProvider.customFilter(() => {});
           expect($animateProvider.customFilter()).toEqual(jasmine.any(Function));
 
           $animateProvider.customFilter(null);
           expect($animateProvider.customFilter()).toBeNull();
 
-          $animateProvider.customFilter(angular.noop);
+          $animateProvider.customFilter(() => {});
           expect($animateProvider.customFilter()).toEqual(jasmine.any(Function));
 
           $animateProvider.customFilter({});

@@ -11539,7 +11539,7 @@ Before:
 ```javascript
 .directive('fancyDirective', function() {
   return {
-    link: angular.noop
+    link: () => {}
   };
 })
 ```
@@ -11555,7 +11555,7 @@ After:
 .directive('fancyDirective', function() {
   return {
     multiElement: true, // Explicitly mark as a multi-element directive.
-    link: angular.noop
+    link: () => {}
   };
 })
 ```

@@ -71,24 +71,24 @@ describe('docs.angularjs.org', () => {
 
 
     it('should be resilient to trailing slashes', () => {
-      browser.get('build/docs/index-production.html#!/api/ng/function/angular.noop/');
+      browser.get('build/docs/index-production.html#!/api/ng/function/() => {}/');
 
       const mainHeader = element(by.css('.main-body h1 '));
-      expect(mainHeader.getText()).toEqual('angular.noop');
+      expect(mainHeader.getText()).toEqual('() => {}');
     });
 
 
     it('should be resilient to trailing "index"', () => {
-      browser.get('build/docs/index-production.html#!/api/ng/function/angular.noop/index');
+      browser.get('build/docs/index-production.html#!/api/ng/function/() => {}/index');
       const mainHeader = element(by.css('.main-body h1 '));
-      expect(mainHeader.getText()).toEqual('angular.noop');
+      expect(mainHeader.getText()).toEqual('() => {}');
     });
 
 
     it('should be resilient to trailing "index/"', () => {
-      browser.get('build/docs/index-production.html#!/api/ng/function/angular.noop/index/');
+      browser.get('build/docs/index-production.html#!/api/ng/function/() => {}/index/');
       const mainHeader = element(by.css('.main-body h1 '));
-      expect(mainHeader.getText()).toEqual('angular.noop');
+      expect(mainHeader.getText()).toEqual('() => {}');
     });
 
 

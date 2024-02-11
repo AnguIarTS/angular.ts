@@ -1,7 +1,6 @@
 
 
 describe('resource', () => {
-  const {noop} = angular;
   const {extend} = angular;
 
 describe('basic usage', () => {
@@ -1470,13 +1469,13 @@ describe('basic usage', () => {
           }
         });
 
-        CreditCard.test1(noop, callback);
+        CreditCard.test1(() => {}, callback);
         $httpBackend.flush();
         expect(callback).toHaveBeenCalledOnceWith('foo');
 
         callback.calls.reset();
 
-        CreditCard.test2(noop, callback);
+        CreditCard.test2(() => {}, callback);
         $httpBackend.flush();
         expect(callback).toHaveBeenCalledOnceWith('bar');
       });
@@ -1520,13 +1519,13 @@ describe('basic usage', () => {
           }
         });
 
-        CreditCard.test1(noop, callback);
+        CreditCard.test1(() => {}, callback);
         $httpBackend.flush();
         expect(callback).toHaveBeenCalledOnceWith('foo');
 
         callback.calls.reset();
 
-        CreditCard.test2(noop, callback);
+        CreditCard.test2(() => {}, callback);
         $httpBackend.flush();
         expect(callback).toHaveBeenCalledOnceWith('bar');
       });
@@ -2004,7 +2003,7 @@ describe('handling rejections', () => {
     const errorCb2 = jasmine.createSpy('errorCb2');
     const CreditCard = $resource('/CreditCard');
 
-    CreditCard.get(noop, errorCb1).$promise.catch(errorCb2);
+    CreditCard.get(() => {}, errorCb1).$promise.catch(errorCb2);
     $httpBackend.flush();
 
     expect(errorCb1).toHaveBeenCalledOnce();
@@ -2038,7 +2037,7 @@ describe('handling rejections', () => {
       });
 
       // With error callback
-      CreditCard.test1(noop, noop);
+      CreditCard.test1(() => {}, () => {});
       $httpBackend.flush();
 
       expect($exceptionHandler.errors.length).toBe(0);
@@ -2050,7 +2049,7 @@ describe('handling rejections', () => {
       expect($exceptionHandler.errors.length).toBe(0);
 
       // With error callback and responseError interceptor
-      CreditCard.test2(noop, noop);
+      CreditCard.test2(() => {}, () => {});
       $httpBackend.flush();
 
       expect($exceptionHandler.errors.length).toBe(0);
@@ -2170,7 +2169,7 @@ describe('handling rejections', () => {
 
     $httpBackend.expectGET('/CreditCard/123').respond(404);
     const CreditCard = $resource('/CreditCard/:id');
-    CreditCard.get({id: 123}, noop, errorCallbackSpy).
+    CreditCard.get({id: 123}, () => {}, errorCallbackSpy).
       $promise.then(promiseResolveSpy, promiseRejectSpy);
 
     $httpBackend.flush();
@@ -2431,7 +2430,7 @@ describe('cancelling requests', () => {
     });
 
     const ccs = CreditCard.get();
-    ccs.$promise.catch(noop);
+    ccs.$promise.catch(() => {});
     $timeout.flush();
     expect($httpBackend.flush).toThrow(new Error('No pending request to flush !'));
 
@@ -2489,11 +2488,11 @@ describe('cancelling requests', () => {
 
     const creditCard = CreditCard.get();
 
-    expect(creditCard.$cancelRequest).not.toBe(noop);
+    expect(creditCard.$cancelRequest).not.toBe(() => {});
 
     $httpBackend.flush();
 
-    expect(creditCard.$cancelRequest).toBe(noop);
+    expect(creditCard.$cancelRequest).toBe(() => {});
   });
 
   it('should not break when calling old `$cancelRequest` after the response arrives', () => {
@@ -2511,7 +2510,7 @@ describe('cancelling requests', () => {
 
     $httpBackend.flush();
 
-    expect(cancelRequest).not.toBe(noop);
+    expect(cancelRequest).not.toBe(() => {});
     expect(cancelRequest).not.toThrow();
   });
 });

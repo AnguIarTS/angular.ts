@@ -387,7 +387,7 @@ function extend(dst) {
    ```js
      function foo(callback) {
        let result = calculateResult();
-       (callback || angular.noop)(result);
+       (callback || () => {})(result);
      }
    ```
  */

@@ -7,6 +7,6 @@ describe('$window', () => {
 
   it('should be able to mock $window without errors', () => {
     module({$window: {}});
-    inject(['$sce', angular.noop]);
+    inject(['$sce', () => {}]);
   });
 });

@@ -1,5 +1,3 @@
-
-
 /* global qFactory: false */
 /* exported
  isFunction,
@@ -11,13 +9,21 @@
 */
 
 /* eslint-disable no-unused-vars */
-function isFunction(value) { return typeof value === 'function'; }
-function isPromiseLike(obj) { return obj && isFunction(obj.then); }
-function isObject(value) { return value !== null && typeof value === 'object'; }
-function isUndefined(value) { return typeof value === 'undefined'; }
+function isFunction(value) {
+  return typeof value === "function";
+}
+function isPromiseLike(obj) {
+  return obj && isFunction(obj.then);
+}
+function isObject(value) {
+  return value !== null && typeof value === "object";
+}
+function isUndefined(value) {
+  return typeof value === "undefined";
+}
 
 function minErr(module, constructor) {
-  return function() {
+  return function () {
     const ErrorConstructor = constructor || Error;
     throw new ErrorConstructor(module + arguments[0] + arguments[1]);
   };

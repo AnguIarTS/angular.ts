@@ -173,7 +173,7 @@
       </file>
     </example>
  */
-const ngPluralizeDirective = [
+export const ngPluralizeDirective = [
   "$locale",
   "$interpolate",
   "$log",
@@ -191,7 +191,7 @@ const ngPluralizeDirective = [
         const startSymbol = $interpolate.startSymbol();
         const endSymbol = $interpolate.endSymbol();
         const braceReplacement = `${startSymbol + numberExp}-${offset}${endSymbol}`;
-        let watchRemover = angular.noop;
+        let watchRemover = () => {};
         let lastCount;
 
         forEach(attr, (expression, attributeName) => {

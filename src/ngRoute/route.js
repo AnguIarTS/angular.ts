@@ -50,7 +50,7 @@ function $RouteProvider() {
   isArray = angular.isArray;
   isObject = angular.isObject;
   isDefined = angular.isDefined;
-  noop = angular.noop;
+  noop = () => {};
 
   function inherit(parent, extra) {
     return angular.extend(Object.create(parent), extra);

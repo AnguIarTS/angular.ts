@@ -560,7 +560,7 @@ describe('$httpBackend', () => {
         port: '',
         protocol: 'file:',
         search: '',
-        setAttribute: angular.noop
+        setAttribute: () => {}
       };
 
       try {

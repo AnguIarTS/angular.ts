@@ -46,7 +46,7 @@ describe('linky', () => {
       expect(() => { linky([]); }).
         toThrowMinErr('linky', 'notstring', 'Expected string but received: []');
 
-      expect(() => { linky(noop); }).
+      expect(() => { linky((() => {}))); }).
         toThrowMinErr('linky', 'notstring', 'Expected string but received: function noop()');
     }
   );

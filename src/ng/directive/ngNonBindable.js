@@ -1,3 +1,5 @@
+import { ngDirective } from "./directives";
+
 /**
  * @ngdoc directive
  * @name ngNonBindable
@@ -29,4 +31,7 @@
     </file>
   </example>
  */
-const ngNonBindableDirective = ngDirective({ terminal: true, priority: 1000 });
+export const ngNonBindableDirective = ngDirective({
+  terminal: true,
+  priority: 1000,
+});

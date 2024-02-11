@@ -1,5 +1,3 @@
-
-
 /**
  * @ngdoc service
  * @name $q
@@ -226,11 +224,19 @@
  */
 function $QProvider() {
   let errorOnUnhandledRejections = true;
-  this.$get = ['$rootScope', '$exceptionHandler', function($rootScope, $exceptionHandler) {
-    return qFactory((callback) => {
-      $rootScope.$evalAsync(callback);
-    }, $exceptionHandler, errorOnUnhandledRejections);
-  }];
+  this.$get = [
+    "$rootScope",
+    "$exceptionHandler",
+    function ($rootScope, $exceptionHandler) {
+      return qFactory(
+        (callback) => {
+          $rootScope.$evalAsync(callback);
+        },
+        $exceptionHandler,
+        errorOnUnhandledRejections,
+      );
+    },
+  ];
 
   /**
    * @ngdoc method
@@ -245,32 +251,38 @@ function $QProvider() {
    * @returns {boolean|ng.$qProvider} Current value when called without a new value or self for
    *    chaining otherwise.
    */
-  this.errorOnUnhandledRejections = function(value) {
+  this.errorOnUnhandledRejections = function (value) {
     if (isDefined(value)) {
       errorOnUnhandledRejections = value;
       return this;
-    } 
-      return errorOnUnhandledRejections;
-    
+    }
+    return errorOnUnhandledRejections;
   };
 }
 
 /** @this */
 function $$QProvider() {
   let errorOnUnhandledRejections = true;
-  this.$get = ['$browser', '$exceptionHandler', function($browser, $exceptionHandler) {
-    return qFactory((callback) => {
-      $browser.defer(callback);
-    }, $exceptionHandler, errorOnUnhandledRejections);
-  }];
+  this.$get = [
+    "$browser",
+    "$exceptionHandler",
+    function ($browser, $exceptionHandler) {
+      return qFactory(
+        (callback) => {
+          $browser.defer(callback);
+        },
+        $exceptionHandler,
+        errorOnUnhandledRejections,
+      );
+    },
+  ];
 
-  this.errorOnUnhandledRejections = function(value) {
+  this.errorOnUnhandledRejections = function (value) {
     if (isDefined(value)) {
       errorOnUnhandledRejections = value;
       return this;
-    } 
-      return errorOnUnhandledRejections;
-    
+    }
+    return errorOnUnhandledRejections;
   };
 }
 
@@ -285,7 +297,7 @@ function $$QProvider() {
  * @returns {object} Promise manager.
  */
 function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
-  const $qMinErr = minErr('$q', TypeError);
+  const $qMinErr = minErr("$q", TypeError);
   let queueSize = 0;
   const checkQueue = [];
 
@@ -304,13 +316,18 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
   }
 
   function Deferred() {
-    const promise = this.promise = new Promise();
+    const promise = (this.promise = new Promise());
     // Non prototype methods necessary to support unbound execution :/
-    this.resolve = function(val) { resolvePromise(promise, val); };
-    this.reject = function(reason) { rejectPromise(promise, reason); };
-    this.notify = function(progress) { notifyPromise(promise, progress); };
+    this.resolve = function (val) {
+      resolvePromise(promise, val);
+    };
+    this.reject = function (reason) {
+      rejectPromise(promise, reason);
+    };
+    this.notify = function (progress) {
+      notifyPromise(promise, progress);
+    };
   }
-
 
   function Promise() {
     this.$$state = { status: 0 };
@@ -318,29 +335,44 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
 
   extend(Promise.prototype, {
     then(onFulfilled, onRejected, progressBack) {
-      if (isUndefined(onFulfilled) && isUndefined(onRejected) && isUndefined(progressBack)) {
+      if (
+        isUndefined(onFulfilled) &&
+        isUndefined(onRejected) &&
+        isUndefined(progressBack)
+      ) {
         return this;
       }
       const result = new Promise();
 
       this.$$state.pending = this.$$state.pending || [];
-      this.$$state.pending.push([result, onFulfilled, onRejected, progressBack]);
+      this.$$state.pending.push([
+        result,
+        onFulfilled,
+        onRejected,
+        progressBack,
+      ]);
       if (this.$$state.status > 0) scheduleProcessQueue(this.$$state);
 
       return result;
     },
 
-    'catch': function(callback) {
+    catch (callback) {
       return this.then(null, callback);
     },
 
-    'finally': function(callback, progressBack) {
-      return this.then((value) => handleCallback(value, resolve, callback), (error) => handleCallback(error, reject, callback), progressBack);
-    }
+    finally (callback, progressBack) {
+      return this.then(
+        (value) => handleCallback(value, resolve, callback),
+        (error) => handleCallback(error, reject, callback),
+        progressBack,
+      );
+    },
   });
 
   function processQueue(state) {
-    let fn; let promise; let pending;
+    let fn;
+    let promise;
+    let pending;
 
     pending = state.pending;
     state.processScheduled = false;
@@ -380,7 +412,7 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
       const toCheck = checkQueue.shift();
       if (!isStateExceptionHandled(toCheck)) {
         markQStateExceptionHandled(toCheck);
-        const errorMessage = `Possibly unhandled rejection: ${  toDebugString(toCheck.value)}`;
+        const errorMessage = `Possibly unhandled rejection: ${toDebugString(toCheck.value)}`;
         if (isError(toCheck.value)) {
           exceptionHandler(toCheck.value, errorMessage);
         } else {
@@ -391,7 +423,12 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
   }
 
   function scheduleProcessQueue(state) {
-    if (errorOnUnhandledRejections && !state.pending && state.status === 2 && !isStateExceptionHandled(state)) {
+    if (
+      errorOnUnhandledRejections &&
+      !state.pending &&
+      state.status === 2 &&
+      !isStateExceptionHandled(state)
+    ) {
       if (queueSize === 0 && checkQueue.length === 0) {
         nextTick(processChecks);
       }
@@ -400,20 +437,25 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
     if (state.processScheduled || !state.pending) return;
     state.processScheduled = true;
     ++queueSize;
-    nextTick(() => { processQueue(state); });
+    nextTick(() => {
+      processQueue(state);
+    });
   }
 
   function resolvePromise(promise, val) {
     if (promise.$$state.status) return;
     if (val === promise) {
-      $$reject(promise, $qMinErr(
-        'qcycle',
-        'Expected promise to be resolved with value other than itself \'{0}\'',
-        val));
+      $$reject(
+        promise,
+        $qMinErr(
+          "qcycle",
+          "Expected promise to be resolved with value other than itself '{0}'",
+          val,
+        ),
+      );
     } else {
       $$resolve(promise, val);
     }
-
   }
 
   function $$resolve(promise, val) {
@@ -462,14 +504,18 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
   function notifyPromise(promise, progress) {
     const callbacks = promise.$$state.pending;
 
-    if ((promise.$$state.status <= 0) && callbacks && callbacks.length) {
+    if (promise.$$state.status <= 0 && callbacks && callbacks.length) {
       nextTick(() => {
-        let callback; let result;
+        let callback;
+        let result;
         for (let i = 0, ii = callbacks.length; i < ii; i++) {
           result = callbacks[i][0];
           callback = callbacks[i][3];
           try {
-            notifyPromise(result, isFunction(callback) ? callback(progress) : progress);
+            notifyPromise(
+              result,
+              isFunction(callback) ? callback(progress) : progress,
+            );
           } catch (e) {
             exceptionHandler(e);
           }
@@ -529,9 +575,8 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
     }
     if (isPromiseLike(callbackOutput)) {
       return callbackOutput.then(() => resolver(value), reject);
-    } 
-      return resolver(value);
-    
+    }
+    return resolver(value);
   }
 
   /**
@@ -550,7 +595,6 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
    * @param {Function=} progressCallback
    * @returns {Promise} Returns a promise of the passed value or promise
    */
-
 
   function when(value, callback, errback, progressBack) {
     const result = new Promise();
@@ -592,17 +636,20 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
 
   function all(promises) {
     const result = new Promise();
-        let counter = 0;
-        const results = isArray(promises) ? [] : {};
+    let counter = 0;
+    const results = isArray(promises) ? [] : {};
 
     forEach(promises, (promise, key) => {
       counter++;
-      when(promise).then((value) => {
-        results[key] = value;
-        if (!(--counter)) resolvePromise(result, results);
-      }, (reason) => {
-        rejectPromise(result, reason);
-      });
+      when(promise).then(
+        (value) => {
+          results[key] = value;
+          if (!--counter) resolvePromise(result, results);
+        },
+        (reason) => {
+          rejectPromise(result, reason);
+        },
+      );
     });
 
     if (counter === 0) {
@@ -638,7 +685,7 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
 
   function $Q(resolver) {
     if (!isFunction(resolver)) {
-      throw $qMinErr('norslvr', 'Expected resolverFn, got \'{0}\'', resolver);
+      throw $qMinErr("norslvr", "Expected resolverFn, got '{0}'", resolver);
     }
 
     const promise = new Promise();
@@ -687,13 +734,21 @@ function markQExceptionHandled(q) {
 }
 
 /* eslint-disable no-unused-vars */
-function isFunction(value) { return typeof value === 'function'; }
-function isPromiseLike(obj) { return obj && isFunction(obj.then); }
-function isObject(value) { return value !== null && typeof value === 'object'; }
-function isUndefined(value) { return typeof value === 'undefined'; }
+function isFunction(value) {
+  return typeof value === "function";
+}
+function isPromiseLike(obj) {
+  return obj && isFunction(obj.then);
+}
+function isObject(value) {
+  return value !== null && typeof value === "object";
+}
+function isUndefined(value) {
+  return typeof value === "undefined";
+}
 
 function minErr(module, constructor) {
-  return function() {
+  return function () {
     const ErrorConstructor = constructor || Error;
     throw new ErrorConstructor(module + arguments[0] + arguments[1]);
   };

@@ -343,7 +343,7 @@ describe('ngView', () => {
 
     it('should be async even if served from cache', () => {
       module(($routeProvider) => {
-        $routeProvider.when('/foo', {controller: angular.noop, templateUrl: 'myUrl1'});
+        $routeProvider.when('/foo', {controller: () => {}, templateUrl: 'myUrl1'});
       });
 
       inject(($route, $rootScope, $location, $templateCache) => {
@@ -743,8 +743,8 @@ describe('ngView', () => {
 
 
     beforeEach(module(($provide, $routeProvider) => {
-      $routeProvider.when('/foo', {controller: angular.noop, templateUrl: '/foo.html'});
-      $routeProvider.when('/bar', {controller: angular.noop, templateUrl: '/bar.html'});
+      $routeProvider.when('/foo', {controller: () => {}, templateUrl: '/foo.html'});
+      $routeProvider.when('/bar', {controller: () => {}, templateUrl: '/bar.html'});
       return function($templateCache) {
         $templateCache.put('/foo.html', [200, '<div>data</div>', {}]);
         $templateCache.put('/bar.html', [200, '<div>data2</div>', {}]);
@@ -950,7 +950,7 @@ describe('ngView', () => {
           autoScrollSpy = jasmine.createSpy('$anchorScroll');
           $provide.value('$anchorScroll', autoScrollSpy);
           $routeProvider.when('/foo', {
-            controller: angular.noop,
+            controller: () => {},
             template: '<div></div>'
           });
         };
