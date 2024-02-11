@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
+import { $CompileProvider } from "./ng/compile";
 import { createInjector } from "./auto/injector";
-import { jqLite } from "./jqLite";
+import { jqLite, $$jqLiteProvider } from "./jqLite";
 import { setupModuleLoader } from "./loader";
 import { htmlAnchorDirective } from "./ng/directive/a";
 import {
@@ -85,11 +86,15 @@ import { $HttpBackendProvider, $xhrFactoryProvider } from "./ng/httpBackend";
 import { $jsonpCallbacksProvider } from "./ng/jsonpCallbacks";
 import { $LocationProvider } from "./ng/location";
 import { $LogProvider } from "./ng/log";
-import { $ParseProvider } from  "./ng/parse";
+import { $ParseProvider } from "./ng/parse";
 import { $RootScopeProvider } from "./ng/rootScope";
-import { $QProvider, $$QProvider} from "./ng/q";
+import { $QProvider, $$QProvider } from "./ng/q";
 import { $SceProvider, $SceDelegateProvider } from "./ng/sce";
 import { $SnifferProvider } from "./ng/sniffer";
+import { $$TaskTrackerFactoryProvider } from "./ng/taskTrackerFactory";
+import { TemplateRequestProvider } from "./ng/templateRequest";
+import { TestabilityProvider } from "./ng/testability";
+import { $TimeoutProvider } from "./ng/timeout";
 import { WindowProvider } from "./ng/window";
 import { SanitizeUriProvider } from "./ng/sanitizeUri";
 import {
@@ -120,8 +125,8 @@ import {
   bind,
 } from "./ng/utils";
 
-const { bootstrap, reloadWithDebugInfo, getTestability } = require("./Angular");
-const { errorHandlingConfig, minErr } = require("./minErr");
+import { bootstrap, reloadWithDebugInfo, getTestability } from "./Angular";
+import { errorHandlingConfig, minErr } from "./minErr";
 
 /**
  * @ngdoc object
@@ -281,8 +286,8 @@ export function publishExternalAPI(angular) {
         $sniffer: $SnifferProvider,
         $$taskTrackerFactory: $$TaskTrackerFactoryProvider,
         $templateCache: TemplateCacheProvider,
-        $templateRequest: $TemplateRequestProvider,
-        $$testability: $$TestabilityProvider,
+        $templateRequest: TemplateRequestProvider,
+        $$testability: TestabilityProvider,
         $timeout: $TimeoutProvider,
         $window: WindowProvider,
         $$jqLite: $$jqLiteProvider,

@@ -1,5 +1,4 @@
-/** @this */
-function $$TestabilityProvider() {
+export function TestabilityProvider() {
   this.$get = [
     "$rootScope",
     "$browser",

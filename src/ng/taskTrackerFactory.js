@@ -13,7 +13,8 @@
  *
  * @this
  */
-function $$TaskTrackerFactoryProvider() {
+export function $$TaskTrackerFactoryProvider() {
+  // eslint-disable-next-line no-use-before-define
   this.$get = valueFn((log) => new TaskTracker(log));
 }
 

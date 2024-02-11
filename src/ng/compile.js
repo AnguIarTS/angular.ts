@@ -1,6 +1,6 @@
 import { jqLite, getBooleanAttrName, getAliasedAttrName } from "../jqLite";
 // eslint-disable-next-line camelcase
-import { snake_case } from "./utils";
+import { forEach, snake_case } from "./utils";
 
 /* ! VARIABLE/FUNCTION NAMING CONVENTIONS THAT APPLY TO THIS FILE!
  *
@@ -1365,9 +1365,10 @@ const _UNINITIALIZED_VALUE = new UNINITIALIZED_VALUE();
  *
  * @description
  */
+// eslint-disable-next-line no-use-before-define
 $CompileProvider.$inject = ["$provide", "$$sanitizeUriProvider"];
 /** @this */
-function $CompileProvider($provide, $$sanitizeUriProvider) {
+export function $CompileProvider($provide, $$sanitizeUriProvider) {
   const hasDirectives = {};
   const Suffix = "Directive";
   const COMMENT_DIRECTIVE_REGEXP = /^\s*directive:\s*([\w-]+)\s+(.*)$/;

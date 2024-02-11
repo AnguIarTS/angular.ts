@@ -11,7 +11,7 @@ const $templateRequestMinErr = minErr("$templateRequest");
  * For example, it can be used for specifying the "Accept" header that is sent to the server, when
  * requesting a template.
  */
-function $TemplateRequestProvider() {
+export function TemplateRequestProvider() {
   let httpOptions;
 
   /**
