@@ -3678,7 +3678,7 @@ angular.mock.$RootScopeDecorator = [
           injector.annotate(blockFns[i]);
         }
         try {
-          injector.invoke(blockFns[i] || () => {}, this);
+          injector.invoke(blockFns[i] || (() => {}), this);
         } catch (e) {
           if (e.stack && errorForStack) {
             throw new ErrorAddingDeclarationLocationStack(e, errorForStack);

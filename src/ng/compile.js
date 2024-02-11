@@ -1,6 +1,6 @@
 import { jqLite, getBooleanAttrName, getAliasedAttrName } from "../jqLite";
 // eslint-disable-next-line camelcase
-import { forEach, snake_case } from "./utils";
+import { createMap, forEach, snake_case } from "./utils";
 
 /* ! VARIABLE/FUNCTION NAMING CONVENTIONS THAT APPLY TO THIS FILE!
  *

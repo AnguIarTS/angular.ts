@@ -1,5 +1,4 @@
-ngRouteModule.directive("ngView", ngViewFactory);
-ngRouteModule.directive("ngView", ngViewFillContentFactory);
+import { isDefined } from "../../ng/utils";
 
 /**
  * @ngdoc directive
@@ -173,8 +172,9 @@ ngRouteModule.directive("ngView", ngViewFillContentFactory);
  * @description
  * Emitted every time the ngView content is reloaded.
  */
+// eslint-disable-next-line no-use-before-define
 ngViewFactory.$inject = ["$route", "$anchorScroll", "$animate"];
-function ngViewFactory($route, $anchorScroll, $animate) {
+export function ngViewFactory($route, $anchorScroll, $animate) {
   return {
     restrict: "ECA",
     terminal: true,
@@ -187,7 +187,9 @@ function ngViewFactory($route, $anchorScroll, $animate) {
       const autoScrollExp = attr.autoscroll;
       const onloadExp = attr.onload || "";
 
+      // eslint-disable-next-line no-use-before-define
       scope.$on("$routeChangeSuccess", update);
+      // eslint-disable-next-line no-use-before-define
       update();
 
       function cleanupLastView() {
@@ -213,7 +215,7 @@ function ngViewFactory($route, $anchorScroll, $animate) {
         const locals = $route.current && $route.current.locals;
         const template = locals && locals.$template;
 
-        if (angular.isDefined(template)) {
+        if (isDefined(template)) {
           const newScope = scope.$new();
           const { current } = $route;
 
@@ -229,7 +231,7 @@ function ngViewFactory($route, $anchorScroll, $animate) {
               .done((response) => {
                 if (
                   response !== false &&
-                  angular.isDefined(autoScrollExp) &&
+                  isDefined(autoScrollExp) &&
                   (!autoScrollExp || scope.$eval(autoScrollExp))
                 ) {
                   $anchorScroll();
@@ -255,8 +257,9 @@ function ngViewFactory($route, $anchorScroll, $animate) {
 // We need this directive so that the element content is already filled when
 // the link function of another directive on the same element as ngView
 // is called.
+// eslint-disable-next-line no-use-before-define
 ngViewFillContentFactory.$inject = ["$compile", "$controller", "$route"];
-function ngViewFillContentFactory($compile, $controller, $route) {
+export function ngViewFillContentFactory($compile, $controller, $route) {
   return {
     restrict: "ECA",
     priority: -400,

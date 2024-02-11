@@ -4,6 +4,8 @@
   ngClassOddDirective
 */
 
+import { createMap, forEach, isArray, isObject, isString } from "../utils";
+
 function classDirective(name, selector) {
   // eslint-disable-next-line no-param-reassign
   name = `ngClass${name}`;
@@ -11,98 +13,96 @@ function classDirective(name, selector) {
 
   return [
     "$parse",
-    function ($parse) {
-      return {
-        restrict: "AC",
-        link(scope, element, attr) {
-          let classCounts = element.data("$classCounts");
-          let oldModulo = true;
-          let oldClassString;
+    ($parse) => ({
+      restrict: "AC",
+      link(scope, element, attr) {
+        let classCounts = element.data("$classCounts");
+        let oldModulo = true;
+        let oldClassString;
 
-          if (!classCounts) {
-            // Use createMap() to prevent class assumptions involving property
-            // names in Object.prototype
-            classCounts = createMap();
-            element.data("$classCounts", classCounts);
+        if (!classCounts) {
+          // Use createMap() to prevent class assumptions involving property
+          // names in Object.prototype
+          classCounts = createMap();
+          element.data("$classCounts", classCounts);
+        }
+
+        if (name !== "ngClass") {
+          if (!indexWatchExpression) {
+            indexWatchExpression = $parse(
+              "$index",
+              ($index) =>
+                // eslint-disable-next-line no-bitwise
+                $index & 1,
+            );
           }
 
-          if (name !== "ngClass") {
-            if (!indexWatchExpression) {
-              indexWatchExpression = $parse(
-                "$index",
-                ($index) =>
-                  // eslint-disable-next-line no-bitwise
-                  $index & 1,
-              );
-            }
+          scope.$watch(indexWatchExpression, ngClassIndexWatchAction);
+        }
 
-            scope.$watch(indexWatchExpression, ngClassIndexWatchAction);
-          }
+        scope.$watch($parse(attr[name], toClassString), ngClassWatchAction);
 
-          scope.$watch($parse(attr[name], toClassString), ngClassWatchAction);
+        function addClasses(classString) {
+          classString = digestClassCounts(split(classString), 1);
+          attr.$addClass(classString);
+        }
 
-          function addClasses(classString) {
-            classString = digestClassCounts(split(classString), 1);
-            attr.$addClass(classString);
-          }
+        function removeClasses(classString) {
+          classString = digestClassCounts(split(classString), -1);
+          attr.$removeClass(classString);
+        }
 
-          function removeClasses(classString) {
-            classString = digestClassCounts(split(classString), -1);
-            attr.$removeClass(classString);
-          }
+        function updateClasses(oldClassString, newClassString) {
+          const oldClassArray = split(oldClassString);
+          const newClassArray = split(newClassString);
 
-          function updateClasses(oldClassString, newClassString) {
-            const oldClassArray = split(oldClassString);
-            const newClassArray = split(newClassString);
+          const toRemoveArray = arrayDifference(oldClassArray, newClassArray);
+          const toAddArray = arrayDifference(newClassArray, oldClassArray);
 
-            const toRemoveArray = arrayDifference(oldClassArray, newClassArray);
-            const toAddArray = arrayDifference(newClassArray, oldClassArray);
+          const toRemoveString = digestClassCounts(toRemoveArray, -1);
+          const toAddString = digestClassCounts(toAddArray, 1);
 
-            const toRemoveString = digestClassCounts(toRemoveArray, -1);
-            const toAddString = digestClassCounts(toAddArray, 1);
+          attr.$addClass(toAddString);
+          attr.$removeClass(toRemoveString);
+        }
 
-            attr.$addClass(toAddString);
-            attr.$removeClass(toRemoveString);
-          }
+        function digestClassCounts(classArray, count) {
+          const classesToUpdate = [];
 
-          function digestClassCounts(classArray, count) {
-            const classesToUpdate = [];
-
-            forEach(classArray, (className) => {
-              if (count > 0 || classCounts[className]) {
-                classCounts[className] = (classCounts[className] || 0) + count;
-                if (classCounts[className] === +(count > 0)) {
-                  classesToUpdate.push(className);
-                }
+          forEach(classArray, (className) => {
+            if (count > 0 || classCounts[className]) {
+              classCounts[className] = (classCounts[className] || 0) + count;
+              if (classCounts[className] === +(count > 0)) {
+                classesToUpdate.push(className);
               }
-            });
-
-            return classesToUpdate.join(" ");
-          }
-
-          function ngClassIndexWatchAction(newModulo) {
-            // This watch-action should run before the `ngClassWatchAction()`, thus it
-            // adds/removes `oldClassString`. If the `ngClass` expression has changed as well, the
-            // `ngClassWatchAction()` will update the classes.
-            if (newModulo === selector) {
-              addClasses(oldClassString);
-            } else {
-              removeClasses(oldClassString);
             }
+          });
 
-            oldModulo = newModulo;
+          return classesToUpdate.join(" ");
+        }
+
+        function ngClassIndexWatchAction(newModulo) {
+          // This watch-action should run before the `ngClassWatchAction()`, thus it
+          // adds/removes `oldClassString`. If the `ngClass` expression has changed as well, the
+          // `ngClassWatchAction()` will update the classes.
+          if (newModulo === selector) {
+            addClasses(oldClassString);
+          } else {
+            removeClasses(oldClassString);
           }
 
-          function ngClassWatchAction(newClassString) {
-            if (oldModulo === selector) {
-              updateClasses(oldClassString, newClassString);
-            }
+          oldModulo = newModulo;
+        }
 
-            oldClassString = newClassString;
+        function ngClassWatchAction(newClassString) {
+          if (oldModulo === selector) {
+            updateClasses(oldClassString, newClassString);
           }
-        },
-      };
-    },
+
+          oldClassString = newClassString;
+        }
+      },
+    }),
   ];
 
   // Helpers

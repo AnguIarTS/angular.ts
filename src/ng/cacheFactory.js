@@ -1,4 +1,5 @@
 import { minErr } from "../minErr";
+import { createMap, extend } from "./utils";
 
 /**
  * @ngdoc service

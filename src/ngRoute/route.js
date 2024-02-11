@@ -1,12 +1,5 @@
-/* global routeToRegExp: false */
-/* global shallowCopy: false */
-
-// `isArray` and `isObject` are necessary for `shallowCopy()` (included via `src/shallowCopy.js`).
-// They are initialized inside the `$RouteProvider`, to ensure `window.angular` is available.
-let isArray;
-let isObject;
-let isDefined;
-let noop;
+import { ngViewFactory, ngViewFillContentFactory } from "./directive/ngView";
+import { $RouteParamsProvider } from "./routeParams";
 
 /**
  * @ngdoc module
@@ -19,7 +12,6 @@ let noop;
  * See {@link ngRoute.$route#examples $route} for an example of configuring and using `ngRoute`.
  *
  */
-/* global -ngRouteModule */
 const ngRouteModule = angular
   .module("ngRoute", [])
   .info({ angularVersion: '"NG_VERSION_FULL"' })
@@ -47,13 +39,10 @@ let isEagerInstantiationEnabled;
  * Requires the {@link ngRoute `ngRoute`} module to be installed.
  */
 function $RouteProvider() {
-  isArray = angular.isArray;
-  isObject = angular.isObject;
-  isDefined = angular.isDefined;
   noop = () => {};
 
   function inherit(parent, extra) {
-    return angular.extend(Object.create(parent), extra);
+    return extend(Object.create(parent), extra);
   }
 
   const routes = {};
@@ -211,16 +200,16 @@ function $RouteProvider() {
   this.when = function (path, route) {
     // copy original route object to preserve params inherited from proto chain
     const routeCopy = shallowCopy(route);
-    if (angular.isUndefined(routeCopy.reloadOnUrl)) {
+    if (isUndefined(routeCopy.reloadOnUrl)) {
       routeCopy.reloadOnUrl = true;
     }
-    if (angular.isUndefined(routeCopy.reloadOnSearch)) {
+    if (isUndefined(routeCopy.reloadOnSearch)) {
       routeCopy.reloadOnSearch = true;
     }
-    if (angular.isUndefined(routeCopy.caseInsensitiveMatch)) {
+    if (isUndefined(routeCopy.caseInsensitiveMatch)) {
       routeCopy.caseInsensitiveMatch = this.caseInsensitiveMatch;
     }
-    routes[path] = angular.extend(
+    routes[path] = extend(
       routeCopy,
       { originalPath: path },
       path && routeToRegExp(path, routeCopy),
@@ -233,7 +222,7 @@ function $RouteProvider() {
           ? path.substr(0, path.length - 1)
           : `${path}/`;
 
-      routes[redirectPath] = angular.extend(
+      routes[redirectPath] = extend(
         { originalPath: path, redirectTo: path },
         routeToRegExp(redirectPath, routeCopy),
       );
@@ -582,7 +571,7 @@ function $RouteProvider() {
          */
         updateParams(newParams) {
           if (this.current && this.current.$$route) {
-            newParams = angular.extend({}, this.current.params, newParams);
+            newParams = extend({}, this.current.params, newParams);
             $location.path(
               interpolate(this.current.$$route.originalPath, newParams),
             );
@@ -710,7 +699,7 @@ function $RouteProvider() {
               // `outstandingRequestCount` to hit zero.  This is important in case we are redirecting
               // to a new route which also requires some asynchronous work.
 
-              $browser.$$completeOutstandingRequest(noop, "$route");
+              $browser.$$completeOutstandingRequest(() => {}, "$route");
             });
         }
       }
@@ -723,7 +712,7 @@ function $RouteProvider() {
 
         if (route) {
           if (route.redirectTo) {
-            if (angular.isString(route.redirectTo)) {
+            if (isString(route.redirectTo)) {
               data.path = interpolate(route.redirectTo, route.params);
               data.search = route.params;
               data.hasRedirection = true;
@@ -736,7 +725,7 @@ function $RouteProvider() {
                 oldSearch,
               );
 
-              if (angular.isDefined(newUrl)) {
+              if (isDefined(newUrl)) {
                 data.url = newUrl;
                 data.hasRedirection = true;
               }
@@ -745,7 +734,7 @@ function $RouteProvider() {
             return $q
               .resolve($injector.invoke(route.resolveRedirectTo))
               .then((newUrl) => {
-                if (angular.isDefined(newUrl)) {
+                if (isDefined(newUrl)) {
                   data.url = newUrl;
                   data.hasRedirection = true;
                 }
@@ -789,14 +778,14 @@ function $RouteProvider() {
 
       function resolveLocals(route) {
         if (route) {
-          const locals = angular.extend({}, route.resolve);
-          angular.forEach(locals, (value, key) => {
+          const locals = extend({}, route.resolve);
+          forEach(locals, (value, key) => {
             locals[key] = angular.isString(value)
               ? $injector.get(value)
               : $injector.invoke(value, null, null, key);
           });
           const template = getTemplateFor(route);
-          if (angular.isDefined(template)) {
+          if (isDefined(template)) {
             locals.$template = template;
           }
           return $q.all(locals);
@@ -806,15 +795,15 @@ function $RouteProvider() {
       function getTemplateFor(route) {
         let template;
         let templateUrl;
-        if (angular.isDefined((template = route.template))) {
-          if (angular.isFunction(template)) {
+        if (isDefined((template = route.template))) {
+          if (isFunction(template)) {
             template = template(route.params);
           }
-        } else if (angular.isDefined((templateUrl = route.templateUrl))) {
-          if (angular.isFunction(templateUrl)) {
+        } else if (isDefined((templateUrl = route.templateUrl))) {
+          if (isFunction(templateUrl)) {
             templateUrl = templateUrl(route.params);
           }
-          if (angular.isDefined(templateUrl)) {
+          if (isDefined(templateUrl)) {
             route.loadedTemplateUrl = $sce.valueOf(templateUrl);
             template = $templateRequest(templateUrl);
           }
@@ -829,7 +818,7 @@ function $RouteProvider() {
         // Match a route
         let params;
         let match;
-        angular.forEach(routes, (route, path) => {
+        forEach(routes, (route, path) => {
           if (
             !match &&
             (params = switchRouteMatcher($location.path(), route))
@@ -901,3 +890,7 @@ function instantiateRoute($injector) {
     $injector.get("$route");
   }
 }
+
+ngRouteModule.provider("$routeParams", $RouteParamsProvider);
+ngRouteModule.directive("ngView", ngViewFactory);
+ngRouteModule.directive("ngView", ngViewFillContentFactory);

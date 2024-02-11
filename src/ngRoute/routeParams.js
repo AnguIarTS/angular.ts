@@ -1,5 +1,3 @@
-ngRouteModule.provider("$routeParams", $RouteParamsProvider);
-
 /**
  * @ngdoc service
  * @name $routeParams
@@ -34,7 +32,7 @@ ngRouteModule.provider("$routeParams", $RouteParamsProvider);
  *  $routeParams ==> {chapterId:'1', sectionId:'2', search:'moby'}
  * ```
  */
-function $RouteParamsProvider() {
+export function $RouteParamsProvider() {
   this.$get = function () {
     return {};
   };
