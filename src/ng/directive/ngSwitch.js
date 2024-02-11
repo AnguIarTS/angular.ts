@@ -1,5 +1,5 @@
-import { forEach } from "../utils";
-import { ngDirective, getBlockNodes } from "./directives";
+import { forEach, getBlockNodes } from "../utils";
+import { ngDirective } from "./directives";
 
 /**
  * @ngdoc directive

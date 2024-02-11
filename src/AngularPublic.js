@@ -90,7 +90,6 @@ import { $ParseProvider } from "./ng/parse";
 import { $RootScopeProvider } from "./ng/rootScope";
 import { $QProvider, $$QProvider } from "./ng/q";
 import { $SceProvider, $SceDelegateProvider } from "./ng/sce";
-import { $SnifferProvider } from "./ng/sniffer";
 import { $$TaskTrackerFactoryProvider } from "./ng/taskTrackerFactory";
 import { TemplateRequestProvider } from "./ng/templateRequest";
 import { TestabilityProvider } from "./ng/testability";
@@ -126,7 +125,7 @@ import {
 } from "./ng/utils";
 
 import { bootstrap, reloadWithDebugInfo, getTestability } from "./Angular";
-import { errorHandlingConfig, minErr } from "./minErr";
+import { errorHandlingConfig } from "./minErr";
 
 /**
  * @ngdoc object
@@ -157,38 +156,12 @@ export function publishExternalAPI(angular) {
   extend(angular, {
     errorHandlingConfig,
     bootstrap,
-    copy,
-    extend,
-    merge,
-    equals,
     element: jqLite,
-    forEach,
     injector: createInjector,
-    noop,
-    bind,
-    toJson,
-    fromJson,
-    identity,
-    isUndefined,
-    isDefined,
-    isString,
-    isFunction,
-    isObject,
-    isNumber,
-    isElement,
-    isArray,
     version,
-    isDate,
     callbacks: { $$counter: 0 },
     getTestability,
-    reloadWithDebugInfo,
-    $$minErr: minErr,
-    $$csp: csp,
-    $$encodeUriSegment: encodeUriSegment,
-    $$encodeUriQuery: encodeUriQuery,
-    $$lowercase: lowercase,
-    $$stringify: stringify,
-    $$uppercase: uppercase,
+    reloadWithDebugInfo
   });
 
   const angularModule = setupModuleLoader(window);
@@ -283,7 +256,6 @@ export function publishExternalAPI(angular) {
         $$q: $$QProvider,
         $sce: $SceProvider,
         $sceDelegate: $SceDelegateProvider,
-        $sniffer: $SnifferProvider,
         $$taskTrackerFactory: $$TaskTrackerFactoryProvider,
         $templateCache: TemplateCacheProvider,
         $templateRequest: TemplateRequestProvider,

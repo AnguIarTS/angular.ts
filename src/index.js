@@ -1,1 +1,1 @@
-export * from "./Angular";
+export * from "./AngularPublic";

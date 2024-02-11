@@ -1,5 +1,5 @@
-import { isDefined, jqLiteBuildFragment } from "../utils";
-
+import { isDefined } from "../utils";
+import { jqLiteBuildFragment } from "../../jqLite";
 /**
  * @ngdoc directive
  * @name ngInclude

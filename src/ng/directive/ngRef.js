@@ -1,4 +1,4 @@
-import { minErr } from ".";
+import { minErr } from "../../minErr";
 
 /**
  * @ngdoc directive

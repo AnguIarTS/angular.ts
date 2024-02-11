@@ -15,6 +15,7 @@ export function setupModuleLoader(window) {
   const ngMinErr = minErr("ng");
 
   function ensure(obj, name, factory) {
+    // eslint-disable-next-line no-return-assign
     return obj[name] || (obj[name] = factory());
   }
 
@@ -81,7 +82,7 @@ export function setupModuleLoader(window) {
     return function module(name, requires, configFn) {
       let info = {};
 
-      const assertNotHasOwnProperty = function (name, context) {
+      function assertNotHasOwnProperty(name, context) {
         if (name === "hasOwnProperty") {
           throw ngMinErr(
             "badname",
@@ -115,6 +116,7 @@ export function setupModuleLoader(window) {
         /** @type {!Array.<Function>} */
         const runBlocks = [];
 
+        // eslint-disable-next-line no-use-before-define
         const config = invokeLater("$injector", "invoke", "push", configBlocks);
 
         /** @type {angular.Module} */

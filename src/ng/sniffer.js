@@ -1,5 +1,7 @@
 /* exported $SnifferProvider */
 
+import { csp, isUndefined, lowercase, toInt } from "./utils";
+
 /**
  * !!! This is an undocumented "private" service !!!
  *

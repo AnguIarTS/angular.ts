@@ -738,19 +738,6 @@
  * (Note that you will need to trigger a digest within the callback to get AngularJS to notice any scope-related changes.)
  */
 
-let copy;
-let extend;
-let forEach;
-let isArray;
-let isDefined;
-let isElement;
-let isFunction;
-let isObject;
-let isString;
-let isUndefined;
-let jqLite;
-let noop;
-
 /**
  * @ngdoc service
  * @name $animate
@@ -762,22 +749,7 @@ let noop;
  * Click here {@link ng.$animate to learn more about animations with `$animate`}.
  */
 angular
-  .module("ngAnimate", [], () => {
-    // Access helpers from AngularJS core.
-    // Do it inside a `config` block to ensure `window.angular` is available.
-    noop = () => {};
-    copy = angular.copy;
-    extend = angular.extend;
-    jqLite = angular.element;
-    forEach = angular.forEach;
-    isArray = angular.isArray;
-    isString = angular.isString;
-    isObject = angular.isObject;
-    isUndefined = angular.isUndefined;
-    isDefined = angular.isDefined;
-    isFunction = angular.isFunction;
-    isElement = angular.isElement;
-  })
+  .module("ngAnimate", [])
   .info({ angularVersion: '"NG_VERSION_FULL"' })
   .directive("ngAnimateSwap", ngAnimateSwapDirective)
 

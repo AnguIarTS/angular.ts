@@ -17,6 +17,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
+    "@types/angular": "^1.8.9",
     "@types/node": "^20.11.17",
     "eslint": "^8.56.0",
     "eslint-config-airbnb-base": "^15.0.0",
