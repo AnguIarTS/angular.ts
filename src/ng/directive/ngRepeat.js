@@ -1,5 +1,3 @@
-/* exported ngRepeatDirective */
-
 /**
  * @ngdoc directive
  * @name ngRepeat
@@ -428,11 +426,11 @@
       </file>
     </example>
  */
-const ngRepeatDirective = [
+export const ngRepeatDirective = [
   "$parse",
   "$animate",
   "$compile",
-  function ($parse, $animate, $compile) {
+  ($parse, $animate, $compile) => {
     const NG_REMOVED = "$$NG_REMOVED";
     const ngRepeatMinErr = minErr("ngRepeat");
 

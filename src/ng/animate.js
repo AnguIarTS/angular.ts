@@ -1,3 +1,6 @@
+import { forEach, isArray, isObject, isString } from "./utils";
+import { minErr } from "../minErr";
+
 const $animateMinErr = minErr("$animate");
 const ELEMENT_NODE = 1;
 const NG_ANIMATE_CLASSNAME = "ng-animate";
@@ -49,14 +52,14 @@ function prepareAnimateOptions(options) {
   return isObject(options) ? options : {};
 }
 
-const $$CoreAnimateJsProvider = /** @this */ function () {
-  this.$get = noop;
-};
+export function CoreAnimateJsProvider() {
+  this.$get = () => {};
+}
 
 // this is prefixed with Core since it conflicts with
 // the animateQueueProvider defined in ngAnimate/animateQueue.js
-const $$CoreAnimateQueueProvider = /** @this */ function () {
-  const postDigestQueue = new NgMap();
+export function CoreAnimateQueueProvider() {
+  const postDigestQueue = new Map();
   const postDigestElements = [];
 
   this.$get = [
@@ -166,7 +169,7 @@ const $$CoreAnimateQueueProvider = /** @this */ function () {
       }
     },
   ];
-};
+}
 
 /**
  * @ngdoc provider
@@ -180,9 +183,9 @@ const $$CoreAnimateQueueProvider = /** @this */ function () {
  *
  * To see the functional implementation check out `src/ngAnimate/animate.js`.
  */
-const $AnimateProvider = [
+export const AnimateProvider = [
   "$provide",
-  /** @this */ function ($provide) {
+  ($provide) => {
     const provider = this;
     let classNameFilter = null;
     let customFilter = null;

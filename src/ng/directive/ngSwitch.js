@@ -1,3 +1,6 @@
+import { forEach } from "../utils";
+import { ngDirective, getBlockNodes } from "./directives";
+
 /**
  * @ngdoc directive
  * @name ngSwitch
@@ -135,78 +138,76 @@
     </file>
   </example>
  */
-const ngSwitchDirective = [
+export const ngSwitchDirective = [
   "$animate",
   "$compile",
-  function ($animate, $compile) {
-    return {
-      require: "ngSwitch",
+  ($animate, $compile) => ({
+    require: "ngSwitch",
 
-      // asks for $scope to fool the BC controller module
-      controller: [
-        "$scope",
-        function NgSwitchController() {
-          this.cases = {};
-        },
-      ],
-      link(scope, element, attr, ngSwitchController) {
-        const watchExpr = attr.ngSwitch || attr.on;
-        let selectedTranscludes = [];
-        const selectedElements = [];
-        const previousLeaveAnimations = [];
-        const selectedScopes = [];
-
-        const spliceFactory = function (array, index) {
-          return function (response) {
-            if (response !== false) array.splice(index, 1);
-          };
-        };
-
-        scope.$watch(watchExpr, (value) => {
-          let i;
-          let ii;
-
-          // Start with the last, in case the array is modified during the loop
-          while (previousLeaveAnimations.length) {
-            $animate.cancel(previousLeaveAnimations.pop());
-          }
-
-          for (i = 0, ii = selectedScopes.length; i < ii; ++i) {
-            const selected = getBlockNodes(selectedElements[i].clone);
-            selectedScopes[i].$destroy();
-            const runner = (previousLeaveAnimations[i] =
-              $animate.leave(selected));
-            runner.done(spliceFactory(previousLeaveAnimations, i));
-          }
-
-          selectedElements.length = 0;
-          selectedScopes.length = 0;
-
-          if (
-            (selectedTranscludes =
-              ngSwitchController.cases[`!${value}`] ||
-              ngSwitchController.cases["?"])
-          ) {
-            forEach(selectedTranscludes, (selectedTransclude) => {
-              selectedTransclude.transclude((caseElement, selectedScope) => {
-                selectedScopes.push(selectedScope);
-                const anchor = selectedTransclude.element;
-                caseElement[caseElement.length++] =
-                  $compile.$$createComment("end ngSwitchWhen");
-                const block = { clone: caseElement };
-
-                selectedElements.push(block);
-                $animate.enter(caseElement, anchor.parent(), anchor);
-              });
-            });
-          }
-        });
+    // asks for $scope to fool the BC controller module
+    controller: [
+      "$scope",
+      function NgSwitchController() {
+        this.cases = {};
       },
-    };
-  },
+    ],
+    link(scope, element, attr, ngSwitchController) {
+      const watchExpr = attr.ngSwitch || attr.on;
+      let selectedTranscludes = [];
+      const selectedElements = [];
+      const previousLeaveAnimations = [];
+      const selectedScopes = [];
+
+      const spliceFactory = function (array, index) {
+        return function (response) {
+          if (response !== false) array.splice(index, 1);
+        };
+      };
+
+      scope.$watch(watchExpr, (value) => {
+        let i;
+        let ii;
+
+        // Start with the last, in case the array is modified during the loop
+        while (previousLeaveAnimations.length) {
+          $animate.cancel(previousLeaveAnimations.pop());
+        }
+
+        for (i = 0, ii = selectedScopes.length; i < ii; ++i) {
+          const selected = getBlockNodes(selectedElements[i].clone);
+          selectedScopes[i].$destroy();
+          const runner = (previousLeaveAnimations[i] =
+            $animate.leave(selected));
+          runner.done(spliceFactory(previousLeaveAnimations, i));
+        }
+
+        selectedElements.length = 0;
+        selectedScopes.length = 0;
+
+        if (
+          (selectedTranscludes =
+            ngSwitchController.cases[`!${value}`] ||
+            ngSwitchController.cases["?"])
+        ) {
+          forEach(selectedTranscludes, (selectedTransclude) => {
+            selectedTransclude.transclude((caseElement, selectedScope) => {
+              selectedScopes.push(selectedScope);
+              const anchor = selectedTransclude.element;
+              caseElement[caseElement.length++] =
+                $compile.$$createComment("end ngSwitchWhen");
+              const block = { clone: caseElement };
+
+              selectedElements.push(block);
+              $animate.enter(caseElement, anchor.parent(), anchor);
+            });
+          });
+        }
+      });
+    },
+  }),
 ];
 
-const ngSwitchWhenDirective = ngDirective({
+export const ngSwitchWhenDirective = ngDirective({
   transclude: "element",
   priority: 1200,
   require: "^ngSwitch",
@@ -230,7 +231,7 @@ const ngSwitchWhenDirective = ngDirective({
   },
 });
 
-const ngSwitchDefaultDirective = ngDirective({
+export const ngSwitchDefaultDirective = ngDirective({
   transclude: "element",
   priority: 1200,
   require: "^ngSwitch",

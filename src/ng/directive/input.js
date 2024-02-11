@@ -2383,7 +2383,7 @@ export const inputDirective = [
   },
 ];
 
-const hiddenInputBrowserCacheDirective = function () {
+export function hiddenInputBrowserCacheDirective() {
   const valueProperty = {
     configurable: true,
     enumerable: false,
@@ -2422,7 +2422,7 @@ const hiddenInputBrowserCacheDirective = function () {
       };
     },
   };
-};
+}
 
 const CONSTANT_VALUE_REGEXP = /^(true|false|\d+)$/;
 /**

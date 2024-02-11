@@ -1,5 +1,3 @@
-/* exported $CoreAnimateCssProvider */
-
 /**
  * @ngdoc service
  * @name $animateCss
@@ -12,13 +10,13 @@
  *
  * Click here {@link ngAnimate.$animateCss to read the documentation for $animateCss}.
  */
-const $CoreAnimateCssProvider = function () {
+export function CoreAnimateCssProvider() {
   this.$get = [
     "$$rAF",
     "$q",
     "$$AnimateRunner",
-    function ($$rAF, $q, $$AnimateRunner) {
-      return function (element, initialOptions) {
+    ($$rAF, $q, $$AnimateRunner) =>
+      function (element, initialOptions) {
         // all of the animation functions should create
         // a copy of the options data, however, if a
         // parent service has already created a copy then
@@ -72,7 +70,6 @@ const $CoreAnimateCssProvider = function () {
             options.to = null;
           }
         }
-      };
-    },
+      },
   ];
-};
+}

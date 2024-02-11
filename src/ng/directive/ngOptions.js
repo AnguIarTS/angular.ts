@@ -1,6 +1,4 @@
-/* exported ngOptionsDirective */
-
-/* global jqLiteRemove */
+import { minErr } from "../../minErr";
 
 const ngOptionsMinErr = minErr("ngOptions");
 
@@ -246,7 +244,7 @@ const NG_OPTIONS_REGEXP =
 // 9: track by expression
 /* eslint-enable */
 
-const ngOptionsDirective = [
+export const ngOptionsDirective = [
   "$compile",
   "$document",
   "$parse",

@@ -1,5 +1,4 @@
-/** @this */
-function $$IntervalFactoryProvider() {
+export function $$IntervalFactoryProvider() {
   this.$get = [
     "$browser",
     "$q",

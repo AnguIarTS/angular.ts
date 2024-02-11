@@ -342,7 +342,7 @@ export function Browser(
 }
 
 /** @this */
-export function $BrowserProvider() {
+export function BrowserProvider() {
   this.$get = [
     "$window",
     "$log",

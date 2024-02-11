@@ -31,7 +31,7 @@ export function AnimateAsyncRunFactoryProvider() {
   ];
 }
 
-export function $$AnimateRunnerFactoryProvider() {
+export function AnimateRunnerFactoryProvider() {
   this.$get = [
     "$q",
     "$sniffer",

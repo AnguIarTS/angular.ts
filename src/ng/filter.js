@@ -105,7 +105,7 @@
   */
 $FilterProvider.$inject = ["$provide"];
 /** @this */
-function $FilterProvider($provide) {
+export function $FilterProvider($provide) {
   const suffix = "Filter";
 
   /**
@@ -144,20 +144,6 @@ function $FilterProvider($provide) {
       };
     },
   ];
-
-  /// /////////////////////////////////////
-
-  /* global
-    currencyFilter: false,
-    dateFilter: false,
-    filterFilter: false,
-    jsonFilter: false,
-    limitToFilter: false,
-    lowercaseFilter: false,
-    numberFilter: false,
-    orderByFilter: false,
-    uppercaseFilter: false
-  */
 
   register("currency", currencyFilter);
   register("date", dateFilter);

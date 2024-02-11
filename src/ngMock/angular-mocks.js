@@ -23,7 +23,7 @@ angular.mock = {};
  * The api of this service is the same as that of the real {@link ng.$browser $browser}, except
  * that there are several helper methods available which can be used in tests.
  */
-angular.mock.$BrowserProvider = function () {
+angular.mock.BrowserProvider = function () {
   this.$get = [
     "$log",
     "$$taskTrackerFactory",
@@ -2831,7 +2831,7 @@ angular.mock.$ComponentControllerProvider = [
 angular
   .module("ngMock", ["ng"])
   .provider({
-    $browser: angular.mock.$BrowserProvider,
+    $browser: angular.mock.BrowserProvider,
     $exceptionHandler: angular.mock.$ExceptionHandlerProvider,
     $log: angular.mock.$LogProvider,
     $interval: angular.mock.$IntervalProvider,

@@ -154,7 +154,7 @@ const SelectController = [
   "$scope",
   /** @this */ function ($element, $scope) {
     const self = this;
-    const optionsMap = new NgMap();
+    const optionsMap = new Map();
 
     self.selectValueMap = {}; // Keys are the hashed values, values the original values
 

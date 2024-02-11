@@ -20,7 +20,7 @@
  * @param {string} method HTTP method of the request (GET, POST, PUT, ..)
  * @param {string} url URL of the request.
  */
-function $xhrFactoryProvider() {
+export function $xhrFactoryProvider() {
   this.$get = function () {
     return function createXhr() {
       return new window.XMLHttpRequest();
@@ -46,7 +46,7 @@ function $xhrFactoryProvider() {
  * During testing this implementation is swapped with {@link ngMock.$httpBackend mock
  * $httpBackend} which can be trained with responses.
  */
-function $HttpBackendProvider() {
+export function $HttpBackendProvider() {
   this.$get = [
     "$browser",
     "$jsonpCallbacks",

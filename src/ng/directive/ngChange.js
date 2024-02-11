@@ -1,3 +1,5 @@
+import { valueFn } from "../utils";
+
 /**
  * @ngdoc directive
  * @name ngChange
@@ -66,7 +68,7 @@
  *   </file>
  * </example>
  */
-const ngChangeDirective = valueFn({
+export const ngChangeDirective = valueFn({
   restrict: "A",
   require: "ngModel",
   link(scope, element, attr, ctrl) {

@@ -3,7 +3,11 @@ import { createInjector } from "./auto/injector";
 import { jqLite } from "./jqLite";
 import { setupModuleLoader } from "./loader";
 import { htmlAnchorDirective } from "./ng/directive/a";
-import { inputDirective } from "./ng/directive/input";
+import {
+  inputDirective,
+  ngValueDirective,
+  hiddenInputBrowserCacheDirective,
+} from "./ng/directive/input";
 import { formDirective, ngFormDirective } from "./ng/directive/form";
 import { scriptDirective } from "./ng/directive/script";
 import { selectDirective, optionDirective } from "./ng/directive/select";
@@ -19,13 +23,73 @@ import {
 } from "./ng/directive/ngClass";
 import { ngCloakDirective } from "./ng/directive/ngCloak";
 import { ngControllerDirective } from "./ng/directive/ngController";
-import { ngHideDirective } from "./ng/directive/ngShowHide";
+import { ngHideDirective, ngShowDirective } from "./ng/directive/ngShowHide";
 import { ngIfDirective } from "./ng/directive/ngIf";
-import { ngIncludeDirective } from "./ng/directive/ngInclude";
+import {
+  ngIncludeDirective,
+  ngIncludeFillContentDirective,
+} from "./ng/directive/ngInclude";
 import { ngInitDirective } from "./ng/directive/ngInit";
 import { ngNonBindableDirective } from "./ng/directive/ngNonBindable";
+import { ngPluralizeDirective } from "./ng/directive/ngPluralize";
+import { ngRefDirective } from "./ng/directive/ngRef";
+import { ngRepeatDirective } from "./ng/directive/ngRepeat";
+import { ngStyleDirective } from "./ng/directive/ngStyle";
+import {
+  ngSwitchDirective,
+  ngSwitchWhenDirective,
+  ngSwitchDefaultDirective,
+} from "./ng/directive/ngSwitch";
+import { ngOptionsDirective } from "./ng/directive/ngOptions";
+import { ngTranscludeDirective } from "./ng/directive/ngTransclude";
+import { ngModelDirective } from "./ng/directive/ngModel";
+import { ngListDirective } from "./ng/directive/ngList";
+import { ngChangeDirective } from "./ng/directive/ngChange";
+import {
+  maxlengthDirective,
+  minlengthDirective,
+  patternDirective,
+  requiredDirective,
+} from "./ng/directive/validators";
+import { ngModelOptionsDirective } from "./ng/directive/ngModelOptions";
+import { ngAttributeAliasDirectives } from "./ng/directive/attrs";
+import { ngEventDirectives } from "./ng/directive/ngEventDirs";
+import { AnchorScrollProvider } from "./ng/anchorScroll";
+import {
+  AnimateProvider,
+  CoreAnimateJsProvider,
+  CoreAnimateQueueProvider,
+} from "./ng/animate";
+import { BrowserProvider } from "./ng/browser";
+import { CoreAnimateCssProvider } from "./ng/animateCss";
 import { CookieReaderProvider } from "./ng/cookieReader";
-import { AnimateAsyncRunFactoryProvider } from "./ng/animateRunner";
+import {
+  AnimateAsyncRunFactoryProvider,
+  AnimateRunnerFactoryProvider,
+} from "./ng/animateRunner";
+import { CacheFactoryProvider, TemplateCacheProvider } from "./ng/cacheFactory";
+import { $ControllerProvider } from "./ng/controller";
+import { $DocumentProvider, $$IsDocumentHiddenProvider } from "./ng/document";
+import { $ExceptionHandlerProvider } from "./ng/exceptionHandler";
+import { $FilterProvider } from "./ng/filter";
+import { $IntervalProvider } from "./ng/interval";
+import { $InterpolateProvider } from "./ng/interpolate";
+import { $$IntervalFactoryProvider } from "./ng/intervalFactory";
+import { $$ForceReflowProvider } from "./ng/forceReflow";
+import {
+  $HttpProvider,
+  $HttpParamSerializerProvider,
+  $HttpParamSerializerJQLikeProvider,
+} from "./ng/http";
+import { $HttpBackendProvider, $xhrFactoryProvider } from "./ng/httpBackend";
+import { $jsonpCallbacksProvider } from "./ng/jsonpCallbacks";
+import { $LocationProvider } from "./ng/location";
+import { $LogProvider } from "./ng/log";
+import { $ParseProvider } from  "./ng/parse";
+import { $RootScopeProvider } from "./ng/rootScope";
+import { $QProvider, $$QProvider} from "./ng/q";
+import { $SceProvider, $SceDelegateProvider } from "./ng/sce";
+import { $SnifferProvider } from "./ng/sniffer";
 import { WindowProvider } from "./ng/window";
 import { SanitizeUriProvider } from "./ng/sanitizeUri";
 import {
@@ -168,13 +232,9 @@ export function publishExternalAPI(angular) {
           ngModel: ngModelDirective,
           ngList: ngListDirective,
           ngChange: ngChangeDirective,
-          pattern: patternDirective,
           ngPattern: patternDirective,
-          required: requiredDirective,
           ngRequired: requiredDirective,
-          minlength: minlengthDirective,
           ngMinlength: minlengthDirective,
-          maxlength: maxlengthDirective,
           ngMaxlength: maxlengthDirective,
           ngValue: ngValueDirective,
           ngModelOptions: ngModelOptionsDirective,
@@ -186,15 +246,15 @@ export function publishExternalAPI(angular) {
         .directive(ngAttributeAliasDirectives)
         .directive(ngEventDirectives);
       $provide.provider({
-        $anchorScroll: $AnchorScrollProvider,
-        $animate: $AnimateProvider,
-        $animateCss: $CoreAnimateCssProvider,
-        $$animateJs: $$CoreAnimateJsProvider,
-        $$animateQueue: $$CoreAnimateQueueProvider,
-        $$AnimateRunner: $$AnimateRunnerFactoryProvider,
+        $anchorScroll: AnchorScrollProvider,
+        $animate: AnimateProvider,
+        $animateCss: CoreAnimateCssProvider,
+        $$animateJs: CoreAnimateJsProvider,
+        $$animateQueue: CoreAnimateQueueProvider,
+        $$AnimateRunner: AnimateRunnerFactoryProvider,
         $$animateAsyncRun: AnimateAsyncRunFactoryProvider,
-        $browser: $BrowserProvider,
-        $cacheFactory: $CacheFactoryProvider,
+        $browser: BrowserProvider,
+        $cacheFactory: CacheFactoryProvider,
         $controller: $ControllerProvider,
         $document: $DocumentProvider,
         $$isDocumentHidden: $$IsDocumentHiddenProvider,
@@ -220,7 +280,7 @@ export function publishExternalAPI(angular) {
         $sceDelegate: $SceDelegateProvider,
         $sniffer: $SnifferProvider,
         $$taskTrackerFactory: $$TaskTrackerFactoryProvider,
-        $templateCache: $TemplateCacheProvider,
+        $templateCache: TemplateCacheProvider,
         $templateRequest: $TemplateRequestProvider,
         $$testability: $$TestabilityProvider,
         $timeout: $TimeoutProvider,

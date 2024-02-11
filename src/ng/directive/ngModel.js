@@ -1361,69 +1361,67 @@ addSetValidityMethod({
      </file>
  * </example>
  */
-const ngModelDirective = [
+export const ngModelDirective = [
   "$rootScope",
-  function ($rootScope) {
-    return {
-      restrict: "A",
-      require: ["ngModel", "^?form", "^?ngModelOptions"],
-      controller: NgModelController,
-      // Prelink needs to run before any input directive
-      // so that we can set the NgModelOptions in NgModelController
-      // before anyone else uses it.
-      priority: 1,
-      compile: function ngModelCompile(element) {
-        // Setup initial state of the control
-        element
-          .addClass(PRISTINE_CLASS)
-          .addClass(UNTOUCHED_CLASS)
-          .addClass(VALID_CLASS);
+  ($rootScope) => ({
+    restrict: "A",
+    require: ["ngModel", "^?form", "^?ngModelOptions"],
+    controller: NgModelController,
+    // Prelink needs to run before any input directive
+    // so that we can set the NgModelOptions in NgModelController
+    // before anyone else uses it.
+    priority: 1,
+    compile: function ngModelCompile(element) {
+      // Setup initial state of the control
+      element
+        .addClass(PRISTINE_CLASS)
+        .addClass(UNTOUCHED_CLASS)
+        .addClass(VALID_CLASS);
 
-        return {
-          pre: function ngModelPreLink(scope, element, attr, ctrls) {
-            const modelCtrl = ctrls[0];
-            const formCtrl = ctrls[1] || modelCtrl.$$parentForm;
-            const optionsCtrl = ctrls[2];
+      return {
+        pre: function ngModelPreLink(scope, element, attr, ctrls) {
+          const modelCtrl = ctrls[0];
+          const formCtrl = ctrls[1] || modelCtrl.$$parentForm;
+          const optionsCtrl = ctrls[2];
 
-            if (optionsCtrl) {
-              modelCtrl.$options = optionsCtrl.$options;
+          if (optionsCtrl) {
+            modelCtrl.$options = optionsCtrl.$options;
+          }
+
+          modelCtrl.$$initGetterSetters();
+
+          // notify others, especially parent forms
+          formCtrl.$addControl(modelCtrl);
+
+          attr.$observe("name", (newValue) => {
+            if (modelCtrl.$name !== newValue) {
+              modelCtrl.$$parentForm.$$renameControl(modelCtrl, newValue);
             }
+          });
 
-            modelCtrl.$$initGetterSetters();
+          scope.$on("$destroy", () => {
+            modelCtrl.$$parentForm.$removeControl(modelCtrl);
+          });
+        },
+        post: function ngModelPostLink(scope, element, attr, ctrls) {
+          const modelCtrl = ctrls[0];
+          modelCtrl.$$setUpdateOnEvents();
 
-            // notify others, especially parent forms
-            formCtrl.$addControl(modelCtrl);
+          function setTouched() {
+            modelCtrl.$setTouched();
+          }
 
-            attr.$observe("name", (newValue) => {
-              if (modelCtrl.$name !== newValue) {
-                modelCtrl.$$parentForm.$$renameControl(modelCtrl, newValue);
-              }
-            });
+          element.on("blur", () => {
+            if (modelCtrl.$touched) return;
 
-            scope.$on("$destroy", () => {
-              modelCtrl.$$parentForm.$removeControl(modelCtrl);
-            });
-          },
-          post: function ngModelPostLink(scope, element, attr, ctrls) {
-            const modelCtrl = ctrls[0];
-            modelCtrl.$$setUpdateOnEvents();
-
-            function setTouched() {
-              modelCtrl.$setTouched();
+            if ($rootScope.$$phase) {
+              scope.$evalAsync(setTouched);
+            } else {
+              scope.$apply(setTouched);
             }
-
-            element.on("blur", () => {
-              if (modelCtrl.$touched) return;
-
-              if ($rootScope.$$phase) {
-                scope.$evalAsync(setTouched);
-              } else {
-                scope.$apply(setTouched);
-              }
-            });
-          },
-        };
-      },
-    };
-  },
+          });
+        },
+      };
+    },
+  }),
 ];

@@ -730,7 +730,7 @@ function locationGetterSetter(property, preprocess) {
  * @description
  * Use the `$locationProvider` to configure how the application deep linking paths are stored.
  */
-function $LocationProvider() {
+export function $LocationProvider() {
   let hashPrefix = "!";
   const html5Mode = {
     enabled: false,

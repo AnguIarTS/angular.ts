@@ -17,8 +17,7 @@ function serializeValue(v) {
   return v;
 }
 
-/** @this */
-function $HttpParamSerializerProvider() {
+export function $HttpParamSerializerProvider() {
   /**
    * @ngdoc service
    * @name $httpParamSerializer
@@ -59,8 +58,7 @@ function $HttpParamSerializerProvider() {
   };
 }
 
-/** @this */
-function $HttpParamSerializerJQLikeProvider() {
+export function $HttpParamSerializerJQLikeProvider() {
   /**
    * @ngdoc service
    * @name $httpParamSerializerJQLike
@@ -276,7 +274,7 @@ function isSuccess(status) {
  * @description
  * Use `$httpProvider` to change the default behavior of the {@link ng.$http $http} service.
  */
-function $HttpProvider() {
+export function $HttpProvider() {
   /**
    * @ngdoc property
    * @name $httpProvider#defaults

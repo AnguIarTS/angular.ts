@@ -1998,8 +1998,8 @@ function getValueOf(value) {
  * `$parseProvider` can be used for configuring the default behavior of the {@link ng.$parse $parse}
  *  service.
  */
-function $ParseProvider() {
-  const cache = createMap();
+export function $ParseProvider() {
+  const cache = new Map();
   const literals = {
     true: true,
     false: false,

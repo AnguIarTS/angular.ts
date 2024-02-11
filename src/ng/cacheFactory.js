@@ -1,3 +1,5 @@
+import { minErr } from "../minErr";
+
 /**
  * @ngdoc service
  * @name $cacheFactory
@@ -80,7 +82,7 @@
      </file>
    </example>
  */
-export function $CacheFactoryProvider() {
+export function CacheFactoryProvider() {
   this.$get = function () {
     const caches = {};
 
@@ -392,7 +394,7 @@ export function $CacheFactoryProvider() {
  * ```
  *
  */
-export function $TemplateCacheProvider() {
+export function TemplateCacheProvider() {
   this.$get = [
     "$cacheFactory",
     function ($cacheFactory) {

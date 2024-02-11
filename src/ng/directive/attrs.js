@@ -97,6 +97,9 @@
     </example>
  */
 
+import { ALIASED_ATTR, BOOLEAN_ATTR } from "../../jqLite";
+import { forEach } from "../utils";
+
 /**
  * @ngdoc directive
  * @name ngSrc
@@ -341,7 +344,7 @@
  *     then special attribute "open" will be set on the element
  */
 
-const ngAttributeAliasDirectives = {};
+export const ngAttributeAliasDirectives = {};
 
 // boolean attrs are evaluated
 forEach(BOOLEAN_ATTR, (propName, attrName) => {

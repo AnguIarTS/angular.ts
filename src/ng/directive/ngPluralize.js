@@ -174,10 +174,9 @@
     </example>
  */
 export const ngPluralizeDirective = [
-  "$locale",
   "$interpolate",
   "$log",
-  function ($locale, $interpolate, $log) {
+  ($interpolate, $log) => {
     const BRACE = /{}/g;
     const IS_WHEN = /^when(Minus)?(.+)$/;
 
@@ -208,14 +207,8 @@ export const ngPluralizeDirective = [
         });
 
         scope.$watch(numberExp, (newVal) => {
-          let count = parseFloat(newVal);
+          const count = parseFloat(newVal);
           const countIsNaN = isNumberNaN(count);
-
-          if (!countIsNaN && !(count in whens)) {
-            // If an explicit number rule such as 1, 2, 3... is defined, just use it.
-            // Otherwise, check it against pluralization rules in $locale service.
-            count = $locale.pluralCat(count - offset);
-          }
 
           // If both `count` and `lastCount` are NaN, we don't need to re-register a watch.
           // In JS `NaN !== NaN`, so we have to explicitly check.
@@ -228,7 +221,7 @@ export const ngPluralizeDirective = [
                   `ngPluralize: no rule defined for '${count}' in ${whenExp}`,
                 );
               }
-              watchRemover = noop;
+              watchRemover = () => {};
               updateElementText();
             } else {
               watchRemover = scope.$watch(whenExpFn, updateElementText);

@@ -35,7 +35,7 @@
  * A collection of directives that allows creation of custom event handlers that are defined as
  * AngularJS expressions and are compiled and executed within the current scope.
  */
-const ngEventDirectives = {};
+export const ngEventDirectives = {};
 
 // For events that might fire synchronously during DOM manipulation
 // we need to execute their event handlers asynchronously using $evalAsync,

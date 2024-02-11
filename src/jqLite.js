@@ -731,7 +731,7 @@ function jqLiteDocumentLoaded(action, win) {
 // these functions return self on setter and
 // value on get.
 /// ///////////////////////////////////////
-const BOOLEAN_ATTR = {};
+export const BOOLEAN_ATTR = {};
 forEach(
   "multiple,selected,checked,disabled,readOnly,required,open".split(","),
   (value) => {
@@ -745,7 +745,7 @@ forEach(
     BOOLEAN_ELEMENTS[value] = true;
   },
 );
-const ALIASED_ATTR = {
+export const ALIASED_ATTR = {
   ngMinlength: "minlength",
   ngMaxlength: "maxlength",
   ngMin: "min",

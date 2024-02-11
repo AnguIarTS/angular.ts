@@ -543,7 +543,7 @@ defaultModelOptions = new ModelOptions({
  *     {@link ngModelOptions#formatting-the-value-of-time-and-datetime-local- See the example}.
  *
  */
-const ngModelOptionsDirective = function () {
+export const ngModelOptionsDirective = function () {
   NgModelOptionsController.$inject = ["$attrs", "$scope"];
   function NgModelOptionsController($attrs, $scope) {
     this.$$attrs = $attrs;

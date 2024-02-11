@@ -1,3 +1,6 @@
+import { ngDirective } from "./directives";
+import { forEach } from "../utils";
+
 /**
  * @ngdoc directive
  * @name ngStyle
@@ -49,7 +52,7 @@
      </file>
    </example>
  */
-const ngStyleDirective = ngDirective((scope, element, attr) => {
+export const ngStyleDirective = ngDirective((scope, element, attr) => {
   scope.$watchCollection(attr.ngStyle, (newStyles, oldStyles) => {
     if (oldStyles && newStyles !== oldStyles) {
       forEach(oldStyles, (val, style) => {

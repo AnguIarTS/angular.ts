@@ -356,11 +356,11 @@ function qFactory(nextTick, exceptionHandler, errorOnUnhandledRejections) {
       return result;
     },
 
-    catch (callback) {
+    catch(callback) {
       return this.then(null, callback);
     },
 
-    finally (callback, progressBack) {
+    finally(callback, progressBack) {
       return this.then(
         (value) => handleCallback(value, resolve, callback),
         (error) => handleCallback(error, reject, callback),

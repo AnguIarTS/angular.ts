@@ -52,7 +52,7 @@
  * @description
  * Use the `$logProvider` to configure how the application logs messages
  */
-function $LogProvider() {
+export function $LogProvider() {
   let debug = true;
   const self = this;
 

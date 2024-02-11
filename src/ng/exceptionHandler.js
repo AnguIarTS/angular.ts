@@ -42,7 +42,7 @@
  *       the error was thrown.
  *
  */
-function $ExceptionHandlerProvider() {
+export function $ExceptionHandlerProvider() {
   this.$get = [
     "$log",
     function ($log) {

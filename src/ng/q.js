@@ -222,7 +222,7 @@
  *
  * @description
  */
-function $QProvider() {
+export function $QProvider() {
   let errorOnUnhandledRejections = true;
   this.$get = [
     "$rootScope",
@@ -259,9 +259,7 @@ function $QProvider() {
     return errorOnUnhandledRejections;
   };
 }
-
-/** @this */
-function $$QProvider() {
+export function $$QProvider() {
   let errorOnUnhandledRejections = true;
   this.$get = [
     "$browser",

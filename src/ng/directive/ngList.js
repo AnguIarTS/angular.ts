@@ -87,7 +87,7 @@
  * </example>
  *
  */
-const ngListDirective = function () {
+export function ngListDirective() {
   return {
     restrict: "A",
     priority: 100,
@@ -127,4 +127,4 @@ const ngListDirective = function () {
       };
     },
   };
-};
+}

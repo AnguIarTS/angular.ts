@@ -1,3 +1,5 @@
+import { minErr } from "../../minErr";
+
 /**
  * @ngdoc directive
  * @name ngTransclude
@@ -157,7 +159,7 @@
  * </example>
  */
 const ngTranscludeMinErr = minErr("ngTransclude");
-const ngTranscludeDirective = [
+export const ngTranscludeDirective = [
   "$compile",
   function ($compile) {
     return {
