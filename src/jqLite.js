@@ -1,3 +1,5 @@
+/* eslint-disable no-multi-assign */
+/* eslint-disable no-use-before-define */
 /* eslint-disable class-methods-use-this */
 import {
   NODE_TYPE_ELEMENT,
@@ -140,20 +142,14 @@ import {
  * @returns {Object} jQuery object.
  */
 
-const jqCache = (JQLite.cache = {});
-let jqId = 1;
 
-/*
- * !!! This is an undocumented "private" function !!!
- */
-JQLite._data = function (node) {
-  // jQuery always returns an object on cache miss
-  return this.cache[node.ng339] || {};
-};
+
+let jqId = 1;
 
 function jqNextId() {
   return ++jqId;
 }
+
 
 const DASH_LOWERCASE_REGEXP = /-([a-z])/g;
 const MS_HACK_REGEXP = /^-ms-/;
@@ -184,8 +180,6 @@ function kebabToCamel(name) {
 const SINGLE_TAG_REGEXP = /^<([\w-]+)\s*\/?>(?:<\/\1>|)$/;
 const HTML_REGEXP = /<|&#?\w+;/;
 const TAG_NAME_REGEXP = /<([\w:-]+)/;
-const XHTML_TAG_REGEXP =
-  /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:-]+)[^>]*)\/>/gi;
 
 // Table parts need to be wrapped with `<table>` or they're
 // stripped to their contents when put in a div.
@@ -456,6 +450,17 @@ class JQLite {
     return jqLiteInheritedData(element, "$injector");
   }
 }
+
+const jqCache = (JQLite.cache = {});
+
+/*
+ * !!! This is an undocumented "private" function !!!
+ */
+JQLite._data = function (node) {
+  // jQuery always returns an object on cache miss
+  return this.cache[node.ng339] || {};
+};
+
 
 JQLite._data = undefined;
 
@@ -1193,7 +1198,7 @@ forEach(
           isImmediatePropagationStopped() {
             return this.immediatePropagationStopped === true;
           },
-          stopPropagation: noop,
+          stopPropagation: () => {},
           type: eventName,
           target: element,
         };

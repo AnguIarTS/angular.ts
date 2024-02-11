@@ -1,15 +1,20 @@
+/* eslint-disable no-use-before-define */
+
+import { valueFn, assertNotHasOwnProperty, shallowCopy, arrayRemove, isBoolean, snakeCase, forEach, extend, isUndefined, noop } from "../utils";
+import { PRISTINE_CLASS, DIRTY_CLASS, VALID_CLASS, INVALID_CLASS } from "./ngModel";
+
 /* global -nullFormCtrl, -PENDING_CLASS, -SUBMITTED_CLASS
  */
 const nullFormCtrl = {
-  $addControl: noop,
+  $addControl: () => {},
   $getControls: valueFn([]),
   $$renameControl: nullFormRenameControl,
-  $removeControl: noop,
-  $setValidity: noop,
-  $setDirty: noop,
-  $setPristine: noop,
-  $setSubmitted: noop,
-  $$setSubmitted: noop,
+  $removeControl: () => {},
+  $setValidity: () => {},
+  $setDirty: () => {},
+  $setPristine: () => {},
+  $setSubmitted: () => {},
+  $$setSubmitted: () => {},
 };
 const PENDING_CLASS = "ng-pending";
 const SUBMITTED_CLASS = "ng-submitted";
@@ -618,7 +623,7 @@ const formDirectiveFactory = function (isNgForm) {
               const parentFormCtrl = ctrls[1] || controller.$$parentForm;
               parentFormCtrl.$addControl(controller);
 
-              let setter = nameAttr ? getSetter(controller.$name) : noop;
+              let setter = nameAttr ? getSetter(controller.$name) : () => {};
 
               if (nameAttr) {
                 setter(scope, controller);
@@ -662,7 +667,8 @@ function setupValidity(instance) {
   instance.$$classCache[INVALID_CLASS] = !(instance.$$classCache[VALID_CLASS] =
     instance.$$element.hasClass(VALID_CLASS));
 }
-function addSetValidityMethod(context) {
+
+export function addSetValidityMethod(context) {
   const { clazz } = context;
   const { set } = context;
   const { unset } = context;
@@ -745,7 +751,7 @@ function addSetValidityMethod(context) {
 
   function toggleValidationCss(ctrl, validationErrorKey, isValid) {
     validationErrorKey = validationErrorKey
-      ? `-${snake_case(validationErrorKey, "-")}`
+      ? `-${snakeCase(validationErrorKey, "-")}`
       : "";
 
     cachedToggleClass(ctrl, VALID_CLASS + validationErrorKey, isValid === true);

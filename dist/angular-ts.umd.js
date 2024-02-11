@@ -1,8 +1,7 @@
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.angular = {}));
-})(this, (function (exports) { 'use strict';
+(function (factory) {
+  typeof define === 'function' && define.amd ? define(factory) :
+  factory();
+})((function () { 'use strict';
 
   const NODE_TYPE_ELEMENT$1 = 1;
   const NODE_TYPE_ATTRIBUTE = 2;
@@ -10,6 +9,8 @@
   const NODE_TYPE_COMMENT$1 = 8;
   const NODE_TYPE_DOCUMENT$1 = 9;
   const NODE_TYPE_DOCUMENT_FRAGMENT = 11;
+
+  /* eslint-disable no-use-before-define */
 
   /**
    *
@@ -156,7 +157,7 @@
    * @param {*} value Reference to check.
    * @returns {boolean} True if `value` is a `Date`.
    */
-  function isDate$1(value) {
+  function isDate(value) {
     return toString.call(value) === "[object Date]";
   }
 
@@ -292,7 +293,7 @@
   }
 
   // eslint-disable-next-line camelcase
-  function snake_case$1(name, separator) {
+  function snakeCase(name, separator) {
     const modseparator = separator || "_";
     return name.replace(
       /[A-Z]/g,
@@ -375,9 +376,7 @@
 
   function forEachSorted(obj, iterator, context) {
     const keys = Object.keys(obj).sort();
-    for (const element of keys) {
-      iterator.call(context, obj[element], element);
-    }
+    keys.forEach(el => iterator.call(context, obj[el], el));
     return keys;
   }
 
@@ -406,7 +405,7 @@
         const src = obj[key];
 
         if (deep && isObject$1(src)) {
-          if (isDate$1(src)) {
+          if (isDate(src)) {
             dst[key] = new Date(src.valueOf());
           } else if (isRegExp$1(src)) {
             dst[key] = new RegExp(src);
@@ -465,38 +464,6 @@
      ```
    */
   function noop$1() {}
-
-  /**
-   * @module angular
-   * @function identity
-
-   * @function
-   *
-   * @description
-   * A function that returns its first argument. This function is useful when writing code in the
-   * functional style.
-   *
-     ```js
-     function transformer(transformationFn, value) {
-       return (transformationFn || angular.identity)(value);
-     };
-
-     // E.g.
-     function getResult(fn, input) {
-       return (fn || angular.identity)(input);
-     };
-
-     getResult(function(n) { return n * 2; }, 21);   // returns 42
-     getResult(null, 21);                            // returns 21
-     getResult(undefined, 21);                       // returns 21
-     ```
-   *
-   * @param {*} value to be returned.
-   * @returns {*} the value passed in.
-   */
-  function identity$1(value) {
-    return value;
-  }
 
   /**
    * @param {*} value
@@ -636,10 +603,10 @@
 
     if (destination) {
       if (isTypedArray(destination) || isArrayBuffer(destination)) {
-        throw ngMinErr$1();
+        throw ngMinErr();
       }
       if (source === destination) {
-        throw ngMinErr$1();
+        throw ngMinErr();
       }
 
       // Empty the destination object
@@ -701,7 +668,7 @@
       }
 
       if (isWindow(source) || isScope$1(source)) {
-        throw ngMinErr$1();
+        throw ngMinErr();
       }
 
       let needsRecurse = false;
@@ -775,128 +742,15 @@
     }
   }
 
-  function simpleCompare$1(a, b) {
-    return a === b || (a !== a && b !== b);
-  }
-
   /**
-   * @module angular
-   * @function equals
-
-   * @function
-   *
-   * @description
-   * Determines if two objects or two values are equivalent. Supports value types, regular
-   * expressions, arrays and objects.
-   *
-   * Two objects or values are considered equivalent if at least one of the following is true:
-   *
-   * * Both objects or values pass `===` comparison.
-   * * Both objects or values are of the same type and all of their properties are equal by
-   *   comparing them with `angular.equals`.
-   * * Both values are NaN. (In JavaScript, NaN == NaN => false. But we consider two NaN as equal)
-   * * Both values represent the same regular expression (In JavaScript,
-   *   /abc/ == /abc/ => false. But we consider two regular expressions as equal when their textual
-   *   representation matches).
-   *
-   * During a property comparison, properties of `function` type and properties with names
-   * that begin with `$` are ignored.
-   *
-   * Scope and DOMWindow objects are being compared only by identify (`===`).
-   *
-   * @param {*} o1 Object or value to compare.
-   * @param {*} o2 Object or value to compare.
-   * @returns {boolean} True if arguments are equal.
-   *
-   * @example
-     <example module="equalsExample" name="equalsExample">
-       <file name="index.html">
-        <div ng-controller="ExampleController">
-          <form novalidate>
-            <h3>User 1</h3>
-            Name: <input type="text" ng-model="user1.name">
-            Age: <input type="number" ng-model="user1.age">
-
-            <h3>User 2</h3>
-            Name: <input type="text" ng-model="user2.name">
-            Age: <input type="number" ng-model="user2.age">
-
-            <div>
-              <br/>
-              <input type="button" value="Compare" ng-click="compare()">
-            </div>
-            User 1: <pre>{{user1 | json}}</pre>
-            User 2: <pre>{{user2 | json}}</pre>
-            Equal: <pre>{{result}}</pre>
-          </form>
-        </div>
-      </file>
-      <file name="script.js">
-          angular.module('equalsExample', []).controller('ExampleController', ['$scope', function($scope) {
-            $scope.user1 = {};
-            $scope.user2 = {};
-            $scope.compare = function() {
-              $scope.result = angular.equals($scope.user1, $scope.user2);
-            };
-          }]);
-      </file>
-    </example>
+   * throw error if the name given is hasOwnProperty
+   * @param  {String} name    the name to test
+   * @param  {String} context the context in which the name is used, such as module or directive
    */
-  function equals$1(o1, o2) {
-    if (o1 === o2) return true;
-    if (o1 === null || o2 === null) return false;
-    // eslint-disable-next-line no-self-compare
-    if (o1 !== o1 && o2 !== o2) return true; // NaN === NaN
-    const t1 = typeof o1;
-    const t2 = typeof o2;
-    let length;
-    let key;
-    let keySet;
-    if (t1 === t2 && t1 === "object") {
-      if (isArray$1(o1)) {
-        if (!isArray$1(o2)) return false;
-        if ((length = o1.length) === o2.length) {
-          for (key = 0; key < length; key++) {
-            if (!equals$1(o1[key], o2[key])) return false;
-          }
-          return true;
-        }
-      } else if (isDate$1(o1)) {
-        if (!isDate$1(o2)) return false;
-        return simpleCompare$1(o1.getTime(), o2.getTime());
-      } else if (isRegExp$1(o1)) {
-        if (!isRegExp$1(o2)) return false;
-        return o1.toString() === o2.toString();
-      } else {
-        if (
-          isScope$1(o1) ||
-          isScope$1(o2) ||
-          isWindow(o1) ||
-          isWindow(o2) ||
-          isArray$1(o2) ||
-          isDate$1(o2) ||
-          isRegExp$1(o2)
-        )
-          return false;
-        keySet = createMap$1();
-        for (key in o1) {
-          if (key.charAt(0) === "$" || isFunction$1(o1[key])) continue;
-          if (!equals$1(o1[key], o2[key])) return false;
-          keySet[key] = true;
-        }
-        for (key in o2) {
-          if (
-            !(key in keySet) &&
-            key.charAt(0) !== "$" &&
-            isDefined$1(o2[key]) &&
-            !isFunction$1(o2[key])
-          )
-            return false;
-        }
-        return true;
-      }
+  function assertNotHasOwnProperty$1(name, context) {
+    if (name === "hasOwnProperty") {
+      throw ngMinErr();
     }
-    return false;
   }
 
   /**
@@ -949,10 +803,10 @@
         value = `${value}`;
         break;
       default:
-        if (hasCustomToString(value) && !isArray$1(value) && !isDate$1(value)) {
+        if (hasCustomToString(value) && !isArray$1(value) && !isDate(value)) {
           value = value.toString();
         } else {
-          value = toJson$1(value);
+          value = toJson(value);
         }
     }
 
@@ -973,39 +827,6 @@
 
   function sliceArgs$1(args, startIndex) {
     return Array.prototype.slice.call(args, startIndex || 0);
-  }
-
-  /**
-   * @module angular
-   * @function bind
-
-   * @function
-   *
-   * @description
-   * Returns a function which calls function `fn` bound to `self` (`self` becomes the `this` for
-   * `fn`). You can supply optional `args` that are prebound to the function. This feature is also
-   * known as [partial application](http://en.wikipedia.org/wiki/Partial_application), as
-   * distinguished from [function currying](http://en.wikipedia.org/wiki/Currying#Contrast_with_partial_function_application).
-   *
-   * @param {Object} self Context which `fn` should be evaluated in.
-   * @param {*} fn Function to be bound.
-   * @returns {function()} Function that wraps the `fn` with all the specified bindings.
-   */
-  function bind$1(self, fn) {
-    const curryArgs = arguments.length > 2 ? sliceArgs$1(arguments, 2) : [];
-    if (isFunction$1(fn) && !(fn instanceof RegExp)) {
-      return curryArgs.length
-        ? function () {
-            return arguments.length
-              ? fn.apply(self, concat$1(curryArgs, arguments, 0))
-              : fn.apply(self, curryArgs);
-          }
-        : function () {
-            return arguments.length ? fn.apply(self, arguments) : fn.call(self);
-          };
-    }
-    // In IE, native methods are not functions so they cannot be bound (note: they don't need to be).
-    return fn;
   }
 
   function toJsonReplacer(key, value) {
@@ -1062,7 +883,7 @@
    *
    * See https://github.com/angular/angular.js/pull/14221 for more information.
    */
-  function toJson$1(obj, pretty) {
+  function toJson(obj, pretty) {
     if (isUndefined$1(obj)) return undefined;
     if (!isNumber$1(pretty)) {
       pretty = pretty ? 2 : null;
@@ -1082,33 +903,6 @@
    */
   function fromJson(json) {
     return isString$1(json) ? JSON.parse(json) : json;
-  }
-
-  /**
-   * @returns {string} Returns the string representation of the element.
-   */
-  function startingTag$1(element) {
-    const clonedElement = element.cloneNode(true);
-    while (clonedElement.firstChild) {
-      clonedElement.removeChild(clonedElement.firstChild);
-    }
-    const tempDiv = document.createElement("div");
-
-    // Append the cloned element to the temp div and get its HTML
-    tempDiv.appendChild(clonedElement);
-    const elemHtml = tempDiv.innerHTML;
-    try {
-      return element[0].nodeType === NODE_TYPE_TEXT$1
-        ? lowercase$1(elemHtml)
-        : elemHtml
-            .match(/^(<[^>]+>)/)[1]
-            .replace(
-              /^<([\w-]+)/,
-              (match, nodeName) => `<${lowercase$1(nodeName)}`,
-            );
-    } catch (e) {
-      return lowercase$1(elemHtml);
-    }
   }
 
   /**
@@ -1182,7 +976,7 @@
       .replace(/%20/g, pctEncodeSpaces ? "%20" : "+");
   }
 
-  function ngMinErr$1(arg0, arg1) {
+  function ngMinErr(arg0, arg1) {
     throw new Error("Function not implemented.");
   }
 
@@ -1252,51 +1046,6 @@
   };
 
   /**
-   * @ngdoc function
-   * @name angular.errorHandlingConfig
-   * @module ng
-   * @kind function
-   *
-   * @description
-   * Configure several aspects of error handling in AngularJS if used as a setter or return the
-   * current configuration if used as a getter. The following options are supported:
-   *
-   * - **objectMaxDepth**: The maximum depth to which objects are traversed when stringified for error messages.
-   *
-   * Omitted or undefined options will leave the corresponding configuration values unchanged.
-   *
-   * @param {Object=} config - The configuration object. May only contain the options that need to be
-   *     updated. Supported keys:
-   *
-   * * `objectMaxDepth`  **{Number}** - The max depth for stringifying objects. Setting to a
-   *   non-positive or non-numeric value, removes the max depth limit.
-   *   Default: 5
-   *
-   * * `urlErrorParamsEnabled`  **{Boolean}** - Specifies whether the generated error url will
-   *   contain the parameters of the thrown error. Disabling the parameters can be useful if the
-   *   generated error url is very long.
-   *
-   *   Default: true. When used without argument, it returns the current value.
-   */
-  function errorHandlingConfig(config) {
-    if (isObject$1(config)) {
-      if (isDefined$1(config.objectMaxDepth)) {
-        minErrConfig.objectMaxDepth = isValidObjectMaxDepth(config.objectMaxDepth)
-          ? config.objectMaxDepth
-          : NaN;
-      }
-      if (
-        isDefined$1(config.urlErrorParamsEnabled) &&
-        isBoolean$1(config.urlErrorParamsEnabled)
-      ) {
-        minErrConfig.urlErrorParamsEnabled = config.urlErrorParamsEnabled;
-      }
-    } else {
-      return minErrConfig;
-    }
-  }
-
-  /**
    * @description
    *
    * This object provides a utility for producing rich Error messages within
@@ -1356,7 +1105,7 @@
 
       message += `\n${url}${module ? `${module}/` : ""}${code}`;
 
-      if (minErrConfig.urlErrorParamsEnabled) {
+      {
         for (
           i = 0, paramPrefix = "?";
           i < templateArgs.length;
@@ -1370,6 +1119,8 @@
     };
   }
 
+  /* eslint-disable no-multi-assign */
+  /* eslint-disable no-use-before-define */
   /* eslint-disable class-methods-use-this */
 
   /// ///////////////////////////////
@@ -1486,20 +1237,14 @@
    * @returns {Object} jQuery object.
    */
 
-  const jqCache = (JQLite$1.cache = {});
-  let jqId = 1;
 
-  /*
-   * !!! This is an undocumented "private" function !!!
-   */
-  JQLite$1._data = function (node) {
-    // jQuery always returns an object on cache miss
-    return this.cache[node.ng339] || {};
-  };
+
+  let jqId = 1;
 
   function jqNextId() {
     return ++jqId;
   }
+
 
   const DASH_LOWERCASE_REGEXP = /-([a-z])/g;
   const MS_HACK_REGEXP = /^-ms-/;
@@ -1773,6 +1518,17 @@
       return jqLiteInheritedData(element, "$injector");
     }
   };
+
+  const jqCache = (JQLite$1.cache = {});
+
+  /*
+   * !!! This is an undocumented "private" function !!!
+   */
+  JQLite$1._data = function (node) {
+    // jQuery always returns an object on cache miss
+    return this.cache[node.ng339] || {};
+  };
+
 
   JQLite$1._data = undefined;
 
@@ -2497,7 +2253,7 @@
             isImmediatePropagationStopped() {
               return this.immediatePropagationStopped === true;
             },
-            stopPropagation: noop$1,
+            stopPropagation: () => {},
             type: eventName,
             target: element,
           };
@@ -3920,7 +3676,7 @@
    * </example>
    */
 
-  const $compileMinErr = minErr("$compile");
+  const $compileMinErr = minErr$1("$compile");
 
   function UNINITIALIZED_VALUE() {}
   const _UNINITIALIZED_VALUE = new UNINITIALIZED_VALUE();
@@ -4880,7 +4636,7 @@
             } else {
               attrName = this.$attr[key];
               if (!attrName) {
-                this.$attr[key] = attrName = snake_case$1(key, "-");
+                this.$attr[key] = attrName = snakeCase(key, "-");
               }
             }
 
@@ -5013,13 +4769,13 @@
 
               $element.data("$binding", bindings);
             }
-          : noop;
+          : () => {};
 
         compile.$$addBindingClass = debugInfoEnabled
           ? function $$addBindingClass($element) {
               safeAddClass($element, "ng-binding");
             }
-          : noop;
+          : () => {};
 
         compile.$$addScopeInfo = debugInfoEnabled
           ? function $$addScopeInfo($element, scope, isolated, noTemplate) {
@@ -5030,13 +4786,13 @@
                 : "$scope";
               $element.data(dataName, scope);
             }
-          : noop;
+          : () => {};
 
         compile.$$addScopeClass = debugInfoEnabled
           ? function $$addScopeClass($element, isolated) {
               safeAddClass($element, isolated ? "ng-isolate-scope" : "ng-scope");
             }
-          : noop;
+          : () => {};
 
         compile.$$createComment = function (directiveName, comment) {
           let content = "";
@@ -7441,7 +7197,7 @@
                 // Don't assign Object.prototype method to scope
                 parentGet = attrs.hasOwnProperty(attrName)
                   ? $parse(attrs[attrName])
-                  : noop;
+                  : () => {};
 
                 // Don't assign noop to destination if expression is not valid
                 if (parentGet === noop && optional) break;
@@ -7557,1019 +7313,6 @@
   }
 
   /**
-   * @ngdoc function
-   * @module ng
-   * @name angular.injector
-   * @kind function
-   *
-   * @description
-   * Creates an injector object that can be used for retrieving services as well as for
-   * dependency injection (see {@link guide/di dependency injection}).
-   *
-   * @param {Array.<string|Function>} modules A list of module functions or their aliases. See
-   *     {@link angular.module}. The `ng` module must be explicitly added.
-   * @param {boolean=} [strictDi=false] Whether the injector should be in strict mode, which
-   *     disallows argument name annotation inference.
-   * @returns {injector} Injector object. See {@link auto.$injector $injector}.
-   *
-   * @example
-   * Typical usage
-   * ```js
-   *   // create an injector
-   *   let $injector = angular.injector(['ng']);
-   *
-   *   // use the injector to kick off your application
-   *   // use the type inference to auto inject arguments, or use implicit injection
-   *   $injector.invoke(function($rootScope, $compile, $document) {
-   *     $compile($document)($rootScope);
-   *     $rootScope.$digest();
-   *   });
-   * ```
-   *
-   * Sometimes you want to get access to the injector of a currently running AngularJS app
-   * from outside AngularJS. Perhaps, you want to inject and compile some markup after the
-   * application has been bootstrapped. You can do this using the extra `injector()` added
-   * to JQuery/jqLite elements. See {@link angular.element}.
-   *
-   * *This is fairly rare but could be the case if a third party library is injecting the
-   * markup.*
-   *
-   * In the following example a new block of HTML containing a `ng-controller`
-   * directive is added to the end of the document body by JQuery. We then compile and link
-   * it into the current AngularJS scope.
-   *
-   * ```js
-   * let $div = $('<div ng-controller="MyCtrl">{{content.label}}</div>');
-   * $(document.body).append($div);
-   *
-   * angular.element(document).injector().invoke(function($compile) {
-   *   let scope = angular.element($div).scope();
-   *   $compile($div)(scope);
-   * });
-   * ```
-   */
-
-  /**
-   * @ngdoc module
-   * @name auto
-   * @installation
-   * @description
-   *
-   * Implicit module which gets automatically added to each {@link auto.$injector $injector}.
-   */
-
-  const ARROW_ARG = /^([^(]+?)=>/;
-  const FN_ARGS = /^[^(]*\(\s*([^)]*)\)/m;
-  const FN_ARG_SPLIT = /,/;
-  const FN_ARG = /^\s*(_?)(\S+?)\1\s*$/;
-  const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/gm;
-  const $injectorMinErr = minErr("$injector");
-
-  function stringifyFn(fn) {
-    return Function.prototype.toString.call(fn);
-  }
-
-  function extractArgs(fn) {
-    const fnText = stringifyFn(fn).replace(STRIP_COMMENTS, "");
-    const args = fnText.match(ARROW_ARG) || fnText.match(FN_ARGS);
-    return args;
-  }
-
-  function anonFn(fn) {
-    // For anonymous functions, showing at the very least the function signature can help in
-    // debugging.
-    const args = extractArgs(fn);
-    if (args) {
-      return `function(${(args[1] || "").replace(/[\s\r\n]+/, " ")})`;
-    }
-    return "fn";
-  }
-
-  function annotate(fn, strictDi, name) {
-    let $inject;
-    let argDecl;
-    let last;
-
-    if (typeof fn === "function") {
-      if (!($inject = fn.$inject)) {
-        $inject = [];
-        if (fn.length) {
-          if (strictDi) {
-            if (!isString(name) || !name) {
-              name = fn.name || anonFn(fn);
-            }
-            throw $injectorMinErr(
-              "strictdi",
-              "{0} is not using explicit annotation and cannot be invoked in strict mode",
-              name,
-            );
-          }
-          argDecl = extractArgs(fn);
-          forEach(argDecl[1].split(FN_ARG_SPLIT), (arg) => {
-            arg.replace(FN_ARG, (all, underscore, name) => {
-              $inject.push(name);
-            });
-          });
-        }
-        fn.$inject = $inject;
-      }
-    } else if (isArray(fn)) {
-      last = fn.length - 1;
-      assertArgFn(fn[last], "fn");
-      $inject = fn.slice(0, last);
-    } else {
-      assertArgFn(fn, "fn", true);
-    }
-    return $inject;
-  }
-
-  /// ////////////////////////////////////
-
-  /**
-   * @ngdoc service
-   * @name $injector
-   *
-   * @description
-   *
-   * `$injector` is used to retrieve object instances as defined by
-   * {@link auto.$provide provider}, instantiate types, invoke methods,
-   * and load modules.
-   *
-   * The following always holds true:
-   *
-   * ```js
-   *   let $injector = angular.injector();
-   *   expect($injector.get('$injector')).toBe($injector);
-   *   expect($injector.invoke(function($injector) {
-   *     return $injector;
-   *   })).toBe($injector);
-   * ```
-   *
-   * ## Injection Function Annotation
-   *
-   * JavaScript does not have annotations, and annotations are needed for dependency injection. The
-   * following are all valid ways of annotating function with injection arguments and are equivalent.
-   *
-   * ```js
-   *   // inferred (only works if code not minified/obfuscated)
-   *   $injector.invoke(function(serviceA){});
-   *
-   *   // annotated
-   *   function explicit(serviceA) {};
-   *   explicit.$inject = ['serviceA'];
-   *   $injector.invoke(explicit);
-   *
-   *   // inline
-   *   $injector.invoke(['serviceA', function(serviceA){}]);
-   * ```
-   *
-   * ### Inference
-   *
-   * In JavaScript calling `toString()` on a function returns the function definition. The definition
-   * can then be parsed and the function arguments can be extracted. This method of discovering
-   * annotations is disallowed when the injector is in strict mode.
-   * *NOTE:* This does not work with minification, and obfuscation tools since these tools change the
-   * argument names.
-   *
-   * ### `$inject` Annotation
-   * By adding an `$inject` property onto a function the injection parameters can be specified.
-   *
-   * ### Inline
-   * As an array of injection names, where the last item in the array is the function to call.
-   */
-
-  /**
-   * @ngdoc property
-   * @name $injector#modules
-   * @type {Object}
-   * @description
-   * A hash containing all the modules that have been loaded into the
-   * $injector.
-   *
-   * You can use this property to find out information about a module via the
-   * {@link angular.Module#info `myModule.info(...)`} method.
-   *
-   * For example:
-   *
-   * ```
-   * let info = $injector.modules['ngAnimate'].info();
-   * ```
-   *
-   * **Do not use this property to attempt to modify the modules after the application
-   * has been bootstrapped.**
-   */
-
-  /**
-   * @ngdoc method
-   * @name $injector#get
-   *
-   * @description
-   * Return an instance of the service.
-   *
-   * @param {string} name The name of the instance to retrieve.
-   * @param {string=} caller An optional string to provide the origin of the function call for error messages.
-   * @return {*} The instance.
-   */
-
-  /**
-   * @ngdoc method
-   * @name $injector#invoke
-   *
-   * @description
-   * Invoke the method and supply the method arguments from the `$injector`.
-   *
-   * @param {Function|Array.<string|Function>} fn The injectable function to invoke. Function parameters are
-   *   injected according to the {@link guide/di $inject Annotation} rules.
-   * @param {Object=} self The `this` for the invoked method.
-   * @param {Object=} locals Optional object. If preset then any argument names are read from this
-   *                         object first, before the `$injector` is consulted.
-   * @returns {*} the value returned by the invoked `fn` function.
-   */
-
-  /**
-   * @ngdoc method
-   * @name $injector#has
-   *
-   * @description
-   * Allows the user to query if the particular service exists.
-   *
-   * @param {string} name Name of the service to query.
-   * @returns {boolean} `true` if injector has given service.
-   */
-
-  /**
-   * @ngdoc method
-   * @name $injector#instantiate
-   * @description
-   * Create a new instance of JS type. The method takes a constructor function, invokes the new
-   * operator, and supplies all of the arguments to the constructor function as specified by the
-   * constructor annotation.
-   *
-   * @param {Function} Type Annotated constructor function.
-   * @param {Object=} locals Optional object. If preset then any argument names are read from this
-   * object first, before the `$injector` is consulted.
-   * @returns {Object} new instance of `Type`.
-   */
-
-  /**
-   * @ngdoc method
-   * @name $injector#annotate
-   *
-   * @description
-   * Returns an array of service names which the function is requesting for injection. This API is
-   * used by the injector to determine which services need to be injected into the function when the
-   * function is invoked. There are three ways in which the function can be annotated with the needed
-   * dependencies.
-   *
-   * #### Argument names
-   *
-   * The simplest form is to extract the dependencies from the arguments of the function. This is done
-   * by converting the function into a string using `toString()` method and extracting the argument
-   * names.
-   * ```js
-   *   // Given
-   *   function MyController($scope, $route) {
-   *     // ...
-   *   }
-   *
-   *   // Then
-   *   expect(injector.annotate(MyController)).toEqual(['$scope', '$route']);
-   * ```
-   *
-   * You can disallow this method by using strict injection mode.
-   *
-   * This method does not work with code minification / obfuscation. For this reason the following
-   * annotation strategies are supported.
-   *
-   * #### The `$inject` property
-   *
-   * If a function has an `$inject` property and its value is an array of strings, then the strings
-   * represent names of services to be injected into the function.
-   * ```js
-   *   // Given
-   *   let MyController = function(obfuscatedScope, obfuscatedRoute) {
-   *     // ...
-   *   }
-   *   // Define function dependencies
-   *   MyController['$inject'] = ['$scope', '$route'];
-   *
-   *   // Then
-   *   expect(injector.annotate(MyController)).toEqual(['$scope', '$route']);
-   * ```
-   *
-   * #### The array notation
-   *
-   * It is often desirable to inline Injected functions and that's when setting the `$inject` property
-   * is very inconvenient. In these situations using the array notation to specify the dependencies in
-   * a way that survives minification is a better choice:
-   *
-   * ```js
-   *   // We wish to write this (not minification / obfuscation safe)
-   *   injector.invoke(function($compile, $rootScope) {
-   *     // ...
-   *   });
-   *
-   *   // We are forced to write break inlining
-   *   let tmpFn = function(obfuscatedCompile, obfuscatedRootScope) {
-   *     // ...
-   *   };
-   *   tmpFn.$inject = ['$compile', '$rootScope'];
-   *   injector.invoke(tmpFn);
-   *
-   *   // To better support inline function the inline annotation is supported
-   *   injector.invoke(['$compile', '$rootScope', function(obfCompile, obfRootScope) {
-   *     // ...
-   *   }]);
-   *
-   *   // Therefore
-   *   expect(injector.annotate(
-   *      ['$compile', '$rootScope', function(obfus_$compile, obfus_$rootScope) {}])
-   *    ).toEqual(['$compile', '$rootScope']);
-   * ```
-   *
-   * @param {Function|Array.<string|Function>} fn Function for which dependent service names need to
-   * be retrieved as described above.
-   *
-   * @param {boolean=} [strictDi=false] Disallow argument name annotation inference.
-   *
-   * @returns {Array.<string>} The names of the services which the function requires.
-   */
-  /**
-   * @ngdoc method
-   * @name $injector#loadNewModules
-   *
-   * @description
-   *
-   * **This is a dangerous API, which you use at your own risk!**
-   *
-   * Add the specified modules to the current injector.
-   *
-   * This method will add each of the injectables to the injector and execute all of the config and run
-   * blocks for each module passed to the method.
-   *
-   * If a module has already been loaded into the injector then it will not be loaded again.
-   *
-   * * The application developer is responsible for loading the code containing the modules; and for
-   * ensuring that lazy scripts are not downloaded and executed more often that desired.
-   * * Previously compiled HTML will not be affected by newly loaded directives, filters and components.
-   * * Modules cannot be unloaded.
-   *
-   * You can use {@link $injector#modules `$injector.modules`} to check whether a module has been loaded
-   * into the injector, which may indicate whether the script has been executed already.
-   *
-   * @example
-   * Here is an example of loading a bundle of modules, with a utility method called `getScript`:
-   *
-   * ```javascript
-   * app.factory('loadModule', function($injector) {
-   *   return function loadModule(moduleName, bundleUrl) {
-   *     return getScript(bundleUrl).then(function() { $injector.loadNewModules([moduleName]); });
-   *   };
-   * })
-   * ```
-   *
-   * @param {Array<String|Function|Array>=} mods an array of modules to load into the application.
-   *     Each item in the array should be the name of a predefined module or a (DI annotated)
-   *     function that will be invoked by the injector as a `config` block.
-   *     See: {@link angular.module modules}
-   */
-
-  /**
-   * @ngdoc service
-   * @name $provide
-   *
-   * @description
-   *
-   * The {@link auto.$provide $provide} service has a number of methods for registering components
-   * with the {@link auto.$injector $injector}. Many of these functions are also exposed on
-   * {@link angular.Module}.
-   *
-   * An AngularJS **service** is a singleton object created by a **service factory**.  These **service
-   * factories** are functions which, in turn, are created by a **service provider**.
-   * The **service providers** are constructor functions. When instantiated they must contain a
-   * property called `$get`, which holds the **service factory** function.
-   *
-   * When you request a service, the {@link auto.$injector $injector} is responsible for finding the
-   * correct **service provider**, instantiating it and then calling its `$get` **service factory**
-   * function to get the instance of the **service**.
-   *
-   * Often services have no configuration options and there is no need to add methods to the service
-   * provider.  The provider will be no more than a constructor function with a `$get` property. For
-   * these cases the {@link auto.$provide $provide} service has additional helper methods to register
-   * services without specifying a provider.
-   *
-   * * {@link auto.$provide#provider provider(name, provider)} - registers a **service provider** with the
-   *     {@link auto.$injector $injector}
-   * * {@link auto.$provide#constant constant(name, obj)} - registers a value/object that can be accessed by
-   *     providers and services.
-   * * {@link auto.$provide#value value(name, obj)} - registers a value/object that can only be accessed by
-   *     services, not providers.
-   * * {@link auto.$provide#factory factory(name, fn)} - registers a service **factory function**
-   *     that will be wrapped in a **service provider** object, whose `$get` property will contain the
-   *     given factory function.
-   * * {@link auto.$provide#service service(name, Fn)} - registers a **constructor function**
-   *     that will be wrapped in a **service provider** object, whose `$get` property will instantiate
-   *      a new object using the given constructor function.
-   * * {@link auto.$provide#decorator decorator(name, decorFn)} - registers a **decorator function** that
-   *      will be able to modify or replace the implementation of another service.
-   *
-   * See the individual methods for more information and examples.
-   */
-
-  /**
-   * @ngdoc method
-   * @name $provide#provider
-   * @description
-   *
-   * Register a **provider function** with the {@link auto.$injector $injector}. Provider functions
-   * are constructor functions, whose instances are responsible for "providing" a factory for a
-   * service.
-   *
-   * Service provider names start with the name of the service they provide followed by `Provider`.
-   * For example, the {@link ng.$log $log} service has a provider called
-   * {@link ng.$logProvider $logProvider}.
-   *
-   * Service provider objects can have additional methods which allow configuration of the provider
-   * and its service. Importantly, you can configure what kind of service is created by the `$get`
-   * method, or how that service will act. For example, the {@link ng.$logProvider $logProvider} has a
-   * method {@link ng.$logProvider#debugEnabled debugEnabled}
-   * which lets you specify whether the {@link ng.$log $log} service will log debug messages to the
-   * console or not.
-   *
-   * It is possible to inject other providers into the provider function,
-   * but the injected provider must have been defined before the one that requires it.
-   *
-   * @param {string} name The name of the instance. NOTE: the provider will be available under `name +
-                          'Provider'` key.
-   * @param {(Object|function())} provider If the provider is:
-   *
-   *   - `Object`: then it should have a `$get` method. The `$get` method will be invoked using
-   *     {@link auto.$injector#invoke $injector.invoke()} when an instance needs to be created.
-   *   - `Constructor`: a new instance of the provider will be created using
-   *     {@link auto.$injector#instantiate $injector.instantiate()}, then treated as `object`.
-   *
-   * @returns {Object} registered provider instance
-
-   * @example
-   *
-   * The following example shows how to create a simple event tracking service and register it using
-   * {@link auto.$provide#provider $provide.provider()}.
-   *
-   * ```js
-   *  // Define the eventTracker provider
-   *  function EventTrackerProvider() {
-   *    let trackingUrl = '/track';
-   *
-   *    // A provider method for configuring where the tracked events should been saved
-   *    this.setTrackingUrl = function(url) {
-   *      trackingUrl = url;
-   *    };
-   *
-   *    // The service factory function
-   *    this.$get = ['$http', function($http) {
-   *      let trackedEvents = {};
-   *      return {
-   *        // Call this to track an event
-   *        event: function(event) {
-   *          let count = trackedEvents[event] || 0;
-   *          count += 1;
-   *          trackedEvents[event] = count;
-   *          return count;
-   *        },
-   *        // Call this to save the tracked events to the trackingUrl
-   *        save: function() {
-   *          $http.post(trackingUrl, trackedEvents);
-   *        }
-   *      };
-   *    }];
-   *  }
-   *
-   *  describe('eventTracker', function() {
-   *    let postSpy;
-   *
-   *    beforeEach(module(function($provide) {
-   *      // Register the eventTracker provider
-   *      $provide.provider('eventTracker', EventTrackerProvider);
-   *    }));
-   *
-   *    beforeEach(module(function(eventTrackerProvider) {
-   *      // Configure eventTracker provider
-   *      eventTrackerProvider.setTrackingUrl('/custom-track');
-   *    }));
-   *
-   *    it('tracks events', inject(function(eventTracker) {
-   *      expect(eventTracker.event('login')).toEqual(1);
-   *      expect(eventTracker.event('login')).toEqual(2);
-   *    }));
-   *
-   *    it('saves to the tracking url', inject(function(eventTracker, $http) {
-   *      postSpy = spyOn($http, 'post');
-   *      eventTracker.event('login');
-   *      eventTracker.save();
-   *      expect(postSpy).toHaveBeenCalled();
-   *      expect(postSpy.mostRecentCall.args[0]).not.toEqual('/track');
-   *      expect(postSpy.mostRecentCall.args[0]).toEqual('/custom-track');
-   *      expect(postSpy.mostRecentCall.args[1]).toEqual({ 'login': 1 });
-   *    }));
-   *  });
-   * ```
-   */
-
-  /**
-   * @ngdoc method
-   * @name $provide#factory
-   * @description
-   *
-   * Register a **service factory**, which will be called to return the service instance.
-   * This is short for registering a service where its provider consists of only a `$get` property,
-   * which is the given service factory function.
-   * You should use {@link auto.$provide#factory $provide.factory(getFn)} if you do not need to
-   * configure your service in a provider.
-   *
-   * @param {string} name The name of the instance.
-   * @param {Function|Array.<string|Function>} $getFn The injectable $getFn for the instance creation.
-   *                      Internally this is a short hand for `$provide.provider(name, {$get: $getFn})`.
-   * @returns {Object} registered provider instance
-   *
-   * @example
-   * Here is an example of registering a service
-   * ```js
-   *   $provide.factory('ping', ['$http', function($http) {
-   *     return function ping() {
-   *       return $http.send('/ping');
-   *     };
-   *   }]);
-   * ```
-   * You would then inject and use this service like this:
-   * ```js
-   *   someModule.controller('Ctrl', ['ping', function(ping) {
-   *     ping();
-   *   }]);
-   * ```
-   */
-
-  /**
-   * @ngdoc method
-   * @name $provide#service
-   * @description
-   *
-   * Register a **service constructor**, which will be invoked with `new` to create the service
-   * instance.
-   * This is short for registering a service where its provider's `$get` property is a factory
-   * function that returns an instance instantiated by the injector from the service constructor
-   * function.
-   *
-   * Internally it looks a bit like this:
-   *
-   * ```
-   * {
-   *   $get: function() {
-   *     return $injector.instantiate(constructor);
-   *   }
-   * }
-   * ```
-   *
-   *
-   * You should use {@link auto.$provide#service $provide.service(class)} if you define your service
-   * as a type/class.
-   *
-   * @param {string} name The name of the instance.
-   * @param {Function|Array.<string|Function>} constructor An injectable class (constructor function)
-   *     that will be instantiated.
-   * @returns {Object} registered provider instance
-   *
-   * @example
-   * Here is an example of registering a service using
-   * {@link auto.$provide#service $provide.service(class)}.
-   * ```js
-   *   let Ping = function($http) {
-   *     this.$http = $http;
-   *   };
-   *
-   *   Ping.$inject = ['$http'];
-   *
-   *   Ping.prototype.send = function() {
-   *     return this.$http.get('/ping');
-   *   };
-   *   $provide.service('ping', Ping);
-   * ```
-   * You would then inject and use this service like this:
-   * ```js
-   *   someModule.controller('Ctrl', ['ping', function(ping) {
-   *     ping.send();
-   *   }]);
-   * ```
-   */
-
-  /**
-   * @ngdoc method
-   * @name $provide#value
-   * @description
-   *
-   * Register a **value service** with the {@link auto.$injector $injector}, such as a string, a
-   * number, an array, an object or a function. This is short for registering a service where its
-   * provider's `$get` property is a factory function that takes no arguments and returns the **value
-   * service**. That also means it is not possible to inject other services into a value service.
-   *
-   * Value services are similar to constant services, except that they cannot be injected into a
-   * module configuration function (see {@link angular.Module#config}) but they can be overridden by
-   * an AngularJS {@link auto.$provide#decorator decorator}.
-   *
-   * @param {string} name The name of the instance.
-   * @param {*} value The value.
-   * @returns {Object} registered provider instance
-   *
-   * @example
-   * Here are some examples of creating value services.
-   * ```js
-   *   $provide.value('ADMIN_USER', 'admin');
-   *
-   *   $provide.value('RoleLookup', { admin: 0, writer: 1, reader: 2 });
-   *
-   *   $provide.value('halfOf', function(value) {
-   *     return value / 2;
-   *   });
-   * ```
-   */
-
-  /**
-   * @ngdoc method
-   * @name $provide#constant
-   * @description
-   *
-   * Register a **constant service** with the {@link auto.$injector $injector}, such as a string,
-   * a number, an array, an object or a function. Like the {@link auto.$provide#value value}, it is not
-   * possible to inject other services into a constant.
-   *
-   * But unlike {@link auto.$provide#value value}, a constant can be
-   * injected into a module configuration function (see {@link angular.Module#config}) and it cannot
-   * be overridden by an AngularJS {@link auto.$provide#decorator decorator}.
-   *
-   * @param {string} name The name of the constant.
-   * @param {*} value The constant value.
-   * @returns {Object} registered instance
-   *
-   * @example
-   * Here a some examples of creating constants:
-   * ```js
-   *   $provide.constant('SHARD_HEIGHT', 306);
-   *
-   *   $provide.constant('MY_COLOURS', ['red', 'blue', 'grey']);
-   *
-   *   $provide.constant('double', function(value) {
-   *     return value * 2;
-   *   });
-   * ```
-   */
-
-  /**
-   * @ngdoc method
-   * @name $provide#decorator
-   * @description
-   *
-   * Register a **decorator function** with the {@link auto.$injector $injector}. A decorator function
-   * intercepts the creation of a service, allowing it to override or modify the behavior of the
-   * service. The return value of the decorator function may be the original service, or a new service
-   * that replaces (or wraps and delegates to) the original service.
-   *
-   * You can find out more about using decorators in the {@link guide/decorators} guide.
-   *
-   * @param {string} name The name of the service to decorate.
-   * @param {Function|Array.<string|Function>} decorator This function will be invoked when the service needs to be
-   *    provided and should return the decorated service instance. The function is called using
-   *    the {@link auto.$injector#invoke injector.invoke} method and is therefore fully injectable.
-   *    Local injection arguments:
-   *
-   *    * `$delegate` - The original service instance, which can be replaced, monkey patched, configured,
-   *      decorated or delegated to.
-   *
-   * @example
-   * Here we decorate the {@link ng.$log $log} service to convert warnings to errors by intercepting
-   * calls to {@link ng.$log#error $log.warn()}.
-   * ```js
-   *   $provide.decorator('$log', ['$delegate', function($delegate) {
-   *     $delegate.warn = $delegate.error;
-   *     return $delegate;
-   *   }]);
-   * ```
-   */
-
-  function createInjector(modulesToLoad, strictDi) {
-    strictDi = strictDi === true;
-    const INSTANTIATING = {};
-    const providerSuffix = "Provider";
-    const path = [];
-    const loadedModules = new NgMap();
-    const providerCache = {
-      $provide: {
-        provider: supportObject(provider),
-        factory: supportObject(factory),
-        service: supportObject(service),
-        value: supportObject(value),
-        constant: supportObject(constant),
-        decorator,
-      },
-    };
-    const providerInjector = (providerCache.$injector = createInternalInjector(
-      providerCache,
-      (serviceName, caller) => {
-        if (angular.isString(caller)) {
-          path.push(caller);
-        }
-        throw $injectorMinErr("unpr", "Unknown provider: {0}", path.join(" <- "));
-      },
-    ));
-    const instanceCache = {};
-    const protoInstanceInjector = createInternalInjector(
-      instanceCache,
-      (serviceName, caller) => {
-        const provider = providerInjector.get(
-          serviceName + providerSuffix,
-          caller,
-        );
-        return instanceInjector.invoke(
-          provider.$get,
-          provider,
-          undefined,
-          serviceName,
-        );
-      },
-    );
-    let instanceInjector = protoInstanceInjector;
-
-    providerCache[`$injector${providerSuffix}`] = {
-      $get: valueFn(protoInstanceInjector),
-    };
-    instanceInjector.modules = providerInjector.modules = createMap();
-    const runBlocks = loadModules(modulesToLoad);
-    instanceInjector = protoInstanceInjector.get("$injector");
-    instanceInjector.strictDi = strictDi;
-    forEach(runBlocks, (fn) => {
-      if (fn) instanceInjector.invoke(fn);
-    });
-
-    instanceInjector.loadNewModules = function (mods) {
-      forEach(loadModules(mods), (fn) => {
-        if (fn) instanceInjector.invoke(fn);
-      });
-    };
-
-    return instanceInjector;
-
-    /// /////////////////////////////////
-    // $provider
-    /// /////////////////////////////////
-
-    function supportObject(delegate) {
-      return function (key, value) {
-        if (isObject(key)) {
-          forEach(key, reverseParams(delegate));
-        } else {
-          return delegate(key, value);
-        }
-      };
-    }
-
-    function provider(name, provider_) {
-      assertNotHasOwnProperty(name, "service");
-      if (isFunction(provider_) || isArray(provider_)) {
-        provider_ = providerInjector.instantiate(provider_);
-      }
-      if (!provider_.$get) {
-        throw $injectorMinErr(
-          "pget",
-          "Provider '{0}' must define $get factory method.",
-          name,
-        );
-      }
-      return (providerCache[name + providerSuffix] = provider_);
-    }
-
-    function enforceReturnValue(name, factory) {
-      return /** @this */ function enforcedReturnValue() {
-        const result = instanceInjector.invoke(factory, this);
-        if (isUndefined(result)) {
-          throw $injectorMinErr(
-            "undef",
-            "Provider '{0}' must return a value from $get factory method.",
-            name,
-          );
-        }
-        return result;
-      };
-    }
-
-    function factory(name, factoryFn, enforce) {
-      return provider(name, {
-        $get: enforce !== false ? enforceReturnValue(name, factoryFn) : factoryFn,
-      });
-    }
-
-    function service(name, constructor) {
-      return factory(name, [
-        "$injector",
-        function ($injector) {
-          return $injector.instantiate(constructor);
-        },
-      ]);
-    }
-
-    function value(name, val) {
-      return factory(name, valueFn(val), false);
-    }
-
-    function constant(name, value) {
-      assertNotHasOwnProperty(name, "constant");
-      providerCache[name] = value;
-      instanceCache[name] = value;
-    }
-
-    function decorator(serviceName, decorFn) {
-      const origProvider = providerInjector.get(serviceName + providerSuffix);
-      const orig$get = origProvider.$get;
-
-      origProvider.$get = function () {
-        const origInstance = instanceInjector.invoke(orig$get, origProvider);
-        return instanceInjector.invoke(decorFn, null, {
-          $delegate: origInstance,
-        });
-      };
-    }
-
-    /// /////////////////////////////////
-    // Module Loading
-    /// /////////////////////////////////
-    function loadModules(modulesToLoad) {
-      assertArg(
-        isUndefined(modulesToLoad) || isArray(modulesToLoad),
-        "modulesToLoad",
-        "not an array",
-      );
-      let runBlocks = [];
-      let moduleFn;
-      forEach(modulesToLoad, (module) => {
-        if (loadedModules.get(module)) return;
-        loadedModules.set(module, true);
-
-        function runInvokeQueue(queue) {
-          let i;
-          let ii;
-          for (i = 0, ii = queue.length; i < ii; i++) {
-            const invokeArgs = queue[i];
-            const provider = providerInjector.get(invokeArgs[0]);
-
-            provider[invokeArgs[1]].apply(provider, invokeArgs[2]);
-          }
-        }
-
-        try {
-          if (isString(module)) {
-            moduleFn = angularModule(module);
-            instanceInjector.modules[module] = moduleFn;
-            runBlocks = runBlocks
-              .concat(loadModules(moduleFn.requires))
-              .concat(moduleFn._runBlocks);
-            runInvokeQueue(moduleFn._invokeQueue);
-            runInvokeQueue(moduleFn._configBlocks);
-          } else if (isFunction(module)) {
-            runBlocks.push(providerInjector.invoke(module));
-          } else if (isArray(module)) {
-            runBlocks.push(providerInjector.invoke(module));
-          } else {
-            assertArgFn(module, "module");
-          }
-        } catch (e) {
-          if (isArray(module)) {
-            module = module[module.length - 1];
-          }
-          if (e.message && e.stack && e.stack.indexOf(e.message) === -1) {
-            // Safari & FF's stack traces don't contain error.message content
-            // unlike those of Chrome and IE
-            // So if stack doesn't contain message, we create a new string that contains both.
-            // Since error.stack is read-only in Safari, I'm overriding e and not e.stack here.
-            // eslint-disable-next-line no-ex-assign
-            e = `${e.message}\n${e.stack}`;
-          }
-          throw $injectorMinErr(
-            "modulerr",
-            "Failed to instantiate module {0} due to:\n{1}",
-            module,
-            e.stack || e.message || e,
-          );
-        }
-      });
-      return runBlocks;
-    }
-
-    /// /////////////////////////////////
-    // internal Injector
-    /// /////////////////////////////////
-
-    function createInternalInjector(cache, factory) {
-      function getService(serviceName, caller) {
-        if (cache.hasOwnProperty(serviceName)) {
-          if (cache[serviceName] === INSTANTIATING) {
-            throw $injectorMinErr(
-              "cdep",
-              "Circular dependency found: {0}",
-              `${serviceName} <- ${path.join(" <- ")}`,
-            );
-          }
-          return cache[serviceName];
-        }
-        try {
-          path.unshift(serviceName);
-          cache[serviceName] = INSTANTIATING;
-          cache[serviceName] = factory(serviceName, caller);
-          return cache[serviceName];
-        } catch (err) {
-          if (cache[serviceName] === INSTANTIATING) {
-            delete cache[serviceName];
-          }
-          throw err;
-        } finally {
-          path.shift();
-        }
-      }
-
-      function injectionArgs(fn, locals, serviceName) {
-        const args = [];
-        const $inject = createInjector.$$annotate(fn, strictDi, serviceName);
-
-        for (let i = 0, { length } = $inject; i < length; i++) {
-          const key = $inject[i];
-          if (typeof key !== "string") {
-            throw $injectorMinErr(
-              "itkn",
-              "Incorrect injection token! Expected service name as string, got {0}",
-              key,
-            );
-          }
-          args.push(
-            locals && locals.hasOwnProperty(key)
-              ? locals[key]
-              : getService(key, serviceName),
-          );
-        }
-        return args;
-      }
-
-      function isClass(func) {
-        let result = func.$$ngIsClass;
-        if (!isBoolean(result)) {
-          result = func.$$ngIsClass = /^class\b/.test(stringifyFn(func));
-        }
-        return result;
-      }
-
-      function invoke(fn, self, locals, serviceName) {
-        if (typeof locals === "string") {
-          serviceName = locals;
-          locals = null;
-        }
-
-        const args = injectionArgs(fn, locals, serviceName);
-        if (isArray(fn)) {
-          fn = fn[fn.length - 1];
-        }
-
-        if (!isClass(fn)) {
-          // http://jsperf.com/angularjs-invoke-apply-vs-switch
-          // #5388
-          return fn.apply(self, args);
-        }
-        args.unshift(null);
-        return new (Function.prototype.bind.apply(fn, args))();
-      }
-
-      function instantiate(Type, locals, serviceName) {
-        // Check if Type is annotated and use just the given function at n-1 as parameter
-        // e.g. someModule.factory('greeter', ['$window', function(renamed$window) {}]);
-        const ctor = isArray(Type) ? Type[Type.length - 1] : Type;
-        const args = injectionArgs(Type, locals, serviceName);
-        // Empty object at position 0 is ignored for invocation with `new`, but required.
-        args.unshift(null);
-        return new (Function.prototype.bind.apply(ctor, args))();
-      }
-
-      return {
-        invoke,
-        instantiate,
-        get: getService,
-        annotate: createInjector.$$annotate,
-        has(name) {
-          return (
-            providerCache.hasOwnProperty(name + providerSuffix) ||
-            cache.hasOwnProperty(name)
-          );
-        },
-      };
-    }
-  }
-
-  createInjector.$$annotate = annotate;
-
-  /**
    * @ngdoc type
    * @name angular.Module
    * @module ng
@@ -8583,8 +7326,23 @@
     const $injectorMinErr = minErr$1("$injector");
     const ngMinErr = minErr$1("ng");
 
+    /**
+     * 
+     * @param {string} name 
+     * @param {string} context 
+     */
+    function assertNotHasOwnProperty(name, context) {
+      if (name === "hasOwnProperty") {
+        throw ngMinErr(
+          "badname",
+          "hasOwnProperty is not a valid {0} name",
+          context,
+        );
+      }
+    }
+
     function ensure(obj, name, factory) {
-      // eslint-disable-next-line no-return-assign
+      // eslint-disable-next-line no-return-assign, no-param-reassign
       return obj[name] || (obj[name] = factory());
     }
 
@@ -8594,7 +7352,7 @@
     angular.$$minErr = angular.$$minErr || minErr$1;
 
     return ensure(angular, "module", () => {
-      /** @type {Object.<string, angular.Module>} */
+      /** @type {Object.<string, angular.IModule>} */
       const modules = {};
 
       /**
@@ -8646,20 +7404,11 @@
        *        unspecified then the module is being retrieved for further configuration.
        * @param {Function=} configFn Optional configuration function for the module. Same as
        *        {@link angular.Module#config Module#config()}.
-       * @returns {angular.Module} new module with the {@link angular.Module} api.
+       * @returns {angular.IModule} new module with the {@link angular.Module} api.
        */
       return function module(name, requires, configFn) {
         let info = {};
 
-        function assertNotHasOwnProperty(name, context) {
-          if (name === "hasOwnProperty") {
-            throw ngMinErr(
-              "badname",
-              "hasOwnProperty is not a valid {0} name",
-              context,
-            );
-          }
-        }
         assertNotHasOwnProperty(name, "module");
         if (requires && modules.hasOwnProperty(name)) {
           modules[name] = null;
@@ -8687,9 +7436,11 @@
           // eslint-disable-next-line no-use-before-define
           const config = invokeLater("$injector", "invoke", "push", configBlocks);
 
-          /** @type {angular.Module} */
+          /** @type {angular.IModule} */
           const moduleInstance = {
             // Private state
+            
+            // @ts-ignore
             _invokeQueue: invokeQueue,
             _configBlocks: configBlocks,
             _runBlocks: runBlocks,
@@ -8699,8 +7450,8 @@
              * @name angular.Module#info
              * @module ng
              *
-             * @param {Object=} info Information about the module
-             * @returns {Object|Module} The current info object for this module if called as a getter,
+             * @param {Object=} value Information about the module
+             * @returns {Object|angular.IModule} The current info object for this module if called as a getter,
              *                          or `this` if called as a setter.
              *
              * @description
@@ -9047,27 +7798,790 @@
     };
   }
 
-  /* global VALID_CLASS: true,
-    INVALID_CLASS: true,
-    PRISTINE_CLASS: true,
-    DIRTY_CLASS: true,
-    UNTOUCHED_CLASS: true,
-    TOUCHED_CLASS: true,
-    PENDING_CLASS: true,
-    addSetValidityMethod: true,
-    setupValidity: true,
-    defaultModelOptions: false
-  */
+  /* eslint-disable no-use-before-define */
 
-  const VALID_CLASS$1 = "ng-valid";
-  const PRISTINE_CLASS$1 = "ng-pristine";
-  const DIRTY_CLASS$1 = "ng-dirty";
+
+  /* global -nullFormCtrl, -PENDING_CLASS, -SUBMITTED_CLASS
+   */
+  const nullFormCtrl$1 = {
+    $addControl: () => {},
+    $getControls: valueFn$1([]),
+    $$renameControl: nullFormRenameControl,
+    $removeControl: () => {},
+    $setValidity: () => {},
+    $setDirty: () => {},
+    $setPristine: () => {},
+    $setSubmitted: () => {},
+    $$setSubmitted: () => {},
+  };
+  const PENDING_CLASS = "ng-pending";
+  const SUBMITTED_CLASS = "ng-submitted";
+
+  function nullFormRenameControl(control, name) {
+    control.$name = name;
+  }
+
+  /**
+   * @ngdoc type
+   * @name form.FormController
+   *
+   * @property {boolean} $pristine True if user has not interacted with the form yet.
+   * @property {boolean} $dirty True if user has already interacted with the form.
+   * @property {boolean} $valid True if all of the containing forms and controls are valid.
+   * @property {boolean} $invalid True if at least one containing control or form is invalid.
+   * @property {boolean} $submitted True if user has submitted the form even if its invalid.
+   *
+   * @property {Object} $pending An object hash, containing references to controls or forms with
+   *  pending validators, where:
+   *
+   *  - keys are validations tokens (error names).
+   *  - values are arrays of controls or forms that have a pending validator for the given error name.
+   *
+   * See {@link form.FormController#$error $error} for a list of built-in validation tokens.
+   *
+   * @property {Object} $error An object hash, containing references to controls or forms with failing
+   *  validators, where:
+   *
+   *  - keys are validation tokens (error names),
+   *  - values are arrays of controls or forms that have a failing validator for the given error name.
+   *
+   *  Built-in validation tokens:
+   *  - `email`
+   *  - `max`
+   *  - `maxlength`
+   *  - `min`
+   *  - `minlength`
+   *  - `number`
+   *  - `pattern`
+   *  - `required`
+   *  - `url`
+   *  - `date`
+   *  - `datetimelocal`
+   *  - `time`
+   *  - `week`
+   *  - `month`
+   *
+   * @description
+   * `FormController` keeps track of all its controls and nested forms as well as the state of them,
+   * such as being valid/invalid or dirty/pristine.
+   *
+   * Each {@link ng.directive:form form} directive creates an instance
+   * of `FormController`.
+   *
+   */
+  // asks for $scope to fool the BC controller module
+  FormController.$inject = [
+    "$element",
+    "$attrs",
+    "$scope",
+    "$animate",
+    "$interpolate",
+  ];
+  function FormController($element, $attrs, $scope, $animate, $interpolate) {
+    this.$$controls = [];
+
+    // init state
+    this.$error = {};
+    this.$$success = {};
+    this.$pending = undefined;
+    this.$name = $interpolate($attrs.name || $attrs.ngForm || "")($scope);
+    this.$dirty = false;
+    this.$pristine = true;
+    this.$valid = true;
+    this.$invalid = false;
+    this.$submitted = false;
+    this.$$parentForm = nullFormCtrl$1;
+
+    this.$$element = $element;
+    this.$$animate = $animate;
+
+    setupValidity$1(this);
+  }
+
+  FormController.prototype = {
+    /**
+     * @ngdoc method
+     * @name form.FormController#$rollbackViewValue
+     *
+     * @description
+     * Rollback all form controls pending updates to the `$modelValue`.
+     *
+     * Updates may be pending by a debounced event or because the input is waiting for a some future
+     * event defined in `ng-model-options`. This method is typically needed by the reset button of
+     * a form that uses `ng-model-options` to pend updates.
+     */
+    $rollbackViewValue() {
+      forEach$1(this.$$controls, (control) => {
+        control.$rollbackViewValue();
+      });
+    },
+
+    /**
+     * @ngdoc method
+     * @name form.FormController#$commitViewValue
+     *
+     * @description
+     * Commit all form controls pending updates to the `$modelValue`.
+     *
+     * Updates may be pending by a debounced event or because the input is waiting for a some future
+     * event defined in `ng-model-options`. This method is rarely needed as `NgModelController`
+     * usually handles calling this in response to input events.
+     */
+    $commitViewValue() {
+      forEach$1(this.$$controls, (control) => {
+        control.$commitViewValue();
+      });
+    },
+
+    /**
+     * @ngdoc method
+     * @name form.FormController#$addControl
+     * @param {object} control control object, either a {@link form.FormController} or an
+     * {@link ngModel.NgModelController}
+     *
+     * @description
+     * Register a control with the form. Input elements using ngModelController do this automatically
+     * when they are linked.
+     *
+     * Note that the current state of the control will not be reflected on the new parent form. This
+     * is not an issue with normal use, as freshly compiled and linked controls are in a `$pristine`
+     * state.
+     *
+     * However, if the method is used programmatically, for example by adding dynamically created controls,
+     * or controls that have been previously removed without destroying their corresponding DOM element,
+     * it's the developers responsibility to make sure the current state propagates to the parent form.
+     *
+     * For example, if an input control is added that is already `$dirty` and has `$error` properties,
+     * calling `$setDirty()` and `$validate()` afterwards will propagate the state to the parent form.
+     */
+    $addControl(control) {
+      // Breaking change - before, inputs whose name was "hasOwnProperty" were quietly ignored
+      // and not added to the scope.  Now we throw an error.
+      assertNotHasOwnProperty$1(control.$name);
+      this.$$controls.push(control);
+
+      if (control.$name) {
+        this[control.$name] = control;
+      }
+
+      control.$$parentForm = this;
+    },
+
+    /**
+     * @ngdoc method
+     * @name form.FormController#$getControls
+     * @returns {Array} the controls that are currently part of this form
+     *
+     * @description
+     * This method returns a **shallow copy** of the controls that are currently part of this form.
+     * The controls can be instances of {@link form.FormController `FormController`}
+     * ({@link ngForm "child-forms"}) and of {@link ngModel.NgModelController `NgModelController`}.
+     * If you need access to the controls of child-forms, you have to call `$getControls()`
+     * recursively on them.
+     * This can be used for example to iterate over all controls to validate them.
+     *
+     * The controls can be accessed normally, but adding to, or removing controls from the array has
+     * no effect on the form. Instead, use {@link form.FormController#$addControl `$addControl()`} and
+     * {@link form.FormController#$removeControl `$removeControl()`} for this use-case.
+     * Likewise, adding a control to, or removing a control from the form is not reflected
+     * in the shallow copy. That means you should get a fresh copy from `$getControls()` every time
+     * you need access to the controls.
+     */
+    $getControls() {
+      return shallowCopy$1(this.$$controls);
+    },
+
+    // Private API: rename a form control
+    $$renameControl(control, newName) {
+      const oldName = control.$name;
+
+      if (this[oldName] === control) {
+        delete this[oldName];
+      }
+      this[newName] = control;
+      control.$name = newName;
+    },
+
+    /**
+     * @ngdoc method
+     * @name form.FormController#$removeControl
+     * @param {object} control control object, either a {@link form.FormController} or an
+     * {@link ngModel.NgModelController}
+     *
+     * @description
+     * Deregister a control from the form.
+     *
+     * Input elements using ngModelController do this automatically when they are destroyed.
+     *
+     * Note that only the removed control's validation state (`$errors`etc.) will be removed from the
+     * form. `$dirty`, `$submitted` states will not be changed, because the expected behavior can be
+     * different from case to case. For example, removing the only `$dirty` control from a form may or
+     * may not mean that the form is still `$dirty`.
+     */
+    $removeControl(control) {
+      if (control.$name && this[control.$name] === control) {
+        delete this[control.$name];
+      }
+      forEach$1(
+        this.$pending,
+        function (value, name) {
+          // eslint-disable-next-line no-invalid-this
+          this.$setValidity(name, null, control);
+        },
+        this,
+      );
+      forEach$1(
+        this.$error,
+        function (value, name) {
+          // eslint-disable-next-line no-invalid-this
+          this.$setValidity(name, null, control);
+        },
+        this,
+      );
+      forEach$1(
+        this.$$success,
+        function (value, name) {
+          // eslint-disable-next-line no-invalid-this
+          this.$setValidity(name, null, control);
+        },
+        this,
+      );
+
+      arrayRemove$1(this.$$controls, control);
+      control.$$parentForm = nullFormCtrl$1;
+    },
+
+    /**
+     * @ngdoc method
+     * @name form.FormController#$setDirty
+     *
+     * @description
+     * Sets the form to a dirty state.
+     *
+     * This method can be called to add the 'ng-dirty' class and set the form to a dirty
+     * state (ng-dirty class). This method will also propagate to parent forms.
+     */
+    $setDirty() {
+      this.$$animate.removeClass(this.$$element, PRISTINE_CLASS);
+      this.$$animate.addClass(this.$$element, DIRTY_CLASS);
+      this.$dirty = true;
+      this.$pristine = false;
+      this.$$parentForm.$setDirty();
+    },
+
+    /**
+     * @ngdoc method
+     * @name form.FormController#$setPristine
+     *
+     * @description
+     * Sets the form to its pristine state.
+     *
+     * This method sets the form's `$pristine` state to true, the `$dirty` state to false, removes
+     * the `ng-dirty` class and adds the `ng-pristine` class. Additionally, it sets the `$submitted`
+     * state to false.
+     *
+     * This method will also propagate to all the controls contained in this form.
+     *
+     * Setting a form back to a pristine state is often useful when we want to 'reuse' a form after
+     * saving or resetting it.
+     */
+    $setPristine() {
+      this.$$animate.setClass(
+        this.$$element,
+        PRISTINE_CLASS,
+        `${DIRTY_CLASS} ${SUBMITTED_CLASS}`,
+      );
+      this.$dirty = false;
+      this.$pristine = true;
+      this.$submitted = false;
+      forEach$1(this.$$controls, (control) => {
+        control.$setPristine();
+      });
+    },
+
+    /**
+     * @ngdoc method
+     * @name form.FormController#$setUntouched
+     *
+     * @description
+     * Sets the form to its untouched state.
+     *
+     * This method can be called to remove the 'ng-touched' class and set the form controls to their
+     * untouched state (ng-untouched class).
+     *
+     * Setting a form controls back to their untouched state is often useful when setting the form
+     * back to its pristine state.
+     */
+    $setUntouched() {
+      forEach$1(this.$$controls, (control) => {
+        control.$setUntouched();
+      });
+    },
+
+    /**
+     * @ngdoc method
+     * @name form.FormController#$setSubmitted
+     *
+     * @description
+     * Sets the form to its `$submitted` state. This will also set `$submitted` on all child and
+     * parent forms of the form.
+     */
+    $setSubmitted() {
+      let rootForm = this;
+      while (rootForm.$$parentForm && rootForm.$$parentForm !== nullFormCtrl$1) {
+        rootForm = rootForm.$$parentForm;
+      }
+      rootForm.$$setSubmitted();
+    },
+
+    $$setSubmitted() {
+      this.$$animate.addClass(this.$$element, SUBMITTED_CLASS);
+      this.$submitted = true;
+      forEach$1(this.$$controls, (control) => {
+        if (control.$$setSubmitted) {
+          control.$$setSubmitted();
+        }
+      });
+    },
+  };
+
+  /**
+   * @ngdoc method
+   * @name form.FormController#$setValidity
+   *
+   * @description
+   * Change the validity state of the form, and notify the parent form (if any).
+   *
+   * Application developers will rarely need to call this method directly. It is used internally, by
+   * {@link ngModel.NgModelController#$setValidity NgModelController.$setValidity()}, to propagate a
+   * control's validity state to the parent `FormController`.
+   *
+   * @param {string} validationErrorKey Name of the validator. The `validationErrorKey` will be
+   *        assigned to either `$error[validationErrorKey]` or `$pending[validationErrorKey]` (for
+   *        unfulfilled `$asyncValidators`), so that it is available for data-binding. The
+   *        `validationErrorKey` should be in camelCase and will get converted into dash-case for
+   *        class name. Example: `myError` will result in `ng-valid-my-error` and
+   *        `ng-invalid-my-error` classes and can be bound to as `{{ someForm.$error.myError }}`.
+   * @param {boolean} isValid Whether the current state is valid (true), invalid (false), pending
+   *        (undefined),  or skipped (null). Pending is used for unfulfilled `$asyncValidators`.
+   *        Skipped is used by AngularJS when validators do not run because of parse errors and when
+   *        `$asyncValidators` do not run because any of the `$validators` failed.
+   * @param {NgModelController | FormController} controller - The controller whose validity state is
+   *        triggering the change.
+   */
+  addSetValidityMethod({
+    clazz: FormController,
+    set(object, property, controller) {
+      const list = object[property];
+      if (!list) {
+        object[property] = [controller];
+      } else {
+        const index = list.indexOf(controller);
+        if (index === -1) {
+          list.push(controller);
+        }
+      }
+    },
+    unset(object, property, controller) {
+      const list = object[property];
+      if (!list) {
+        return;
+      }
+      arrayRemove$1(list, controller);
+      if (list.length === 0) {
+        delete object[property];
+      }
+    },
+  });
+
+  /**
+   * @ngdoc directive
+   * @name ngForm
+   * @restrict EAC
+   *
+   * @description
+   * Helper directive that makes it possible to create control groups inside a
+   * {@link ng.directive:form `form`} directive.
+   * These "child forms" can be used, for example, to determine the validity of a sub-group of
+   * controls.
+   *
+   * <div class="alert alert-danger">
+   * **Note**: `ngForm` cannot be used as a replacement for `<form>`, because it lacks its
+   * [built-in HTML functionality](https://html.spec.whatwg.org/#the-form-element).
+   * Specifically, you cannot submit `ngForm` like a `<form>` tag. That means,
+   * you cannot send data to the server with `ngForm`, or integrate it with
+   * {@link ng.directive:ngSubmit `ngSubmit`}.
+   * </div>
+   *
+   * @param {string=} ngForm|name Name of the form. If specified, the form controller will
+   *                              be published into the related scope, under this name.
+   *
+   */
+
+  /**
+   * @ngdoc directive
+   * @name form
+   * @restrict E
+   *
+   * @description
+   * Directive that instantiates
+   * {@link form.FormController FormController}.
+   *
+   * If the `name` attribute is specified, the form controller is published onto the current scope under
+   * this name.
+   *
+   * ## Alias: {@link ng.directive:ngForm `ngForm`}
+   *
+   * In AngularJS, forms can be nested. This means that the outer form is valid when all of the child
+   * forms are valid as well. However, browsers do not allow nesting of `<form>` elements, so
+   * AngularJS provides the {@link ng.directive:ngForm `ngForm`} directive, which behaves identically to
+   * `form` but can be nested. Nested forms can be useful, for example, if the validity of a sub-group
+   * of controls needs to be determined.
+   *
+   * ## CSS classes
+   *  - `ng-valid` is set if the form is valid.
+   *  - `ng-invalid` is set if the form is invalid.
+   *  - `ng-pending` is set if the form is pending.
+   *  - `ng-pristine` is set if the form is pristine.
+   *  - `ng-dirty` is set if the form is dirty.
+   *  - `ng-submitted` is set if the form was submitted.
+   *
+   * Keep in mind that ngAnimate can detect each of these classes when added and removed.
+   *
+   *
+   * ## Submitting a form and preventing the default action
+   *
+   * Since the role of forms in client-side AngularJS applications is different than in classical
+   * roundtrip apps, it is desirable for the browser not to translate the form submission into a full
+   * page reload that sends the data to the server. Instead some javascript logic should be triggered
+   * to handle the form submission in an application-specific way.
+   *
+   * For this reason, AngularJS prevents the default action (form submission to the server) unless the
+   * `<form>` element has an `action` attribute specified.
+   *
+   * You can use one of the following two ways to specify what javascript method should be called when
+   * a form is submitted:
+   *
+   * - {@link ng.directive:ngSubmit ngSubmit} directive on the form element
+   * - {@link ng.directive:ngClick ngClick} directive on the first
+    *  button or input field of type submit (input[type=submit])
+   *
+   * To prevent double execution of the handler, use only one of the {@link ng.directive:ngSubmit ngSubmit}
+   * or {@link ng.directive:ngClick ngClick} directives.
+   * This is because of the following form submission rules in the HTML specification:
+   *
+   * - If a form has only one input field then hitting enter in this field triggers form submit
+   * (`ngSubmit`)
+   * - if a form has 2+ input fields and no buttons or input[type=submit] then hitting enter
+   * doesn't trigger submit
+   * - if a form has one or more input fields and one or more buttons or input[type=submit] then
+   * hitting enter in any of the input fields will trigger the click handler on the *first* button or
+   * input[type=submit] (`ngClick`) *and* a submit handler on the enclosing form (`ngSubmit`)
+   *
+   * Any pending `ngModelOptions` changes will take place immediately when an enclosing form is
+   * submitted. Note that `ngClick` events will occur before the model is updated. Use `ngSubmit`
+   * to have access to the updated model.
+   *
+   * @animations
+   * Animations in ngForm are triggered when any of the associated CSS classes are added and removed.
+   * These classes are: `.ng-pristine`, `.ng-dirty`, `.ng-invalid` and `.ng-valid` as well as any
+   * other validations that are performed within the form. Animations in ngForm are similar to how
+   * they work in ngClass and animations can be hooked into using CSS transitions, keyframes as well
+   * as JS animations.
+   *
+   * The following example shows a simple way to utilize CSS transitions to style a form element
+   * that has been rendered as invalid after it has been validated:
+   *
+   * <pre>
+   * //be sure to include ngAnimate as a module to hook into more
+   * //advanced animations
+   * .my-form {
+   *   transition:0.5s linear all;
+   *   background: white;
+   * }
+   * .my-form.ng-invalid {
+   *   background: red;
+   *   color:white;
+   * }
+   * </pre>
+   *
+   * @example
+      <example name="ng-form" deps="angular-animate.js" animations="true" fixBase="true" module="formExample">
+        <file name="index.html">
+         <script>
+           angular.module('formExample', [])
+             .controller('FormController', ['$scope', function($scope) {
+               $scope.userType = 'guest';
+             }]);
+         </script>
+         <style>
+          .my-form {
+            transition:all linear 0.5s;
+            background: transparent;
+          }
+          .my-form.ng-invalid {
+            background: red;
+          }
+         </style>
+         <form name="myForm" ng-controller="FormController" class="my-form">
+           userType: <input name="input" ng-model="userType" required>
+           <span class="error" ng-show="myForm.input.$error.required">Required!</span><br>
+           <code>userType = {{userType}}</code><br>
+           <code>myForm.input.$valid = {{myForm.input.$valid}}</code><br>
+           <code>myForm.input.$error = {{myForm.input.$error}}</code><br>
+           <code>myForm.$valid = {{myForm.$valid}}</code><br>
+           <code>myForm.$error.required = {{!!myForm.$error.required}}</code><br>
+          </form>
+        </file>
+        <file name="protractor.js" type="protractor">
+          it('should initialize to model', function() {
+            let userType = element(by.binding('userType'));
+            let valid = element(by.binding('myForm.input.$valid'));
+
+            expect(userType.getText()).toContain('guest');
+            expect(valid.getText()).toContain('true');
+          });
+
+          it('should be invalid if empty', function() {
+            let userType = element(by.binding('userType'));
+            let valid = element(by.binding('myForm.input.$valid'));
+            let userInput = element(by.model('userType'));
+
+            userInput.clear();
+            userInput.sendKeys('');
+
+            expect(userType.getText()).toEqual('userType =');
+            expect(valid.getText()).toContain('false');
+          });
+        </file>
+      </example>
+   *
+   * @param {string=} name Name of the form. If specified, the form controller will be published into
+   *                       related scope, under this name.
+   */
+  const formDirectiveFactory = function (isNgForm) {
+    return [
+      "$timeout",
+      "$parse",
+      function ($timeout, $parse) {
+        const formDirective = {
+          name: "form",
+          restrict: isNgForm ? "EAC" : "E",
+          require: ["form", "^^?form"], // first is the form's own ctrl, second is an optional parent form
+          controller: FormController,
+          compile: function ngFormCompile(formElement, attr) {
+            // Setup initial state of the control
+            formElement.addClass(PRISTINE_CLASS).addClass(VALID_CLASS);
+
+            const nameAttr = attr.name
+              ? "name"
+              : isNgForm && attr.ngForm
+                ? "ngForm"
+                : false;
+
+            return {
+              pre: function ngFormPreLink(scope, formElement, attr, ctrls) {
+                const controller = ctrls[0];
+
+                // if `action` attr is not present on the form, prevent the default action (submission)
+                if (!("action" in attr)) {
+                  // we can't use jq events because if a form is destroyed during submission the default
+                  // action is not prevented. see #1238
+                  //
+                  // IE 9 is not affected because it doesn't fire a submit event and try to do a full
+                  // page reload if the form was destroyed by submission of the form via a click handler
+                  // on a button in the form. Looks like an IE9 specific bug.
+                  const handleFormSubmission = function (event) {
+                    scope.$apply(() => {
+                      controller.$commitViewValue();
+                      controller.$setSubmitted();
+                    });
+
+                    event.preventDefault();
+                  };
+
+                  formElement[0].addEventListener("submit", handleFormSubmission);
+
+                  // unregister the preventDefault listener so that we don't not leak memory but in a
+                  // way that will achieve the prevention of the default action.
+                  formElement.on("$destroy", () => {
+                    $timeout(
+                      () => {
+                        formElement[0].removeEventListener(
+                          "submit",
+                          handleFormSubmission,
+                        );
+                      },
+                      0,
+                      false,
+                    );
+                  });
+                }
+
+                const parentFormCtrl = ctrls[1] || controller.$$parentForm;
+                parentFormCtrl.$addControl(controller);
+
+                let setter = nameAttr ? getSetter(controller.$name) : () => {};
+
+                if (nameAttr) {
+                  setter(scope, controller);
+                  attr.$observe(nameAttr, (newValue) => {
+                    if (controller.$name === newValue) return;
+                    setter(scope, undefined);
+                    controller.$$parentForm.$$renameControl(controller, newValue);
+                    setter = getSetter(controller.$name);
+                    setter(scope, controller);
+                  });
+                }
+                formElement.on("$destroy", () => {
+                  controller.$$parentForm.$removeControl(controller);
+                  setter(scope, undefined);
+                  extend$1(controller, nullFormCtrl$1); // stop propagating child destruction handlers upwards
+                });
+              },
+            };
+          },
+        };
+
+        return formDirective;
+
+        function getSetter(expression) {
+          if (expression === "") {
+            // create an assignable expression, so forms with an empty name can be renamed later
+            return $parse('this[""]').assign;
+          }
+          return $parse(expression).assign || noop$1;
+        }
+      },
+    ];
+  };
+
+  const formDirective = formDirectiveFactory();
+  const ngFormDirective = formDirectiveFactory(true);
+
+  // helper methods
+  function setupValidity$1(instance) {
+    instance.$$classCache = {};
+    instance.$$classCache[INVALID_CLASS] = !(instance.$$classCache[VALID_CLASS] =
+      instance.$$element.hasClass(VALID_CLASS));
+  }
+
+  function addSetValidityMethod(context) {
+    const { clazz } = context;
+    const { set } = context;
+    const { unset } = context;
+
+    clazz.prototype.$setValidity = function (
+      validationErrorKey,
+      state,
+      controller,
+    ) {
+      if (isUndefined$1(state)) {
+        createAndSet(this, "$pending", validationErrorKey, controller);
+      } else {
+        unsetAndCleanup(this, "$pending", validationErrorKey, controller);
+      }
+      if (!isBoolean$1(state)) {
+        unset(this.$error, validationErrorKey, controller);
+        unset(this.$$success, validationErrorKey, controller);
+      } else if (state) {
+        unset(this.$error, validationErrorKey, controller);
+        set(this.$$success, validationErrorKey, controller);
+      } else {
+        set(this.$error, validationErrorKey, controller);
+        unset(this.$$success, validationErrorKey, controller);
+      }
+      if (this.$pending) {
+        cachedToggleClass(this, PENDING_CLASS, true);
+        this.$valid = this.$invalid = undefined;
+        toggleValidationCss(this, "", null);
+      } else {
+        cachedToggleClass(this, PENDING_CLASS, false);
+        this.$valid = isObjectEmpty(this.$error);
+        this.$invalid = !this.$valid;
+        toggleValidationCss(this, "", this.$valid);
+      }
+
+      // re-read the state as the set/unset methods could have
+      // combined state in this.$error[validationError] (used for forms),
+      // where setting/unsetting only increments/decrements the value,
+      // and does not replace it.
+      let combinedState;
+      if (this.$pending && this.$pending[validationErrorKey]) {
+        combinedState = undefined;
+      } else if (this.$error[validationErrorKey]) {
+        combinedState = false;
+      } else if (this.$$success[validationErrorKey]) {
+        combinedState = true;
+      } else {
+        combinedState = null;
+      }
+
+      toggleValidationCss(this, validationErrorKey, combinedState);
+      this.$$parentForm.$setValidity(validationErrorKey, combinedState, this);
+    };
+
+    function createAndSet(ctrl, name, value, controller) {
+      if (!ctrl[name]) {
+        ctrl[name] = {};
+      }
+      set(ctrl[name], value, controller);
+    }
+
+    function unsetAndCleanup(ctrl, name, value, controller) {
+      if (ctrl[name]) {
+        unset(ctrl[name], value, controller);
+      }
+      if (isObjectEmpty(ctrl[name])) {
+        ctrl[name] = undefined;
+      }
+    }
+
+    function cachedToggleClass(ctrl, className, switchValue) {
+      if (switchValue && !ctrl.$$classCache[className]) {
+        ctrl.$$animate.addClass(ctrl.$$element, className);
+        ctrl.$$classCache[className] = true;
+      } else if (!switchValue && ctrl.$$classCache[className]) {
+        ctrl.$$animate.removeClass(ctrl.$$element, className);
+        ctrl.$$classCache[className] = false;
+      }
+    }
+
+    function toggleValidationCss(ctrl, validationErrorKey, isValid) {
+      validationErrorKey = validationErrorKey
+        ? `-${snakeCase(validationErrorKey, "-")}`
+        : "";
+
+      cachedToggleClass(ctrl, VALID_CLASS + validationErrorKey, isValid === true);
+      cachedToggleClass(
+        ctrl,
+        INVALID_CLASS + validationErrorKey,
+        isValid === false,
+      );
+    }
+  }
+
+  function isObjectEmpty(obj) {
+    if (obj) {
+      for (const prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  const VALID_CLASS = "ng-valid";
+  const INVALID_CLASS = "ng-invalid";
+  const PRISTINE_CLASS = "ng-pristine";
+  const DIRTY_CLASS = "ng-dirty";
   const UNTOUCHED_CLASS = "ng-untouched";
   const TOUCHED_CLASS = "ng-touched";
   const EMPTY_CLASS = "ng-empty";
   const NOT_EMPTY_CLASS = "ng-not-empty";
 
-  const ngModelMinErr = minErr("ngModel");
+  const ngModelMinErr = minErr$1("ngModel");
 
   /**
    * @ngdoc type
@@ -9415,7 +8929,7 @@
      * or `$viewValue` are objects (rather than a string or number) then `$render()` will not be
      * invoked if you only change a property on the objects.
      */
-    $render: noop,
+    $render: () => {},
 
     /**
      * @ngdoc method
@@ -9466,8 +8980,8 @@
     $setPristine() {
       this.$dirty = false;
       this.$pristine = true;
-      this.$$animate.removeClass(this.$$element, DIRTY_CLASS$1);
-      this.$$animate.addClass(this.$$element, PRISTINE_CLASS$1);
+      this.$$animate.removeClass(this.$$element, DIRTY_CLASS);
+      this.$$animate.addClass(this.$$element, PRISTINE_CLASS);
     },
 
     /**
@@ -9484,8 +8998,8 @@
     $setDirty() {
       this.$dirty = true;
       this.$pristine = false;
-      this.$$animate.removeClass(this.$$element, PRISTINE_CLASS$1);
-      this.$$animate.addClass(this.$$element, DIRTY_CLASS$1);
+      this.$$animate.removeClass(this.$$element, PRISTINE_CLASS);
+      this.$$animate.addClass(this.$$element, DIRTY_CLASS);
       this.$$parentForm.$setDirty();
     },
 
@@ -10422,9 +9936,9 @@
       compile: function ngModelCompile(element) {
         // Setup initial state of the control
         element
-          .addClass(PRISTINE_CLASS$1)
+          .addClass(PRISTINE_CLASS)
           .addClass(UNTOUCHED_CLASS)
-          .addClass(VALID_CLASS$1);
+          .addClass(VALID_CLASS);
 
         return {
           pre: function ngModelPreLink(scope, element, attr, ctrls) {
@@ -11909,7 +11423,7 @@
   }
 
   function weekParser(isoWeek, existingDate) {
-    if (isDate$1(isoWeek)) {
+    if (isDate(isoWeek)) {
       return isoWeek;
     }
 
@@ -11953,7 +11467,7 @@
       let parts;
       let map;
 
-      if (isDate$1(iso)) {
+      if (isDate(iso)) {
         return iso;
       }
 
@@ -12047,7 +11561,7 @@
       });
 
       ctrl.$formatters.push((value) => {
-        if (value && !isDate$1(value)) {
+        if (value && !isDate(value)) {
           throw ngModelMinErr("datefmt", "Expected `{0}` to be a date", value);
         }
         if (isValidDate(value)) {
@@ -12112,7 +11626,7 @@
       }
 
       function parseObservedDateValue(val) {
-        return isDefined$1(val) && !isDate$1(val)
+        return isDefined$1(val) && !isDate(val)
           ? parseDateAndConvertTimeZoneToLocal(val) || undefined
           : val;
       }
@@ -12983,776 +12497,6 @@
     };
   }
 
-  /* global -nullFormCtrl, -PENDING_CLASS, -SUBMITTED_CLASS
-   */
-  const nullFormCtrl$1 = {
-    $addControl: noop,
-    $getControls: valueFn([]),
-    $$renameControl: nullFormRenameControl,
-    $removeControl: noop,
-    $setValidity: noop,
-    $setDirty: noop,
-    $setPristine: noop,
-    $setSubmitted: noop,
-    $$setSubmitted: noop,
-  };
-  const PENDING_CLASS = "ng-pending";
-  const SUBMITTED_CLASS = "ng-submitted";
-
-  function nullFormRenameControl(control, name) {
-    control.$name = name;
-  }
-
-  /**
-   * @ngdoc type
-   * @name form.FormController
-   *
-   * @property {boolean} $pristine True if user has not interacted with the form yet.
-   * @property {boolean} $dirty True if user has already interacted with the form.
-   * @property {boolean} $valid True if all of the containing forms and controls are valid.
-   * @property {boolean} $invalid True if at least one containing control or form is invalid.
-   * @property {boolean} $submitted True if user has submitted the form even if its invalid.
-   *
-   * @property {Object} $pending An object hash, containing references to controls or forms with
-   *  pending validators, where:
-   *
-   *  - keys are validations tokens (error names).
-   *  - values are arrays of controls or forms that have a pending validator for the given error name.
-   *
-   * See {@link form.FormController#$error $error} for a list of built-in validation tokens.
-   *
-   * @property {Object} $error An object hash, containing references to controls or forms with failing
-   *  validators, where:
-   *
-   *  - keys are validation tokens (error names),
-   *  - values are arrays of controls or forms that have a failing validator for the given error name.
-   *
-   *  Built-in validation tokens:
-   *  - `email`
-   *  - `max`
-   *  - `maxlength`
-   *  - `min`
-   *  - `minlength`
-   *  - `number`
-   *  - `pattern`
-   *  - `required`
-   *  - `url`
-   *  - `date`
-   *  - `datetimelocal`
-   *  - `time`
-   *  - `week`
-   *  - `month`
-   *
-   * @description
-   * `FormController` keeps track of all its controls and nested forms as well as the state of them,
-   * such as being valid/invalid or dirty/pristine.
-   *
-   * Each {@link ng.directive:form form} directive creates an instance
-   * of `FormController`.
-   *
-   */
-  // asks for $scope to fool the BC controller module
-  FormController.$inject = [
-    "$element",
-    "$attrs",
-    "$scope",
-    "$animate",
-    "$interpolate",
-  ];
-  function FormController($element, $attrs, $scope, $animate, $interpolate) {
-    this.$$controls = [];
-
-    // init state
-    this.$error = {};
-    this.$$success = {};
-    this.$pending = undefined;
-    this.$name = $interpolate($attrs.name || $attrs.ngForm || "")($scope);
-    this.$dirty = false;
-    this.$pristine = true;
-    this.$valid = true;
-    this.$invalid = false;
-    this.$submitted = false;
-    this.$$parentForm = nullFormCtrl$1;
-
-    this.$$element = $element;
-    this.$$animate = $animate;
-
-    setupValidity$1(this);
-  }
-
-  FormController.prototype = {
-    /**
-     * @ngdoc method
-     * @name form.FormController#$rollbackViewValue
-     *
-     * @description
-     * Rollback all form controls pending updates to the `$modelValue`.
-     *
-     * Updates may be pending by a debounced event or because the input is waiting for a some future
-     * event defined in `ng-model-options`. This method is typically needed by the reset button of
-     * a form that uses `ng-model-options` to pend updates.
-     */
-    $rollbackViewValue() {
-      forEach(this.$$controls, (control) => {
-        control.$rollbackViewValue();
-      });
-    },
-
-    /**
-     * @ngdoc method
-     * @name form.FormController#$commitViewValue
-     *
-     * @description
-     * Commit all form controls pending updates to the `$modelValue`.
-     *
-     * Updates may be pending by a debounced event or because the input is waiting for a some future
-     * event defined in `ng-model-options`. This method is rarely needed as `NgModelController`
-     * usually handles calling this in response to input events.
-     */
-    $commitViewValue() {
-      forEach(this.$$controls, (control) => {
-        control.$commitViewValue();
-      });
-    },
-
-    /**
-     * @ngdoc method
-     * @name form.FormController#$addControl
-     * @param {object} control control object, either a {@link form.FormController} or an
-     * {@link ngModel.NgModelController}
-     *
-     * @description
-     * Register a control with the form. Input elements using ngModelController do this automatically
-     * when they are linked.
-     *
-     * Note that the current state of the control will not be reflected on the new parent form. This
-     * is not an issue with normal use, as freshly compiled and linked controls are in a `$pristine`
-     * state.
-     *
-     * However, if the method is used programmatically, for example by adding dynamically created controls,
-     * or controls that have been previously removed without destroying their corresponding DOM element,
-     * it's the developers responsibility to make sure the current state propagates to the parent form.
-     *
-     * For example, if an input control is added that is already `$dirty` and has `$error` properties,
-     * calling `$setDirty()` and `$validate()` afterwards will propagate the state to the parent form.
-     */
-    $addControl(control) {
-      // Breaking change - before, inputs whose name was "hasOwnProperty" were quietly ignored
-      // and not added to the scope.  Now we throw an error.
-      assertNotHasOwnProperty(control.$name, "input");
-      this.$$controls.push(control);
-
-      if (control.$name) {
-        this[control.$name] = control;
-      }
-
-      control.$$parentForm = this;
-    },
-
-    /**
-     * @ngdoc method
-     * @name form.FormController#$getControls
-     * @returns {Array} the controls that are currently part of this form
-     *
-     * @description
-     * This method returns a **shallow copy** of the controls that are currently part of this form.
-     * The controls can be instances of {@link form.FormController `FormController`}
-     * ({@link ngForm "child-forms"}) and of {@link ngModel.NgModelController `NgModelController`}.
-     * If you need access to the controls of child-forms, you have to call `$getControls()`
-     * recursively on them.
-     * This can be used for example to iterate over all controls to validate them.
-     *
-     * The controls can be accessed normally, but adding to, or removing controls from the array has
-     * no effect on the form. Instead, use {@link form.FormController#$addControl `$addControl()`} and
-     * {@link form.FormController#$removeControl `$removeControl()`} for this use-case.
-     * Likewise, adding a control to, or removing a control from the form is not reflected
-     * in the shallow copy. That means you should get a fresh copy from `$getControls()` every time
-     * you need access to the controls.
-     */
-    $getControls() {
-      return shallowCopy(this.$$controls);
-    },
-
-    // Private API: rename a form control
-    $$renameControl(control, newName) {
-      const oldName = control.$name;
-
-      if (this[oldName] === control) {
-        delete this[oldName];
-      }
-      this[newName] = control;
-      control.$name = newName;
-    },
-
-    /**
-     * @ngdoc method
-     * @name form.FormController#$removeControl
-     * @param {object} control control object, either a {@link form.FormController} or an
-     * {@link ngModel.NgModelController}
-     *
-     * @description
-     * Deregister a control from the form.
-     *
-     * Input elements using ngModelController do this automatically when they are destroyed.
-     *
-     * Note that only the removed control's validation state (`$errors`etc.) will be removed from the
-     * form. `$dirty`, `$submitted` states will not be changed, because the expected behavior can be
-     * different from case to case. For example, removing the only `$dirty` control from a form may or
-     * may not mean that the form is still `$dirty`.
-     */
-    $removeControl(control) {
-      if (control.$name && this[control.$name] === control) {
-        delete this[control.$name];
-      }
-      forEach(
-        this.$pending,
-        function (value, name) {
-          // eslint-disable-next-line no-invalid-this
-          this.$setValidity(name, null, control);
-        },
-        this,
-      );
-      forEach(
-        this.$error,
-        function (value, name) {
-          // eslint-disable-next-line no-invalid-this
-          this.$setValidity(name, null, control);
-        },
-        this,
-      );
-      forEach(
-        this.$$success,
-        function (value, name) {
-          // eslint-disable-next-line no-invalid-this
-          this.$setValidity(name, null, control);
-        },
-        this,
-      );
-
-      arrayRemove(this.$$controls, control);
-      control.$$parentForm = nullFormCtrl$1;
-    },
-
-    /**
-     * @ngdoc method
-     * @name form.FormController#$setDirty
-     *
-     * @description
-     * Sets the form to a dirty state.
-     *
-     * This method can be called to add the 'ng-dirty' class and set the form to a dirty
-     * state (ng-dirty class). This method will also propagate to parent forms.
-     */
-    $setDirty() {
-      this.$$animate.removeClass(this.$$element, PRISTINE_CLASS);
-      this.$$animate.addClass(this.$$element, DIRTY_CLASS);
-      this.$dirty = true;
-      this.$pristine = false;
-      this.$$parentForm.$setDirty();
-    },
-
-    /**
-     * @ngdoc method
-     * @name form.FormController#$setPristine
-     *
-     * @description
-     * Sets the form to its pristine state.
-     *
-     * This method sets the form's `$pristine` state to true, the `$dirty` state to false, removes
-     * the `ng-dirty` class and adds the `ng-pristine` class. Additionally, it sets the `$submitted`
-     * state to false.
-     *
-     * This method will also propagate to all the controls contained in this form.
-     *
-     * Setting a form back to a pristine state is often useful when we want to 'reuse' a form after
-     * saving or resetting it.
-     */
-    $setPristine() {
-      this.$$animate.setClass(
-        this.$$element,
-        PRISTINE_CLASS,
-        `${DIRTY_CLASS} ${SUBMITTED_CLASS}`,
-      );
-      this.$dirty = false;
-      this.$pristine = true;
-      this.$submitted = false;
-      forEach(this.$$controls, (control) => {
-        control.$setPristine();
-      });
-    },
-
-    /**
-     * @ngdoc method
-     * @name form.FormController#$setUntouched
-     *
-     * @description
-     * Sets the form to its untouched state.
-     *
-     * This method can be called to remove the 'ng-touched' class and set the form controls to their
-     * untouched state (ng-untouched class).
-     *
-     * Setting a form controls back to their untouched state is often useful when setting the form
-     * back to its pristine state.
-     */
-    $setUntouched() {
-      forEach(this.$$controls, (control) => {
-        control.$setUntouched();
-      });
-    },
-
-    /**
-     * @ngdoc method
-     * @name form.FormController#$setSubmitted
-     *
-     * @description
-     * Sets the form to its `$submitted` state. This will also set `$submitted` on all child and
-     * parent forms of the form.
-     */
-    $setSubmitted() {
-      let rootForm = this;
-      while (rootForm.$$parentForm && rootForm.$$parentForm !== nullFormCtrl$1) {
-        rootForm = rootForm.$$parentForm;
-      }
-      rootForm.$$setSubmitted();
-    },
-
-    $$setSubmitted() {
-      this.$$animate.addClass(this.$$element, SUBMITTED_CLASS);
-      this.$submitted = true;
-      forEach(this.$$controls, (control) => {
-        if (control.$$setSubmitted) {
-          control.$$setSubmitted();
-        }
-      });
-    },
-  };
-
-  /**
-   * @ngdoc method
-   * @name form.FormController#$setValidity
-   *
-   * @description
-   * Change the validity state of the form, and notify the parent form (if any).
-   *
-   * Application developers will rarely need to call this method directly. It is used internally, by
-   * {@link ngModel.NgModelController#$setValidity NgModelController.$setValidity()}, to propagate a
-   * control's validity state to the parent `FormController`.
-   *
-   * @param {string} validationErrorKey Name of the validator. The `validationErrorKey` will be
-   *        assigned to either `$error[validationErrorKey]` or `$pending[validationErrorKey]` (for
-   *        unfulfilled `$asyncValidators`), so that it is available for data-binding. The
-   *        `validationErrorKey` should be in camelCase and will get converted into dash-case for
-   *        class name. Example: `myError` will result in `ng-valid-my-error` and
-   *        `ng-invalid-my-error` classes and can be bound to as `{{ someForm.$error.myError }}`.
-   * @param {boolean} isValid Whether the current state is valid (true), invalid (false), pending
-   *        (undefined),  or skipped (null). Pending is used for unfulfilled `$asyncValidators`.
-   *        Skipped is used by AngularJS when validators do not run because of parse errors and when
-   *        `$asyncValidators` do not run because any of the `$validators` failed.
-   * @param {NgModelController | FormController} controller - The controller whose validity state is
-   *        triggering the change.
-   */
-  addSetValidityMethod$1({
-    clazz: FormController,
-    set(object, property, controller) {
-      const list = object[property];
-      if (!list) {
-        object[property] = [controller];
-      } else {
-        const index = list.indexOf(controller);
-        if (index === -1) {
-          list.push(controller);
-        }
-      }
-    },
-    unset(object, property, controller) {
-      const list = object[property];
-      if (!list) {
-        return;
-      }
-      arrayRemove(list, controller);
-      if (list.length === 0) {
-        delete object[property];
-      }
-    },
-  });
-
-  /**
-   * @ngdoc directive
-   * @name ngForm
-   * @restrict EAC
-   *
-   * @description
-   * Helper directive that makes it possible to create control groups inside a
-   * {@link ng.directive:form `form`} directive.
-   * These "child forms" can be used, for example, to determine the validity of a sub-group of
-   * controls.
-   *
-   * <div class="alert alert-danger">
-   * **Note**: `ngForm` cannot be used as a replacement for `<form>`, because it lacks its
-   * [built-in HTML functionality](https://html.spec.whatwg.org/#the-form-element).
-   * Specifically, you cannot submit `ngForm` like a `<form>` tag. That means,
-   * you cannot send data to the server with `ngForm`, or integrate it with
-   * {@link ng.directive:ngSubmit `ngSubmit`}.
-   * </div>
-   *
-   * @param {string=} ngForm|name Name of the form. If specified, the form controller will
-   *                              be published into the related scope, under this name.
-   *
-   */
-
-  /**
-   * @ngdoc directive
-   * @name form
-   * @restrict E
-   *
-   * @description
-   * Directive that instantiates
-   * {@link form.FormController FormController}.
-   *
-   * If the `name` attribute is specified, the form controller is published onto the current scope under
-   * this name.
-   *
-   * ## Alias: {@link ng.directive:ngForm `ngForm`}
-   *
-   * In AngularJS, forms can be nested. This means that the outer form is valid when all of the child
-   * forms are valid as well. However, browsers do not allow nesting of `<form>` elements, so
-   * AngularJS provides the {@link ng.directive:ngForm `ngForm`} directive, which behaves identically to
-   * `form` but can be nested. Nested forms can be useful, for example, if the validity of a sub-group
-   * of controls needs to be determined.
-   *
-   * ## CSS classes
-   *  - `ng-valid` is set if the form is valid.
-   *  - `ng-invalid` is set if the form is invalid.
-   *  - `ng-pending` is set if the form is pending.
-   *  - `ng-pristine` is set if the form is pristine.
-   *  - `ng-dirty` is set if the form is dirty.
-   *  - `ng-submitted` is set if the form was submitted.
-   *
-   * Keep in mind that ngAnimate can detect each of these classes when added and removed.
-   *
-   *
-   * ## Submitting a form and preventing the default action
-   *
-   * Since the role of forms in client-side AngularJS applications is different than in classical
-   * roundtrip apps, it is desirable for the browser not to translate the form submission into a full
-   * page reload that sends the data to the server. Instead some javascript logic should be triggered
-   * to handle the form submission in an application-specific way.
-   *
-   * For this reason, AngularJS prevents the default action (form submission to the server) unless the
-   * `<form>` element has an `action` attribute specified.
-   *
-   * You can use one of the following two ways to specify what javascript method should be called when
-   * a form is submitted:
-   *
-   * - {@link ng.directive:ngSubmit ngSubmit} directive on the form element
-   * - {@link ng.directive:ngClick ngClick} directive on the first
-    *  button or input field of type submit (input[type=submit])
-   *
-   * To prevent double execution of the handler, use only one of the {@link ng.directive:ngSubmit ngSubmit}
-   * or {@link ng.directive:ngClick ngClick} directives.
-   * This is because of the following form submission rules in the HTML specification:
-   *
-   * - If a form has only one input field then hitting enter in this field triggers form submit
-   * (`ngSubmit`)
-   * - if a form has 2+ input fields and no buttons or input[type=submit] then hitting enter
-   * doesn't trigger submit
-   * - if a form has one or more input fields and one or more buttons or input[type=submit] then
-   * hitting enter in any of the input fields will trigger the click handler on the *first* button or
-   * input[type=submit] (`ngClick`) *and* a submit handler on the enclosing form (`ngSubmit`)
-   *
-   * Any pending `ngModelOptions` changes will take place immediately when an enclosing form is
-   * submitted. Note that `ngClick` events will occur before the model is updated. Use `ngSubmit`
-   * to have access to the updated model.
-   *
-   * @animations
-   * Animations in ngForm are triggered when any of the associated CSS classes are added and removed.
-   * These classes are: `.ng-pristine`, `.ng-dirty`, `.ng-invalid` and `.ng-valid` as well as any
-   * other validations that are performed within the form. Animations in ngForm are similar to how
-   * they work in ngClass and animations can be hooked into using CSS transitions, keyframes as well
-   * as JS animations.
-   *
-   * The following example shows a simple way to utilize CSS transitions to style a form element
-   * that has been rendered as invalid after it has been validated:
-   *
-   * <pre>
-   * //be sure to include ngAnimate as a module to hook into more
-   * //advanced animations
-   * .my-form {
-   *   transition:0.5s linear all;
-   *   background: white;
-   * }
-   * .my-form.ng-invalid {
-   *   background: red;
-   *   color:white;
-   * }
-   * </pre>
-   *
-   * @example
-      <example name="ng-form" deps="angular-animate.js" animations="true" fixBase="true" module="formExample">
-        <file name="index.html">
-         <script>
-           angular.module('formExample', [])
-             .controller('FormController', ['$scope', function($scope) {
-               $scope.userType = 'guest';
-             }]);
-         </script>
-         <style>
-          .my-form {
-            transition:all linear 0.5s;
-            background: transparent;
-          }
-          .my-form.ng-invalid {
-            background: red;
-          }
-         </style>
-         <form name="myForm" ng-controller="FormController" class="my-form">
-           userType: <input name="input" ng-model="userType" required>
-           <span class="error" ng-show="myForm.input.$error.required">Required!</span><br>
-           <code>userType = {{userType}}</code><br>
-           <code>myForm.input.$valid = {{myForm.input.$valid}}</code><br>
-           <code>myForm.input.$error = {{myForm.input.$error}}</code><br>
-           <code>myForm.$valid = {{myForm.$valid}}</code><br>
-           <code>myForm.$error.required = {{!!myForm.$error.required}}</code><br>
-          </form>
-        </file>
-        <file name="protractor.js" type="protractor">
-          it('should initialize to model', function() {
-            let userType = element(by.binding('userType'));
-            let valid = element(by.binding('myForm.input.$valid'));
-
-            expect(userType.getText()).toContain('guest');
-            expect(valid.getText()).toContain('true');
-          });
-
-          it('should be invalid if empty', function() {
-            let userType = element(by.binding('userType'));
-            let valid = element(by.binding('myForm.input.$valid'));
-            let userInput = element(by.model('userType'));
-
-            userInput.clear();
-            userInput.sendKeys('');
-
-            expect(userType.getText()).toEqual('userType =');
-            expect(valid.getText()).toContain('false');
-          });
-        </file>
-      </example>
-   *
-   * @param {string=} name Name of the form. If specified, the form controller will be published into
-   *                       related scope, under this name.
-   */
-  const formDirectiveFactory = function (isNgForm) {
-    return [
-      "$timeout",
-      "$parse",
-      function ($timeout, $parse) {
-        const formDirective = {
-          name: "form",
-          restrict: isNgForm ? "EAC" : "E",
-          require: ["form", "^^?form"], // first is the form's own ctrl, second is an optional parent form
-          controller: FormController,
-          compile: function ngFormCompile(formElement, attr) {
-            // Setup initial state of the control
-            formElement.addClass(PRISTINE_CLASS).addClass(VALID_CLASS);
-
-            const nameAttr = attr.name
-              ? "name"
-              : isNgForm && attr.ngForm
-                ? "ngForm"
-                : false;
-
-            return {
-              pre: function ngFormPreLink(scope, formElement, attr, ctrls) {
-                const controller = ctrls[0];
-
-                // if `action` attr is not present on the form, prevent the default action (submission)
-                if (!("action" in attr)) {
-                  // we can't use jq events because if a form is destroyed during submission the default
-                  // action is not prevented. see #1238
-                  //
-                  // IE 9 is not affected because it doesn't fire a submit event and try to do a full
-                  // page reload if the form was destroyed by submission of the form via a click handler
-                  // on a button in the form. Looks like an IE9 specific bug.
-                  const handleFormSubmission = function (event) {
-                    scope.$apply(() => {
-                      controller.$commitViewValue();
-                      controller.$setSubmitted();
-                    });
-
-                    event.preventDefault();
-                  };
-
-                  formElement[0].addEventListener("submit", handleFormSubmission);
-
-                  // unregister the preventDefault listener so that we don't not leak memory but in a
-                  // way that will achieve the prevention of the default action.
-                  formElement.on("$destroy", () => {
-                    $timeout(
-                      () => {
-                        formElement[0].removeEventListener(
-                          "submit",
-                          handleFormSubmission,
-                        );
-                      },
-                      0,
-                      false,
-                    );
-                  });
-                }
-
-                const parentFormCtrl = ctrls[1] || controller.$$parentForm;
-                parentFormCtrl.$addControl(controller);
-
-                let setter = nameAttr ? getSetter(controller.$name) : noop;
-
-                if (nameAttr) {
-                  setter(scope, controller);
-                  attr.$observe(nameAttr, (newValue) => {
-                    if (controller.$name === newValue) return;
-                    setter(scope, undefined);
-                    controller.$$parentForm.$$renameControl(controller, newValue);
-                    setter = getSetter(controller.$name);
-                    setter(scope, controller);
-                  });
-                }
-                formElement.on("$destroy", () => {
-                  controller.$$parentForm.$removeControl(controller);
-                  setter(scope, undefined);
-                  extend(controller, nullFormCtrl$1); // stop propagating child destruction handlers upwards
-                });
-              },
-            };
-          },
-        };
-
-        return formDirective;
-
-        function getSetter(expression) {
-          if (expression === "") {
-            // create an assignable expression, so forms with an empty name can be renamed later
-            return $parse('this[""]').assign;
-          }
-          return $parse(expression).assign || noop;
-        }
-      },
-    ];
-  };
-
-  const formDirective = formDirectiveFactory();
-  const ngFormDirective = formDirectiveFactory(true);
-
-  // helper methods
-  function setupValidity$1(instance) {
-    instance.$$classCache = {};
-    instance.$$classCache[INVALID_CLASS] = !(instance.$$classCache[VALID_CLASS] =
-      instance.$$element.hasClass(VALID_CLASS));
-  }
-  function addSetValidityMethod$1(context) {
-    const { clazz } = context;
-    const { set } = context;
-    const { unset } = context;
-
-    clazz.prototype.$setValidity = function (
-      validationErrorKey,
-      state,
-      controller,
-    ) {
-      if (isUndefined(state)) {
-        createAndSet(this, "$pending", validationErrorKey, controller);
-      } else {
-        unsetAndCleanup(this, "$pending", validationErrorKey, controller);
-      }
-      if (!isBoolean(state)) {
-        unset(this.$error, validationErrorKey, controller);
-        unset(this.$$success, validationErrorKey, controller);
-      } else if (state) {
-        unset(this.$error, validationErrorKey, controller);
-        set(this.$$success, validationErrorKey, controller);
-      } else {
-        set(this.$error, validationErrorKey, controller);
-        unset(this.$$success, validationErrorKey, controller);
-      }
-      if (this.$pending) {
-        cachedToggleClass(this, PENDING_CLASS, true);
-        this.$valid = this.$invalid = undefined;
-        toggleValidationCss(this, "", null);
-      } else {
-        cachedToggleClass(this, PENDING_CLASS, false);
-        this.$valid = isObjectEmpty(this.$error);
-        this.$invalid = !this.$valid;
-        toggleValidationCss(this, "", this.$valid);
-      }
-
-      // re-read the state as the set/unset methods could have
-      // combined state in this.$error[validationError] (used for forms),
-      // where setting/unsetting only increments/decrements the value,
-      // and does not replace it.
-      let combinedState;
-      if (this.$pending && this.$pending[validationErrorKey]) {
-        combinedState = undefined;
-      } else if (this.$error[validationErrorKey]) {
-        combinedState = false;
-      } else if (this.$$success[validationErrorKey]) {
-        combinedState = true;
-      } else {
-        combinedState = null;
-      }
-
-      toggleValidationCss(this, validationErrorKey, combinedState);
-      this.$$parentForm.$setValidity(validationErrorKey, combinedState, this);
-    };
-
-    function createAndSet(ctrl, name, value, controller) {
-      if (!ctrl[name]) {
-        ctrl[name] = {};
-      }
-      set(ctrl[name], value, controller);
-    }
-
-    function unsetAndCleanup(ctrl, name, value, controller) {
-      if (ctrl[name]) {
-        unset(ctrl[name], value, controller);
-      }
-      if (isObjectEmpty(ctrl[name])) {
-        ctrl[name] = undefined;
-      }
-    }
-
-    function cachedToggleClass(ctrl, className, switchValue) {
-      if (switchValue && !ctrl.$$classCache[className]) {
-        ctrl.$$animate.addClass(ctrl.$$element, className);
-        ctrl.$$classCache[className] = true;
-      } else if (!switchValue && ctrl.$$classCache[className]) {
-        ctrl.$$animate.removeClass(ctrl.$$element, className);
-        ctrl.$$classCache[className] = false;
-      }
-    }
-
-    function toggleValidationCss(ctrl, validationErrorKey, isValid) {
-      validationErrorKey = validationErrorKey
-        ? `-${snake_case(validationErrorKey, "-")}`
-        : "";
-
-      cachedToggleClass(ctrl, VALID_CLASS + validationErrorKey, isValid === true);
-      cachedToggleClass(
-        ctrl,
-        INVALID_CLASS + validationErrorKey,
-        isValid === false,
-      );
-    }
-  }
-
-  function isObjectEmpty(obj) {
-    if (obj) {
-      for (const prop in obj) {
-        if (obj.hasOwnProperty(prop)) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
   /**
    * @ngdoc directive
    * @name script
@@ -13804,7 +12548,7 @@
 
   /* exported selectDirective, optionDirective */
 
-  const noopNgModelController = { $setViewValue: noop, $render: noop };
+  const noopNgModelController = { $setViewValue: () => {}, $render: () => {} };
 
   function setOptionSelectedStatus(optionEl, value) {
     optionEl.prop("selected", value);
@@ -21908,10 +20652,10 @@
       "$rootScope",
       function ($$AnimateRunner, $rootScope) {
         return {
-          enabled: noop,
-          on: noop,
-          off: noop,
-          pin: noop,
+          enabled: () => {},
+          on: () => {},
+          off: () => {},
+          pin: () => {},
 
           push(element, event, options, domOperation) {
             if (domOperation) {
@@ -25155,7 +23899,7 @@
 
   function serializeValue(v) {
     if (isObject$1(v)) {
-      return isDate$1(v) ? v.toISOString() : toJson$1(v);
+      return isDate(v) ? v.toISOString() : toJson(v);
     }
     return v;
   }
@@ -25258,7 +24002,7 @@
             forEach$1(toSerialize, (value, index) => {
               serialize(value, `${prefix}[${isObject$1(value) ? index : ""}]`);
             });
-          } else if (isObject$1(toSerialize) && !isDate$1(toSerialize)) {
+          } else if (isObject$1(toSerialize) && !isDate(toSerialize)) {
             forEachSorted(toSerialize, (value, key) => {
               serialize(
                 value,
@@ -25479,7 +24223,7 @@
       transformRequest: [
         function (d) {
           return isObject$1(d) && !isFile(d) && !isBlob(d) && !isFormData(d)
-            ? toJson$1(d)
+            ? toJson(d)
             : d;
         },
       ],
@@ -31203,7 +29947,7 @@
          */
           $watch(watchExp, listener, objectEquality, prettyPrintExpression) {
             const get = $parse(watchExp);
-            const fn = isFunction(listener) ? listener : noop;
+            const fn = isFunction(listener) ? listener : () => {};
 
             if (get.$$watchDelegate) {
               return get.$$watchDelegate(this, fn, objectEquality, get, watchExp);
@@ -34993,433 +33737,110 @@
     };
   }
 
-  const ngMinErr = minErr$1("ng");
-
-  /**
-   * @type {angular.IAngularStatic}
-   */
-  const angular$1 = {
-    bind: bind$1,
-    bootstrap: function (element, modules, config) {
-      throw new Error("Function not implemented.");
-    },
-    copy,
-    element: undefined,
-    errorHandlingConfig: function () {
-      throw new Error("Function not implemented.");
-    },
-    equals: equals$1,
-    extend: extend$1,
-    forEach: forEach$1,
-    fromJson,
-    identity: identity$1,
-    injector: function (modules, strictDi) {
-      throw new Error("Function not implemented.");
-    },
-    isArray: isArray$1,
-    isDate,
-    isDefined: isDefined$1,
-    isElement,
-    isFunction: isFunction$1,
-    isNumber,
-    isObject: isObject$1,
-    isString,
-    isUndefined,
-    merge,
-    module: function (name, requires, configFn) {
-      throw new Error("Function not implemented.");
-    },
-    noop: () => {},
-    reloadWithDebugInfo: function () {
-      throw new Error("Function not implemented.");
-    },
-    toJson,
-    version: {
-      full: "",
-      major: 0,
-      minor: 0,
-      dot: 0,
-      codeName: ""
-    },
-    UNSAFE_restoreLegacyJqLiteXHTMLReplacement () {
-      throw new Error("Function not implemented.");
-    }
-  };
-
-  /// //////////////////////////////////////////////
-
-  function allowAutoBootstrap(document) {
-    const script = document.currentScript;
-
-    // If the `currentScript` property has been clobbered just return false, since this indicates a probable attack
-    if (
-      !(
-        script instanceof window.HTMLScriptElement ||
-        script instanceof window.SVGScriptElement
-      )
-    ) {
-      return false;
-    }
-
-    const { attributes } = script;
-    const srcs = [
-      attributes.getNamedItem("src"),
-      attributes.getNamedItem("href"),
-      attributes.getNamedItem("xlink:href"),
-    ];
-
-    return srcs.every((src) => {
-      if (!src) {
-        return true;
-      }
-      if (!src.value) {
-        return false;
-      }
-
-      const link = document.createElement("a");
-      link.href = src.value;
-
-      if (document.location.origin === link.origin) {
-        // Same-origin resources are always allowed, even for banned URL schemes.
-        return true;
-      }
-      // Disabled bootstrapping unless angular.js was loaded from a known scheme used on the web.
-      // This is to prevent angular.js bundled with browser extensions from being used to bypass the
-      // content security policy in web pages and other browser extensions.
-      switch (link.protocol) {
-        case "http:":
-        case "https:":
-        case "ftp:":
-        case "blob:":
-        case "file:":
-        case "data:":
-          return true;
-        default:
-          return false;
-      }
-    });
-  }
-
-  // Cached as it has to run during loading so that document.currentScript is available.
-  allowAutoBootstrap(window.document);
-
-  /**
-   * @module angular
-   * @function bootstrap
-
-   * @description
-   * Use this function to manually start up AngularJS application.
-   *
-   * For more information, see the {@link guide/bootstrap Bootstrap guide}.
-   *
-   * AngularJS will detect if it has been loaded into the browser more than once and only allow the
-   * first loaded script to be bootstrapped and will report a warning to the browser console for
-   * each of the subsequent scripts. This prevents strange results in applications, where otherwise
-   * multiple instances of AngularJS try to work on the DOM.
-   *
-   * <div class="alert alert-warning">
-   * **Note:** Protractor based end-to-end tests cannot use this function to bootstrap manually.
-   * They must use {@link ng.directive:ngApp ngApp}.
-   * </div>
-   *
-   * <div class="alert alert-warning">
-   * **Note:** Do not bootstrap the app on an element with a directive that uses {@link ng.$compile#transclusion transclusion},
-   * such as {@link ng.ngIf `ngIf`}, {@link ng.ngInclude `ngInclude`} and {@link ngRoute.ngView `ngView`}.
-   * Doing this misplaces the app {@link ng.$rootElement `$rootElement`} and the app's {@link auto.$injector injector},
-   * causing animations to stop working and making the injector inaccessible from outside the app.
-   * </div>
-   *
-   * ```html
-   * <!doctype html>
-   * <html>
-   * <body>
-   * <div ng-controller="WelcomeController">
-   *   {{greeting}}
-   * </div>
-   *
-   * <script src="angular.js"></script>
-   * <script>
-   *   let app = angular.module('demo', [])
-   *   .controller('WelcomeController', function($scope) {
-   *       $scope.greeting = 'Welcome!';
-   *   });
-   *   angular.bootstrap(document, ['demo']);
-   * </script>
-   * </body>
-   * </html>
-   * ```
-   *
-   * @param {DOMElement} element DOM element which is the root of AngularJS application.
-   * @param {Array<String|Function|Array>=} modules an array of modules to load into the application.
-   *     Each item in the array should be the name of a predefined module or a (DI annotated)
-   *     function that will be invoked by the injector as a `config` block.
-   *     See: {@link angular.module modules}
-   * @param {Object=} config an object for defining configuration options for the application. The
-   *     following keys are supported:
-   *
-   * * `strictDi` - disable automatic function annotation for the application. This is meant to
-   *   assist in finding bugs which break minified code. Defaults to `false`.
-   *
-   * @returns {auto.$injector} Returns the newly created injector for this app.
-   */
-  function bootstrap(element, modules, config) {
-    if (!isObject$1(config)) config = {};
-    const defaultConfig = {
-      strictDi: false,
-    };
-    config = extend$1(defaultConfig, config);
-    const doBootstrap = function () {
-      element = jqLite$1(element);
-
-      if (element.injector()) {
-        const tag =
-          element[0] === window.document ? "document" : startingTag$1(element);
-        // Encode angle brackets to prevent input from being sanitized to empty string #8683.
-        throw ngMinErr(
-          "btstrpd",
-          "App already bootstrapped with this element '{0}'",
-          tag.replace(/</, "&lt;").replace(/>/, "&gt;"),
-        );
-      }
-
-      modules = modules || [];
-      modules.unshift([
-        "$provide",
-        function ($provide) {
-          $provide.value("$rootElement", element);
-        },
-      ]);
-
-      if (config.debugInfoEnabled) {
-        // Pushing so that this overrides `debugInfoEnabled` setting defined in user's `modules`.
-        modules.push([
-          "$compileProvider",
-          function ($compileProvider) {
-            $compileProvider.debugInfoEnabled(true);
-          },
-        ]);
-      }
-
-      modules.unshift("ng");
-      const injector = createInjector(modules, config.strictDi);
-      injector.invoke([
-        "$rootScope",
-        "$rootElement",
-        "$compile",
-        "$injector",
-        function bootstrapApply(scope, element, compile, injector) {
-          scope.$apply(() => {
-            element.data("$injector", injector);
-            compile(element)(scope);
-          });
-        },
-      ]);
-      return injector;
-    };
-
-    const NG_ENABLE_DEBUG_INFO = /^NG_ENABLE_DEBUG_INFO!/;
-    const NG_DEFER_BOOTSTRAP = /^NG_DEFER_BOOTSTRAP!/;
-
-    if (window && NG_ENABLE_DEBUG_INFO.test(window.name)) {
-      config.debugInfoEnabled = true;
-      window.name = window.name.replace(NG_ENABLE_DEBUG_INFO, "");
-    }
-
-    if (window && !NG_DEFER_BOOTSTRAP.test(window.name)) {
-      return doBootstrap();
-    }
-
-    window.name = window.name.replace(NG_DEFER_BOOTSTRAP, "");
-    angular$1.resumeBootstrap = function (extraModules) {
-      forEach$1(extraModules, (module) => {
-        modules.push(module);
-      });
-      return doBootstrap();
-    };
-
-    if (isFunction$1(angular$1.resumeDeferredBootstrap)) {
-      angular$1.resumeDeferredBootstrap();
-    }
-  }
-
-  /**
-   * @module angular
-   * @function reloadWithDebugInfo
-
-   * @description
-   * Use this function to reload the current application with debug information turned on.
-   * This takes precedence over a call to `$compileProvider.debugInfoEnabled(false)`.
-   *
-   * See {@link ng.$compileProvider#debugInfoEnabled} for more.
-   */
-  function reloadWithDebugInfo() {
-    window.name = `NG_ENABLE_DEBUG_INFO!${window.name}`;
-    window.location.reload();
-  }
-
-  /**
-   * @function getTestability
-
-   * @description
-   * Get the testability service for the instance of AngularJS on the given
-   * element.
-   * @param {DOMElement} element DOM element which is the root of AngularJS application.
-   */
-  function getTestability(rootElement) {
-    const injector = jqLite$1(rootElement).injector();
-    if (!injector) {
-      throw ngMinErr(
-        "test",
-        "no injector found for element argument to getTestability",
-      );
-    }
-    return injector.get("$$testability");
-  }
-
   /* eslint-disable import/prefer-default-export */
 
-  /**
-   * @ngdoc object
-   * @name angular.version
-   * @module ng
-   * @description
-   * An object that contains information about the current AngularJS version.
-   *
-   * This object has the following properties:
-   *
-   * - `full` – `{string}` – Full version string, such as "0.9.18".
-   * - `major` – `{number}` – Major version number, such as "0".
-   * - `minor` – `{number}` – Minor version number, such as "9".
-   * - `dot` – `{number}` – Dot version number, such as "18".
-   * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
-   */
-  const version = {
-    // These placeholder strings will be replaced by grunt's `build` task.
-    // They need to be double- or single-quoted.
-    full: '"NG_VERSION_FULL"',
-    major: "NG_VERSION_MAJOR",
-    minor: "NG_VERSION_MINOR",
-    dot: "NG_VERSION_DOT",
-    codeName: '"NG_VERSION_CODENAME"',
-  };
+  const angularModule = setupModuleLoader(window);
 
-  function publishExternalAPI(angular) {
-    extend$1(angular, {
-      errorHandlingConfig,
-      bootstrap,
-      element: jqLite$1,
-      injector: createInjector,
-      version,
-      callbacks: { $$counter: 0 },
-      getTestability,
-      reloadWithDebugInfo
-    });
-
-    const angularModule = setupModuleLoader(window);
-
-    angularModule("ng", [
-      "$provide",
-      function ngModule($provide) {
-        // $$sanitizeUriProvider needs to be before $compileProvider as it is used by it.
-        $provide.provider({
-          $$sanitizeUri: SanitizeUriProvider,
-        });
-        $provide
-          .provider("$compile", $CompileProvider)
-          .directive({
-            a: htmlAnchorDirective,
-            input: inputDirective,
-            textarea: inputDirective,
-            form: formDirective,
-            script: scriptDirective,
-            select: selectDirective,
-            option: optionDirective,
-            ngBind: ngBindDirective,
-            ngBindHtml: ngBindHtmlDirective,
-            ngBindTemplate: ngBindTemplateDirective,
-            ngClass: ngClassDirective,
-            ngClassEven: ngClassEvenDirective,
-            ngClassOdd: ngClassOddDirective,
-            ngCloak: ngCloakDirective,
-            ngController: ngControllerDirective,
-            ngForm: ngFormDirective,
-            ngHide: ngHideDirective,
-            ngIf: ngIfDirective,
-            ngInclude: ngIncludeDirective,
-            ngInit: ngInitDirective,
-            ngNonBindable: ngNonBindableDirective,
-            ngPluralize: ngPluralizeDirective,
-            ngRef: ngRefDirective,
-            ngRepeat: ngRepeatDirective,
-            ngShow: ngShowDirective,
-            ngStyle: ngStyleDirective,
-            ngSwitch: ngSwitchDirective,
-            ngSwitchWhen: ngSwitchWhenDirective,
-            ngSwitchDefault: ngSwitchDefaultDirective,
-            ngOptions: ngOptionsDirective,
-            ngTransclude: ngTranscludeDirective,
-            ngModel: ngModelDirective,
-            ngList: ngListDirective,
-            ngChange: ngChangeDirective,
-            ngPattern: patternDirective,
-            ngRequired: requiredDirective,
-            ngMinlength: minlengthDirective,
-            ngMaxlength: maxlengthDirective,
-            ngValue: ngValueDirective,
-            ngModelOptions: ngModelOptionsDirective,
-          })
-          .directive({
-            ngInclude: ngIncludeFillContentDirective,
-            input: hiddenInputBrowserCacheDirective,
-          })
-          .directive(ngAttributeAliasDirectives)
-          .directive(ngEventDirectives);
-        $provide.provider({
-          $anchorScroll: AnchorScrollProvider,
-          $animate: AnimateProvider,
-          $animateCss: CoreAnimateCssProvider,
-          $$animateJs: CoreAnimateJsProvider,
-          $$animateQueue: CoreAnimateQueueProvider,
-          $$AnimateRunner: AnimateRunnerFactoryProvider,
-          $$animateAsyncRun: AnimateAsyncRunFactoryProvider,
-          $browser: BrowserProvider,
-          $cacheFactory: CacheFactoryProvider,
-          $controller: $ControllerProvider,
-          $document: $DocumentProvider,
-          $$isDocumentHidden: $$IsDocumentHiddenProvider,
-          $exceptionHandler: $ExceptionHandlerProvider,
-          $filter: $FilterProvider,
-          $$forceReflow: $$ForceReflowProvider,
-          $interpolate: $InterpolateProvider,
-          $interval: $IntervalProvider,
-          $$intervalFactory: $$IntervalFactoryProvider,
-          $http: $HttpProvider,
-          $httpParamSerializer: $HttpParamSerializerProvider,
-          $httpParamSerializerJQLike: $HttpParamSerializerJQLikeProvider,
-          $httpBackend: $HttpBackendProvider,
-          $xhrFactory: $xhrFactoryProvider,
-          $jsonpCallbacks: $jsonpCallbacksProvider,
-          $location: $LocationProvider,
-          $log: $LogProvider,
-          $parse: $ParseProvider,
-          $rootScope: $RootScopeProvider,
-          $q: $QProvider,
-          $$q: $$QProvider,
-          $sce: $SceProvider,
-          $sceDelegate: $SceDelegateProvider,
-          $$taskTrackerFactory: $$TaskTrackerFactoryProvider,
-          $templateCache: TemplateCacheProvider,
-          $templateRequest: TemplateRequestProvider,
-          $$testability: TestabilityProvider,
-          $timeout: $TimeoutProvider,
-          $window: WindowProvider,
-          $$jqLite: $$jqLiteProvider,
-          $$cookieReader: CookieReaderProvider,
-        });
-      },
-    ]).info({ angularVersion: '"NG_VERSION_FULL"' });
-  }
-
-  exports.publishExternalAPI = publishExternalAPI;
+  angularModule("ng", [
+    "$provide",
+    function ngModule($provide) {
+      // $$sanitizeUriProvider needs to be before $compileProvider as it is used by it.
+      $provide.provider({
+        $$sanitizeUri: SanitizeUriProvider,
+      });
+      $provide
+        .provider("$compile", $CompileProvider)
+        .directive({
+          a: htmlAnchorDirective,
+          input: inputDirective,
+          textarea: inputDirective,
+          form: formDirective,
+          script: scriptDirective,
+          select: selectDirective,
+          option: optionDirective,
+          ngBind: ngBindDirective,
+          ngBindHtml: ngBindHtmlDirective,
+          ngBindTemplate: ngBindTemplateDirective,
+          ngClass: ngClassDirective,
+          ngClassEven: ngClassEvenDirective,
+          ngClassOdd: ngClassOddDirective,
+          ngCloak: ngCloakDirective,
+          ngController: ngControllerDirective,
+          ngForm: ngFormDirective,
+          ngHide: ngHideDirective,
+          ngIf: ngIfDirective,
+          ngInclude: ngIncludeDirective,
+          ngInit: ngInitDirective,
+          ngNonBindable: ngNonBindableDirective,
+          ngPluralize: ngPluralizeDirective,
+          ngRef: ngRefDirective,
+          ngRepeat: ngRepeatDirective,
+          ngShow: ngShowDirective,
+          ngStyle: ngStyleDirective,
+          ngSwitch: ngSwitchDirective,
+          ngSwitchWhen: ngSwitchWhenDirective,
+          ngSwitchDefault: ngSwitchDefaultDirective,
+          ngOptions: ngOptionsDirective,
+          ngTransclude: ngTranscludeDirective,
+          ngModel: ngModelDirective,
+          ngList: ngListDirective,
+          ngChange: ngChangeDirective,
+          ngPattern: patternDirective,
+          ngRequired: requiredDirective,
+          ngMinlength: minlengthDirective,
+          ngMaxlength: maxlengthDirective,
+          ngValue: ngValueDirective,
+          ngModelOptions: ngModelOptionsDirective,
+        })
+        .directive({
+          ngInclude: ngIncludeFillContentDirective,
+          input: hiddenInputBrowserCacheDirective,
+        })
+        .directive(ngAttributeAliasDirectives)
+        .directive(ngEventDirectives);
+      $provide.provider({
+        $anchorScroll: AnchorScrollProvider,
+        $animate: AnimateProvider,
+        $animateCss: CoreAnimateCssProvider,
+        $$animateJs: CoreAnimateJsProvider,
+        $$animateQueue: CoreAnimateQueueProvider,
+        $$AnimateRunner: AnimateRunnerFactoryProvider,
+        $$animateAsyncRun: AnimateAsyncRunFactoryProvider,
+        $browser: BrowserProvider,
+        $cacheFactory: CacheFactoryProvider,
+        $controller: $ControllerProvider,
+        $document: $DocumentProvider,
+        $$isDocumentHidden: $$IsDocumentHiddenProvider,
+        $exceptionHandler: $ExceptionHandlerProvider,
+        $filter: $FilterProvider,
+        $$forceReflow: $$ForceReflowProvider,
+        $interpolate: $InterpolateProvider,
+        $interval: $IntervalProvider,
+        $$intervalFactory: $$IntervalFactoryProvider,
+        $http: $HttpProvider,
+        $httpParamSerializer: $HttpParamSerializerProvider,
+        $httpParamSerializerJQLike: $HttpParamSerializerJQLikeProvider,
+        $httpBackend: $HttpBackendProvider,
+        $xhrFactory: $xhrFactoryProvider,
+        $jsonpCallbacks: $jsonpCallbacksProvider,
+        $location: $LocationProvider,
+        $log: $LogProvider,
+        $parse: $ParseProvider,
+        $rootScope: $RootScopeProvider,
+        $q: $QProvider,
+        $$q: $$QProvider,
+        $sce: $SceProvider,
+        $sceDelegate: $SceDelegateProvider,
+        $$taskTrackerFactory: $$TaskTrackerFactoryProvider,
+        $templateCache: TemplateCacheProvider,
+        $templateRequest: TemplateRequestProvider,
+        $$testability: TestabilityProvider,
+        $timeout: $TimeoutProvider,
+        $window: WindowProvider,
+        $$jqLite: $$jqLiteProvider,
+        $$cookieReader: CookieReaderProvider,
+      });
+    },
+  ]).info({ angularVersion: '"NG_VERSION_FULL"' });
 
 }));

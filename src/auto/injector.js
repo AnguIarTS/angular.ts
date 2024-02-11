@@ -1,3 +1,7 @@
+
+import { minErr } from "../minErr";
+
+
 /**
  * @ngdoc function
  * @module ng

@@ -1,6 +1,7 @@
 import { jqLite, getBooleanAttrName, getAliasedAttrName } from "../jqLite";
+import { minErr } from "../minErr";
 // eslint-disable-next-line camelcase
-import { createMap, forEach, snake_case } from "./utils";
+import { createMap, forEach, snakeCase } from "./utils";
 
 /* ! VARIABLE/FUNCTION NAMING CONVENTIONS THAT APPLY TO THIS FILE!
  *
@@ -2314,7 +2315,7 @@ export function $CompileProvider($provide, $$sanitizeUriProvider) {
           } else {
             attrName = this.$attr[key];
             if (!attrName) {
-              this.$attr[key] = attrName = snake_case(key, "-");
+              this.$attr[key] = attrName = snakeCase(key, "-");
             }
           }
 
@@ -2447,13 +2448,13 @@ export function $CompileProvider($provide, $$sanitizeUriProvider) {
 
             $element.data("$binding", bindings);
           }
-        : noop;
+        : () => {};
 
       compile.$$addBindingClass = debugInfoEnabled
         ? function $$addBindingClass($element) {
             safeAddClass($element, "ng-binding");
           }
-        : noop;
+        : () => {};
 
       compile.$$addScopeInfo = debugInfoEnabled
         ? function $$addScopeInfo($element, scope, isolated, noTemplate) {
@@ -2464,13 +2465,13 @@ export function $CompileProvider($provide, $$sanitizeUriProvider) {
               : "$scope";
             $element.data(dataName, scope);
           }
-        : noop;
+        : () => {};
 
       compile.$$addScopeClass = debugInfoEnabled
         ? function $$addScopeClass($element, isolated) {
             safeAddClass($element, isolated ? "ng-isolate-scope" : "ng-scope");
           }
-        : noop;
+        : () => {};
 
       compile.$$createComment = function (directiveName, comment) {
         let content = "";
@@ -4901,7 +4902,7 @@ export function $CompileProvider($provide, $$sanitizeUriProvider) {
               // Don't assign Object.prototype method to scope
               parentGet = attrs.hasOwnProperty(attrName)
                 ? $parse(attrs[attrName])
-                : noop;
+                : () => {};
 
               // Don't assign noop to destination if expression is not valid
               if (parentGet === noop && optional) break;

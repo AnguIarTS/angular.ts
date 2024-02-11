@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { NODE_TYPE_TEXT } from "../constants";
 
 let uid = 0;
@@ -13,7 +14,8 @@ let uid = 0;
  * @returns {number} an unique alpha-numeric string
  */
 export function nextUid() {
-  return ++uid;
+  uid+=1;
+  return uid;
 }
 
 /**
@@ -319,7 +321,7 @@ export function trim(value) {
 }
 
 // eslint-disable-next-line camelcase
-export function snake_case(name, separator) {
+export function snakeCase(name, separator) {
   const modseparator = separator || "_";
   return name.replace(
     /[A-Z]/g,
@@ -402,9 +404,7 @@ export function forEach(obj, iterator, context) {
 
 export function forEachSorted(obj, iterator, context) {
   const keys = Object.keys(obj).sort();
-  for (const element of keys) {
-    iterator.call(context, obj[element], element);
-  }
+  keys.forEach(el => iterator.call(context, obj[el], el));
   return keys;
 }
 

@@ -1,23 +1,14 @@
-/* global VALID_CLASS: true,
-  INVALID_CLASS: true,
-  PRISTINE_CLASS: true,
-  DIRTY_CLASS: true,
-  UNTOUCHED_CLASS: true,
-  TOUCHED_CLASS: true,
-  PENDING_CLASS: true,
-  addSetValidityMethod: true,
-  setupValidity: true,
-  defaultModelOptions: false
-*/
+import { minErr } from "../../minErr";
+import { addSetValidityMethod } from "./form";
 
-const VALID_CLASS = "ng-valid";
-const INVALID_CLASS = "ng-invalid";
-const PRISTINE_CLASS = "ng-pristine";
-const DIRTY_CLASS = "ng-dirty";
-const UNTOUCHED_CLASS = "ng-untouched";
-const TOUCHED_CLASS = "ng-touched";
-const EMPTY_CLASS = "ng-empty";
-const NOT_EMPTY_CLASS = "ng-not-empty";
+export const VALID_CLASS = "ng-valid";
+export const INVALID_CLASS = "ng-invalid";
+export const PRISTINE_CLASS = "ng-pristine";
+export const DIRTY_CLASS = "ng-dirty";
+export const UNTOUCHED_CLASS = "ng-untouched";
+export const TOUCHED_CLASS = "ng-touched";
+export const EMPTY_CLASS = "ng-empty";
+export const NOT_EMPTY_CLASS = "ng-not-empty";
 
 export const ngModelMinErr = minErr("ngModel");
 
@@ -367,7 +358,7 @@ NgModelController.prototype = {
    * or `$viewValue` are objects (rather than a string or number) then `$render()` will not be
    * invoked if you only change a property on the objects.
    */
-  $render: noop,
+  $render: () => {},
 
   /**
    * @ngdoc method

@@ -14,8 +14,23 @@ export function setupModuleLoader(window) {
   const $injectorMinErr = minErr("$injector");
   const ngMinErr = minErr("ng");
 
+  /**
+   * 
+   * @param {string} name 
+   * @param {string} context 
+   */
+  function assertNotHasOwnProperty(name, context) {
+    if (name === "hasOwnProperty") {
+      throw ngMinErr(
+        "badname",
+        "hasOwnProperty is not a valid {0} name",
+        context,
+      );
+    }
+  }
+
   function ensure(obj, name, factory) {
-    // eslint-disable-next-line no-return-assign
+    // eslint-disable-next-line no-return-assign, no-param-reassign
     return obj[name] || (obj[name] = factory());
   }
 
@@ -25,7 +40,7 @@ export function setupModuleLoader(window) {
   angular.$$minErr = angular.$$minErr || minErr;
 
   return ensure(angular, "module", () => {
-    /** @type {Object.<string, angular.Module>} */
+    /** @type {Object.<string, angular.IModule>} */
     const modules = {};
 
     /**
@@ -77,20 +92,10 @@ export function setupModuleLoader(window) {
      *        unspecified then the module is being retrieved for further configuration.
      * @param {Function=} configFn Optional configuration function for the module. Same as
      *        {@link angular.Module#config Module#config()}.
-     * @returns {angular.Module} new module with the {@link angular.Module} api.
+     * @returns {angular.IModule} new module with the {@link angular.Module} api.
      */
     return function module(name, requires, configFn) {
       let info = {};
-
-      function assertNotHasOwnProperty(name, context) {
-        if (name === "hasOwnProperty") {
-          throw ngMinErr(
-            "badname",
-            "hasOwnProperty is not a valid {0} name",
-            context,
-          );
-        }
-      };
 
       assertNotHasOwnProperty(name, "module");
       if (requires && modules.hasOwnProperty(name)) {
@@ -119,9 +124,11 @@ export function setupModuleLoader(window) {
         // eslint-disable-next-line no-use-before-define
         const config = invokeLater("$injector", "invoke", "push", configBlocks);
 
-        /** @type {angular.Module} */
+        /** @type {angular.IModule} */
         const moduleInstance = {
           // Private state
+          
+          // @ts-ignore
           _invokeQueue: invokeQueue,
           _configBlocks: configBlocks,
           _runBlocks: runBlocks,
@@ -131,8 +138,8 @@ export function setupModuleLoader(window) {
            * @name angular.Module#info
            * @module ng
            *
-           * @param {Object=} info Information about the module
-           * @returns {Object|Module} The current info object for this module if called as a getter,
+           * @param {Object=} value Information about the module
+           * @returns {Object|angular.IModule} The current info object for this module if called as a getter,
            *                          or `this` if called as a setter.
            *
            * @description

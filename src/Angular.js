@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-use-before-define */
 import { minErr } from "./minErr";
 import {
   extend,
@@ -40,12 +42,10 @@ const ngMinErr = minErr("ng");
  */
 const angular = {
   bind,
-  bootstrap: function (element, modules, config) {
-    throw new Error("Function not implemented.");
-  },
+  bootstrap,
   copy,
   element: undefined,
-  errorHandlingConfig: function () {
+  errorHandlingConfig() {
     throw new Error("Function not implemented.");
   },
   equals,
@@ -53,7 +53,7 @@ const angular = {
   forEach,
   fromJson,
   identity,
-  injector: function (modules, strictDi) {
+  injector(modules, strictDi) {
     throw new Error("Function not implemented.");
   },
   isArray,
@@ -66,11 +66,11 @@ const angular = {
   isString,
   isUndefined,
   merge,
-  module: function (name, requires, configFn) {
+  module(name, requires, configFn) {
     throw new Error("Function not implemented.");
   },
   noop: () => {},
-  reloadWithDebugInfo: function () {
+  reloadWithDebugInfo() {
     throw new Error("Function not implemented.");
   },
   toJson,
@@ -79,11 +79,11 @@ const angular = {
     major: 0,
     minor: 0,
     dot: 0,
-    codeName: ""
+    codeName: "",
   },
-  UNSAFE_restoreLegacyJqLiteXHTMLReplacement () {
+  UNSAFE_restoreLegacyJqLiteXHTMLReplacement() {
     throw new Error("Function not implemented.");
-  }
+  },
 };
 
 /// //////////////////////////////////////////////
@@ -369,7 +369,7 @@ export function angularInit(element, bootstrap) {
  * </html>
  * ```
  *
- * @param {DOMElement} element DOM element which is the root of AngularJS application.
+ * @param {Element} element DOM element which is the root of AngularJS application.
  * @param {Array<String|Function|Array>=} modules an array of modules to load into the application.
  *     Each item in the array should be the name of a predefined module or a (DI annotated)
  *     function that will be invoked by the injector as a `config` block.
@@ -382,7 +382,8 @@ export function angularInit(element, bootstrap) {
  *
  * @returns {auto.$injector} Returns the newly created injector for this app.
  */
-export function bootstrap(element, modules, config) {
+function bootstrap(element, modules, config) {
+  // eslint-disable-next-line no-param-reassign
   if (!isObject(config)) config = {};
   const defaultConfig = {
     strictDi: false,
@@ -405,7 +406,7 @@ export function bootstrap(element, modules, config) {
     modules = modules || [];
     modules.unshift([
       "$provide",
-      function ($provide) {
+      ($provide) => {
         $provide.value("$rootElement", element);
       },
     ]);
@@ -427,10 +428,10 @@ export function bootstrap(element, modules, config) {
       "$rootElement",
       "$compile",
       "$injector",
-      function bootstrapApply(scope, element, compile, injector) {
+      function bootstrapApply(scope, el, compile, $injector) {
         scope.$apply(() => {
-          element.data("$injector", injector);
-          compile(element)(scope);
+          el.data("$injector", $injector);
+          compile(el)(scope);
         });
       },
     ]);
@@ -528,7 +529,6 @@ export function assertArgFn(arg, name, acceptArrayAnnotation) {
   return arg;
 }
 
-
 /**
  * @ngdoc type
  * @name angular.Module
@@ -617,7 +617,7 @@ export function setupModuleLoader(window) {
             context,
           );
         }
-      };
+      }
 
       assertNotHasOwnProperty(name, "module");
       if (requires && modules.hasOwnProperty(name)) {

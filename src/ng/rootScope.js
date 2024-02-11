@@ -393,7 +393,7 @@ export function $RootScopeProvider() {
        */
         $watch(watchExp, listener, objectEquality, prettyPrintExpression) {
           const get = $parse(watchExp);
-          const fn = isFunction(listener) ? listener : noop;
+          const fn = isFunction(listener) ? listener : () => {};
 
           if (get.$$watchDelegate) {
             return get.$$watchDelegate(this, fn, objectEquality, get, watchExp);

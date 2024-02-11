@@ -67,10 +67,10 @@ export function CoreAnimateQueueProvider() {
     "$rootScope",
     function ($$AnimateRunner, $rootScope) {
       return {
-        enabled: noop,
-        on: noop,
-        off: noop,
-        pin: noop,
+        enabled: () => {},
+        on: () => {},
+        off: () => {},
+        pin: () => {},
 
         push(element, event, options, domOperation) {
           if (domOperation) {
