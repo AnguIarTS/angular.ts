@@ -55,7 +55,7 @@ function isArrayLike(obj) {
  * @param {*} value Reference to check.
  * @returns {boolean} True if `value` is undefined.
  */
-function isUndefined$1(value) {
+function isUndefined(value) {
   return typeof value === "undefined";
 }
 
@@ -84,7 +84,7 @@ function isDefined(value) {
  * @param {*} value Reference to check.
  * @returns {boolean} True if `value` is an `Object` but not `null`.
  */
-function isObject$1(value) {
+function isObject(value) {
   // http://jsperf.com/isobject4
   return value !== null && typeof value === "object";
 }
@@ -213,7 +213,7 @@ function isScope(obj) {
  * @param {*} value
  * @returns {boolean}
  */
-function isBoolean$1(value) {
+function isBoolean(value) {
   return typeof value === "boolean";
 }
 
@@ -321,6 +321,17 @@ function forEach(obj, iterator, context) {
 }
 
 /**
+ * when using forEach the params are value, key, but it is often useful to have key, value.
+ * @param {function(string, *)} iteratorFn
+ * @returns {function(*, string)}
+ */
+function reverseParams(iteratorFn) {
+  return function (value, key) {
+    iteratorFn(key, value);
+  };
+}
+
+/**
  * Set or clear the hashkey for an object.
  * @param obj object
  * @param h the hashkey (!truthy to delete the hashkey)
@@ -338,13 +349,13 @@ function baseExtend(dst, objs, deep) {
 
   for (let i = 0, ii = objs.length; i < ii; ++i) {
     const obj = objs[i];
-    if (!isObject$1(obj) && !isFunction(obj)) continue;
+    if (!isObject(obj) && !isFunction(obj)) continue;
     const keys = Object.keys(obj);
     for (let j = 0, jj = keys.length; j < jj; j++) {
       const key = keys[j];
       const src = obj[key];
 
-      if (deep && isObject$1(src)) {
+      if (deep && isObject(src)) {
         if (isDate(src)) {
           dst[key] = new Date(src.valueOf());
         } else if (isRegExp(src)) {
@@ -354,7 +365,7 @@ function baseExtend(dst, objs, deep) {
         } else if (isElement(src)) {
           dst[key] = src.clone();
         } else if (key !== "__proto__") {
-          if (!isObject$1(dst[key])) dst[key] = isArray(src) ? [] : {};
+          if (!isObject(dst[key])) dst[key] = isArray(src) ? [] : {};
           baseExtend(dst[key], [src], true);
         }
       } else {
@@ -457,6 +468,14 @@ function merge(dst) {
  */
 function identity(value) {
   return value;
+}
+
+/**
+ * @param {*} value
+ * @returns {() => *}
+ */
+function valueFn(value) {
+  return () => value;
 }
 
 /**
@@ -645,7 +664,7 @@ function copy(source, destination, maxDepth) {
 
   function copyElement(source, maxDepth) {
     // Simple values
-    if (!isObject$1(source)) {
+    if (!isObject(source)) {
       return source;
     }
 
@@ -836,7 +855,7 @@ function equals(o1, o2) {
         isRegExp(o2)
       )
         return false;
-      keySet = createMap$1();
+      keySet = createMap();
       for (key in o1) {
         if (key.charAt(0) === "$" || isFunction(o1[key])) continue;
         if (!equals(o1[key], o2[key])) return false;
@@ -862,7 +881,7 @@ function equals(o1, o2) {
  * @param  {String} name    the name to test
  * @param  {String} context the context in which the name is used, such as module or directive
  */
-function assertNotHasOwnProperty$1(name, context) {
+function assertNotHasOwnProperty(name, context) {
   if (name === "hasOwnProperty") {
     throw ngMinErr$1(
       "badname",
@@ -883,7 +902,7 @@ function assertNotHasOwnProperty$1(name, context) {
  *
  * @returns {Object}
  */
-function createMap$1() {
+function createMap() {
   return Object.create(null);
 }
 
@@ -991,7 +1010,7 @@ function toJsonReplacer(key, value) {
  * See https://github.com/angular/angular.js/pull/14221 for more information.
  */
 function toJson(obj, pretty) {
-  if (isUndefined$1(obj)) return undefined;
+  if (isUndefined(obj)) return undefined;
   if (!isNumber(pretty)) {
     pretty = pretty ? 2 : null;
   }
@@ -1051,7 +1070,7 @@ function shallowCopy(src, dst) {
     for (let i = 0, ii = src.length; i < ii; i++) {
       dst[i] = src[i];
     }
-  } else if (isObject$1(src)) {
+  } else if (isObject(src)) {
     dst = dst || {};
 
     for (const key in src) {
@@ -1067,7 +1086,7 @@ function shallowCopy(src, dst) {
 /**
  * throw error if the argument is falsy.
  */
-function assertArg$1(arg, name, reason) {
+function assertArg(arg, name, reason) {
   if (!arg) {
     throw ngMinErr$1(
       "areq",
@@ -1084,7 +1103,7 @@ function assertArgFn(arg, name, acceptArrayAnnotation) {
     arg = arg[arg.length - 1];
   }
 
-  assertArg$1(
+  assertArg(
     isFunction(arg),
     name,
     `not a function, got ${
@@ -1643,7 +1662,7 @@ function jqLiteData(element, key, value) {
     let prop;
 
     const isSimpleSetter = isDefined(value);
-    const isSimpleGetter = !isSimpleSetter && key && !isObject$1(key);
+    const isSimpleGetter = !isSimpleSetter && key && !isObject(key);
     const massGetter = !key;
     const expandoStore = jqLiteExpandoStore(element, !isSimpleGetter);
     const data = expandoStore && expandoStore.data;
@@ -1904,7 +1923,7 @@ forEach(
       return getText;
 
       function getText(element, value) {
-        if (isUndefined$1(value)) {
+        if (isUndefined(value)) {
           const { nodeType } = element;
           return nodeType === NODE_TYPE_ELEMENT || nodeType === NODE_TYPE_TEXT
             ? element.textContent
@@ -1915,7 +1934,7 @@ forEach(
     })(),
 
     val(element, value) {
-      if (isUndefined$1(value)) {
+      if (isUndefined(value)) {
         if (element.multiple && nodeName_(element) === "select") {
           const result = [];
           forEach(element.options, (option) => {
@@ -1931,7 +1950,7 @@ forEach(
     },
 
     html(element, value) {
-      if (isUndefined$1(value)) {
+      if (isUndefined(value)) {
         return element.innerHTML;
       }
       jqLiteDealoc(element, true);
@@ -1954,13 +1973,13 @@ forEach(
       // jqLiteEmpty takes no arguments but is a setter.
       if (
         fn !== jqLiteEmpty &&
-        isUndefined$1(
+        isUndefined(
           fn.length === 2 && fn !== jqLiteHasClass && fn !== jqLiteController
             ? arg1
             : arg2,
         )
       ) {
-        if (isObject$1(arg1)) {
+        if (isObject(arg1)) {
           // we are a write, but the object properties are the key/values
           for (i = 0; i < nodeCount; i++) {
             if (fn === jqLiteData) {
@@ -1979,7 +1998,7 @@ forEach(
         // TODO: do we still need this?
         let value = fn.$dv;
         // Only if we have $dv do we iterate over all, otherwise it is just the first element.
-        const jj = isUndefined$1(value) ? Math.min(nodeCount, 1) : nodeCount;
+        const jj = isUndefined(value) ? Math.min(nodeCount, 1) : nodeCount;
         for (let j = 0; j < jj; j++) {
           const nodeValue = fn(this[j], arg1, arg2);
           value = value ? value + nodeValue : nodeValue;
@@ -2008,7 +2027,7 @@ function createEventHandler(element, events) {
 
     if (!eventFnsLength) return;
 
-    if (isUndefined$1(event.immediatePropagationStopped)) {
+    if (isUndefined(event.immediatePropagationStopped)) {
       const originalStopImmediatePropagation = event.stopImmediatePropagation;
       event.stopImmediatePropagation = function () {
         event.immediatePropagationStopped = true;
@@ -2177,7 +2196,7 @@ forEach(
       if (selector) {
         forEach(selector.split(" "), (className) => {
           let classCondition = condition;
-          if (isUndefined$1(classCondition)) {
+          if (isUndefined(classCondition)) {
             classCondition = !jqLiteHasClass(element, className);
           }
           (classCondition ? jqLiteAddClass : jqLiteRemoveClass)(
@@ -2262,7 +2281,7 @@ forEach(
       let value;
 
       for (let i = 0, ii = this.length; i < ii; i++) {
-        if (isUndefined$1(value)) {
+        if (isUndefined(value)) {
           value = fn(this[i], arg1, arg2, arg3);
           if (isDefined(value)) {
             // any function which returns a value needs to be wrapped
@@ -2280,6 +2299,8 @@ forEach(
 // bind legacy bind/unbind to on/off
 JQLite.prototype.bind = JQLite.prototype.on;
 JQLite.prototype.unbind = JQLite.prototype.off;
+
+/* eslint-disable no-use-before-define */
 
 /**
  * @ngdoc function
@@ -2984,7 +3005,7 @@ function createInjector(modulesToLoad, strictDi) {
   const INSTANTIATING = {};
   const providerSuffix = "Provider";
   const path = [];
-  const loadedModules = new NgMap();
+  const loadedModules = new Map();
   const providerCache = {
     $provide: {
       provider: supportObject(provider),
@@ -3322,9 +3343,7 @@ const ngMinErr = minErr("ng");
 /** @type {Object.<string, angular.IModule>} */
 const moduleCache = {};
 
-let doBootstrap = () => {
-  throw new Error("Bootsrap not configured");
-};
+let doBootstrap = () => {};
 
 class Angular {
   constructor() {
@@ -3352,14 +3371,12 @@ class Angular {
     this.isElement = isElement;
     this.isFunction = isFunction;
     this.isNumber = isNumber;
-    this.isObject = isObject$1;
+    this.isObject = isObject;
     this.isString = isString;
-    this.isUndefined = isUndefined$1;
+    this.isUndefined = isUndefined;
     this.merge = merge;
     this.noop = () => {};
   }
-
-  injector() {}
 
   /**
  * @module angular
@@ -3422,7 +3439,7 @@ class Angular {
  */
   bootstrap(element, modules, config) {
     // eslint-disable-next-line no-param-reassign
-    if (!isObject$1(config)) config = {};
+    if (!isObject(config)) config = {};
     const defaultConfig = {
       strictDi: false,
     };
@@ -3474,6 +3491,16 @@ class Angular {
     window.name = window.name.replace(NG_DEFER_BOOTSTRAP, "");
   }
 
+  /**
+   *
+   * @param {any[]} modules
+   * @param {boolean?} strictDi
+   * @returns {angular.auto.IInjectorService}
+   */
+  injector(modules, strictDi) {
+    return createInjector(modules, strictDi);
+  }
+
   resumeBootstrap(extraModules) {
     forEach(extraModules, (module) => {
     });
@@ -3508,7 +3535,7 @@ class Angular {
    *   Default: true. When used without argument, it returns the current value.
    */
   errorHandlingConfig(config) {
-    if (isObject$1(config)) {
+    if (isObject(config)) {
       if (isDefined(config.objectMaxDepth)) {
         minErrConfig$1.objectMaxDepth = isValidObjectMaxDepth(
           config.objectMaxDepth,
@@ -3518,7 +3545,7 @@ class Angular {
       }
       if (
         isDefined(config.urlErrorParamsEnabled) &&
-        isBoolean$1(config.urlErrorParamsEnabled)
+        isBoolean(config.urlErrorParamsEnabled)
       ) {
         minErrConfig$1.urlErrorParamsEnabled = config.urlErrorParamsEnabled;
       }
@@ -3581,7 +3608,7 @@ class Angular {
     const $injectorMinErr = minErr("$injector");
     let info = {};
 
-    assertNotHasOwnProperty$1(name, "module");
+    assertNotHasOwnProperty(name, "module");
     if (requires && moduleCache.hasOwnProperty(name)) {
       moduleCache[name] = null;
     }
@@ -3655,7 +3682,7 @@ class Angular {
          */
         info(value) {
           if (isDefined(value)) {
-            if (!isObject$1(value))
+            if (!isObject(value))
               throw ngMinErr(
                 "aobj",
                 "Argument '{0}' must be an object",

@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import {
   assertArgFn,
   minErr,
@@ -5,6 +6,14 @@ import {
   isArray,
   isFunction,
   isString,
+  createMap,
+  isBoolean,
+  isUndefined,
+  assertArg,
+  valueFn,
+  assertNotHasOwnProperty,
+  reverseParams,
+  isObject,
 } from "../ng/utils";
 
 /**
@@ -710,7 +719,7 @@ export function createInjector(modulesToLoad, strictDi) {
   const INSTANTIATING = {};
   const providerSuffix = "Provider";
   const path = [];
-  const loadedModules = new NgMap();
+  const loadedModules = new Map();
   const providerCache = {
     $provide: {
       provider: supportObject(provider),

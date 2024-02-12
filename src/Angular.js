@@ -60,9 +60,7 @@ const moduleCache = {};
  */
 const bootstrapedModules = [];
 
-let doBootstrap = () => {
-  throw new Error("Bootsrap not configured");
-};
+let doBootstrap = () => {};
 
 export class Angular {
   constructor() {
@@ -96,8 +94,6 @@ export class Angular {
     this.merge = merge;
     this.noop = () => {};
   }
-
-  injector() {}
 
   /**
  * @module angular
@@ -228,6 +224,16 @@ export class Angular {
     }
 
     window.name = window.name.replace(NG_DEFER_BOOTSTRAP, "");
+  }
+
+  /**
+   *
+   * @param {any[]} modules
+   * @param {boolean?} strictDi
+   * @returns {angular.auto.IInjectorService}
+   */
+  injector(modules, strictDi) {
+    return createInjector(modules, strictDi);
   }
 
   resumeBootstrap(extraModules) {
@@ -766,7 +772,7 @@ const isAutoBootstrapAllowed = allowAutoBootstrap(window.document);
  * @name ngApp
  *
  * @element ANY
- * @param {angular.Module} ngApp an optional application
+ * @param {angular.IModule} ngApp an optional application
  *   {@link angular.module module} name to load.
  * @param {boolean=} ngStrictDi if this attribute is present on the app element, the injector will be
  *   created in "strict-di" mode. This means that the application will fail to invoke functions which
@@ -1038,17 +1044,7 @@ export function setupModuleLoader(window) {
      */
     return function module(name, requires, configFn) {
       let info = {};
-
-      function assertNotHasOwnProperty(name, context) {
-        if (name === "hasOwnProperty") {
-          throw ngMinErr(
-            "badname",
-            "hasOwnProperty is not a valid {0} name",
-            context,
-          );
-        }
-      }
-
+     
       assertNotHasOwnProperty(name, "module");
       if (requires && modules.hasOwnProperty(name)) {
         modules[name] = null;

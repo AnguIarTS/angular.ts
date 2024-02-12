@@ -1,7 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { $CompileProvider } from "./ng/compile";
-import { createInjector } from "./auto/injector";
-import { jqLite, $$jqLiteProvider } from "./jqLite";
+import { $$jqLiteProvider } from "./jqLite";
 import { setupModuleLoader } from "./loader";
 import { htmlAnchorDirective } from "./ng/directive/a";
 import {

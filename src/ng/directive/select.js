@@ -1,6 +1,9 @@
+/* eslint-disable no-use-before-define */
 /* exported selectDirective, optionDirective */
 
-import { forEach, includes } from "../utils";
+import { NODE_TYPE_COMMENT } from "../../constants";
+import { jqLite } from "../../jqLite";
+import { assertNotHasOwnProperty, forEach, includes, isDefined } from "../utils";
 
 const noopNgModelController = { $setViewValue: () => {}, $render: () => {} };
 
@@ -154,7 +157,7 @@ function setOptionSelectedStatus(optionEl, value) {
 const SelectController = [
   "$element",
   "$scope",
-  /** @this */ function ($element, $scope) {
+  ($element, $scope) => {
     const self = this;
     const optionsMap = new Map();
 
@@ -221,7 +224,7 @@ const SelectController = [
 
     $scope.$on("$destroy", () => {
       // disable unknown option so that we don't do work when the whole select is being destroyed
-      self.renderUnknownOption = noop;
+      self.renderUnknownOption = () => {};
     });
 
     // Read the value of the select control, the implementation of this changes depending
