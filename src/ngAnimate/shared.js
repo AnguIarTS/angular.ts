@@ -1,5 +1,4 @@
-import { minErr } from "../minErr";
-import { isArray, isString } from "../ng/utils";
+import { isArray, isString, minErr } from "../ng/utils";
 
 export const ELEMENT_NODE = 1;
 export const COMMENT_NODE = 8;

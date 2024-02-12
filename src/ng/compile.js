@@ -1,4 +1,5 @@
 import { jqLite, getBooleanAttrName, getAliasedAttrName } from "../jqLite";
+import { identifierForController } from "./controller";
 import {
   minErr,
   assertArg,

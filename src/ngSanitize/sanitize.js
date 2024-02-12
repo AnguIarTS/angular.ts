@@ -1,4 +1,4 @@
-import { minErr } from "../minErr";
+import { minErr } from "../ng/utils";
 
 const $sanitizeMinErr = minErr("$sanitize");
 let bind;

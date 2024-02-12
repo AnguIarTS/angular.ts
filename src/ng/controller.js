@@ -11,12 +11,13 @@ import {
 const $controllerMinErr = minErr("$controller");
 
 const CNTRL_REG = /^(\S+)(\s+as\s+([\w$]+))?$/;
-function identifierForController(controller, ident) {
+export function identifierForController(controller, ident) {
   if (ident && isString(ident)) return ident;
   if (isString(controller)) {
     const match = CNTRL_REG.exec(controller);
     if (match) return match[3];
   }
+  throw new Error("No match");
 }
 
 /**

@@ -1,5 +1,4 @@
-import { minErr } from "../../minErr";
-import { isNumberNaN, isString, startingTag, toInt } from "../utils";
+import { isNumberNaN, isString, startingTag, toInt, minErr } from "../utils";
 
 /**
  * @ngdoc directive

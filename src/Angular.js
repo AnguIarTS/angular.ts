@@ -58,7 +58,7 @@ const moduleCache = {};
 /**
  * @type {Array<string | Function | any[]>}
  */
-const bootstrapedModules = [];
+const bootsrappedModules = [];
 
 let doBootstrap = () => {};
 
@@ -176,8 +176,8 @@ export class Angular {
         );
       }
 
-      bootstrapedModules.push(modules);
-      bootstrapedModules.unshift([
+      bootsrappedModules.push(modules);
+      bootsrappedModules.unshift([
         "$provide",
         ($provide) => {
           $provide.value("$rootElement", element);
@@ -186,7 +186,7 @@ export class Angular {
 
       if (config.debugInfoEnabled) {
         // Pushing so that this overrides `debugInfoEnabled` setting defined in user's `modules`.
-        bootstrapedModules.push([
+        bootsrappedModules.push([
           "$compileProvider",
           function ($compileProvider) {
             $compileProvider.debugInfoEnabled(true);
@@ -194,7 +194,7 @@ export class Angular {
         ]);
       }
 
-      bootstrapedModules.unshift("ng");
+      bootsrappedModules.unshift("ng");
       const injector = createInjector(modules, config.strictDi);
       injector.invoke([
         "$rootScope",
@@ -238,7 +238,7 @@ export class Angular {
 
   resumeBootstrap(extraModules) {
     forEach(extraModules, (module) => {
-      bootstrapedModules.push(module);
+      bootsrappedModules.push(module);
     });
     return doBootstrap();
   }
@@ -712,8 +712,8 @@ export class Angular {
 
 /// //////////////////////////////////////////////
 
-export function allowAutoBootstrap(document) {
-  const script = document.currentScript;
+export function allowAutoBootstrap(currentScript) {
+  const script = currentScript;
 
   // If the `currentScript` property has been clobbered just return false, since this indicates a probable attack
   if (
@@ -764,8 +764,9 @@ export function allowAutoBootstrap(document) {
   });
 }
 
-// Cached as it has to run during loading so that document.currentScript is available.
-const isAutoBootstrapAllowed = allowAutoBootstrap(window.document);
+export const confGlobal = {
+  isAutoBootstrapAllowed: false,
+};
 
 /**
  * @ngdoc directive
@@ -935,7 +936,7 @@ export function angularInit(element, bootstrap) {
     }
   });
   if (appElement) {
-    if (!isAutoBootstrapAllowed) {
+    if (!confGlobal.isAutoBootstrapAllowed) {
       window.console.error(
         "AngularJS: disabling automatic bootstrap. <script> protocol indicates an extension, document.location.href does not match.",
       );
@@ -948,7 +949,6 @@ export function angularInit(element, bootstrap) {
 
 /**
  * @function getTestability
-
  * @description
  * Get the testability service for the instance of AngularJS on the given
  * element.
@@ -975,7 +975,6 @@ export function getTestability(rootElement) {
  */
 export function setupModuleLoader(window) {
   const $injectorMinErr = minErr("$injector");
-  const ngMinErr = minErr("ng");
 
   function ensure(obj, name, factory) {
     // eslint-disable-next-line no-return-assign
@@ -1044,7 +1043,7 @@ export function setupModuleLoader(window) {
      */
     return function module(name, requires, configFn) {
       let info = {};
-     
+
       assertNotHasOwnProperty(name, "module");
       if (requires && modules.hasOwnProperty(name)) {
         modules[name] = null;
@@ -1365,7 +1364,7 @@ export function setupModuleLoader(window) {
          * @param {string} provider
          * @param {string} method
          * @param {String=} insertMethod
-         * @returns {angular.Module}
+         * @returns {angular.IModule}
          */
         function invokeLater(provider, method, insertMethod, queue) {
           if (!queue) queue = invokeQueue;
@@ -1378,7 +1377,7 @@ export function setupModuleLoader(window) {
         /**
          * @param {string} provider
          * @param {string} method
-         * @returns {angular.Module}
+         * @returns {angular.IModule}
          */
         function invokeLaterAndSetModuleName(provider, method, queue) {
           if (!queue) queue = invokeQueue;

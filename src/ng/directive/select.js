@@ -3,7 +3,12 @@
 
 import { NODE_TYPE_COMMENT } from "../../constants";
 import { jqLite } from "../../jqLite";
-import { assertNotHasOwnProperty, forEach, includes, isDefined } from "../utils";
+import {
+  assertNotHasOwnProperty,
+  forEach,
+  includes,
+  isDefined,
+} from "../utils";
 
 const noopNgModelController = { $setViewValue: () => {}, $render: () => {} };
 
