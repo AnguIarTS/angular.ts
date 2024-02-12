@@ -1,5 +1,4 @@
-import { minErr } from "../../minErr";
-import { includes } from "../utils";
+import { includes, minErr } from "../utils";
 
 const ngOptionsMinErr = minErr("ngOptions");
 

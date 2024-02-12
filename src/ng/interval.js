@@ -1,4 +1,4 @@
-import { minErr } from "../minErr";
+import { minErr } from "./utils";
 
 const $intervalMinErr = minErr("$interval");
 

@@ -6,8 +6,8 @@ import {
   UNTOUCHED_CLASS,
   VALID_CLASS,
 } from "../../constants";
-import { minErr } from "../../minErr";
 import {
+  minErr,
   forEach,
   isNumber,
   isNumberNaN,

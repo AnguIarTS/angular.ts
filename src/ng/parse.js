@@ -9,8 +9,7 @@
  *     Or gives undesired access to variables likes document or window?    *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-import { minErr } from "../minErr";
-import { createMap, forEach } from "./utils";
+import { createMap, forEach, minErr } from "./utils";
 
 const $parseMinErr = minErr("$parse");
 

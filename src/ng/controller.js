@@ -1,7 +1,7 @@
-import { minErr } from "../minErr";
 import {
   assertArgFn,
   assertNotHasOwnProperty,
+  minErr,
   extend,
   isArray,
   isObject,

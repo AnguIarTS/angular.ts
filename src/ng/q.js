@@ -216,8 +216,7 @@
  * @returns {Promise} The newly created promise.
  */
 
-import { minErr } from "../minErr";
-import { forEach, isArray } from "./utils";
+import { forEach, isArray, minErr } from "./utils";
 
 /**
  * @ngdoc provider

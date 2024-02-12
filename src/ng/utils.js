@@ -1,6 +1,8 @@
 /* eslint-disable no-use-before-define */
 import { NODE_TYPE_TEXT } from "../constants";
 
+const ngMinErr = minErr("ng");
+
 let uid = 0;
 
 /**
@@ -1452,10 +1454,6 @@ export function getNgAttribute(element, ngAttr) {
   return null;
 }
 
-function ngMinErr(arg0, arg1) {
-  throw new Error("Function not implemented.");
-}
-
 /**
  * Creates a shallow copy of an object, an array or a primitive.
  *
@@ -1511,4 +1509,78 @@ export function assertArgFn(arg, name, acceptArrayAnnotation) {
     }`,
   );
   return arg;
+}
+
+/**
+ * @description
+ *
+ * This object provides a utility for producing rich Error messages within
+ * AngularJS. It can be called as follows:
+ *
+ * let exampleMinErr = minErr('example');
+ * throw exampleMinErr('one', 'This {0} is {1}', foo, bar);
+ *
+ * The above creates an instance of minErr in the example namespace. The
+ * resulting error will have a namespaced error code of example.one.  The
+ * resulting error will replace {0} with the value of foo, and {1} with the
+ * value of bar. The object is not restricted in the number of arguments it can
+ * take.
+ *
+ * If fewer arguments are specified than necessary for interpolation, the extra
+ * interpolation markers will be preserved in the final string.
+ *
+ * Since data will be parsed statically during a build step, some restrictions
+ * are applied with respect to how minErr instances are created and called.
+ * Instances should have names of the form namespaceMinErr for a minErr created
+ * using minErr('namespace'). Error codes, namespaces and template strings
+ * should all be static strings, not variables or general expressions.
+ *
+ * @param {string} module The namespace to use for the new minErr instance.
+ * @returns {function(string, string, ...*): Error} minErr instance
+ */
+
+export function minErr(module) {
+  const url = 'https://errors.angularjs.org/"NG_VERSION_FULL"/';
+  const regex = `${url.replace(".", "\\.")}[\\s\\S]*`;
+  const errRegExp = new RegExp(regex, "g");
+
+  return function () {
+    const code = arguments[0];
+    const template = arguments[1];
+    let message = `[${module ? `${module}:` : ""}${code}] `;
+    const templateArgs = sliceArgs(arguments, 2).map((arg) =>
+      toDebugString(arg, minErrConfig.objectMaxDepth),
+    );
+    let paramPrefix;
+    let i;
+
+    // A minErr message has two parts: the message itself and the url that contains the
+    // encoded message.
+    // The message's parameters can contain other error messages which also include error urls.
+    // To prevent the messages from getting too long, we strip the error urls from the parameters.
+
+    message += template.replace(/\{\d+\}/g, (match) => {
+      const index = +match.slice(1, -1);
+
+      if (index < templateArgs.length) {
+        return templateArgs[index].replace(errRegExp, "");
+      }
+
+      return match;
+    });
+
+    message += `\n${url}${module ? `${module}/` : ""}${code}`;
+
+    if (minErrConfig.urlErrorParamsEnabled) {
+      for (
+        i = 0, paramPrefix = "?";
+        i < templateArgs.length;
+        i++, paramPrefix = "&"
+      ) {
+        message += `${paramPrefix}p${i}=${encodeURIComponent(templateArgs[i])}`;
+      }
+    }
+
+    return Error(message);
+  };
 }

@@ -9,7 +9,7 @@
  *     Or gives undesired access to variables likes document or window?    *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-import { minErr } from "../minErr";
+import { minErr } from "./utils";
 
 /* exported $SceProvider, $SceDelegateProvider */
 

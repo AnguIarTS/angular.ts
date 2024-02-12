@@ -9,8 +9,8 @@ import {
   NODE_TYPE_ATTRIBUTE,
   NODE_TYPE_COMMENT,
 } from "./constants";
-import { minErr } from "./minErr";
 import {
+  minErr,
   arrayRemove,
   concat,
   extend,

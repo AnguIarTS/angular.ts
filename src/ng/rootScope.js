@@ -23,7 +23,7 @@
  * to construct.
  */
 
-import { minErr } from "../minErr";
+import { minErr } from "./utils";
 
 /**
  * @ngdoc provider

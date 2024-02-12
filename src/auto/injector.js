@@ -1,6 +1,6 @@
-import { minErr } from "../minErr";
 import {
   assertArgFn,
+  minErr,
   forEach,
   isArray,
   isFunction,

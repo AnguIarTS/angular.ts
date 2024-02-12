@@ -1,7 +1,20 @@
 import { jqLite, getBooleanAttrName, getAliasedAttrName } from "../jqLite";
-import { minErr } from "../minErr";
-// eslint-disable-next-line camelcase
-import { createMap, forEach, snakeCase } from "./utils";
+import {
+  minErr,
+  assertArg,
+  assertNotHasOwnProperty,
+  createMap,
+  forEach,
+  isArray,
+  isDefined,
+  isFunction,
+  isObject,
+  isString,
+  lowercase,
+  reverseParams,
+  snakeCase,
+  valueFn,
+} from "./utils";
 
 /* ! VARIABLE/FUNCTION NAMING CONVENTIONS THAT APPLY TO THIS FILE!
  *
@@ -5019,25 +5032,6 @@ export function directiveNormalize(name) {
  *          property to the original name.
  * @param {string} value Value to set the attribute to. The value can be an interpolated string.
  */
-
-/**
- * Closure compiler type information
- */
-
-function nodesetLinkingFn(
-  /* angular.Scope */ scope,
-  /* NodeList */ nodeList,
-  /* Element */ rootElement,
-  /* function(Function) */ boundTranscludeFn,
-) {}
-
-function directiveLinkingFn(
-  /* nodesetLinkingFn */ nodesetLinkingFn,
-  /* angular.Scope */ scope,
-  /* Node */ node,
-  /* Element */ rootElement,
-  /* function(Function) */ boundTranscludeFn,
-) {}
 
 function tokenDifference(str1, str2) {
   let values = "";

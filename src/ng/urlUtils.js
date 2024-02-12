@@ -14,8 +14,6 @@ let baseUrlParsingNode;
 
 urlParsingNode.href = "http://[::1]";
 
-
-
 /**
  *
  * Implementation Notes for non-IE browsers

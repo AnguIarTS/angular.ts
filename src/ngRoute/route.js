@@ -1,6 +1,7 @@
 import { ngViewFactory, ngViewFillContentFactory } from "./directive/ngView";
 import { $RouteParamsProvider } from "./routeParams";
-import { minErr } from "../minErr";
+import { minErr } from "../ng/utils";
+
 /**
  * @ngdoc module
  * @name ngRoute

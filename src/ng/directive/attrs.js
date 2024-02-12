@@ -97,11 +97,11 @@
     </example>
  */
 
-import { REGEX_STRING_REGEXP } from "../../Angular";
 import { ALIASED_ATTR, BOOLEAN_ATTR } from "../../jqLite";
 import { directiveNormalize } from "../compile";
 import { forEach } from "../utils";
 
+export const REGEX_STRING_REGEXP = /^\/(.+)\/([a-z]*)$/;
 /**
  * @ngdoc directive
  * @name ngSrc

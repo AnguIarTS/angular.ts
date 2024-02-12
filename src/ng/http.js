@@ -1,6 +1,6 @@
-import { minErr } from "../minErr";
 import { urlIsAllowedOriginFactory } from "./urlUtils";
 import {
+  minErr,
   isObject,
   isDate,
   toJson,

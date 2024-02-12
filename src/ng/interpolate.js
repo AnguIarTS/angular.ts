@@ -1,5 +1,4 @@
-import { minErr } from "../minErr";
-import { isDefined, isUndefined, stringify } from "./utils";
+import { minErr, isDefined, isUndefined, stringify } from "./utils";
 
 const $interpolateMinErr = minErr("$interpolate");
 $interpolateMinErr.throwNoconcat = function (text) {

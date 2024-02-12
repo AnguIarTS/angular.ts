@@ -1,5 +1,4 @@
-import { minErr } from "../../minErr";
-import { isObject } from "../../ng/utils";
+import { isObject, minErr } from "../../ng/utils";
 
 /**
  * @ngdoc filter

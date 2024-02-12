@@ -123,7 +123,6 @@ const version = {
 };
 
 const angularModule = setupModuleLoader(window);
-
 angularModule("ng", [
   "$provide",
   function ngModule($provide) {

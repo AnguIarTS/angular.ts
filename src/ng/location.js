@@ -1,7 +1,4 @@
-/* global stripHash: true */
-
-import { minErr } from "../minErr";
-import { forEach } from "./utils";
+import { forEach, minErr } from "./utils";
 
 const PATH_MATCH = /^([^?#]*)(\?([^#]*))?(#(.*))?$/;
 const DEFAULT_PORTS = { http: 80, https: 443, ftp: 21 };

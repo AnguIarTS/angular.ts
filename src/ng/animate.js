@@ -1,5 +1,4 @@
-import { forEach, isArray, isObject, isString } from "./utils";
-import { minErr } from "../minErr";
+import { forEach, isArray, isObject, isString, minErr } from "./utils";
 
 const $animateMinErr = minErr("$animate");
 const ELEMENT_NODE = 1;
